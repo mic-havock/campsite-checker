@@ -1,10 +1,9 @@
-import React from "react";
-import CampsiteChecker from "./components/CampsiteChecker";
+import FacilitiesFinder from "./components/FacilitiesFinder";
 
 function App() {
   return (
     <div className="App">
-      <CampsiteChecker />
+      <FacilitiesFinder />
     </div>
   );
 }

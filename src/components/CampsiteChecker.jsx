@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { fetchCampgroundAvailability, fetchCampsiteAvailability } from "../api/campsites";
 
 const CampsiteChecker = () => {
   const [campgroundId, setCampgroundId] = useState("");
   const [campsiteId, setCampsiteId] = useState("");
   const [startDate, setStartDate] = useState("");
-  const [results, setResults] = useState(null);
-  const [error, setError] = useState("");
+  const [results, setResults] = useState([]);
+  const [error, setError] = useState(null);
 
   const handleCheckCampground = async () => {
     try {
@@ -14,7 +14,7 @@ const CampsiteChecker = () => {
       const data = await fetchCampgroundAvailability(campgroundId, startDate);
       setResults(data);
     } catch (err) {
-      setError("Error fetching campground availability. Check console for details.");
+      setError(`Error fetching campground availability: ${err.message}. Check console for details.`);
     }
   };
 
@@ -24,7 +24,7 @@ const CampsiteChecker = () => {
       const data = await fetchCampsiteAvailability(campsiteId);
       setResults(data);
     } catch (err) {
-      setError("Error fetching campsite availability. Check console for details.");
+      setError(`Error fetching campsite availability: ${err.message}. Check console for details.`);
     }
   };
 
@@ -60,7 +60,7 @@ const CampsiteChecker = () => {
         <button onClick={handleCheckCampsite}>Check Campsite</button>
       </div>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className="error-message">{error}</p>}
       {results && (
         <div>
           <h3>Results:</h3>
