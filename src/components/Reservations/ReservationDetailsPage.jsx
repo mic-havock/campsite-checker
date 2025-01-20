@@ -16,53 +16,59 @@ const ReservationDetailsPage = () => {
     );
   }
 
-  const renderCampsites = () => {
-    return Object.keys(availabilityData.campsites).map((campsiteId) => {
-      const campsite = availabilityData.campsites[campsiteId];
-      const quantities = Object.entries(campsite.quantities).map(
-        ([date, quantity]) => ({
-          date,
-          quantity,
-        })
-      );
+  const renderCalendar = () => {
+    const campsites = Object.values(availabilityData.campsites);
 
-      return (
-        <div key={campsiteId} className="campsite-details">
-          <h2>{`Campsite ${campsite.site} - ${campsite.loop}`}</h2>
-          <p>
-            <strong>Type:</strong> {campsite.campsite_type}
-          </p>
-          <p>
-            <strong>Capacity:</strong> {campsite.min_num_people} -{" "}
-            {campsite.max_num_people} people
-          </p>
-          <div className="availability-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Availability</th>
-                </tr>
-              </thead>
-              <tbody>
-                {quantities.map(({ date, quantity }) => (
-                  <tr key={date}>
-                    <td>{new Date(date).toLocaleDateString()}</td>
-                    <td>{quantity > 0 ? "Available" : "Unavailable"}</td>
-                  </tr>
+    // Generate the list of unique dates
+    const dates = Array.from(
+      new Set(
+        campsites.flatMap((campsite) =>
+          Object.keys(campsite.quantities).map(
+            (date) => new Date(date).toISOString().split("T")[0]
+          )
+        )
+      )
+    ).sort();
+
+    return (
+      <div className="calendar-view">
+        <table>
+          <thead>
+            <tr>
+              <th>Campsite</th>
+              {dates.map((date) => (
+                <th key={date}>{new Date(date).toLocaleDateString()}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {campsites.map((campsite) => (
+              <tr key={campsite.campsite_id}>
+                <td>{`Campsite ${campsite.site} - ${campsite.loop}`}</td>
+                {dates.map((date) => (
+                  <td
+                    key={`${campsite.campsite_id}-${date}`}
+                    className={
+                      campsite.quantities[`${date}T00:00:00Z`] > 0
+                        ? "available"
+                        : "unavailable"
+                    }
+                  >
+                    {campsite.quantities[`${date}T00:00:00Z`] > 0 ? "A" : "X"}
+                  </td>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      );
-    });
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
   };
 
   return (
     <div>
       <h1>Reservation Details</h1>
-      <div className="campsite-list">{renderCampsites()}</div>
+      {renderCalendar()}
       <button onClick={() => navigate(-1)}>Back to Campsites</button>
     </div>
   );

@@ -30,11 +30,6 @@ const CampsitesPage = () => {
         startDate
       );
 
-      // if (!response.ok) {
-      //   throw new Error("Failed to fetch availability data.");
-      // }
-
-      //const data = await response.json();
       navigate("/reservation-details", { state: { availabilityData: data } });
     } catch (error) {
       console.error("Error fetching availability data:", error);

@@ -1,33 +1,31 @@
-.campsite-list {
-	margin: 20px 0;
-  }
-  
-  .campsite-details {
-	margin-bottom: 30px;
-	padding: 20px;
-	border: 1px solid #ccc;
-	border-radius: 8px;
-	background-color: #f9f9f9;
-  }
-  
-  .campsite-details h2 {
-	margin-bottom: 10px;
-  }
-  
-  .availability-table table {
+.calendar-view table {
 	width: 100%;
 	border-collapse: collapse;
   }
   
-  .availability-table th,
-  .availability-table td {
+  .calendar-view th,
+  .calendar-view td {
 	border: 1px solid #ddd;
 	padding: 8px;
 	text-align: center;
   }
   
-  .availability-table th {
+  .calendar-view th {
 	background-color: #f2f2f2;
+	font-weight: bold;
+  }
+  
+  .calendar-view td.available {
+	background-color: #d4f4dd;
+	color: blue;
+  }
+  
+  .calendar-view td.unavailable {
+	background-color: #f8d7da;
+	color: red;
+  }
+  
+  .calendar-view td {
 	font-weight: bold;
   }
   
