@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { fetchCampgroundAvailability } from "../../api/campsites";
 import Campsite from "./Campsite";
 import "./CampsitesPage.css";
 
@@ -6,6 +8,39 @@ const CampsitesPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { campsites } = location.state || {}; // Access campsites
+  const [selectedDate, setSelectedDate] = useState("");
+  // Get facilityId from the first campsite if available
+  const facilityID = campsites?.[0]?.FacilityID;
+
+  const handleDateChange = (event) => {
+    setSelectedDate(event.target.value);
+  };
+
+  const fetchAvailability = async () => {
+    if (!selectedDate) {
+      alert("Please select a date.");
+      return;
+    }
+
+    try {
+      console.log("location.state:", location.state); //
+      const startDate = new Date(selectedDate).toISOString();
+      const data = await await fetchCampgroundAvailability(
+        facilityID,
+        startDate
+      );
+
+      // if (!response.ok) {
+      //   throw new Error("Failed to fetch availability data.");
+      // }
+
+      //const data = await response.json();
+      navigate("/reservation-details", { state: { availabilityData: data } });
+    } catch (error) {
+      console.error("Error fetching availability data:", error);
+      alert("Could not fetch availability. Please try again later.");
+    }
+  };
 
   return (
     <div>
@@ -19,6 +54,10 @@ const CampsitesPage = () => {
       ) : (
         <p>No campsites available for this facility.</p>
       )}
+      <div className="availability-check">
+        <input type="date" value={selectedDate} onChange={handleDateChange} />
+        <button onClick={fetchAvailability}>Check Availability</button>
+      </div>
       <button onClick={() => navigate(-1)}>Back to Facilities</button>
     </div>
   );
