@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa"; // Using FontAwesome icons for arrows
 import Modal from "react-modal";
 

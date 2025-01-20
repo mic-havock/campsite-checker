@@ -1,11 +1,14 @@
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import CampsitesPage from "./components/CampsitesPage";
 import FacilitiesFinder from "./components/FacilitiesFinder";
 
-function App() {
-  return (
-    <div className="App">
-      <FacilitiesFinder />
-    </div>
-  );
-}
+const App = () => (
+  <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<FacilitiesFinder />} />
+      <Route path="/campsites" element={<CampsitesPage />} />
+    </Routes>
+  </BrowserRouter>
+);
 
 export default App;
