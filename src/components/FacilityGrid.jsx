@@ -10,6 +10,7 @@ import {
 import { AgGridReact } from "ag-grid-react";
 import PropTypes from "prop-types";
 import { useMemo, useState } from "react";
+
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
   CheckboxEditorModule,
@@ -19,7 +20,8 @@ ModuleRegistry.registerModules([
   ValidationModule,
 ]);
 
-const FacilityGrid = ({ rowData }) => {
+const FacilityGrid = ({ rowData, onRowSelected }) => {
+  // Accept onRowSelected as a prop
   const [columnDefs] = useState([
     { headerName: "Facility Name", field: "FacilityName" },
     { headerName: "Facility ID", field: "FacilityID" },
@@ -31,6 +33,7 @@ const FacilityGrid = ({ rowData }) => {
     { headerName: "Facility Address", field: "FACILITYADDRESS" },
     { headerName: "Facility Directions", field: "FacilityDirections" },
     { headerName: "Facility Email", field: "FacilityEmail" },
+    { headerName: "Facility Media", field: "MEDIA" },
   ]);
 
   const defaultColDef = useMemo(() => {
@@ -46,11 +49,19 @@ const FacilityGrid = ({ rowData }) => {
       enableClickSelection: true,
     };
   }, []);
+
   const initialState = useMemo(() => {
     return {
       rowSelection: ["2"],
     };
   }, []);
+
+  const onSelectionChanged = (event) => {
+    const selectedRows = event.api.getSelectedRows();
+    if (selectedRows.length > 0) {
+      onRowSelected(selectedRows[0]); // Pass the selected row to the parent
+    }
+  };
 
   return (
     <div style={{ height: "600px", width: "1000px" }}>
@@ -62,12 +73,15 @@ const FacilityGrid = ({ rowData }) => {
         rowSelection={rowSelection}
         defaultColDef={defaultColDef}
         initialState={initialState}
+        onSelectionChanged={onSelectionChanged} // Attach the selection change event handler
       />
     </div>
   );
 };
+
 FacilityGrid.propTypes = {
   rowData: PropTypes.array.isRequired,
+  onRowSelected: PropTypes.func.isRequired, // Add prop type for the onRowSelected function
 };
 
 export default FacilityGrid;

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { getFacilities } from "../api/facilities";
+import FacilityDetails from "./FacilityDetails"; // New component for row details
 import FacilityGrid from "./FacilityGrid";
 
 const FacilitiesFinder = () => {
@@ -12,6 +13,7 @@ const FacilitiesFinder = () => {
   const [facilities, setFacilities] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [selectedFacility, setSelectedFacility] = useState(null); // Add state for selected facility
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -37,6 +39,10 @@ const FacilitiesFinder = () => {
     }
   };
 
+  const handleRowSelection = (selectedRow) => {
+    setSelectedFacility(selectedRow); // Update selected facility when a row is selected
+  };
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
@@ -54,10 +60,10 @@ const FacilitiesFinder = () => {
           {loading ? "Loading..." : "Search"}
         </button>
       </form>
-
       {error && <p>{error}</p>}
-
-      <FacilityGrid rowData={facilities} />
+      <FacilityGrid rowData={facilities} onRowSelected={handleRowSelection} />
+      {selectedFacility && <FacilityDetails facility={selectedFacility} />}{" "}
+      {/* Show details if a row is selected */}
     </div>
   );
 };
