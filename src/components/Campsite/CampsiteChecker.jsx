@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { fetchCampgroundAvailability, fetchCampsiteAvailability } from "../api/campsites";
+import {
+  fetchCampgroundAvailability,
+  fetchCampsiteAvailability,
+} from "../../api/campsites";
 
 const CampsiteChecker = () => {
   const [campgroundId, setCampgroundId] = useState("");
@@ -14,7 +17,9 @@ const CampsiteChecker = () => {
       const data = await fetchCampgroundAvailability(campgroundId, startDate);
       setResults(data);
     } catch (err) {
-      setError(`Error fetching campground availability: ${err.message}. Check console for details.`);
+      setError(
+        `Error fetching campground availability: ${err.message}. Check console for details.`
+      );
     }
   };
 
@@ -24,7 +29,9 @@ const CampsiteChecker = () => {
       const data = await fetchCampsiteAvailability(campsiteId);
       setResults(data);
     } catch (err) {
-      setError(`Error fetching campsite availability: ${err.message}. Check console for details.`);
+      setError(
+        `Error fetching campsite availability: ${err.message}. Check console for details.`
+      );
     }
   };
 

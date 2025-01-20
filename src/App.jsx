@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import CampsitesPage from "./components/CampsitesPage";
+import CampsitesPage from "./components/Campsite/CampsitesPage";
 import FacilitiesFinder from "./components/FacilitiesFinder";
 
 const App = () => (

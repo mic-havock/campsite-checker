@@ -1,4 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import Campsite from "./Campsite";
+import "./CampsitesPage.css";
 
 const CampsitesPage = () => {
   const location = useLocation();
@@ -9,15 +11,11 @@ const CampsitesPage = () => {
     <div>
       <h1>Campsites</h1>
       {campsites && campsites.length > 0 ? (
-        <ul>
+        <div className="campsites-grid">
           {campsites.map((campsite) => (
-            <li key={campsite.CampsiteID}>
-              <h3>{campsite.CampsiteName}</h3>
-              <p>{campsite.CampsiteType}</p>
-              <p>Accessible: {campsite.CampsiteAccessible ? "Yes" : "No"}</p>
-            </li>
+            <Campsite key={campsite.CampsiteID} campsite={campsite} />
           ))}
-        </ul>
+        </div>
       ) : (
         <p>No campsites available for this facility.</p>
       )}
