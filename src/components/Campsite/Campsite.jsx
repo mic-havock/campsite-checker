@@ -10,50 +10,107 @@ const Campsite = ({ campsite }) => {
     ATTRIBUTES,
   } = campsite;
   const [isExpanded, setIsExpanded] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const thumbnail =
-    ENTITYMEDIA?.find((media) => media.IsPrimary)?.URL || ENTITYMEDIA?.[0]?.URL;
+  const thumbnail = ENTITYMEDIA?.[currentImageIndex]?.URL;
+
+  const handleClose = (e) => {
+    if (e.target.classList.contains("expanded")) {
+      setIsExpanded(false);
+    }
+  };
+
+  const handleNextImage = () => {
+    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % ENTITYMEDIA.length);
+  };
+
+  const handlePrevImage = () => {
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === 0 ? ENTITYMEDIA.length - 1 : prevIndex - 1
+    );
+  };
 
   return (
     <div
       className={`campsite-tile ${isExpanded ? "expanded" : ""}`}
-      onClick={() => setIsExpanded(!isExpanded)}
+      onClick={(e) => {
+        if (!isExpanded) setIsExpanded(true);
+      }}
     >
-      {thumbnail && (
+      {isExpanded && (
+        <div className="overlay" onClick={handleClose}>
+          <div
+            className="expanded-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="close-button"
+              onClick={() => setIsExpanded(false)}
+            >
+              Close
+            </button>
+
+            {thumbnail && (
+              <div className="image-slider">
+                <button
+                  className="prev-button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handlePrevImage();
+                  }}
+                >
+                  &lt;
+                </button>
+                <img
+                  src={thumbnail}
+                  alt={`Image ${currentImageIndex + 1}`}
+                  className="slider-image"
+                />
+                <button
+                  className="next-button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleNextImage();
+                  }}
+                >
+                  &gt;
+                </button>
+              </div>
+            )}
+
+            <h3>{CampsiteName}</h3>
+            <p>Type: {CampsiteType}</p>
+            <p>Reservable: {CampsiteReservable ? "Yes" : "No"}</p>
+
+            {ATTRIBUTES && (
+              <div className="campsite-details">
+                <h4>Details</h4>
+                <ul>
+                  {ATTRIBUTES.map((attribute, index) => (
+                    <li
+                      key={index}
+                    >{`${attribute.AttributeName}: ${attribute.AttributeValue}`}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {!isExpanded && thumbnail && (
         <img
           src={thumbnail}
           alt={`${CampsiteName} thumbnail`}
           className="campsite-thumbnail"
         />
       )}
-      <h3>{CampsiteName}</h3>
-      <p>Type: {CampsiteType}</p>
-      <p>Reservable: {CampsiteReservable ? "Yes" : "No"}</p>
 
-      {isExpanded && (
-        <div className="campsite-details">
-          <h4>Details</h4>
-          {ATTRIBUTES && (
-            <ul>
-              {ATTRIBUTES.map((attribute, index) => (
-                <li
-                  key={index}
-                >{`${attribute.AttributeName}: ${attribute.AttributeValue}`}</li>
-              ))}
-            </ul>
-          )}
-          {ENTITYMEDIA && (
-            <div className="campsite-media">
-              {ENTITYMEDIA.map((media, index) => (
-                <img
-                  key={index}
-                  src={media.URL}
-                  alt={media.Description || "Campsite Image"}
-                  className="campsite-media-image"
-                />
-              ))}
-            </div>
-          )}
+      {!isExpanded && (
+        <div>
+          <h3>{CampsiteName}</h3>
+          <p>Type: {CampsiteType}</p>
+          <p>Reservable: {CampsiteReservable ? "Yes" : "No"}</p>
         </div>
       )}
     </div>
