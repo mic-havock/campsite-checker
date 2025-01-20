@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa"; // Use FontAwesome icons for arrows
+import React, { useState } from "react";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa"; // Using FontAwesome icons for arrows
 import Modal from "react-modal";
 
 // Modal styles
@@ -17,8 +17,7 @@ const customStyles = {
     overflow: "auto",
     display: "flex",
     flexDirection: "column",
-    justifyContent: "space-between", // Ensure content is spaced between
-    alignItems: "center", // Center align everything
+    justifyContent: "space-between",
   },
 };
 
@@ -65,24 +64,34 @@ const FacilityDetails = ({ facility }) => {
     <div
       style={{ marginTop: "20px", padding: "10px", border: "1px solid #ccc" }}
     >
-      <h3>Facility Details</h3>
+      <h2>Facility Details</h2>
       <p>
-        <strong>Name:</strong> {facility.FacilityName}
+        <strong>Facility Name:</strong> {facility.FacilityName}
       </p>
       <p>
-        <strong>ID:</strong> {facility.FacilityID}
+        <strong>Facility Type:</strong> {facility.FacilityTypeDescription}
       </p>
       <p>
-        <strong>Latitude:</strong> {facility.GEOJSON?.COORDINATES[1]}
+        <strong>Phone:</strong> {facility.FacilityPhone}
+      </p>
+      <p>
+        <strong>Email:</strong>{" "}
+        {facility.FacilityEmail ? facility.FacilityEmail : "None Available"}
       </p>
       <p>
         <strong>Longitude:</strong> {facility.GEOJSON?.COORDINATES[0]}
       </p>
       <p>
-        <strong>Type:</strong> {facility.FacilityTypeDescription}
+        <strong>Latitude:</strong> {facility.GEOJSON?.COORDINATES[1]}
       </p>
       <p>
-        <strong>Phone:</strong> {facility.FacilityPhone}
+        <a
+          href={`https://www.google.com/maps?q=${facility.GEOJSON?.COORDINATES[1]},${facility.GEOJSON?.COORDINATES[0]}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          View on Google Maps
+        </a>
       </p>
       {/* Render Description as HTML */}
       <div
@@ -91,9 +100,7 @@ const FacilityDetails = ({ facility }) => {
             facility.FacilityDescription || "<p>No description available</p>",
         }}
       />
-      <p>
-        <strong>Address:</strong> {facility.FACILITYADDRESS}
-      </p>
+      <h2>Directions</h2>
       {/* Render Directions as HTML */}
       <div
         dangerouslySetInnerHTML={{
@@ -101,13 +108,9 @@ const FacilityDetails = ({ facility }) => {
             facility.FacilityDirections || "<p>No directions available</p>",
         }}
       />
-      <p>
-        <strong>Email:</strong> {facility.FacilityEmail}
-      </p>
-
       {/* Render Images */}
       <div style={{ marginTop: "20px" }}>
-        <h4>Images:</h4>
+        <h2>Images</h2>
         {facility.MEDIA && facility.MEDIA.length > 0 ? (
           <div style={{ display: "flex", flexWrap: "wrap" }}>
             {facility.MEDIA.map((media, index) => (
@@ -143,14 +146,7 @@ const FacilityDetails = ({ facility }) => {
         style={customStyles}
         contentLabel="Image Modal"
       >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            flex: 1,
-          }}
-        >
+        <div style={{ textAlign: "center", flex: 1 }}>
           {/* Navigation Arrows */}
           <button onClick={goToPreviousImage} style={arrowStyle}>
             <FaArrowLeft />
@@ -166,12 +162,15 @@ const FacilityDetails = ({ facility }) => {
           <button onClick={goToNextImage} style={arrowStyle}>
             <FaArrowRight />
           </button>
-        </div>
 
-        {/* Close button */}
-        <button onClick={closeImageModal} style={closeButtonStyle}>
-          Close
-        </button>
+          {/* Close button */}
+          <button
+            onClick={closeImageModal}
+            style={{ marginTop: "10px", alignSelf: "center" }}
+          >
+            Close
+          </button>
+        </div>
       </Modal>
     </div>
   );
@@ -183,24 +182,11 @@ const arrowStyle = {
   border: "1px solid #ccc",
   borderRadius: "50%",
   fontSize: "20px",
-  padding: "15px", // Increase padding for better button size
+  padding: "10px",
   cursor: "pointer",
-  margin: "0 20px", // Adjust space between arrows
+  margin: "0 10px",
   boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
   display: "inline-block",
-  alignSelf: "center", // Vertically align the arrows
-  flex: "none",
-};
-
-// Close button style
-const closeButtonStyle = {
-  marginTop: "10px",
-  padding: "10px 20px",
-  backgroundColor: "#007BFF",
-  color: "#fff",
-  border: "none",
-  borderRadius: "5px",
-  cursor: "pointer",
   alignSelf: "center",
 };
 

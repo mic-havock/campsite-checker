@@ -8,8 +8,9 @@ import {
   ValidationModule,
 } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
+import axios from "axios";
 import PropTypes from "prop-types";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
@@ -20,21 +21,53 @@ ModuleRegistry.registerModules([
   ValidationModule,
 ]);
 
+// Function to fetch city and state using HERE API
+const fetchCityAndState = async (latitude, longitude) => {
+  try {
+    const response = await axios.get(
+      `https://revgeocode.search.hereapi.com/v1/revgeocode`,
+      {
+        params: {
+          at: `${latitude},${longitude}`,
+          apiKey: "8hq7xHTF1kE7gJS_4o6H4dUf2vsBpQ_pLuWrB0HVvsA", // Replace with your HERE API key
+        },
+      }
+    );
+
+    const data = response.data.items[0];
+    const state = data.address.state || "Unknown State";
+    return { state };
+  } catch (error) {
+    console.error("Geocoding error:", error);
+    return { city: "Unknown City", state: "Unknown State" };
+  }
+};
+
 const FacilityGrid = ({ rowData, onRowSelected }) => {
-  // Accept onRowSelected as a prop
+  const [processedData, setProcessedData] = useState([]);
+
   const [columnDefs] = useState([
     { headerName: "Facility Name", field: "FacilityName" },
-    { headerName: "Facility ID", field: "FacilityID" },
-    { headerName: "Facility Latitude", field: "FacilityLatitude" },
-    { headerName: "Facility Longitude", field: "FacilityLongitude" },
+    { headerName: "State", field: "NearestState" },
     { headerName: "Facility Type", field: "FacilityTypeDescription" },
-    { headerName: "Facility Phone", field: "FacilityPhone" },
-    { headerName: "Facility Description", field: "FacilityDescription" },
-    { headerName: "Facility Address", field: "FACILITYADDRESS" },
-    { headerName: "Facility Directions", field: "FacilityDirections" },
-    { headerName: "Facility Email", field: "FacilityEmail" },
-    { headerName: "Facility Media", field: "MEDIA" },
   ]);
+
+  useEffect(() => {
+    const updateLocations = async () => {
+      const updatedData = await Promise.all(
+        rowData.map(async (row) => {
+          const { city, state } = await fetchCityAndState(
+            row.FacilityLatitude,
+            row.FacilityLongitude
+          );
+          return { ...row, NearestCity: city, NearestState: state };
+        })
+      );
+      setProcessedData(updatedData);
+    };
+
+    updateLocations();
+  }, [rowData]);
 
   const defaultColDef = useMemo(() => {
     return {
@@ -42,6 +75,7 @@ const FacilityGrid = ({ rowData, onRowSelected }) => {
       minWidth: 100,
     };
   }, []);
+
   const rowSelection = useMemo(() => {
     return {
       mode: "singleRow",
@@ -50,16 +84,10 @@ const FacilityGrid = ({ rowData, onRowSelected }) => {
     };
   }, []);
 
-  const initialState = useMemo(() => {
-    return {
-      rowSelection: ["2"],
-    };
-  }, []);
-
   const onSelectionChanged = (event) => {
     const selectedRows = event.api.getSelectedRows();
     if (selectedRows.length > 0) {
-      onRowSelected(selectedRows[0]); // Pass the selected row to the parent
+      onRowSelected(selectedRows[0]);
     }
   };
 
@@ -68,12 +96,11 @@ const FacilityGrid = ({ rowData, onRowSelected }) => {
       <AgGridReact
         modules={[ClientSideRowModelModule]}
         columnDefs={columnDefs}
-        rowData={rowData}
+        rowData={processedData}
         pagination={true}
         rowSelection={rowSelection}
         defaultColDef={defaultColDef}
-        initialState={initialState}
-        onSelectionChanged={onSelectionChanged} // Attach the selection change event handler
+        onSelectionChanged={onSelectionChanged}
       />
     </div>
   );
@@ -81,7 +108,7 @@ const FacilityGrid = ({ rowData, onRowSelected }) => {
 
 FacilityGrid.propTypes = {
   rowData: PropTypes.array.isRequired,
-  onRowSelected: PropTypes.func.isRequired, // Add prop type for the onRowSelected function
+  onRowSelected: PropTypes.func.isRequired,
 };
 
 export default FacilityGrid;
