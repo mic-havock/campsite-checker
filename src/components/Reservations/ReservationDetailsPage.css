@@ -29,3 +29,77 @@
 	font-weight: bold;
   }
   
+  /* Modal styling */
+  .modal {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 400px;
+	background-color: #fff;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	border-radius: 8px;
+	padding: 20px;
+	z-index: 1000;
+  }
+  
+  .modal h2 {
+	margin-top: 0;
+	font-size: 1.5rem;
+	color: #333;
+  }
+  
+  .modal p {
+	margin: 10px 0;
+	font-size: 1rem;
+	color: #555;
+  }
+  
+  .modal input {
+	width: 100%;
+	padding: 10px;
+	margin: 10px 0;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	font-size: 1rem;
+  }
+  
+  .modal button {
+	margin: 5px;
+	padding: 10px 15px;
+	border: none;
+	border-radius: 4px;
+	font-size: 1rem;
+	cursor: pointer;
+  }
+  
+  .modal button:first-of-type {
+	background-color: #007bff;
+	color: #fff;
+  }
+  
+  .modal button:first-of-type:hover {
+	background-color: #0056b3;
+  }
+  
+  .modal button:last-of-type {
+	background-color: #f8d7da;
+	color: #d9534f;
+  }
+  
+  .modal button:last-of-type:hover {
+	background-color: #d9534f;
+	color: #fff;
+  }
+  
+  /* Modal backdrop */
+  .modal-backdrop {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background: rgba(0, 0, 0, 0.5);
+	z-index: 999;
+  }
+  

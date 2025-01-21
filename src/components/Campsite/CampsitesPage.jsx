@@ -24,7 +24,13 @@ const CampsitesPage = () => {
 
     try {
       console.log("location.state:", location.state); //
-      const startDate = new Date(selectedDate).toISOString();
+
+      const selectedDateObj = new Date(selectedDate);
+      const startDate = new Date(
+        Date.UTC(selectedDateObj.getFullYear(), selectedDateObj.getMonth(), 1)
+      ).toISOString();
+
+      //const startDate = new Date(selectedDate).toISOString();
       const data = await await fetchCampgroundAvailability(
         facilityID,
         startDate
