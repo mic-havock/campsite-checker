@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import reservationsAPI from "../../api/reservations";
 import "./ReservationDetailsPage.css";
 
 const ReservationDetailsPage = () => {
@@ -30,24 +31,33 @@ const ReservationDetailsPage = () => {
     setAlertModal(true);
   };
 
-  const handleCreateAlert = () => {
+  const handleCreateAlert = async () => {
     const { name, email, startDate, endDate } = alertDetails;
     if (!name || !email || !startDate || !endDate) {
       alert("Please fill in all fields.");
       return;
     }
 
-    // Pass the details to your alert creation API or function
-    console.log("Alert Created:", {
-      campsite_id: selectedCampsite.campsite_id,
-      startDate,
-      endDate,
+    const reservationData = {
       name,
-      email,
-    });
+      email_address: email,
+      campsite_id: selectedCampsite.campsite_id,
+      reservation_start_date: startDate,
+      reservation_end_date: endDate,
+      monitoring_active: true, // Set default or desired value
+      attempts_made: 0, // Set default or desired value
+      success_sent: false, // Set default or desired value
+    };
 
-    setAlertModal(false);
-    alert("Alert created successfully!");
+    try {
+      // Call the reservations API to create a new reservation
+      const result = await reservationsAPI.create(reservationData);
+      setAlertModal(false);
+      alert(`Alert created successfully! Reservation ID: ${result.id}`);
+    } catch (error) {
+      console.error("Error creating reservation:", error);
+      alert("Failed to create alert. Please try again.");
+    }
   };
 
   const renderCalendar = () => {

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:3000/api"; // Replace with your backend's URL if deployed
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 // Fetch availability for a campground
 export const getFacilities = async (name, state) => {
