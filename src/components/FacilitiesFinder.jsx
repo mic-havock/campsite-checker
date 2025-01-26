@@ -1,15 +1,21 @@
+import {
+  Button,
+  Grid,
+  GridContainer,
+  TextInput,
+} from "@trussworks/react-uswds";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchCampsitesByFacility } from "../api/campsites";
 import { getFacilities } from "../api/facilities";
 import FacilityDetails from "./Facility/FacilityDetails";
 import FacilityGrid from "./Facility/FacilityGrid";
+import "./facilities-finder.scss";
 
 const FacilitiesFinder = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Restore state from location or localStorage
   const [inputValue, setInputValue] = useState(
     location.state?.searchParams?.query ||
       JSON.parse(localStorage.getItem("searchParams"))?.query ||
@@ -39,21 +45,20 @@ const FacilitiesFinder = () => {
   const [error, setError] = useState("");
 
   const handleInputChange = (e) => {
-    setInputValue(e.target.value); // Update the input value
+    setInputValue(e.target.value);
   };
 
   const handleSubmit = async (e) => {
-    if (e) e.preventDefault(); // Prevent default for form submission
+    if (e) e.preventDefault();
     const updatedSearchParams = { ...searchParams, query: inputValue };
     setSearchParams(updatedSearchParams);
     setLoading(true);
     setError("");
 
     try {
-      const response = await getFacilities(inputValue); // Fetch facilities
+      const response = await getFacilities(inputValue);
       setFacilities(response.RECDATA);
 
-      // Persist state to localStorage
       localStorage.setItem("searchParams", JSON.stringify(updatedSearchParams));
       localStorage.setItem("facilities", JSON.stringify(response.RECDATA));
     } catch (err) {
@@ -64,13 +69,23 @@ const FacilitiesFinder = () => {
     }
   };
 
+  const handleClear = () => {
+    setInputValue("");
+    setFacilities([]);
+    setSelectedFacility(null);
+    setError("");
+
+    localStorage.removeItem("searchParams");
+    localStorage.removeItem("facilities");
+    localStorage.removeItem("selectedFacility");
+  };
+
   const handleViewCampsites = async () => {
     if (selectedFacility) {
       const response = await fetchCampsitesByFacility(
         selectedFacility.FacilityID
       );
       const campsites = response.RECDATA || [];
-      // Persist selected facility to localStorage
       localStorage.setItem(
         "selectedFacility",
         JSON.stringify(selectedFacility)
@@ -83,11 +98,10 @@ const FacilitiesFinder = () => {
 
   const handleRowSelection = (row) => {
     setSelectedFacility(row);
-    localStorage.setItem("selectedFacility", JSON.stringify(row)); // Persist selection
+    localStorage.setItem("selectedFacility", JSON.stringify(row));
   };
 
   useEffect(() => {
-    // If there's no location state but localStorage has data, restore it
     if (!location.state) {
       const savedFacilities = localStorage.getItem("facilities");
       const savedSearchParams = localStorage.getItem("searchParams");
@@ -97,46 +111,50 @@ const FacilitiesFinder = () => {
       if (savedSearchParams) setSearchParams(JSON.parse(savedSearchParams));
       if (savedSelectedFacility)
         setSelectedFacility(JSON.parse(savedSelectedFacility));
-      setInputValue(
-        JSON.parse(savedSearchParams)?.query || "" // Restore input value
-      );
+      setInputValue(JSON.parse(savedSearchParams)?.query || "");
     }
   }, [location.state]);
 
   return (
-    <div>
-      {/* Search Form */}
-      <form onSubmit={handleSubmit}>
-        <label>
-          Facility Name:
-          <input
-            type="text"
-            name="query"
-            value={inputValue} // Use the input value for rendering
-            onChange={handleInputChange} // Update the input value
-          />
-        </label>
-        <button type="submit" disabled={loading}>
+    <GridContainer className="facilities-finder">
+      <h1>Find Your Perfect Campground</h1>
+      <form onSubmit={handleSubmit} className="facilities-finder__form">
+        <TextInput
+          id="campground-name"
+          name="query"
+          type="text"
+          label="Campground Name"
+          value={inputValue}
+          onChange={handleInputChange}
+        />
+        <Button type="submit" className="submit" disabled={loading}>
           {loading ? "Loading..." : "Search"}
-        </button>
+        </Button>
+        <Button type="button" className="clear" onClick={handleClear}>
+          Clear
+        </Button>
       </form>
 
-      {/* Error Display */}
-      {error && <p>{error}</p>}
+      {error && <p className="error">{error}</p>}
 
-      {/* Facility Grid and Details */}
-      <FacilityGrid rowData={facilities} onRowSelected={handleRowSelection} />
+      <Grid row>
+        <Grid col={12}>
+          <FacilityGrid
+            rowData={facilities}
+            onRowSelected={handleRowSelection}
+          />
+        </Grid>
+      </Grid>
       {selectedFacility && <FacilityDetails facility={selectedFacility} />}
 
-      {/* View Campgrounds Button */}
-      <button
+      <Button
         onClick={handleViewCampsites}
+        className="view-campgrounds"
         disabled={!selectedFacility}
-        style={{ marginTop: "10px" }}
       >
         View Campgrounds
-      </button>
-    </div>
+      </Button>
+    </GridContainer>
   );
 };
 

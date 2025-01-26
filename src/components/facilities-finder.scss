@@ -1,0 +1,65 @@
+.facilities-finder {
+  background-color: #f4f4f2; // Off-white
+  border: 2px solid #6b8e23; // Olive green
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  h1 {
+    color: #2e4600; // Deep green
+    font-family: "Georgia", serif;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .facilities-finder__form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+
+    .usa-label {
+      color: #2e4600; // Deep green
+    }
+
+    input {
+      border-color: #6b8e23; // Olive green
+      &:focus {
+        border-color: #556b2f; // Dark olive green
+        box-shadow: 0 0 5px #556b2f;
+      }
+    }
+
+    .submit {
+      background-color: #2e8b57; // Sea green
+      color: #fff;
+      &:hover {
+        background-color: #228b22; // Forest green
+      }
+    }
+
+    .clear {
+      background-color: #8b4513; // Saddle brown
+      color: #fff;
+      &:hover {
+        background-color: #a0522d; // Light brown
+      }
+    }
+  }
+
+  .error {
+    color: #b22222; // Firebrick red
+    text-align: center;
+    margin-top: 15px;
+  }
+
+  .view-campgrounds {
+    background-color: #2e8b57; // Sea green
+    color: #fff;
+    margin-top: 20px;
+    &:hover {
+      background-color: #228b22; // Forest green
+    }
+  }
+}
