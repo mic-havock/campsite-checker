@@ -10,15 +10,14 @@ export const getFacilities = async (params) => {
       params: {
         query: params.query || "",
         state: params.state || "",
-        limit: params.limit || 50,
-        offset: params.offset || 0,
+        limit: params.limit || 500,
+        //offset: params.offset || 0,
         latitude: params.latitude || "",
         longitude: params.longitude || "",
         radius: params.radius || "",
-        // activity: params.activity || "CAMPING",
-        activity: params.activity || "",
-        lastupdated: params.lastupdated || "",
-        sort: params.sort || "NAME",
+        //activity: params.activity || "",
+        //lastupdated: params.lastupdated || "",
+        sort: params.sort || "ID",
       },
     });
     return response.data;

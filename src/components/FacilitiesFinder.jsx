@@ -138,7 +138,7 @@ const FacilitiesFinder = () => {
     setSearchParams({
       query: "",
       state: "",
-      limit: 50,
+      limit: "",
       offset: 0,
       latitude: "",
       longitude: "",
@@ -196,6 +196,7 @@ const FacilitiesFinder = () => {
 
   return (
     <GridContainer className="facilities-finder">
+      <h1>Recreation Information Database (RIDB)</h1>
       <h1>Facility Finder</h1>
       <form onSubmit={handleSubmit} className="facilities-finder__form">
         <div className="form-group">
@@ -231,36 +232,6 @@ const FacilitiesFinder = () => {
           </select>
           <p className="helper-text">Select the two-letter state code.</p>
         </div>
-        {/* <div className="form-group">
-          <TextInput
-            id="limit"
-            name="limit"
-            type="number"
-            label="Limit"
-            value={searchParams.limit}
-            onChange={(e) =>
-              setSearchParams((prev) => ({ ...prev, limit: e.target.value }))
-            }
-          />
-          <p className="helper-text">
-            Specify the maximum number of results to display.
-          </p>
-        </div> */}
-        {/* <div className="form-group">
-          <TextInput
-            id="offset"
-            name="offset"
-            type="number"
-            label="Offset"
-            value={searchParams.offset}
-            onChange={(e) =>
-              setSearchParams((prev) => ({ ...prev, offset: e.target.value }))
-            }
-          />
-          <p className="helper-text">
-            Set the starting point for results pagination.
-          </p>
-        </div> */}
         <div className="form-group">
           <TextInput
             id="latitude"
@@ -307,7 +278,37 @@ const FacilitiesFinder = () => {
           />
           <p className="helper-text">Specify the search radius in miles.</p>
         </div>
-        <div className="form-group">
+        {/* <div className="form-group">
+              <TextInput
+                id="limit"
+                name="limit"
+                type="number"
+                label="Limit"
+                value={searchParams.limit}
+                onChange={(e) =>
+                  setSearchParams((prev) => ({ ...prev, limit: e.target.value }))
+                }
+              />
+              <p className="helper-text">
+                Specify the maximum number of results to display.
+              </p>
+            </div> */}
+        {/* <div className="form-group">
+              <TextInput
+                id="offset"
+                name="offset"
+                type="number"
+                label="Offset"
+                value={searchParams.offset}
+                onChange={(e) =>
+                  setSearchParams((prev) => ({ ...prev, offset: e.target.value }))
+                }
+              />
+              <p className="helper-text">
+                Set the starting point for results pagination.
+              </p>
+            </div> */}
+        {/* <div className="form-group">
           <TextInput
             id="activity"
             name="activity"
@@ -321,7 +322,7 @@ const FacilitiesFinder = () => {
           <p className="helper-text">
             Enter the activity type (e.g., CAMPING, FISHING).
           </p>
-        </div>
+        </div> */}
         {/* <div className="form-group">
           <TextInput
             id="lastupdated"
@@ -340,7 +341,7 @@ const FacilitiesFinder = () => {
             Filter facilities updated after this date.
           </p>
         </div> */}
-        <div className="form-group">
+        {/* <div className="form-group">
           <TextInput
             id="sort"
             name="sort"
@@ -354,13 +355,15 @@ const FacilitiesFinder = () => {
           <p className="helper-text">
             Specify sorting order (e.g., NAME, DATE).
           </p>
-        </div>
-        <Button type="submit" className="submit" disabled={loading}>
-          {loading ? "Loading..." : "Search"}
-        </Button>
-        <Button type="button" className="clear" onClick={handleClear}>
-          Clear
-        </Button>
+        </div> */}
+        <Grid col={12}>
+          <Button type="submit" className="submit" disabled={loading}>
+            {loading ? "Loading..." : "Search"}
+          </Button>
+          <Button type="button" className="clear" onClick={handleClear}>
+            Clear
+          </Button>
+        </Grid>
       </form>
 
       {error && <p className="error">{error}</p>}
