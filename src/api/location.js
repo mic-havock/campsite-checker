@@ -2,12 +2,7 @@ import axios from "axios";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-/**
- * Fetches the city and state for a facility by its ID.
- * @param {string|number} facilityId - The ID of the facility.
- * @returns {Promise<Object[]>} - A promise that resolves to an array of objects with `city` and `state`.
- * @throws {Error} - Throws an error if the request fails.
- */
+//Get facility address by facility ID
 export const getFacilityAddress = async (facilityId) => {
   if (!facilityId) {
     throw new Error("Facility ID is required.");
@@ -31,8 +26,7 @@ export const getFacilityAddress = async (facilityId) => {
   }
 };
 
-// Function to fetch city and state using HERE API
-// Function to fetch city and state using the getFacilityAddress API
+//Get city and state of a facility
 export const fetchCityAndState = async (facilityId) => {
   if (!facilityId) {
     throw new Error("Facility ID is required.");

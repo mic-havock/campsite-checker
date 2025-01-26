@@ -31,11 +31,7 @@ export const fetchCampsiteAvailability = async (campsiteId) => {
   }
 };
 
-/**
- * Fetch all campsites under a specific facility
- * @param {string} facilityId - The ID of the facility
- * @returns {Promise} - Resolves to the list of campsites under the facility
- */
+// Get campsites for a facility
 export const fetchCampsitesByFacility = async (facilityId) => {
   try {
     const response = await axios.get(
