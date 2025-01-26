@@ -12,7 +12,6 @@ export const getFacilityAddress = async (facilityId) => {
     const response = await axios.get(
       `${BASE_URL}/facilities/${facilityId}/addresses`
     );
-    console.log("response", JSON.stringify(response));
     // Filter the response to include only city and state
     const addressData = response.data.RECDATA.map((item) => ({
       city: item.City,

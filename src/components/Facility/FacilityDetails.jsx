@@ -79,19 +79,27 @@ const FacilityDetails = ({ facility }) => {
         {facility.FacilityEmail ? facility.FacilityEmail : "None Available"}
       </p>
       <p>
-        <strong>Longitude:</strong> {facility.GEOJSON?.COORDINATES[0]}
+        <strong>Longitude:</strong>{" "}
+        {Array.isArray(facility.GEOJSON?.COORDINATES)
+          ? facility.GEOJSON.COORDINATES[0]
+          : "Not Available"}
       </p>
       <p>
-        <strong>Latitude:</strong> {facility.GEOJSON?.COORDINATES[1]}
+        <strong>Longitude:</strong>{" "}
+        {Array.isArray(facility.GEOJSON?.COORDINATES)
+          ? facility.GEOJSON.COORDINATES[1]
+          : "Not Available"}
       </p>
       <p>
-        <a
-          href={`https://www.google.com/maps?q=${facility.GEOJSON?.COORDINATES[1]},${facility.GEOJSON?.COORDINATES[0]}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          View on Google Maps
-        </a>
+        {Array.isArray(facility.GEOJSON?.COORDINATES) ? (
+          <a
+            href={`https://www.google.com/maps?q=${facility.GEOJSON.COORDINATES[1]},${facility.GEOJSON.COORDINATES[0]}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View on Google Maps
+          </a>
+        ) : null}
       </p>
       {/* Render Description as HTML */}
       <div

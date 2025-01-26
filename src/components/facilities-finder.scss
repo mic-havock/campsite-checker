@@ -3,11 +3,12 @@
   border: 2px solid #6b8e23; // Olive green
   border-radius: 12px;
   padding: 20px;
+  margin: 2rem;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
   h1 {
     color: #2e4600; // Deep green
-    font-family: "Georgia", serif;
+    font-family: "Inter", sans-serif;
     text-align: center;
     margin-bottom: 20px;
   }
@@ -25,10 +26,22 @@
 
     input {
       border-color: #6b8e23; // Olive green
-      &:focus {
-        border-color: #556b2f; // Dark olive green
-        box-shadow: 0 0 5px #556b2f;
-      }
+      border-radius: 5px;
+      width: 100%;
+      // &:focus {
+      //   border-color: #556b2f; // Dark olive green
+      //   box-shadow: 0 0 5px #556b2f;
+      // }
+    }
+
+    select {
+      border-color: #6b8e23; // Olive green
+      border-radius: 5px;
+      width: 100%;
+      // &:focus {
+      //   border-color: #556b2f; // Dark olive green
+      //   box-shadow: 0 0 5px #556b2f;
+      // }
     }
 
     .submit {

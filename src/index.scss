@@ -1,0 +1,85 @@
+// Outdoor-specific theme colors
+$primary-color: #6b8e23; // Olive green
+$secondary-color: #f4f4f2; // Off-white
+$accent-color: #8b4513; // Saddle brown
+$hover-color: #a0522d; // Darker brown
+
+:root {
+  font-family: "Inter", sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  background-color: #3c5c00; // Deep green
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: $primary-color;
+  text-decoration: none;
+
+  &:hover {
+    color: darken($primary-color, 10%); // Slightly darker olive green
+  }
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: $primary-color; // Olive green background
+  //color: $secondary-color; // Light text
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+  color: $secondary-color; // Light text for headings
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  margin: 0.5rem;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: $accent-color; // Saddle brown
+  color: $secondary-color; // Light text
+  cursor: pointer;
+  transition: border-color 0.25s, background-color 0.25s;
+
+  &:hover {
+    border-color: $hover-color; // Darker brown border on hover
+    background-color: lighten($accent-color, 5%); // Slightly lighter background
+  }
+
+  &:focus,
+  &:focus-visible {
+    outline: 4px auto $primary-color; // Olive green focus outline
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: $primary-color; // Olive green text
+    background-color: $secondary-color; // Off-white background
+  }
+
+  a:hover {
+    color: darken($primary-color, 15%); // Slightly darker olive green
+  }
+
+  button {
+    background-color: lighten($accent-color, 20%); // Lighter saddle brown
+    color: $primary-color; // Olive green text
+  }
+}

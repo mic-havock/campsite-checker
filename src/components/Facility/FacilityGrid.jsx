@@ -68,12 +68,19 @@ const FacilityGrid = ({ rowData, onRowSelected }) => {
   };
 
   return (
-    <div style={{ height: "600px", width: "1000px" }}>
+    <div
+      className="facility-grid-container"
+      style={{
+        width: "100%", // Full width
+        height: `300px`,
+        margin: "0 auto",
+      }}
+    >
       <AgGridReact
-        modules={[ClientSideRowModelModule]}
         columnDefs={columnDefs}
         rowData={processedData}
         pagination={true}
+        paginationPageSize={20} // Default page size of 20
         rowSelection={rowSelection}
         defaultColDef={defaultColDef}
         onSelectionChanged={onSelectionChanged}
