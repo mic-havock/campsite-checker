@@ -1,30 +1,63 @@
 import axios from "axios";
 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 /**
- * Fetches the city and state based on latitude and longitude using the HERE API.
- * @param {number} latitude - The latitude of the location.
- * @param {number} longitude - The longitude of the location.
- * @returns {Promise<{city: string, state: string}>} - An object containing the city and state.
+ * Fetches the city and state for a facility by its ID.
+ * @param {string|number} facilityId - The ID of the facility.
+ * @returns {Promise<Object[]>} - A promise that resolves to an array of objects with `city` and `state`.
+ * @throws {Error} - Throws an error if the request fails.
  */
-export const fetchCityAndState = async (latitude, longitude) => {
+export const getFacilityAddress = async (facilityId) => {
+  if (!facilityId) {
+    throw new Error("Facility ID is required.");
+  }
+
   try {
     const response = await axios.get(
-      `https://revgeocode.search.hereapi.com/v1/revgeocode`,
-      {
-        params: {
-          at: `${latitude},${longitude}`,
-          apiKey: "YOUR_HERE_API_KEY", // Replace with your HERE API key
-        },
-      }
+      `${BASE_URL}/facilities/${facilityId}/addresses`
     );
+    console.log("response", JSON.stringify(response));
+    // Filter the response to include only city and state
+    const addressData = response.data.RECDATA.map((item) => ({
+      city: item.City,
+      state: item.AddressStateCode,
+    }));
 
-    const data = response.data.items[0];
-    const state = data.address.state || "Unknown State";
-    const city = data.address.city || "Unknown City";
-
-    return { city, state };
+    return addressData;
   } catch (error) {
-    console.error("Geocoding error:", error);
+    console.error("Error fetching facility address:", error.message || error);
+    throw error;
+  }
+};
+
+// Function to fetch city and state using HERE API
+// Function to fetch city and state using the getFacilityAddress API
+export const fetchCityAndState = async (facilityId) => {
+  if (!facilityId) {
+    throw new Error("Facility ID is required.");
+  }
+  console.log("facilityId", facilityId);
+  try {
+    const addressData = await getFacilityAddress(facilityId);
+    console.log("address data", addressData);
+    // Assuming the API response has the relevant data in RECDATA
+    if (addressData && addressData.length > 0) {
+      const { city, state } = addressData[0]; // Take the first address entry
+      return {
+        city: city || "Unknown City",
+        state: state || "Unknown State",
+      };
+    }
+
+    // Default response if no valid data is found
+    return { city: "Unknown City", state: "Unknown State" };
+  } catch (error) {
+    console.error(
+      `Error fetching city and state for Facility ID ${facilityId}:`,
+      error.message || error
+    );
+    // Default response in case of error
     return { city: "Unknown City", state: "Unknown State" };
   }
 };

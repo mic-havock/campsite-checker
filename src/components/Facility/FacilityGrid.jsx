@@ -8,9 +8,9 @@ import {
   ValidationModule,
 } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
-import axios from "axios";
 import PropTypes from "prop-types";
 import { useEffect, useMemo, useState } from "react";
+import { fetchCityAndState } from "../../api/location";
 
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
@@ -21,34 +21,13 @@ ModuleRegistry.registerModules([
   ValidationModule,
 ]);
 
-// Function to fetch city and state using HERE API
-const fetchCityAndState = async (latitude, longitude) => {
-  try {
-    const response = await axios.get(
-      `https://revgeocode.search.hereapi.com/v1/revgeocode`,
-      {
-        params: {
-          at: `${latitude},${longitude}`,
-          apiKey: "8hq7xHTF1kE7gJS_4o6H4dUf2vsBpQ_pLuWrB0HVvsA", // Replace with your HERE API key
-        },
-      }
-    );
-
-    const data = response.data.items[0];
-    const state = data.address.state || "Unknown State";
-    return { state };
-  } catch (error) {
-    console.error("Geocoding error:", error);
-    return { city: "Unknown City", state: "Unknown State" };
-  }
-};
-
 const FacilityGrid = ({ rowData, onRowSelected }) => {
   const [processedData, setProcessedData] = useState([]);
 
   const [columnDefs] = useState([
     { headerName: "Facility Name", field: "FacilityName" },
-    { headerName: "State", field: "NearestState" },
+    { headerName: "City", field: "City" },
+    { headerName: "State", field: "State" },
     { headerName: "Facility Type", field: "FacilityTypeDescription" },
   ]);
 
@@ -56,11 +35,8 @@ const FacilityGrid = ({ rowData, onRowSelected }) => {
     const updateLocations = async () => {
       const updatedData = await Promise.all(
         rowData.map(async (row) => {
-          const { city, state } = await fetchCityAndState(
-            row.FacilityLatitude,
-            row.FacilityLongitude
-          );
-          return { ...row, NearestCity: city, NearestState: state };
+          const { city, state } = await fetchCityAndState(row.FacilityID);
+          return { ...row, City: city, State: state };
         })
       );
       setProcessedData(updatedData);
