@@ -21,7 +21,7 @@ const customStyles = {
   },
 };
 
-const FacilityDetails = ({ facility }) => {
+const FacilityDetails = ({ facility, handleViewCampsites }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -62,8 +62,36 @@ const FacilityDetails = ({ facility }) => {
 
   return (
     <div
-      style={{ marginTop: "20px", padding: "10px", border: "1px solid #ccc" }}
+      style={{
+        marginTop: "20px",
+        padding: "10px",
+        border: "1px solid #ccc",
+        position: "relative",
+      }}
     >
+      <div
+        style={{
+          position: "absolute",
+          top: "10px",
+          right: "10px", // Correctly aligns the button to the right
+          zIndex: 10,
+        }}
+      >
+        <button
+          onClick={handleViewCampsites}
+          // style={{
+          //   padding: "10px 15px",
+          //   backgroundColor: "#007BFF",
+          //   color: "#fff",
+          //   border: "none",
+          //   borderRadius: "5px",
+          //   cursor: "pointer",
+          // }}
+          disabled={!facility}
+        >
+          View Campgrounds
+        </button>
+      </div>
       <h2>Facility Details</h2>
       <p>
         <strong>Facility Name:</strong> {facility.FacilityName}

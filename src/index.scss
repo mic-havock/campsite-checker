@@ -53,8 +53,8 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: $accent-color; // Saddle brown
-  color: $secondary-color; // Light text
+  background-color: #2a3ce0; // Saddle brown
+  color: #ffffff; // Light text
   cursor: pointer;
   transition: border-color 0.25s, background-color 0.25s;
 
@@ -77,10 +77,5 @@ button {
 
   a:hover {
     color: darken($primary-color, 15%); // Slightly darker olive green
-  }
-
-  button {
-    background-color: #8a6041; // Lighter saddle brown
-    color: $primary-color; // Olive green text
   }
 }

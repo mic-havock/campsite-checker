@@ -376,15 +376,20 @@ const FacilitiesFinder = () => {
           />
         </Grid>
       </Grid>
-      {selectedFacility && <FacilityDetails facility={selectedFacility} />}
+      {selectedFacility && (
+        <FacilityDetails
+          facility={selectedFacility}
+          handleViewCampsites={handleViewCampsites} // Pass the function here
+        />
+      )}
 
-      <Button
+      {/* <Button
         onClick={handleViewCampsites}
         className="view-campgrounds"
         disabled={!selectedFacility}
       >
         View Campgrounds
-      </Button>
+      </Button> */}
     </GridContainer>
   );
 };

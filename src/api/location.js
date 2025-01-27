@@ -33,8 +33,6 @@ export const fetchCityAndState = async (facilityId) => {
   console.log("facilityId", facilityId);
   try {
     const addressData = await getFacilityAddress(facilityId);
-    console.log("address data", addressData);
-    // Assuming the API response has the relevant data in RECDATA
     if (addressData && addressData.length > 0) {
       const { city, state } = addressData[0]; // Take the first address entry
       return {
