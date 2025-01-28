@@ -37,10 +37,6 @@ export const fetchCampsitesByFacility = async (facilityId) => {
     const response = await axios.get(
       `${BASE_URL}/facilities/${facilityId}/campsites`
     );
-    console.log(
-      "Response from fetchCampsitesByFacility is api:",
-      JSON.stringify(response)
-    ); //
     return response.data || []; // Return campsites (RECDATA)
   } catch (error) {
     console.error(

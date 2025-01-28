@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchCampgroundAvailability } from "../../api/campsites";
 import Campsite from "./Campsite";
-import "./CampsitesPage.css";
+import "./campsites-page.scss";
 
 const CampsitesPage = () => {
   const location = useLocation();

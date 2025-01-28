@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import reservationsAPI from "../../api/reservations";
-import "./ReservationDetailsPage.scss";
+import "./reservation-details.scss";
 
 const ReservationDetailsPage = () => {
   const location = useLocation();

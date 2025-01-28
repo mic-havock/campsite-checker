@@ -1,6 +1,6 @@
 // Outdoor-specific theme colors
-$primary-color: #375200; // Olive green
-$secondary-color: #f4f4f2; // Off-white
+$primary-color: #003c1f;
+$secondary-color: #cdcdcd;
 $accent-color: #8b4513; // Saddle brown
 $hover-color: #a0522d; // Darker brown
 
@@ -9,8 +9,7 @@ $hover-color: #a0522d; // Darker brown
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  background-color: #2a4100; // Deep green
+  background-color: $primary-color; // Deep green
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -34,15 +33,15 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-  background-color: $primary-color; // Olive green background
-  //color: $secondary-color; // Light text
+  background-color: $primary-color;
+  //color: $primary-color;
 }
 
 h1 {
   font-size: 2.5em;
   line-height: 1;
   font-weight: bolder;
-  color: $secondary-color; // Light text for headings
+  text-align: center;
 }
 
 button {

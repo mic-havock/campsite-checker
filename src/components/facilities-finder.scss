@@ -1,16 +1,9 @@
 .facilities-finder {
   background-color: #f4f4f2; // Off-white
-  border: 2px solid #6b8e23; // Olive green
+  border: 2px solid #243600; // Olive green
   border-radius: 12px;
   padding: 20px;
   margin: 2rem;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-
-  h1 {
-    color: #2e4600; // Deep green
-    font-family: "Inter", sans-serif;
-    text-align: center;
-  }
 
   .facilities-finder__form {
     display: flex;
@@ -18,10 +11,6 @@
     gap: 10px;
     justify-content: center;
     align-items: center;
-
-    .usa-label {
-      color: #2e4600; // Deep green
-    }
 
     input {
       border-color: #6b8e23; // Olive green
@@ -64,6 +53,7 @@
     color: #b22222; // Firebrick red
     text-align: center;
     margin-top: 15px;
+    font-weight: bold;
   }
 
   .view-campgrounds {
@@ -74,13 +64,13 @@
       background-color: #228b22; // Forest green
     }
   }
+
   .form-group {
     margin-bottom: 1rem;
   }
 
   .helper-text {
     font-size: 0.85rem;
-    color: #6c757d;
     margin-top: 0.25rem;
   }
 }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./Campsite.css";
+import "./campsite.scss";
 
 const Campsite = ({ campsite }) => {
   const {
