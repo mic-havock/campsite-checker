@@ -278,84 +278,6 @@ const FacilitiesFinder = () => {
           />
           <p className="helper-text">Specify the search radius in miles.</p>
         </div>
-        {/* <div className="form-group">
-              <TextInput
-                id="limit"
-                name="limit"
-                type="number"
-                label="Limit"
-                value={searchParams.limit}
-                onChange={(e) =>
-                  setSearchParams((prev) => ({ ...prev, limit: e.target.value }))
-                }
-              />
-              <p className="helper-text">
-                Specify the maximum number of results to display.
-              </p>
-            </div> */}
-        {/* <div className="form-group">
-              <TextInput
-                id="offset"
-                name="offset"
-                type="number"
-                label="Offset"
-                value={searchParams.offset}
-                onChange={(e) =>
-                  setSearchParams((prev) => ({ ...prev, offset: e.target.value }))
-                }
-              />
-              <p className="helper-text">
-                Set the starting point for results pagination.
-              </p>
-            </div> */}
-        {/* <div className="form-group">
-          <TextInput
-            id="activity"
-            name="activity"
-            type="text"
-            label="Activity"
-            value={searchParams.activity}
-            onChange={(e) =>
-              setSearchParams((prev) => ({ ...prev, activity: e.target.value }))
-            }
-          />
-          <p className="helper-text">
-            Enter the activity type (e.g., CAMPING, FISHING).
-          </p>
-        </div> */}
-        {/* <div className="form-group">
-          <TextInput
-            id="lastupdated"
-            name="lastupdated"
-            type="date"
-            label="Last Updated"
-            value={searchParams.lastupdated}
-            onChange={(e) =>
-              setSearchParams((prev) => ({
-                ...prev,
-                lastupdated: e.target.value,
-              }))
-            }
-          />
-          <p className="helper-text">
-            Filter facilities updated after this date.
-          </p>
-        </div> */}
-        {/* <div className="form-group">
-          <TextInput
-            id="sort"
-            name="sort"
-            type="text"
-            label="Sort By"
-            value={searchParams.sort}
-            onChange={(e) =>
-              setSearchParams((prev) => ({ ...prev, sort: e.target.value }))
-            }
-          />
-          <p className="helper-text">
-            Specify sorting order (e.g., NAME, DATE).
-          </p>
-        </div> */}
         <Grid col={12}>
           <Button type="submit" className="submit" disabled={loading}>
             {loading ? "Loading..." : "Search"}
@@ -379,17 +301,9 @@ const FacilitiesFinder = () => {
       {selectedFacility && (
         <FacilityDetails
           facility={selectedFacility}
-          handleViewCampsites={handleViewCampsites} // Pass the function here
+          handleViewCampsites={handleViewCampsites}
         />
       )}
-
-      {/* <Button
-        onClick={handleViewCampsites}
-        className="view-campgrounds"
-        disabled={!selectedFacility}
-      >
-        View Campgrounds
-      </Button> */}
     </GridContainer>
   );
 };
