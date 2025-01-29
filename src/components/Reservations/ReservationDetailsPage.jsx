@@ -1,8 +1,23 @@
-import { Button } from "@trussworks/react-uswds";
+import {
+  CellStyleModule,
+  ClientSideRowModelModule,
+  ColumnAutoSizeModule,
+  ModuleRegistry,
+} from "ag-grid-community";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-alpine.css";
+import { AgGridReact } from "ag-grid-react";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import reservationsAPI from "../../api/reservations";
 import "./reservation-details.scss";
+
+// Register all required modules
+ModuleRegistry.registerModules([
+  ClientSideRowModelModule,
+  ColumnAutoSizeModule,
+  CellStyleModule,
+]);
 
 const ReservationDetailsPage = () => {
   const location = useLocation();
@@ -11,6 +26,7 @@ const ReservationDetailsPage = () => {
   const [alertModal, setAlertModal] = useState(false);
   const [selectedCampsite, setSelectedCampsite] = useState(null);
   const [tableWidth, setTableWidth] = useState(window.innerWidth);
+  const [gridApi, setGridApi] = useState(null);
   const [alertDetails, setAlertDetails] = useState({
     name: "",
     email: "",
@@ -18,15 +34,17 @@ const ReservationDetailsPage = () => {
     endDate: "",
   });
 
-  console.log(JSON.stringify(availabilityData, null, 2));
   useEffect(() => {
     const handleResize = () => {
       setTableWidth(window.innerWidth);
+      if (gridApi) {
+        gridApi.sizeColumnsToFit();
+      }
     };
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [gridApi]);
 
   if (!availabilityData || !availabilityData.campsites) {
     return (
@@ -56,13 +74,12 @@ const ReservationDetailsPage = () => {
       campsite_id: selectedCampsite.campsite_id,
       reservation_start_date: startDate,
       reservation_end_date: endDate,
-      monitoring_active: true, // Set default or desired value
-      attempts_made: 0, // Set default or desired value
-      success_sent: false, // Set default or desired value
+      monitoring_active: true,
+      attempts_made: 0,
+      success_sent: false,
     };
 
     try {
-      // Call the reservations API to create a new reservation
       const result = await reservationsAPI.create(reservationData);
       setAlertModal(false);
       alert(
@@ -77,7 +94,6 @@ const ReservationDetailsPage = () => {
 
   const renderCalendar = () => {
     const campsites = Object.values(availabilityData.campsites);
-
     const dates = Array.from(
       new Set(
         campsites.flatMap((campsite) =>
@@ -88,122 +104,131 @@ const ReservationDetailsPage = () => {
       )
     ).sort();
 
-    const tableContainerStyle = {
-      maxHeight: "800px",
-      overflowX: "auto",
-      overflowY: "auto",
-      position: "relative",
+    // Transform data for AG Grid
+    const rowData = campsites.map((campsite) => {
+      const row = {
+        campsite: `Campsite ${campsite.site} - ${campsite.loop}`,
+        campsiteObj: campsite, // Store full campsite object for reference
+      };
+
+      dates.forEach((date) => {
+        row[date] = {
+          available: campsite.quantities[`${date}T00:00:00Z`] > 0,
+          quantity: campsite.quantities[`${date}T00:00:00Z`],
+        };
+      });
+
+      return row;
+    });
+
+    const columnDefs = [
+      {
+        headerName: "Campsite",
+        field: "campsite",
+        pinned: "left",
+        width: 200,
+        cellStyle: {
+          backgroundColor: "#cdcdcd",
+          border: "1px solid",
+        },
+      },
+      ...dates.map((date) => ({
+        headerName: new Date(date).toLocaleDateString(),
+        field: date,
+        width: 120,
+        headerClass: "ag-header-cell-center",
+        valueFormatter: (params) => {
+          // Format the object data for display
+          return params.value.available ? "A" : "X";
+        },
+        cellRenderer: (params) => {
+          const data = params.value;
+          if (data.available) {
+            return (
+              <div
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "not-allowed",
+                  backgroundColor: "#7ee875",
+                  transition: "background-color 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "#90ff88";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "#7ee875";
+                }}
+              >
+                A
+              </div>
+            );
+          } else {
+            return (
+              <div
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  backgroundColor: "#d65140",
+                  transition: "background-color 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "#fff";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "#d65140";
+                }}
+                onClick={() => handleUnavailableClick(params.data.campsiteObj)}
+              >
+                X
+              </div>
+            );
+          }
+        },
+        cellStyle: (params) => ({
+          backgroundColor: params.value.available ? "#7ee875" : "#d65140",
+          border: "1px solid",
+          padding: "8px",
+          textAlign: "center",
+          cursor: params.value.available ? "default" : "pointer",
+        }),
+      })),
+    ];
+
+    const defaultColDef = {
+      sortable: false,
+      resizable: true,
+      filter: false,
+    };
+
+    const gridStyle = {
+      height: `${Math.min(rowData.length * 40 + 40, 800)}px`, // 40px per row + 40px for header
       width: `${tableWidth}px`,
     };
 
-    const tableStyle = {
-      width: `${tableWidth}px`, // Dynamically adjust width
-      minWidth: "600px", // Ensure the table doesn't get too small
-      borderCollapse: "collapse",
-      paddingLeft: "1rem",
-      backgroundColor: "#cdcdcd",
-    };
-
-    const stickyHeaderStyle = {
-      position: "sticky",
-      top: 0,
-      backgroundColor: "#cdcdcd",
-      zIndex: 1, // Lower z-index than the pinned column
-    };
-
-    const stickyColumnStyle = {
-      position: "sticky",
-      left: 0,
-      backgroundColor: "#cdcdcd",
-      zIndex: 2, // Higher z-index to prevent overlap by the header
-    };
-
-    const intersectionStyle = {
-      ...stickyHeaderStyle,
-      ...stickyColumnStyle,
-      zIndex: 3, // Highest z-index for the top-left cell
-    };
-
-    const cellStyle = {
-      border: "1px solid",
-      padding: "8px",
-      textAlign: "center",
-      whiteSpace: "nowrap",
-    };
-
-    const availableStyle = {
-      ...cellStyle,
-      backgroundColor: "#7ee875", // Light green
-    };
-
-    const unavailableStyle = {
-      ...cellStyle,
-      cursor: "pointer", // Pointer cursor for hoverable cells
-      transition: "background-color 0.3s ease", // Smooth transition for hover effect
-      backgroundColor: "#d65140", // Light red
-    };
-
-    const unavailableButtonStyle = {
-      backgroundColor: "transparent",
-      border: "none",
-      cursor: "pointer",
-      //fontSize: "16px",
-      //fontWeight: "bold",
-      // color: "#d9534f", // Bootstrap "danger" red
-      width: "100%",
-      height: "100%",
-      transition: "background-color 0.3s ease, border 0.3s ease",
-    };
-
     return (
-      <div style={tableContainerStyle}>
-        <table style={tableStyle}>
-          <thead>
-            <tr>
-              <th style={{ ...cellStyle, ...intersectionStyle }}>Campsite</th>
-              {dates.map((date) => (
-                <th key={date} style={{ ...cellStyle, ...stickyHeaderStyle }}>
-                  {new Date(date).toLocaleDateString()}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {campsites.map((campsite) => (
-              <tr key={campsite.campsite_id}>
-                <td style={{ ...cellStyle, ...stickyColumnStyle }}>
-                  {`Campsite ${campsite.site} - ${campsite.loop}`}
-                </td>
-                {dates.map((date) => (
-                  <td
-                    key={`${campsite.campsite_id}-${date}`}
-                    style={
-                      campsite.quantities[`${date}T00:00:00Z`] > 0
-                        ? availableStyle
-                        : unavailableStyle
-                    }
-                    onClick={() =>
-                      campsite.quantities[`${date}T00:00:00Z`] === 0
-                        ? handleUnavailableClick(campsite)
-                        : null
-                    }
-                  >
-                    {campsite.quantities[`${date}T00:00:00Z`] > 0 ? (
-                      "A"
-                    ) : (
-                      <Button
-                        style={unavailableButtonStyle}
-                        onClick={() => handleUnavailableClick(campsite)}
-                      >
-                        X
-                      </Button>
-                    )}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="ag-theme-alpine" style={gridStyle}>
+        <AgGridReact
+          theme="legacy"
+          columnDefs={columnDefs}
+          rowData={rowData}
+          defaultColDef={defaultColDef}
+          onGridReady={(params) => {
+            setGridApi(params.api);
+            params.api.sizeColumnsToFit();
+          }}
+          rowSelection="none"
+          headerHeight={40}
+          rowHeight={40}
+          domLayout="autoHeight"
+        />
       </div>
     );
   };
@@ -242,7 +267,7 @@ const ReservationDetailsPage = () => {
             <label>Start Date:</label>
             <input
               type="date"
-              value={alertDetails.startDate}
+              value={alertDetails.startDate || selectedCampsite?.selectedDate} // Use selected column date
               onChange={(e) =>
                 setAlertDetails((prev) => ({
                   ...prev,

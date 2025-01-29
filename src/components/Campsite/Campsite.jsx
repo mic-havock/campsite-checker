@@ -15,102 +15,130 @@ const Campsite = ({ campsite }) => {
   const thumbnail = ENTITYMEDIA?.[currentImageIndex]?.URL;
 
   const handleClose = (e) => {
-    if (e.target.classList.contains("expanded")) {
+    if (e.target.classList.contains("overlay")) {
       setIsExpanded(false);
     }
   };
 
-  const handleNextImage = () => {
+  const handleNextImage = (e) => {
+    e.stopPropagation();
     setCurrentImageIndex((prevIndex) => (prevIndex + 1) % ENTITYMEDIA.length);
   };
 
-  const handlePrevImage = () => {
+  const handlePrevImage = (e) => {
+    e.stopPropagation();
     setCurrentImageIndex((prevIndex) =>
       prevIndex === 0 ? ENTITYMEDIA.length - 1 : prevIndex - 1
     );
   };
 
   return (
-    <div
-      className={`campsite-tile ${isExpanded ? "expanded" : ""}`}
-      onClick={(e) => {
-        if (!isExpanded) setIsExpanded(true);
-      }}
-    >
+    <div className="campsite-card">
+      <div className="campsite-content" onClick={() => setIsExpanded(true)}>
+        {thumbnail && (
+          <div className="image-container">
+            <img
+              src={thumbnail}
+              alt={`${CampsiteName} thumbnail`}
+              className="campsite-thumbnail"
+            />
+            {ENTITYMEDIA.length > 1 && (
+              <span className="image-counter">
+                {currentImageIndex + 1}/{ENTITYMEDIA.length}
+              </span>
+            )}
+          </div>
+        )}
+
+        <div className="campsite-info">
+          <h3>{CampsiteName}</h3>
+          <div className="campsite-tags">
+            <span className="tag type-tag">{CampsiteType}</span>
+            <span
+              className={`tag ${
+                CampsiteReservable ? "available-tag" : "unavailable-tag"
+              }`}
+            >
+              {CampsiteReservable ? "Reservable" : "Not Reservable"}
+            </span>
+          </div>
+        </div>
+      </div>
+
       {isExpanded && (
         <div className="overlay" onClick={handleClose}>
-          <div
-            className="expanded-content"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button
               className="close-button"
               onClick={() => setIsExpanded(false)}
+              aria-label="Close"
             >
-              Close
+              ×
             </button>
 
             {thumbnail && (
               <div className="image-slider">
-                <button
-                  className="prev-button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handlePrevImage();
-                  }}
-                >
-                  &lt;
-                </button>
+                {ENTITYMEDIA.length > 1 && (
+                  <button
+                    className="nav-button prev-button"
+                    onClick={handlePrevImage}
+                    aria-label="Previous image"
+                  >
+                    ‹
+                  </button>
+                )}
                 <img
                   src={thumbnail}
-                  alt={`Image ${currentImageIndex + 1}`}
+                  alt={`${CampsiteName} view ${currentImageIndex + 1}`}
                   className="slider-image"
                 />
-                <button
-                  className="next-button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleNextImage();
-                  }}
+                {ENTITYMEDIA.length > 1 && (
+                  <button
+                    className="nav-button next-button"
+                    onClick={handleNextImage}
+                    aria-label="Next image"
+                  >
+                    ›
+                  </button>
+                )}
+                <div className="image-counter">
+                  {currentImageIndex + 1}/{ENTITYMEDIA.length}
+                </div>
+              </div>
+            )}
+
+            <div className="modal-details">
+              <h2>{CampsiteName}</h2>
+              <div className="campsite-tags">
+                <span className="tag type-tag">{CampsiteType}</span>
+                <span
+                  className={`tag ${
+                    CampsiteReservable ? "available-tag" : "unavailable-tag"
+                  }`}
                 >
-                  &gt;
-                </button>
+                  {CampsiteReservable ? "Reservable" : "Not Reservable"}
+                </span>
               </div>
-            )}
 
-            <h3>{CampsiteName}</h3>
-            <p>Type: {CampsiteType}</p>
-            <p>Reservable: {CampsiteReservable ? "Yes" : "No"}</p>
-
-            {ATTRIBUTES && (
-              <div className="campsite-details">
-                <h4>Details</h4>
-                <ul>
-                  {ATTRIBUTES.map((attribute, index) => (
-                    <li
-                      key={index}
-                    >{`${attribute.AttributeName}: ${attribute.AttributeValue}`}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
+              {ATTRIBUTES && ATTRIBUTES.length > 0 && (
+                <div className="attributes-section">
+                  <h3>Campsite Details</h3>
+                  <div className="attributes-grid">
+                    {ATTRIBUTES.map((attribute, index) => (
+                      <div key={index} className="attribute-item">
+                        <span className="attribute-name">
+                          {attribute.AttributeName}:
+                        </span>
+                        <span className="attribute-value">
+                          {attribute.AttributeValue}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      )}
-
-      {!isExpanded && thumbnail && (
-        <img
-          src={thumbnail}
-          alt={`${CampsiteName} thumbnail`}
-          className="campsite-thumbnail"
-        />
-      )}
-
-      {!isExpanded && (
-        <div>
-          <h3>{CampsiteName}</h3>
-          <p>Type: {CampsiteType}</p>
-          <p>Reservable: {CampsiteReservable ? "Yes" : "No"}</p>
         </div>
       )}
     </div>
