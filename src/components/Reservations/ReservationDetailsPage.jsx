@@ -9,6 +9,7 @@ import "ag-grid-community/styles/ag-theme-alpine.css";
 import { AgGridReact } from "ag-grid-react";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { fetchCampgroundAvailability } from "../../api/campsites";
 import reservationsAPI from "../../api/reservations";
 import "./reservation-details.scss";
 
@@ -22,7 +23,10 @@ ModuleRegistry.registerModules([
 const ReservationDetailsPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { availabilityData } = location.state || {};
+  const [availabilityData, setAvailabilityData] = useState(
+    location.state?.availabilityData
+  );
+  const facilityID = location.state?.facilityID;
   const [alertModal, setAlertModal] = useState(false);
   const [selectedCampsite, setSelectedCampsite] = useState(null);
   const [tableWidth, setTableWidth] = useState(window.innerWidth);
@@ -33,6 +37,8 @@ const ReservationDetailsPage = () => {
     startDate: "",
     endDate: "",
   });
+  const [selectedMonth, setSelectedMonth] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -89,6 +95,77 @@ const ReservationDetailsPage = () => {
     } catch (error) {
       console.error("Error creating reservation:", error);
       alert("Failed to create alert. Please try again.");
+    }
+  };
+
+  const getNextMonths = () => {
+    const months = [];
+    const currentDate = new Date();
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
+    for (let i = 0; i < 12; i++) {
+      const date = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() + i,
+        1
+      );
+
+      const monthName = monthNames[date.getMonth()];
+      const year = date.getFullYear();
+
+      months.push({
+        value: date.toISOString(),
+        label: `${monthName} ${year}`,
+        month: monthName,
+        year: year,
+      });
+    }
+    return months;
+  };
+
+  const handleMonthChange = async (event) => {
+    setSelectedMonth(event.target.value);
+    setIsLoading(true);
+
+    try {
+      const startDate = new Date(event.target.value);
+      console.log("Start date:", startDate);
+      const utcDate = new Date(
+        Date.UTC(startDate.getFullYear(), startDate.getMonth(), 1, 0, 0, 0, 0)
+      );
+      console.log("UTC date:", utcDate);
+
+      if (!facilityID) {
+        throw new Error("Facility ID not found");
+      }
+
+      console.log("Using facility ID:", facilityID);
+
+      const data = await fetchCampgroundAvailability(
+        facilityID,
+        utcDate.toISOString()
+      );
+
+      // Update the state with new data
+      setAvailabilityData(data);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching availability data:", error);
+      alert("Could not fetch availability. Please try again later.");
+      setIsLoading(false);
     }
   };
 
@@ -236,7 +313,31 @@ const ReservationDetailsPage = () => {
   return (
     <div>
       <h1>Campground Availablility</h1>
-      {renderCalendar()}
+
+      <div className="availability-section">
+        <div className="month-picker">
+          <label htmlFor="month-select">Select Month for Availability</label>
+          <div className="select-wrapper">
+            <select
+              id="month-select"
+              value={selectedMonth}
+              onChange={handleMonthChange}
+              className="month-select"
+              disabled={isLoading}
+            >
+              <option value="">Choose a month...</option>
+              {getNextMonths().map((month) => (
+                <option key={month.value} value={month.value}>
+                  {month.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {isLoading ? <div>Loading...</div> : renderCalendar()}
+
       <button onClick={() => navigate(-1)}>Back to Campsites</button>
 
       {alertModal && (

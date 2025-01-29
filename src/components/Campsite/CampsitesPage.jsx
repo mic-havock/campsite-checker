@@ -72,7 +72,12 @@ const CampsitesPage = () => {
         utcDate.toISOString()
       );
 
-      navigate("/reservation-details", { state: { availabilityData: data } });
+      navigate("/reservation-details", {
+        state: {
+          availabilityData: data,
+          facilityID: facilityID,
+        },
+      });
     } catch (error) {
       console.error("Error fetching availability data:", error);
       alert("Could not fetch availability. Please try again later.");
