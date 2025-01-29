@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa"; // Using FontAwesome icons for arrows
-import Modal from "react-modal";
 
 // Modal styles
 const customStyles = {
@@ -40,24 +38,18 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
     setCurrentImageIndex(0);
   };
 
-  // Navigate to the previous image
-  const goToPreviousImage = () => {
-    const previousIndex =
-      currentImageIndex === 0
-        ? facility.MEDIA.length - 1
-        : currentImageIndex - 1;
-    setSelectedImage(facility.MEDIA[previousIndex].URL);
-    setCurrentImageIndex(previousIndex);
+  const handlePrevImage = (e) => {
+    e.stopPropagation(); // Add this to prevent event bubbling
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === 0 ? facility.MEDIA.length - 1 : prevIndex - 1
+    );
   };
 
-  // Navigate to the next image
-  const goToNextImage = () => {
-    const nextIndex =
-      currentImageIndex === facility.MEDIA.length - 1
-        ? 0
-        : currentImageIndex + 1;
-    setSelectedImage(facility.MEDIA[nextIndex].URL);
-    setCurrentImageIndex(nextIndex);
+  const handleNextImage = (e) => {
+    e.stopPropagation(); // Add this to prevent event bubbling
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === facility.MEDIA.length - 1 ? 0 : prevIndex + 1
+    );
   };
 
   return (
@@ -175,55 +167,87 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
         )}
       </div>
 
-      {/* Modal for image */}
-      <Modal
-        isOpen={isModalOpen}
-        onRequestClose={closeImageModal}
-        style={customStyles}
-        contentLabel="Image Modal"
-      >
-        <div style={{ textAlign: "center", flex: 1 }}>
-          {/* Navigation Arrows */}
-          <button onClick={goToPreviousImage} style={arrowStyle}>
-            <FaArrowLeft />
-          </button>
-
-          {/* Displaying the selected image */}
-          <img
-            src={selectedImage}
-            alt="Selected"
-            style={{ maxWidth: "100%", maxHeight: "100%", margin: "10px 0" }}
-          />
-
-          <button onClick={goToNextImage} style={arrowStyle}>
-            <FaArrowRight />
-          </button>
-
-          {/* Close button */}
-          <button
-            onClick={closeImageModal}
-            style={{ marginTop: "10px", alignSelf: "center" }}
+      {isModalOpen && (
+        <div className="overlay" onClick={closeImageModal}>
+          <div
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()} // Add this to prevent modal closing
           >
-            Close
-          </button>
+            <button
+              className="close-button"
+              onClick={(e) => {
+                e.stopPropagation(); // Add this to prevent event bubbling
+                setIsModalOpen(false);
+              }}
+              aria-label="Close"
+            >
+              ×
+            </button>
+
+            <div
+              className="image-slider"
+              onClick={(e) => e.stopPropagation()} // Add this to prevent modal closing
+            >
+              {facility.MEDIA.length > 1 && (
+                <button
+                  className="nav-button prev-button"
+                  onClick={handlePrevImage}
+                  aria-label="Previous image"
+                />
+              )}
+              <img
+                src={facility.MEDIA[currentImageIndex].URL}
+                alt={facility.MEDIA[currentImageIndex].Title}
+                className="slider-image"
+                onClick={(e) => e.stopPropagation()} // Add this to prevent modal closing
+              />
+              {facility.MEDIA.length > 1 && (
+                <button
+                  className="nav-button next-button"
+                  onClick={handleNextImage}
+                  aria-label="Next image"
+                />
+              )}
+
+              <div
+                className="image-caption"
+                onClick={(e) => e.stopPropagation()} // Add this to prevent modal closing
+              >
+                {facility.MEDIA[currentImageIndex].Title}
+              </div>
+
+              <div
+                className="image-counter"
+                onClick={(e) => e.stopPropagation()} // Add this to prevent modal closing
+              >
+                {currentImageIndex + 1}/{facility.MEDIA.length}
+              </div>
+
+              <div
+                className="thumbnails-nav"
+                onClick={(e) => e.stopPropagation()} // Add this to prevent modal closing
+              >
+                {facility.MEDIA.map((media, index) => (
+                  <img
+                    key={media.EntityMediaID}
+                    src={media.URL}
+                    alt={`Thumbnail ${index + 1}`}
+                    className={`thumbnail ${
+                      index === currentImageIndex ? "active" : ""
+                    }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurrentImageIndex(index);
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
-      </Modal>
+      )}
     </div>
   );
-};
-
-// Styling for navigation arrows
-const arrowStyle = {
-  backgroundColor: "#fff",
-  border: "1px solid #ccc",
-  borderRadius: "50%",
-  fontSize: "20px",
-  padding: "10px",
-  cursor: "pointer",
-  margin: "0 10px",
-  boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
-  display: "inline-block",
-  alignSelf: "center",
 };
 
 export default FacilityDetails;
