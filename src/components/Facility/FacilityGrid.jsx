@@ -28,7 +28,6 @@ const FacilityGrid = ({ rowData, onRowSelected }) => {
     { headerName: "Facility Name", field: "FacilityName" },
     { headerName: "City", field: "City" },
     { headerName: "State", field: "State" },
-    { headerName: "Facility Type", field: "FacilityTypeDescription" },
   ]);
 
   useEffect(() => {

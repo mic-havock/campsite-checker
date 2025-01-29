@@ -11,7 +11,7 @@ const CampsitesPage = () => {
   const [selectedDate, setSelectedDate] = useState("");
   // Get facilityId from the first campsite if available
   const facilityID = campsites?.[0]?.FacilityID;
-
+  console.log(JSON.stringify(campsites, null, 2));
   const handleDateChange = (event) => {
     setSelectedDate(event.target.value);
   };
@@ -23,8 +23,6 @@ const CampsitesPage = () => {
     }
 
     try {
-      console.log("location.state:", location.state); //
-
       const selectedDateObj = new Date(selectedDate);
       const startDate = new Date(
         Date.UTC(selectedDateObj.getFullYear(), selectedDateObj.getMonth(), 1)
@@ -45,7 +43,11 @@ const CampsitesPage = () => {
 
   return (
     <div>
-      <h1>Campsites</h1>
+      <h1>Campground&apos;s Campsites</h1>
+      <div className="availability-check">
+        <input type="date" value={selectedDate} onChange={handleDateChange} />
+        <button onClick={fetchAvailability}>Check Availability</button>
+      </div>
       {campsites && campsites.length > 0 ? (
         <div className="campsites-grid">
           {campsites.map((campsite) => (
@@ -55,11 +57,7 @@ const CampsitesPage = () => {
       ) : (
         <p>No campsites available for this facility.</p>
       )}
-      <div className="availability-check">
-        <input type="date" value={selectedDate} onChange={handleDateChange} />
-        <button onClick={fetchAvailability}>Check Availability</button>
-      </div>
-      <button onClick={() => navigate(-1)}>Back to Facilities</button>
+      <button onClick={() => navigate(-1)}>Back to Campgrounds</button>
     </div>
   );
 };

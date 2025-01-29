@@ -119,7 +119,10 @@ const FacilitiesFinder = () => {
     try {
       console.log("Filtered searchParams", updatedSearchParams);
       const response = await getFacilities(updatedSearchParams); // Pass only non-empty params
-      setFacilities(response.RECDATA);
+      const filteredFacilities = response.RECDATA.filter(
+        (facility) => facility.FacilityTypeDescription === "Campground"
+      );
+      setFacilities(filteredFacilities);
 
       // Save updated searchParams and facilities in localStorage
       localStorage.setItem("searchParams", JSON.stringify(updatedSearchParams));
@@ -197,7 +200,7 @@ const FacilitiesFinder = () => {
   return (
     <GridContainer className="facilities-finder">
       <h1>Recreation Information Database (RIDB)</h1>
-      <h1>Facility Finder</h1>
+      <h1>Campground Finder</h1>
       <form onSubmit={handleSubmit} className="facilities-finder__form">
         <div className="form-group">
           <TextInput
@@ -208,9 +211,7 @@ const FacilitiesFinder = () => {
             value={inputValue}
             onChange={handleInputChange}
           />
-          <p className="helper-text">
-            Enter the name of the campground or facility.
-          </p>
+          <p className="helper-text">Enter the name of the campground.</p>
         </div>
         <div className="form-group">
           {/* <label htmlFor="state">State</label> */}

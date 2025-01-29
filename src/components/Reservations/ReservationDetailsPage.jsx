@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { Button } from "@trussworks/react-uswds";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import reservationsAPI from "../../api/reservations";
 import "./reservation-details.scss";
@@ -9,6 +10,7 @@ const ReservationDetailsPage = () => {
   const { availabilityData } = location.state || {};
   const [alertModal, setAlertModal] = useState(false);
   const [selectedCampsite, setSelectedCampsite] = useState(null);
+  const [tableWidth, setTableWidth] = useState(window.innerWidth);
   const [alertDetails, setAlertDetails] = useState({
     name: "",
     email: "",
@@ -16,10 +18,20 @@ const ReservationDetailsPage = () => {
     endDate: "",
   });
 
+  console.log(JSON.stringify(availabilityData, null, 2));
+  useEffect(() => {
+    const handleResize = () => {
+      setTableWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   if (!availabilityData || !availabilityData.campsites) {
     return (
       <div>
-        <h1>Reservation Details</h1>
+        <h1>Campground Availability For Details</h1>
         <p>No availability data found. Please go back and try again.</p>
         <button onClick={() => navigate(-1)}>Back to Campsites</button>
       </div>
@@ -53,7 +65,10 @@ const ReservationDetailsPage = () => {
       // Call the reservations API to create a new reservation
       const result = await reservationsAPI.create(reservationData);
       setAlertModal(false);
-      alert(`Alert created successfully! Reservation ID: ${result.id}`);
+      alert(
+        `\nAlert created successfully! Reservation ID: ${result.id} \n\nIf your selection becomes available, you will receive an email.`
+      );
+      setAlertDetails({ name: "", email: "", startDate: "", endDate: "" });
     } catch (error) {
       console.error("Error creating reservation:", error);
       alert("Failed to create alert. Please try again.");
@@ -73,28 +88,99 @@ const ReservationDetailsPage = () => {
       )
     ).sort();
 
+    const tableContainerStyle = {
+      maxHeight: "800px",
+      overflowX: "auto",
+      overflowY: "auto",
+      position: "relative",
+      width: `${tableWidth}px`,
+    };
+
+    const tableStyle = {
+      width: `${tableWidth}px`, // Dynamically adjust width
+      minWidth: "600px", // Ensure the table doesn't get too small
+      borderCollapse: "collapse",
+      paddingLeft: "1rem",
+      backgroundColor: "#cdcdcd",
+    };
+
+    const stickyHeaderStyle = {
+      position: "sticky",
+      top: 0,
+      backgroundColor: "#cdcdcd",
+      zIndex: 1, // Lower z-index than the pinned column
+    };
+
+    const stickyColumnStyle = {
+      position: "sticky",
+      left: 0,
+      backgroundColor: "#cdcdcd",
+      zIndex: 2, // Higher z-index to prevent overlap by the header
+    };
+
+    const intersectionStyle = {
+      ...stickyHeaderStyle,
+      ...stickyColumnStyle,
+      zIndex: 3, // Highest z-index for the top-left cell
+    };
+
+    const cellStyle = {
+      border: "1px solid",
+      padding: "8px",
+      textAlign: "center",
+      whiteSpace: "nowrap",
+    };
+
+    const availableStyle = {
+      ...cellStyle,
+      backgroundColor: "#7ee875", // Light green
+    };
+
+    const unavailableStyle = {
+      ...cellStyle,
+      cursor: "pointer", // Pointer cursor for hoverable cells
+      transition: "background-color 0.3s ease", // Smooth transition for hover effect
+      backgroundColor: "#d65140", // Light red
+    };
+
+    const unavailableButtonStyle = {
+      backgroundColor: "transparent",
+      border: "none",
+      cursor: "pointer",
+      //fontSize: "16px",
+      //fontWeight: "bold",
+      // color: "#d9534f", // Bootstrap "danger" red
+      width: "100%",
+      height: "100%",
+      transition: "background-color 0.3s ease, border 0.3s ease",
+    };
+
     return (
-      <div className="calendar-view">
-        <table>
+      <div style={tableContainerStyle}>
+        <table style={tableStyle}>
           <thead>
             <tr>
-              <th>Campsite</th>
+              <th style={{ ...cellStyle, ...intersectionStyle }}>Campsite</th>
               {dates.map((date) => (
-                <th key={date}>{new Date(date).toLocaleDateString()}</th>
+                <th key={date} style={{ ...cellStyle, ...stickyHeaderStyle }}>
+                  {new Date(date).toLocaleDateString()}
+                </th>
               ))}
             </tr>
           </thead>
           <tbody>
             {campsites.map((campsite) => (
               <tr key={campsite.campsite_id}>
-                <td>{`Campsite ${campsite.site} - ${campsite.loop}`}</td>
+                <td style={{ ...cellStyle, ...stickyColumnStyle }}>
+                  {`Campsite ${campsite.site} - ${campsite.loop}`}
+                </td>
                 {dates.map((date) => (
                   <td
                     key={`${campsite.campsite_id}-${date}`}
-                    className={
+                    style={
                       campsite.quantities[`${date}T00:00:00Z`] > 0
-                        ? "available"
-                        : "unavailable"
+                        ? availableStyle
+                        : unavailableStyle
                     }
                     onClick={() =>
                       campsite.quantities[`${date}T00:00:00Z`] === 0
@@ -102,7 +188,16 @@ const ReservationDetailsPage = () => {
                         : null
                     }
                   >
-                    {campsite.quantities[`${date}T00:00:00Z`] > 0 ? "A" : "X"}
+                    {campsite.quantities[`${date}T00:00:00Z`] > 0 ? (
+                      "A"
+                    ) : (
+                      <Button
+                        style={unavailableButtonStyle}
+                        onClick={() => handleUnavailableClick(campsite)}
+                      >
+                        X
+                      </Button>
+                    )}
                   </td>
                 ))}
               </tr>
@@ -115,7 +210,7 @@ const ReservationDetailsPage = () => {
 
   return (
     <div>
-      <h1>Reservation Details</h1>
+      <h1>Campground Availablility</h1>
       {renderCalendar()}
       <button onClick={() => navigate(-1)}>Back to Campsites</button>
 
