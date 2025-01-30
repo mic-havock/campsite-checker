@@ -1,12 +1,22 @@
+@import "../../styles/variables";
+
 .facility-grid {
   h2 {
     text-align: center;
-    color: #2e4600;
+    color: $primary-color;
   }
 
   .ag-root-wrapper {
-    border: 2px solid #6b8e23;
-    border-radius: 8px;
-    background-color: #f4f4f2;
+    border: 2px solid $secondary-color;
+    border-radius: $button-border-radius;
+    background-color: $background-light;
+  }
+
+  .ag-theme-alpine {
+    --ag-header-background-color: #{$color-moss};
+    --ag-header-foreground-color: #{$text-light};
+    --ag-odd-row-background-color: #{$background-light};
+    --ag-row-hover-color: #{rgba($color-moss, 0.1)};
+    --ag-selected-row-background-color: #{rgba($primary-color, 0.2)};
   }
 }

@@ -42,26 +42,15 @@ const Campsite = ({ campsite }) => {
               alt={`${CampsiteName} thumbnail`}
               className="campsite-thumbnail"
             />
-            {ENTITYMEDIA.length > 1 && (
-              <span className="image-counter">
-                {currentImageIndex + 1}/{ENTITYMEDIA.length}
-              </span>
-            )}
           </div>
         )}
 
         <div className="campsite-info">
-          <h3>{CampsiteName}</h3>
-          <div className="campsite-tags">
-            <span className="tag type-tag">{CampsiteType}</span>
-            <span
-              className={`tag ${
-                CampsiteReservable ? "available-tag" : "unavailable-tag"
-              }`}
-            >
-              {CampsiteReservable ? "Reservable" : "Not Reservable"}
-            </span>
-          </div>
+          <h3>
+            {CampsiteName} -{" "}
+            {CampsiteReservable ? "Reservable" : "Not Reservable"}
+          </h3>
+          <div className="campsite-tags">{CampsiteType}</div>
         </div>
       </div>
 

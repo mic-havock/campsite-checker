@@ -1,0 +1,77 @@
+// Nature-inspired color palette
+$color-forest-green: #2b4c1c;
+$color-moss: #8b9d77;
+$color-bark: #4a3b2b;
+$color-earth: #796957;
+$color-stone: #a69f98;
+$color-sky: #b8c5d6;
+$color-sunset: #d4846a;
+$color-warning: #d4846a;
+$color-danger: #963019;
+
+// Functional colors
+$primary-color: $color-forest-green;
+$secondary-color: $color-moss;
+$accent-color: $color-sunset;
+$background-light: #f4f4f2;
+$background-dark: $color-bark;
+$text-primary: #2c3e50;
+$text-light: #ffffff;
+
+// Button styles
+$button-padding: 0.8rem 1.5rem;
+$button-border-radius: 8px;
+$button-transition: all 0.2s ease;
+
+// Shadows
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+$shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);
+
+// Common mixins
+@mixin button-base {
+  padding: $button-padding;
+  border-radius: $button-border-radius;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: $button-transition;
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+@mixin button-primary {
+  @include button-base;
+  background-color: $primary-color;
+  color: $text-light;
+
+  &:hover:not(:disabled) {
+    background-color: darken($primary-color, 10%);
+    transform: translateY(-2px);
+  }
+}
+
+@mixin button-secondary {
+  @include button-base;
+  background-color: $secondary-color;
+  color: $text-light;
+
+  &:hover:not(:disabled) {
+    background-color: darken($secondary-color, 10%);
+    transform: translateY(-2px);
+  }
+}
+
+@mixin button-danger {
+  @include button-base;
+  background-color: $color-danger;
+  color: $text-light;
+
+  &:hover:not(:disabled) {
+    background-color: darken($color-danger, 10%);
+    transform: translateY(-2px);
+  }
+}

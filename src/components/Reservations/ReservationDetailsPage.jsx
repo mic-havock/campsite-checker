@@ -198,15 +198,23 @@ const ReservationDetailsPage = () => {
       return row;
     });
 
+    const gridHeight = Math.min(rowData.length * 40 + 40, 800);
+
+    const gridStyle = {
+      height: `${gridHeight}px`,
+      width: `${tableWidth * 0.9}px`,
+    };
+
     const columnDefs = [
       {
         headerName: "Campsite",
         field: "campsite",
         pinned: "left",
+        lockPinned: true,
         width: 200,
         cellStyle: {
-          backgroundColor: "#cdcdcd",
-          border: "1px solid",
+          backgroundColor: "#f8f9fa",
+          borderRight: "1px solid #dde2eb",
         },
       },
       ...dates.map((date) => ({
@@ -215,7 +223,6 @@ const ReservationDetailsPage = () => {
         width: 120,
         headerClass: "ag-header-cell-center",
         valueFormatter: (params) => {
-          // Format the object data for display
           return params.value.available ? "A" : "X";
         },
         cellRenderer: (params) => {
@@ -232,6 +239,8 @@ const ReservationDetailsPage = () => {
                   cursor: "not-allowed",
                   backgroundColor: "#7ee875",
                   transition: "background-color 0.2s ease",
+                  margin: "-1px",
+                  position: "relative",
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = "#90ff88";
@@ -255,9 +264,11 @@ const ReservationDetailsPage = () => {
                   cursor: "pointer",
                   backgroundColor: "#d65140",
                   transition: "background-color 0.2s ease",
+                  margin: "-1px",
+                  position: "relative",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "#fff";
+                  e.currentTarget.style.backgroundColor = "#ff6b5b";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = "#d65140";
@@ -269,34 +280,23 @@ const ReservationDetailsPage = () => {
             );
           }
         },
-        cellStyle: (params) => ({
-          backgroundColor: params.value.available ? "#7ee875" : "#d65140",
-          border: "1px solid",
-          padding: "8px",
+        cellStyle: {
+          padding: "0",
           textAlign: "center",
-          cursor: params.value.available ? "default" : "pointer",
-        }),
+        },
       })),
     ];
 
-    const defaultColDef = {
-      sortable: false,
-      resizable: true,
-      filter: false,
-    };
-
-    const gridStyle = {
-      height: `${Math.min(rowData.length * 40 + 40, 800)}px`, // 40px per row + 40px for header
-      width: `${tableWidth}px`,
-    };
-
     return (
-      <div className="ag-theme-alpine" style={gridStyle}>
+      <div className="calendar-container" style={gridStyle}>
         <AgGridReact
-          theme="legacy"
           columnDefs={columnDefs}
           rowData={rowData}
-          defaultColDef={defaultColDef}
+          defaultColDef={{
+            sortable: false,
+            resizable: true,
+            filter: false,
+          }}
           onGridReady={(params) => {
             setGridApi(params.api);
             params.api.sizeColumnsToFit();
@@ -311,34 +311,54 @@ const ReservationDetailsPage = () => {
   };
 
   return (
-    <div>
-      <h1>Campground Availablility</h1>
+    <div className="reservation-details-container">
+      <div className="reservation-details-header">
+        <h1>Campground Availability</h1>
 
-      <div className="availability-section">
-        <div className="month-picker">
-          <label htmlFor="month-select">Select Month for Availability</label>
-          <div className="select-wrapper">
-            <select
-              id="month-select"
-              value={selectedMonth}
-              onChange={handleMonthChange}
-              className="month-select"
-              disabled={isLoading}
-            >
-              <option value="">Choose a month...</option>
-              {getNextMonths().map((month) => (
-                <option key={month.value} value={month.value}>
-                  {month.label}
-                </option>
-              ))}
-            </select>
+        <div className="availability-section">
+          <div className="month-picker">
+            <label htmlFor="month-select">Select Month for Availability</label>
+            <div className="select-wrapper">
+              <select
+                id="month-select"
+                value={selectedMonth}
+                onChange={handleMonthChange}
+                className="month-select"
+                disabled={isLoading}
+              >
+                <option value="">Choose a month...</option>
+                {getNextMonths().map((month) => (
+                  <option key={month.value} value={month.value}>
+                    {month.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
+        </div>
+
+        <div className="info-text">
+          <p>
+            Click on an unavailable date (marked with X) to create a reservation
+            alert
+          </p>
         </div>
       </div>
 
-      {isLoading ? <div>Loading...</div> : renderCalendar()}
+      <div>
+        {isLoading ? (
+          <div className="loading-spinner">
+            <div className="spinner"></div>
+            <p>Loading availability data...</p>
+          </div>
+        ) : (
+          renderCalendar()
+        )}
+      </div>
 
-      <button onClick={() => navigate(-1)}>Back to Campsites</button>
+      <button className="back-button" onClick={() => navigate(-1)}>
+        <span>←</span> Back to Campsites
+      </button>
 
       {alertModal && (
         <>

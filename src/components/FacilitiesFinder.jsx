@@ -201,7 +201,11 @@ const FacilitiesFinder = () => {
     <GridContainer className="facilities-finder">
       <h1>Recreation Information Database (RIDB)</h1>
       <h1>Campground Finder</h1>
-      <form onSubmit={handleSubmit} className="facilities-finder__form">
+      <form
+        onSubmit={handleSubmit}
+        className="facilities-finder__form"
+        style={{ width: "100%" }}
+      >
         <div className="form-group">
           <TextInput
             id="campground-name"
@@ -232,52 +236,6 @@ const FacilitiesFinder = () => {
             ))}
           </select>
           <p className="helper-text">Select the two-letter state code.</p>
-        </div>
-        <div className="form-group">
-          <TextInput
-            id="latitude"
-            name="latitude"
-            type="number"
-            label="Latitude"
-            value={searchParams.latitude}
-            onChange={(e) =>
-              setSearchParams((prev) => ({ ...prev, latitude: e.target.value }))
-            }
-          />
-          <p className="helper-text">
-            Enter the latitude for location-based filtering.
-          </p>
-        </div>
-        <div className="form-group">
-          <TextInput
-            id="longitude"
-            name="longitude"
-            type="number"
-            label="Longitude"
-            value={searchParams.longitude}
-            onChange={(e) =>
-              setSearchParams((prev) => ({
-                ...prev,
-                longitude: e.target.value,
-              }))
-            }
-          />
-          <p className="helper-text">
-            Enter the longitude for location-based filtering.
-          </p>
-        </div>
-        <div className="form-group">
-          <TextInput
-            id="radius"
-            name="radius"
-            type="number"
-            label="Radius (miles)"
-            value={searchParams.radius}
-            onChange={(e) =>
-              setSearchParams((prev) => ({ ...prev, radius: e.target.value }))
-            }
-          />
-          <p className="helper-text">Specify the search radius in miles.</p>
         </div>
         <Grid col={12}>
           <Button type="submit" className="submit" disabled={loading}>

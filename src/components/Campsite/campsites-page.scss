@@ -1,3 +1,5 @@
+@import "../../styles/variables";
+
 // Variables
 $primary-color: #2c3e50;
 $secondary-color: #34495e;
@@ -11,12 +13,25 @@ $transition: all 0.2s ease;
 // Base styles
 .campsites-page {
   min-height: 100vh;
-  background-color: #f4f4f2; // Off-white
-  border-radius: 12px;
+  background-color: $background-light;
+  border-radius: $button-border-radius;
   padding: 20px;
   margin: 2rem;
   @media (max-width: 768px) {
     padding: 1rem;
+  }
+
+  // Add specific button styling for all buttons in this component
+  button {
+    @include button-primary;
+
+    &.secondary-button {
+      @include button-secondary;
+    }
+
+    &.danger-button {
+      @include button-danger;
+    }
   }
 }
 
@@ -25,12 +40,12 @@ $transition: all 0.2s ease;
   text-align: center;
   margin-bottom: 2rem;
   padding: 1.5rem;
-  background: white;
-  border-radius: $border-radius;
-  box-shadow: $box-shadow;
+  background: $text-light;
+  border-radius: $button-border-radius;
+  box-shadow: $shadow-md;
 
   .campsite-count {
-    color: $secondary-color;
+    color: $color-earth;
     font-size: clamp(0.9rem, 2vw, 1.1rem);
     opacity: 0.8;
   }
@@ -38,10 +53,10 @@ $transition: all 0.2s ease;
 
 // Availability Section
 .availability-section {
-  background: white;
+  background: $text-light;
   padding: 2rem;
-  border-radius: $border-radius;
-  box-shadow: $box-shadow;
+  border-radius: $button-border-radius;
+  box-shadow: $shadow-md;
   margin-bottom: 2rem;
   max-width: 800px;
   margin-left: auto;
@@ -56,8 +71,28 @@ $transition: all 0.2s ease;
 
   label {
     font-size: clamp(1rem, 2.5vw, 1.2rem);
-    color: $primary-color;
+    color: $text-primary;
     font-weight: 500;
+  }
+
+  select {
+    border: 2px solid $secondary-color;
+    border-radius: $button-border-radius;
+    padding: 0.8rem;
+    width: 100%;
+    transition: $button-transition;
+
+    &:focus {
+      border-color: $primary-color;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+    }
+  }
+
+  .action-button {
+    @include button-primary;
+    width: 100%;
+    max-width: 300px;
   }
 }
 
@@ -144,27 +179,14 @@ $transition: all 0.2s ease;
 
 // Back Button
 .back-button {
-  display: flex;
+  @include button-primary;
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background-color: $secondary-color;
-  color: white;
-  border: none;
-  padding: 0.8rem 1.5rem;
-  border-radius: $border-radius;
-  cursor: pointer;
-  transition: $transition;
-  font-size: 1rem;
-  margin: 2rem auto;
+  margin-top: 2rem;
 
-  .back-arrow {
-    font-size: 1.2em;
-  }
-
-  &:hover {
-    background-color: darken($secondary-color, 5%);
-    transform: translateY(-2px);
-    box-shadow: $box-shadow;
+  span {
+    font-size: 1.2rem;
   }
 }
 

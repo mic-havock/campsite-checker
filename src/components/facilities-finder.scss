@@ -1,9 +1,16 @@
+@import "../styles/variables";
+
 .facilities-finder {
-  background-color: #f4f4f2; // Off-white
-  border: 2px solid #243600; // Olive green
-  border-radius: 12px;
+  background-color: $background-light;
+  border: 2px solid $primary-color;
+  border-radius: $button-border-radius;
   padding: 20px;
-  margin: 2rem;
+  margin: 0;
+  width: 100vw;
+  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  left: 0;
 
   .facilities-finder__form {
     display: flex;
@@ -11,58 +18,43 @@
     gap: 10px;
     justify-content: center;
     align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
 
-    input {
-      border-color: #6b8e23; // Olive green
-      border-radius: 5px;
-      width: 100%;
-      // &:focus {
-      //   border-color: #556b2f; // Dark olive green
-      //   box-shadow: 0 0 5px #556b2f;
-      // }
-    }
-
+    input,
     select {
-      border-color: #6b8e23; // Olive green
-      border-radius: 5px;
+      border: 2px solid $secondary-color;
+      border-radius: $button-border-radius;
       width: 100%;
-      // &:focus {
-      //   border-color: #556b2f; // Dark olive green
-      //   box-shadow: 0 0 5px #556b2f;
-      // }
+      padding: 0.8rem;
+      transition: $button-transition;
+
+      &:focus {
+        border-color: $primary-color;
+        box-shadow: 0 0 5px rgba($primary-color, 0.2);
+        outline: none;
+      }
     }
 
     .submit {
-      background-color: #2e8b57; // Sea green
-      color: #fff;
-      &:hover {
-        background-color: #228b22; // Forest green
-      }
+      @include button-primary;
     }
 
     .clear {
-      background-color: #8b4513; // Saddle brown
-      color: #fff;
-      &:hover {
-        background-color: #a0522d; // Light brown
-      }
+      @include button-secondary;
     }
   }
 
   .error {
-    color: #b22222; // Firebrick red
+    color: $color-danger;
     text-align: center;
     margin-top: 15px;
     font-weight: bold;
   }
 
   .view-campgrounds {
-    background-color: #2e8b57; // Sea green
-    color: #fff;
+    @include button-primary;
     margin-top: 20px;
-    &:hover {
-      background-color: #228b22; // Forest green
-    }
   }
 
   .form-group {
@@ -72,5 +64,6 @@
   .helper-text {
     font-size: 0.85rem;
     margin-top: 0.25rem;
+    color: $color-earth;
   }
 }

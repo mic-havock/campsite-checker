@@ -1,24 +1,5 @@
 import { useState } from "react";
 
-// Modal styles
-const customStyles = {
-  content: {
-    top: "50%",
-    left: "50%",
-    right: "auto",
-    bottom: "auto",
-    marginRight: "-50%",
-    transform: "translate(-50%, -50%)",
-    padding: "20px",
-    maxWidth: "90%",
-    maxHeight: "90%",
-    overflow: "auto",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between",
-  },
-};
-
 const FacilityDetails = ({ facility, handleViewCampsites }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -65,22 +46,11 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
         style={{
           position: "absolute",
           top: "10px",
-          right: "10px", // Correctly aligns the button to the right
+          right: "10px",
           zIndex: 10,
         }}
       >
-        <button
-          onClick={handleViewCampsites}
-          // style={{
-          //   padding: "10px 15px",
-          //   backgroundColor: "#007BFF",
-          //   color: "#fff",
-          //   border: "none",
-          //   borderRadius: "5px",
-          //   cursor: "pointer",
-          // }}
-          disabled={!facility}
-        >
+        <button onClick={handleViewCampsites} disabled={!facility}>
           View Campgrounds
         </button>
       </div>
@@ -181,7 +151,7 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
               }}
               aria-label="Close"
             >
-              ×
+              X
             </button>
 
             <div
