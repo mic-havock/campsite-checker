@@ -1,0 +1,18 @@
+<svg 
+    width="100" 
+    height="100" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg">
+    
+    <!-- Left Pine Tree -->
+    <path d="M5 15L8 10L11 15L9 15L9 19H7L7 15H5Z" fill="green" stroke="darkgreen" stroke-width="2" stroke-linejoin="round"/>
+    
+    <!-- Right Pine Tree -->
+    <path d="M13 13L16 8L19 13L17 13L17 19H15L15 13H13Z" fill="green" stroke="darkgreen" stroke-width="2" stroke-linejoin="round"/>
+    
+    <!-- Tree Trunks -->
+    <rect x="8" y="19" width="2" height="2" fill="saddlebrown"/>
+    <rect x="16" y="19" width="2" height="2" fill="saddlebrown"/>
+    
+</svg>

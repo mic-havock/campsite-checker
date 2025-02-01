@@ -78,10 +78,6 @@ const FacilitiesFinder = () => {
   const [searchParams, setSearchParams] = useState(
     location.state?.searchParams ||
       JSON.parse(localStorage.getItem("searchParams")) || {
-        activity: "",
-        sort: "",
-        limit: 500,
-        offset: 0,
         query: "",
       }
   );
@@ -141,14 +137,6 @@ const FacilitiesFinder = () => {
     setSearchParams({
       query: "",
       state: "",
-      limit: "",
-      offset: 0,
-      latitude: "",
-      longitude: "",
-      radius: "",
-      activity: "",
-      lastupdated: "",
-      sort: "",
     });
 
     // Clear facilities and selected facility
@@ -214,8 +202,8 @@ const FacilitiesFinder = () => {
             label="Campground Name"
             value={inputValue}
             onChange={handleInputChange}
+            placeholder="Enter campground name"
           />
-          <p className="helper-text">Enter the name of the campground.</p>
         </div>
         <div className="form-group">
           {/* <label htmlFor="state">State</label> */}
@@ -224,9 +212,13 @@ const FacilitiesFinder = () => {
             name="state"
             value={searchParams.state}
             onChange={(e) =>
-              setSearchParams((prev) => ({ ...prev, state: e.target.value }))
+              setSearchParams((prev) => ({
+                ...prev,
+                state: e.target.value,
+              }))
             }
             className="dropdown"
+            placeholder="Select a state"
           >
             <option value="">Select a state</option>
             {states.map((state) => (
@@ -235,16 +227,16 @@ const FacilitiesFinder = () => {
               </option>
             ))}
           </select>
-          <p className="helper-text">Select the two-letter state code.</p>
         </div>
-        <Grid col={12}>
+
+        <div className="buttons-container">
           <Button type="submit" className="submit" disabled={loading}>
             {loading ? "Loading..." : "Search"}
           </Button>
           <Button type="button" className="clear" onClick={handleClear}>
             Clear
           </Button>
-        </Grid>
+        </div>
       </form>
 
       {error && <p className="error">{error}</p>}

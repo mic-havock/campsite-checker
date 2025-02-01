@@ -25,7 +25,7 @@ const FacilityGrid = ({ rowData, onRowSelected }) => {
   const [processedData, setProcessedData] = useState([]);
 
   const [columnDefs] = useState([
-    { headerName: "Facility Name", field: "FacilityName" },
+    { headerName: "Campground Name", field: "FacilityName" },
     { headerName: "City", field: "City" },
     { headerName: "State", field: "State" },
   ]);

@@ -4,7 +4,7 @@
   background-color: $background-light;
   border: 2px solid $primary-color;
   border-radius: $button-border-radius;
-  padding: 20px;
+  padding: 10px;
   margin: 0;
   width: 100vw;
   box-sizing: border-box;
@@ -14,34 +14,51 @@
 
   .facilities-finder__form {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
+    gap: 10px;
     max-width: 1200px;
     margin: 0 auto;
 
-    input,
-    select {
-      border: 2px solid $secondary-color;
-      border-radius: $button-border-radius;
+    .form-group {
+      display: flex;
+      justify-content: center;
       width: 100%;
-      padding: 0.8rem;
-      transition: $button-transition;
 
-      &:focus {
-        border-color: $primary-color;
-        box-shadow: 0 0 5px rgba($primary-color, 0.2);
-        outline: none;
+      input,
+      select {
+        flex: 1;
+        max-width: 300px;
+        border: 2px solid $secondary-color;
+        border-radius: $button-border-radius;
+        padding: 0.8rem;
+        transition: $button-transition;
+
+        &:focus {
+          border-color: $primary-color;
+          box-shadow: 0 0 5px rgba($primary-color, 0.2);
+          outline: none;
+        }
       }
     }
 
-    .submit {
-      @include button-primary;
-    }
+    .buttons-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 10px;
 
-    .clear {
-      @include button-secondary;
+      button {
+        min-width: 150px;
+      }
+
+      .submit {
+        margin-right: 10px;
+        @include button-primary;
+      }
+
+      .clear {
+        @include button-secondary;
+      }
     }
   }
 
@@ -50,20 +67,5 @@
     text-align: center;
     margin-top: 15px;
     font-weight: bold;
-  }
-
-  .view-campgrounds {
-    @include button-primary;
-    margin-top: 20px;
-  }
-
-  .form-group {
-    margin-bottom: 1rem;
-  }
-
-  .helper-text {
-    font-size: 0.85rem;
-    margin-top: 0.25rem;
-    color: $color-earth;
   }
 }

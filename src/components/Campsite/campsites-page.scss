@@ -16,10 +16,10 @@ $transition: all 0.2s ease;
   background-color: $background-light;
   border-radius: $button-border-radius;
   padding: 20px;
-  margin: 2rem;
-  @media (max-width: 768px) {
-    padding: 1rem;
-  }
+  margin: 0;
+  width: 100vw;
+  box-sizing: border-box;
+  overflow-x: hidden;
 
   // Add specific button styling for all buttons in this component
   button {
@@ -33,6 +33,10 @@ $transition: all 0.2s ease;
       @include button-danger;
     }
   }
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
 }
 
 // Header Section
@@ -43,6 +47,9 @@ $transition: all 0.2s ease;
   background: $text-light;
   border-radius: $button-border-radius;
   box-shadow: $shadow-md;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
 
   .campsite-count {
     color: $color-earth;

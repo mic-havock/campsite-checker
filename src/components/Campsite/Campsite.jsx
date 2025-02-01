@@ -97,16 +97,10 @@ const Campsite = ({ campsite }) => {
             )}
 
             <div className="modal-details">
-              <h2>{CampsiteName}</h2>
+              <h2>Campsite: {CampsiteName}</h2>
               <div className="campsite-tags">
-                <span className="tag type-tag">{CampsiteType}</span>
-                <span
-                  className={`tag ${
-                    CampsiteReservable ? "available-tag" : "unavailable-tag"
-                  }`}
-                >
-                  {CampsiteReservable ? "Reservable" : "Not Reservable"}
-                </span>
+                {CampsiteType} -{" "}
+                {CampsiteReservable ? "Reservable" : "Not Reservable"}
               </div>
 
               {ATTRIBUTES && ATTRIBUTES.length > 0 && (
