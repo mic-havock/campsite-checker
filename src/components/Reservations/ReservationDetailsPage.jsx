@@ -31,13 +31,14 @@ const ReservationDetailsPage = () => {
   const [selectedCampsite, setSelectedCampsite] = useState(null);
   const [tableWidth, setTableWidth] = useState(window.innerWidth);
   const [gridApi, setGridApi] = useState(null);
+  const [selectedMonth, setSelectedMonth] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
   const [alertDetails, setAlertDetails] = useState({
     name: "",
     email: "",
     startDate: "",
     endDate: "",
   });
-  const [selectedMonth, setSelectedMonth] = useState("");
   const [startDate, setStartDate] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -63,12 +64,14 @@ const ReservationDetailsPage = () => {
     );
   }
 
-  const handleUnavailableClick = (campsite) => {
+  const handleUnavailableClick = (campsite, date) => {
+    setSelectedDate(date);
     setSelectedCampsite(campsite);
     setAlertModal(true);
   };
 
   const handleCreateAlert = async () => {
+    console.log("Creating alert:", alertDetails);
     const { name, email, startDate, endDate } = alertDetails;
     if (!name || !email || !startDate || !endDate) {
       alert("Please fill in all fields.");
@@ -198,9 +201,8 @@ const ReservationDetailsPage = () => {
     });
 
     const gridStyle = {
-      height: "auto",
-      //height: `${gridHeight}px`,
-      width: `${tableWidth * 0.9}px`,
+      height: "800px",
+      width: `${tableWidth * 0.96}px`,
     };
 
     const columnDefs = [
@@ -227,7 +229,10 @@ const ReservationDetailsPage = () => {
         },
       },
       ...dates.map((date) => ({
-        headerName: new Date(date).toLocaleDateString(),
+        headerName: new Date(date).toLocaleDateString("en-US", {
+          month: "2-digit",
+          day: "2-digit",
+        }),
         field: date,
         width: 90,
         headerClass: "ag-header-cell-center",
@@ -282,7 +287,9 @@ const ReservationDetailsPage = () => {
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = "#d65140";
                 }}
-                onClick={() => handleUnavailableClick(params.data.campsiteObj)}
+                onClick={() =>
+                  handleUnavailableClick(params.data.campsiteObj, date)
+                }
               >
                 X
               </div>
@@ -310,10 +317,9 @@ const ReservationDetailsPage = () => {
             setGridApi(params.api);
             params.api.sizeColumnsToFit();
           }}
-          rowSelection="none"
           headerHeight={30}
           rowHeight={30}
-          domLayout="autoHeight"
+          domLayout="normal"
         />
       </div>
     );
@@ -348,17 +354,13 @@ const ReservationDetailsPage = () => {
         </div>
 
         <div className="info-text">
-          <p>
-            Click on an unavailable date (marked with X) to create a reservation
-            alert
-          </p>
+          <p>Click on an unavailable date to create a reservation alert</p>
         </div>
       </div>
 
       <div>
         {isLoading ? (
-          <div className="loading-spinner">
-            <div className="spinner"></div>
+          <div>
             <p>Loading availability data...</p>
           </div>
         ) : (
@@ -372,13 +374,9 @@ const ReservationDetailsPage = () => {
 
       {alertModal && (
         <>
-          <div
-            className="modal-backdrop"
-            onClick={() => setAlertModal(false)}
-          ></div>
           <div className="modal">
             <h2>Create Availability Alert</h2>
-            <p>{`Campsite: ${selectedCampsite.site} - ${selectedCampsite.loop}`}</p>
+            <h3>{`Campsite: ${selectedCampsite.site} - ${selectedCampsite.loop}`}</h3>
             <input
               type="text"
               placeholder="Name"
@@ -398,11 +396,11 @@ const ReservationDetailsPage = () => {
             <label>Start Date:</label>
             <input
               type="date"
-              value={alertDetails.startDate || selectedCampsite?.selectedDate} // Use selected column date
+              value={alertDetails.startDate}
               onChange={(e) =>
                 setAlertDetails((prev) => ({
                   ...prev,
-                  startDate: e.target.value,
+                  startDate: e.target.value || selectedDate,
                 }))
               }
             />
@@ -413,7 +411,7 @@ const ReservationDetailsPage = () => {
               onChange={(e) =>
                 setAlertDetails((prev) => ({
                   ...prev,
-                  endDate: e.target.value,
+                  endDate: e.target.value || selectedDate,
                 }))
               }
             />
