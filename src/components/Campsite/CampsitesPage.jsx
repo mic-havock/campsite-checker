@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchCampgroundAvailability } from "../../api/campsites";
 import Campsite from "./Campsite";
@@ -8,9 +8,19 @@ const CampsitesPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { campsites, facilityName } = location.state || {};
+  const [campsiteData, setCampsiteData] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState("");
   const facilityID = campsites?.[0]?.FacilityID;
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    // Filter out campsites with "Don't Use" in the name and sort the rest alphabetically
+    const filteredAndSortedCampsites = campsites
+      .filter((campsite) => !campsite.CampsiteName.includes("Don't Use"))
+      .sort((a, b) => a.CampsiteName.localeCompare(b.CampsiteName));
+
+    setCampsiteData(filteredAndSortedCampsites);
+  }, []);
 
   const getNextMonths = () => {
     const months = [];
@@ -112,47 +122,35 @@ const CampsitesPage = () => {
       <div className="page-header">
         <h1>{facilityName || "Campground's Campsites"}</h1>
         <p className="campsite-count">
-          {campsites.length} {campsites.length === 1 ? "campsite" : "campsites"}{" "}
-          available
+          {campsites.length} {campsites.length === 1 ? "Campsite" : "Campsites"}
         </p>
       </div>
 
       <div className="availability-section">
-        <div className="month-picker">
-          <label htmlFor="month-select">Select Month for Availability</label>
-          <div className="select-wrapper">
-            <select
-              id="month-select"
-              value={selectedMonth}
-              onChange={handleMonthChange}
-              className="month-select"
-            >
-              <option value="">Choose a month...</option>
-              {availableMonths.map((month) => (
-                <option key={month.value} value={month.value}>
-                  {month.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <button
-            onClick={fetchAvailability}
-            className="check-availability-btn"
-            disabled={!selectedMonth || isLoading}
-          >
-            {isLoading ? (
-              <span className="loading-spinner">Loading...</span>
-            ) : selectedMonthData ? (
-              `Check ${selectedMonthData.month} Availability`
-            ) : (
-              "Check Availability"
-            )}
-          </button>
-        </div>
+        <select
+          id="month-select"
+          value={selectedMonth}
+          onChange={handleMonthChange}
+          className="month-select"
+        >
+          <option value="">Select a month to see availability...</option>
+          {availableMonths.map((month) => (
+            <option key={month.value} value={month.value}>
+              {month.label}
+            </option>
+          ))}
+        </select>
+        <button
+          onClick={fetchAvailability}
+          className="check-availability-btn"
+          disabled={!selectedMonth || isLoading}
+        >
+          Check Availability
+        </button>
       </div>
 
       <div className="campsites-grid">
-        {campsites.map((campsite) => (
+        {campsiteData.map((campsite) => (
           <Campsite key={campsite.CampsiteID} campsite={campsite} />
         ))}
       </div>

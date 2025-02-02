@@ -55,35 +55,50 @@
 }
 
 .availability-section {
-  .month-picker {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    max-width: 550px;
-    margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: $text-light;
+  padding: 2rem;
+  border-radius: $button-border-radius;
+  box-shadow: $shadow-md;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
 
-    label {
-      font-weight: bold;
-      color: #333;
+  @media (max-width: 768px) {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  select {
+    flex: 0 1 300px;
+    min-width: 0;
+    padding: 0.8rem 1rem;
+    border: 2px solid $color-stone;
+    border-radius: $button-border-radius;
+    background-color: $text-light;
+    font-size: 1rem;
+    color: $text-primary;
+    cursor: pointer;
+    appearance: none;
+    transition: $button-transition;
+
+    &:hover {
+      border-color: $secondary-color;
     }
 
-    .select-wrapper {
-      position: relative;
-      margin: 0 auto;
-      select {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        background-color: white;
-        font-size: 16px;
-        cursor: pointer;
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+    }
 
-        &:disabled {
-          background-color: #f5f5f5;
-          cursor: not-allowed;
-        }
-      }
+    &:disabled {
+      background-color: $color-stone;
+      cursor: not-allowed;
+      opacity: 0.7;
     }
   }
 }

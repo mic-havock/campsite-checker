@@ -316,25 +316,26 @@ const ReservationDetailsPage = () => {
         <h1>Campground Availability</h1>
 
         <div className="availability-section">
-          <div className="month-picker">
-            <label htmlFor="month-select">Select Month for Availability</label>
-            <div className="select-wrapper">
-              <select
-                id="month-select"
-                value={selectedMonth}
-                onChange={handleMonthChange}
-                className="month-select"
-                disabled={isLoading}
-              >
-                <option value="">Choose a month...</option>
-                {getNextMonths().map((month) => (
-                  <option key={month.value} value={month.value}>
-                    {month.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
+          <select
+            id="month-select"
+            value={selectedMonth}
+            onChange={handleMonthChange}
+            disabled={isLoading}
+          >
+            <option value="">Select a month to see availability...</option>
+            {getNextMonths().map((month) => (
+              <option key={month.value} value={month.value}>
+                {month.label}
+              </option>
+            ))}
+          </select>
+          <button
+            onClick={handleMonthChange}
+            className="check-availability-btn"
+            disabled={!selectedMonth || isLoading}
+          >
+            {isLoading ? "Loading..." : "Check Availability"}
+          </button>
         </div>
 
         <div className="info-text">

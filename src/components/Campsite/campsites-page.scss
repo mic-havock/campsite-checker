@@ -1,9 +1,5 @@
 @import "../../styles/variables";
 
-// Variables
-$primary-color: #2c3e50;
-$secondary-color: #34495e;
-$accent-color: #3498db;
 $success-color: #28a745;
 $light-bg: #f8f9fa;
 $border-radius: 12px;
@@ -60,67 +56,27 @@ $transition: all 0.2s ease;
 
 // Availability Section
 .availability-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
   background: $text-light;
   padding: 2rem;
   border-radius: $button-border-radius;
   box-shadow: $shadow-md;
-  margin-bottom: 2rem;
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
-}
 
-.month-picker {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  align-items: center;
-
-  label {
-    font-size: clamp(1rem, 2.5vw, 1.2rem);
-    color: $text-primary;
-    font-weight: 500;
-  }
-
-  select {
-    border: 2px solid $secondary-color;
-    border-radius: $button-border-radius;
-    padding: 0.8rem;
+  @media (max-width: 768px) {
+    flex-direction: column;
     width: 100%;
-    transition: $button-transition;
-
-    &:focus {
-      border-color: $primary-color;
-      outline: none;
-      box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
-    }
-  }
-
-  .action-button {
-    @include button-primary;
-    width: 100%;
-    max-width: 300px;
-  }
-}
-
-.select-wrapper {
-  position: relative;
-  width: 100%;
-  max-width: 400px;
-
-  &::after {
-    content: "▼";
-    position: absolute;
-    right: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: $secondary-color;
-    pointer-events: none;
-    font-size: 0.8rem;
   }
 }
 
 .month-select {
+  flex: 0 1 300px;
+  min-width: 0;
   width: 100%;
   padding: 1rem;
   font-size: 1rem;
@@ -135,36 +91,6 @@ $transition: all 0.2s ease;
   &:focus {
     border-color: $accent-color;
     box-shadow: 0 0 0 3px rgba($accent-color, 0.1);
-  }
-}
-
-.check-availability-btn {
-  background-color: $success-color;
-  color: white;
-  border: none;
-  padding: 1rem 2rem;
-  border-radius: $border-radius;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: $transition;
-  min-width: min(300px, 90%);
-
-  &:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: $box-shadow;
-  }
-
-  &:disabled {
-    background-color: #6c757d;
-    cursor: not-allowed;
-    opacity: 0.7;
-  }
-
-  .loading-spinner {
-    display: inline-block;
-    margin-right: 0.5rem;
-    animation: spin 1s linear infinite;
   }
 }
 
@@ -228,12 +154,6 @@ $transition: all 0.2s ease;
   to {
     transform: rotate(360deg);
   }
-}
-
-// Loading Spinner
-.loading-spinner::before {
-  content: "◌";
-  animation: spin 1s linear infinite;
 }
 
 .campsite-tile {

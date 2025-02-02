@@ -8,6 +8,9 @@ const Campsite = ({ campsite }) => {
     CampsiteType,
     ENTITYMEDIA,
     ATTRIBUTES,
+    PERMITTEDEQUIPMENT,
+    CampsiteLatitude,
+    CampsiteLongitude,
   } = campsite;
   const [isExpanded, setIsExpanded] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -112,9 +115,20 @@ const Campsite = ({ campsite }) => {
                         <span className="attribute-name">
                           {attribute.AttributeName}:
                         </span>
-                        <span className="attribute-value">
-                          {attribute.AttributeValue}
-                        </span>
+                        {attribute.AttributeValue}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {PERMITTEDEQUIPMENT && PERMITTEDEQUIPMENT.length > 0 && (
+                <div className="attributes-section">
+                  <h3>Permitted Equipment</h3>
+                  <div className="attributes-grid">
+                    {PERMITTEDEQUIPMENT.map((permittedEquipment, index) => (
+                      <div key={index} className="attribute-item">
+                        {permittedEquipment.EquipmentName}
                       </div>
                     ))}
                   </div>

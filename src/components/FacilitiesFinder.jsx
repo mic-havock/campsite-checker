@@ -161,7 +161,7 @@ const FacilitiesFinder = () => {
         JSON.stringify(selectedFacility)
       );
       navigate("/campsites", {
-        state: { campsites },
+        state: { campsites, facilityName: selectedFacility.FacilityName },
       });
     }
   };
