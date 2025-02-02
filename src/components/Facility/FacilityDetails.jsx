@@ -51,7 +51,7 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
         }}
       >
         <button onClick={handleViewCampsites} disabled={!facility}>
-          View Campgrounds
+          View Campsites
         </button>
       </div>
       <h2>Facility Details</h2>

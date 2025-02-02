@@ -3,9 +3,8 @@ import {
   ClientSideRowModelModule,
   ColumnAutoSizeModule,
   ModuleRegistry,
+  TextFilterModule,
 } from "ag-grid-community";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-alpine.css";
 import { AgGridReact } from "ag-grid-react";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -18,6 +17,7 @@ ModuleRegistry.registerModules([
   ClientSideRowModelModule,
   ColumnAutoSizeModule,
   CellStyleModule,
+  TextFilterModule,
 ]);
 
 const ReservationDetailsPage = () => {
@@ -38,6 +38,7 @@ const ReservationDetailsPage = () => {
     endDate: "",
   });
   const [selectedMonth, setSelectedMonth] = useState("");
+  const [startDate, setStartDate] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -136,28 +137,25 @@ const ReservationDetailsPage = () => {
     return months;
   };
 
-  const handleMonthChange = async (event) => {
+  const handleSelectChange = async (event) => {
+    setSelectedMonth(event.target.value);
+    const startDate = new Date(event.target.value);
+    const utcDate = new Date(
+      Date.UTC(startDate.getFullYear(), startDate.getMonth(), 1, 0, 0, 0, 0)
+    );
+    setStartDate(utcDate.toISOString());
+  };
+
+  const handleMonthChange = async () => {
     setSelectedMonth(event.target.value);
     setIsLoading(true);
 
     try {
-      const startDate = new Date(event.target.value);
-      console.log("Start date:", startDate);
-      const utcDate = new Date(
-        Date.UTC(startDate.getFullYear(), startDate.getMonth(), 1, 0, 0, 0, 0)
-      );
-      console.log("UTC date:", utcDate);
-
       if (!facilityID) {
         throw new Error("Facility ID not found");
       }
 
-      console.log("Using facility ID:", facilityID);
-
-      const data = await fetchCampgroundAvailability(
-        facilityID,
-        utcDate.toISOString()
-      );
+      const data = await fetchCampgroundAvailability(facilityID, startDate);
 
       // Update the state with new data
       setAvailabilityData(data);
@@ -184,7 +182,8 @@ const ReservationDetailsPage = () => {
     // Transform data for AG Grid
     const rowData = campsites.map((campsite) => {
       const row = {
-        campsite: `Campsite ${campsite.site} - ${campsite.loop}`,
+        campsite: `${campsite.site}`,
+        loop: `${campsite.loop}`,
         campsiteObj: campsite, // Store full campsite object for reference
       };
 
@@ -198,10 +197,9 @@ const ReservationDetailsPage = () => {
       return row;
     });
 
-    const gridHeight = Math.min(rowData.length * 40 + 40, 800);
-
     const gridStyle = {
-      height: `${gridHeight}px`,
+      height: "auto",
+      //height: `${gridHeight}px`,
       width: `${tableWidth * 0.9}px`,
     };
 
@@ -211,16 +209,27 @@ const ReservationDetailsPage = () => {
         field: "campsite",
         pinned: "left",
         lockPinned: true,
-        width: 200,
+        width: 150,
         cellStyle: {
           backgroundColor: "#f8f9fa",
-          borderRight: "1px solid #dde2eb",
+          //borderRight: "1px solid#c4c4c4",
+        },
+      },
+      {
+        headerName: "Loop",
+        field: "loop",
+        pinned: "left",
+        lockPinned: true,
+        width: 150,
+        cellStyle: {
+          backgroundColor: "#f8f9fa",
+          //borderRight: "1px solid #dde2eb",
         },
       },
       ...dates.map((date) => ({
         headerName: new Date(date).toLocaleDateString(),
         field: date,
-        width: 120,
+        width: 90,
         headerClass: "ag-header-cell-center",
         valueFormatter: (params) => {
           return params.value.available ? "A" : "X";
@@ -293,17 +302,17 @@ const ReservationDetailsPage = () => {
           columnDefs={columnDefs}
           rowData={rowData}
           defaultColDef={{
-            sortable: false,
+            sortable: true,
             resizable: true,
-            filter: false,
+            filter: true,
           }}
           onGridReady={(params) => {
             setGridApi(params.api);
             params.api.sizeColumnsToFit();
           }}
           rowSelection="none"
-          headerHeight={40}
-          rowHeight={40}
+          headerHeight={30}
+          rowHeight={30}
           domLayout="autoHeight"
         />
       </div>
@@ -319,7 +328,7 @@ const ReservationDetailsPage = () => {
           <select
             id="month-select"
             value={selectedMonth}
-            onChange={handleMonthChange}
+            onChange={handleSelectChange}
             disabled={isLoading}
           >
             <option value="">Select a month to see availability...</option>
