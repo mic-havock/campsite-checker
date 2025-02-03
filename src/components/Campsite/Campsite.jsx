@@ -39,13 +39,17 @@ const Campsite = ({ campsite }) => {
     <div className="campsite-card">
       <div className="campsite-content" onClick={() => setIsExpanded(true)}>
         {thumbnail && (
-          <div className="image-container">
+          <div>
             <img
               src={thumbnail}
               alt={`${CampsiteName} thumbnail`}
               className="campsite-thumbnail"
             />
           </div>
+        )}
+
+        {!thumbnail && (
+          <div className="no-image-container">No Image Available</div>
         )}
 
         <div className="campsite-info">
