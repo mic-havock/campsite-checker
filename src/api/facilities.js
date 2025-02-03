@@ -4,13 +4,12 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 // Fetch facilities based on multiple criteria
 export const getFacilities = async (params) => {
-  console.log("params", params);
   try {
     const response = await axios.get(`${BASE_URL}/facilities`, {
       params: {
         query: params.query || "",
         state: params.state || "",
-        limit: params.limit || 5,
+        limit: params.limit || 50,
         //offset: params.offset || 0,
         latitude: params.latitude || "",
         longitude: params.longitude || "",

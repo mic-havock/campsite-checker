@@ -110,3 +110,7 @@
   padding: 8px 16px;
   border-radius: 20px;
 }
+
+.camground-btn {
+  @include button-primary !important;
+}

@@ -38,19 +38,16 @@ $transition: all 0.2s ease;
 // Header Section
 .page-header {
   text-align: center;
-  margin-bottom: 2rem;
-  padding: 1.5rem;
-  background: $text-light;
-  border-radius: $button-border-radius;
-  box-shadow: $shadow-md;
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
 
+  h1 {
+    margin-bottom: -0.5rem;
+  }
+
   .campsite-count {
     color: $color-earth;
-    font-size: clamp(0.9rem, 2vw, 1.1rem);
-    opacity: 0.8;
   }
 }
 

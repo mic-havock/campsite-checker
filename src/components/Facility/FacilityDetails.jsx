@@ -40,6 +40,7 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
         padding: "10px",
         border: "1px solid #ccc",
         position: "relative",
+        borderRadius: "8px",
       }}
     >
       <div
@@ -50,7 +51,11 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
           zIndex: 10,
         }}
       >
-        <button onClick={handleViewCampsites} disabled={!facility}>
+        <button
+          className="camground-btn"
+          onClick={handleViewCampsites}
+          disabled={!facility}
+        >
           View Campsites
         </button>
       </div>
