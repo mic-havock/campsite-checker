@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchCampgroundAvailability } from "../../api/campsites";
 import reservationsAPI from "../../api/reservations";
+import LoadingSpinner from "../common/LoadingSpinner/LoadingSpinner";
 import "./reservation-details.scss";
 
 // Register all required modules
@@ -32,7 +33,6 @@ const ReservationDetailsPage = () => {
   const [tableWidth, setTableWidth] = useState(window.innerWidth);
   const [gridApi, setGridApi] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState("");
-  const [selectedDate, setSelectedDate] = useState("");
   const [alertDetails, setAlertDetails] = useState({
     name: "",
     email: "",
@@ -65,8 +65,12 @@ const ReservationDetailsPage = () => {
   }
 
   const handleUnavailableClick = (campsite, date) => {
-    setSelectedDate(date);
     setSelectedCampsite(campsite);
+    setAlertDetails((prev) => ({
+      ...prev,
+      startDate: date,
+      endDate: date,
+    }));
     setAlertModal(true);
   };
 
@@ -327,6 +331,8 @@ const ReservationDetailsPage = () => {
 
   return (
     <div className="reservation-details-container">
+      {isLoading && <LoadingSpinner fullPage />}
+
       <div className="reservation-details-header">
         <h1>Campground Availability</h1>
 
@@ -349,7 +355,14 @@ const ReservationDetailsPage = () => {
             className="check-availability-btn"
             disabled={!selectedMonth || isLoading}
           >
-            {isLoading ? "Loading..." : "Check Availability"}
+            {isLoading ? (
+              <>
+                <LoadingSpinner size="small" />
+                <span style={{ marginLeft: "8px" }}>Loading...</span>
+              </>
+            ) : (
+              "Check Availability"
+            )}
           </button>
         </div>
 
@@ -400,7 +413,7 @@ const ReservationDetailsPage = () => {
               onChange={(e) =>
                 setAlertDetails((prev) => ({
                   ...prev,
-                  startDate: e.target.value || selectedDate,
+                  startDate: e.target.value,
                 }))
               }
             />
@@ -411,7 +424,7 @@ const ReservationDetailsPage = () => {
               onChange={(e) =>
                 setAlertDetails((prev) => ({
                   ...prev,
-                  endDate: e.target.value || selectedDate,
+                  endDate: e.target.value,
                 }))
               }
             />

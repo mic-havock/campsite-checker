@@ -11,6 +11,7 @@ import { AgGridReact } from "ag-grid-react";
 import PropTypes from "prop-types";
 import { useEffect, useMemo, useState } from "react";
 import { fetchCityAndState } from "../../api/location";
+import "./facility-grid.scss";
 
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,

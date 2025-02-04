@@ -113,7 +113,6 @@ const FacilitiesFinder = () => {
     setError("");
 
     try {
-      console.log("Filtered searchParams", updatedSearchParams);
       const response = await getFacilities(updatedSearchParams); // Pass only non-empty params
       const filteredFacilities = response.RECDATA.filter(
         (facility) => facility.FacilityTypeDescription === "Campground"

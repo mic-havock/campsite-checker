@@ -5,6 +5,17 @@
   border: 2px solid $primary-color;
   border-radius: $button-border-radius;
   padding: 20px;
+  margin-top: 20px;
+  position: relative;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+
+  .view-campsites-wrapper {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+  }
 
   .image-gallery img {
     cursor: pointer;
@@ -17,6 +28,28 @@
     max-width: 100%;
     max-height: 80vh;
     margin: 0 auto;
+  }
+
+  .media-section {
+    margin-top: 20px;
+
+    .media-grid {
+      display: flex;
+      flex-wrap: wrap;
+
+      .media-item {
+        margin: 10px;
+        width: 200px;
+
+        img {
+          width: 100%;
+          height: auto;
+          border-radius: 5px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          cursor: pointer;
+        }
+      }
+    }
   }
 }
 
@@ -112,5 +145,76 @@
 }
 
 .camground-btn {
-  @include button-primary !important;
+  @include button-primary;
+}
+
+.modal-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+
+  .close-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    z-index: 1100;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #e60000;
+    }
+  }
+}
+
+.image-slider {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .slider-image {
+    max-width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+  }
+}
+
+.thumbnails-nav {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  overflow-x: auto;
+  padding: 10px;
+
+  .thumbnail {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    cursor: pointer;
+    border-radius: 4px;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+
+    &.active {
+      opacity: 1;
+      border: 2px solid $primary-color;
+    }
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}
+
+.image-caption {
+  color: $text-light;
+  margin-top: 10px;
+  text-align: center;
 }

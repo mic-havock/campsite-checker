@@ -1,9 +1,14 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import LoadingSpinner from "../common/LoadingSpinner/LoadingSpinner";
+import "./facility-details.scss";
 
 const FacilityDetails = ({ facility, handleViewCampsites }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   // Open image modal
   const openImageModal = (imageUrl, index) => {
@@ -33,30 +38,33 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
     );
   };
 
+  const handleCampsitesClick = async () => {
+    setIsLoading(true);
+    try {
+      await handleViewCampsites();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <div
-      style={{
-        marginTop: "20px",
-        padding: "10px",
-        border: "1px solid #ccc",
-        position: "relative",
-        borderRadius: "8px",
-      }}
-    >
-      <div
-        style={{
-          position: "absolute",
-          top: "10px",
-          right: "10px",
-          zIndex: 10,
-        }}
-      >
+    <div className="facility-details">
+      {isLoading && <LoadingSpinner fullPage />}
+
+      <div className="view-campsites-wrapper">
         <button
           className="camground-btn"
-          onClick={handleViewCampsites}
-          disabled={!facility}
+          onClick={handleCampsitesClick}
+          disabled={!facility || isLoading}
         >
-          View Campsites
+          {isLoading ? (
+            <>
+              <LoadingSpinner size="small" />
+              <span style={{ marginLeft: "8px" }}>Loading...</span>
+            </>
+          ) : (
+            "View Campsites"
+          )}
         </button>
       </div>
       <h2>Facility Details</h2>
@@ -112,26 +120,16 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
         }}
       />
       {/* Render Images */}
-      <div style={{ marginTop: "20px" }}>
+      <div className="media-section">
         <h2>Images</h2>
         {facility.MEDIA && facility.MEDIA.length > 0 ? (
-          <div style={{ display: "flex", flexWrap: "wrap" }}>
+          <div className="media-grid">
             {facility.MEDIA.map((media, index) => (
-              <div
-                key={media.EntityMediaID}
-                style={{ margin: "10px", width: "200px" }}
-              >
+              <div key={media.EntityMediaID} className="media-item">
                 <img
                   src={media.URL}
                   alt={media.Title}
-                  style={{
-                    width: "100%",
-                    height: "auto",
-                    borderRadius: "5px",
-                    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => openImageModal(media.URL, index)} // Open image in modal when clicked
+                  onClick={() => openImageModal(media.URL, index)}
                 />
                 <p>{media.Title}</p>
               </div>
@@ -144,14 +142,11 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
 
       {isModalOpen && (
         <div className="overlay" onClick={closeImageModal}>
-          <div
-            className="modal-content"
-            onClick={(e) => e.stopPropagation()} // Add this to prevent modal closing
-          >
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button
               className="close-button"
               onClick={(e) => {
-                e.stopPropagation(); // Add this to prevent event bubbling
+                e.stopPropagation();
                 setIsModalOpen(false);
               }}
               aria-label="Close"
@@ -159,10 +154,7 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
               X
             </button>
 
-            <div
-              className="image-slider"
-              onClick={(e) => e.stopPropagation()} // Add this to prevent modal closing
-            >
+            <div className="image-slider" onClick={(e) => e.stopPropagation()}>
               {facility.MEDIA.length > 1 && (
                 <button
                   className="nav-button prev-button"
@@ -174,7 +166,7 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
                 src={facility.MEDIA[currentImageIndex].URL}
                 alt={facility.MEDIA[currentImageIndex].Title}
                 className="slider-image"
-                onClick={(e) => e.stopPropagation()} // Add this to prevent modal closing
+                onClick={(e) => e.stopPropagation()}
               />
               {facility.MEDIA.length > 1 && (
                 <button
@@ -184,24 +176,15 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
                 />
               )}
 
-              <div
-                className="image-caption"
-                onClick={(e) => e.stopPropagation()} // Add this to prevent modal closing
-              >
+              <div className="image-caption">
                 {facility.MEDIA[currentImageIndex].Title}
               </div>
 
-              <div
-                className="image-counter"
-                onClick={(e) => e.stopPropagation()} // Add this to prevent modal closing
-              >
+              <div className="image-counter">
                 {currentImageIndex + 1}/{facility.MEDIA.length}
               </div>
 
-              <div
-                className="thumbnails-nav"
-                onClick={(e) => e.stopPropagation()} // Add this to prevent modal closing
-              >
+              <div className="thumbnails-nav">
                 {facility.MEDIA.map((media, index) => (
                   <img
                     key={media.EntityMediaID}

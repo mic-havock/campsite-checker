@@ -30,7 +30,7 @@ export const fetchCityAndState = async (facilityId) => {
   if (!facilityId) {
     throw new Error("Facility ID is required.");
   }
-  console.log("facilityId", facilityId);
+
   try {
     const addressData = await getFacilityAddress(facilityId);
     if (addressData && addressData.length > 0) {

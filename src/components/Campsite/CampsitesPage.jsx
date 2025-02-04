@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchCampgroundAvailability } from "../../api/campsites";
+import LoadingSpinner from "../common/LoadingSpinner/LoadingSpinner";
 import Campsite from "./Campsite";
 import "./campsites-page.scss";
 
@@ -119,6 +120,8 @@ const CampsitesPage = () => {
 
   return (
     <div className="campsites-page">
+      {isLoading && <LoadingSpinner fullPage />}
+
       <div className="page-header">
         <h1>{facilityName || "Campground's Campsites"}</h1>
         <p className="campsite-count">
@@ -132,6 +135,7 @@ const CampsitesPage = () => {
           value={selectedMonth}
           onChange={handleMonthChange}
           className="month-select"
+          disabled={isLoading}
         >
           <option value="">Select a month to see availability...</option>
           {availableMonths.map((month) => (
@@ -145,7 +149,14 @@ const CampsitesPage = () => {
           className="check-availability-btn"
           disabled={!selectedMonth || isLoading}
         >
-          Check Availability
+          {isLoading ? (
+            <>
+              <LoadingSpinner size="small" />
+              <span style={{ marginLeft: "8px" }}>Loading...</span>
+            </>
+          ) : (
+            "Check Availability"
+          )}
         </button>
       </div>
 
