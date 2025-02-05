@@ -42,6 +42,18 @@
   margin-bottom: 12px;
 }
 
+.no-image-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 20px;
+  border: 2px solid $secondary-color;
+  border-radius: $button-border-radius;
+  margin-bottom: 2rem !important; /* Force margin */
+  box-shadow: $shadow-sm;
+}
+
 .campsite-details {
   margin-top: 16px;
   text-align: left;
@@ -214,8 +226,8 @@
 
 .no-image-container {
   text-align: center;
-  width: 100%;
-  height: 240px;
+  width: auto;
+  height: 285px;
   border-radius: $button-border-radius;
   margin-bottom: 2.5rem;
   box-shadow: $shadow-sm;

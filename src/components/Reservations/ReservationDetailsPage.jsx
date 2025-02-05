@@ -204,8 +204,14 @@ const ReservationDetailsPage = () => {
       return row;
     });
 
+    // Calculate dynamic height based on number of rows
+    const rowHeight = 30; // height of each row
+    const headerHeight = 30; // height of the header
+    const calculatedHeight = rowData.length * rowHeight + headerHeight;
+    const gridHeight = Math.min(calculatedHeight, 700); // Cap at 700px
+
     const gridStyle = {
-      height: "800px",
+      height: `${gridHeight}px`,
       width: `${tableWidth * 0.96}px`,
     };
 
@@ -321,8 +327,8 @@ const ReservationDetailsPage = () => {
             setGridApi(params.api);
             params.api.sizeColumnsToFit();
           }}
-          headerHeight={30}
-          rowHeight={30}
+          headerHeight={headerHeight}
+          rowHeight={rowHeight}
           domLayout="normal"
         />
       </div>
