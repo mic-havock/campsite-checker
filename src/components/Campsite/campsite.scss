@@ -9,79 +9,44 @@
   box-sizing: border-box;
 }
 
-.campsite-tile {
-  text-align: center;
-  align-items: center;
-  border-radius: $button-border-radius;
-  padding: 16px;
-  text-align: center;
-  background-color: $background-light;
-  box-shadow: $shadow-md;
-  transition: $button-transition;
-  cursor: pointer;
+.campsite-card {
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-top: 0.5rem;
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: $shadow-lg;
-  }
-
-  &.expanded {
-    grid-column: span 2;
-    background-color: $background-light;
-    box-shadow: $shadow-lg;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   }
 }
 
 .campsite-thumbnail {
-  margin-left: -2px;
-  align-items: center;
   width: 100%;
-  height: auto;
-  border: 2px solid $secondary-color;
-  border-radius: $button-border-radius;
+  height: 280px;
+  border-radius: 4px;
   margin-bottom: 12px;
 }
 
 .no-image-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 20px;
-  border: 2px solid $secondary-color;
+  text-align: center;
+  width: auto;
+  height: 285px;
   border-radius: $button-border-radius;
-  margin-bottom: 2rem !important; /* Force margin */
+  margin-bottom: 2.5rem;
   box-shadow: $shadow-sm;
 }
 
-.campsite-details {
-  margin-top: 16px;
-  text-align: left;
-
-  ul {
+.campsite-info {
+  padding: 0;
+  text-align: center;
+  margin-top: -2rem;
+  .campsite-tags {
+    margin-top: -1rem;
     padding: 0;
-    list-style-type: none;
-
-    li {
-      margin-bottom: 8px;
-      font-size: 14px;
-      color: $text-primary;
-    }
-  }
-}
-
-.campsite-media {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 16px;
-
-  .campsite-media-image {
-    max-width: 100px;
-    max-height: 100px;
-    border-radius: $button-border-radius;
-    object-fit: cover;
-    border: 1px solid $color-stone;
   }
 }
 
@@ -113,124 +78,35 @@
   opacity: 0;
   transform: scale(0.9);
   animation: modalPop 0.3s ease-out 0.1s forwards;
-
-  &::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 4px;
-
-    &:hover {
-      background: #666;
-    }
-  }
+  padding-top: 60px;
 }
 
 .close-button {
   position: absolute;
   top: 20px;
   right: 20px;
-  background: rgba(0, 0, 0, 0.6);
+  background: #dc3545;
   color: white;
   border: none;
   width: 40px;
   height: 40px;
-  border-radius: 50%;
+  border-radius: 4px;
   font-size: 24px;
   cursor: pointer;
-  z-index: 2;
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
 
   &:hover {
-    background: rgba(0, 0, 0, 0.8);
+    background: #c82333;
     transform: scale(1.1);
   }
 
   &:active {
     transform: scale(0.95);
   }
-}
-
-.image-slider {
-  position: relative;
-  width: 100%;
-  height: 500px;
-  background: #000000;
-
-  .slider-image {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-  }
-
-  .nav-button {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.6);
-    color: white;
-    border: none;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    font-size: 28px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    opacity: 0.7;
-
-    &:hover {
-      opacity: 1;
-      background: rgba(0, 0, 0, 0.8);
-      transform: translateY(-50%) scale(1.1);
-    }
-
-    &:active {
-      transform: translateY(-50%) scale(0.95);
-    }
-
-    &.prev-button {
-      left: 20px;
-    }
-
-    &.next-button {
-      right: 20px;
-    }
-  }
-
-  .image-counter {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.6);
-    color: white;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    backdrop-filter: blur(4px);
-  }
-}
-
-.no-image-container {
-  text-align: center;
-  width: auto;
-  height: 285px;
-  border-radius: $button-border-radius;
-  margin-bottom: 2.5rem;
-  box-shadow: $shadow-sm;
 }
 
 .modal-details {
@@ -241,21 +117,6 @@
     color: #2c3e50;
     font-size: 2rem;
     font-weight: 600;
-  }
-
-  .campsite-tags {
-    padding-bottom: -1rem;
-  }
-}
-
-.campsite-info {
-  padding-top: -1rem;
-  padding: 0;
-  text-align: center;
-  margin-top: -2rem;
-  .campsite-tags {
-    margin-top: -1rem;
-    padding: 0;
   }
 }
 
@@ -312,6 +173,83 @@
   }
 }
 
+// Media section and Image Gallery styles
+.media-section {
+  margin: 2rem 0;
+
+  .image-gallery {
+    max-width: 800px;
+    margin: 0 auto;
+
+    .image-gallery-thumbnails-wrapper {
+      .image-gallery-thumbnails {
+        .image-gallery-thumbnails-container {
+          text-align: center;
+
+          .image-gallery-thumbnail {
+            width: 100px;
+            margin: 0 5px;
+            border: none;
+            padding: 0;
+
+            &.active {
+              border: 2px solid $primary-color;
+            }
+
+            img {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+            }
+          }
+        }
+      }
+    }
+
+    .image-gallery-slide img {
+      width: 100%;
+      height: auto;
+      max-height: 500px;
+      object-fit: contain;
+    }
+  }
+
+  .image-gallery-description {
+    background: rgba(0, 0, 0, 0.7);
+    bottom: 0;
+  }
+}
+
+// Image Gallery Controls
+.image-gallery-icon {
+  color: $primary-color !important;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.3));
+  padding: 0;
+  background: transparent !important;
+
+  &:hover {
+    color: $secondary-color !important;
+    background: transparent !important;
+  }
+
+  &:focus {
+    outline: none;
+    background: transparent !important;
+  }
+
+  &.image-gallery-left-nav,
+  &.image-gallery-right-nav {
+    padding: 0;
+    width: 30px;
+    height: 30px;
+
+    .image-gallery-svg {
+      width: 30px;
+      height: 30px;
+    }
+  }
+}
+
 // Responsive adjustments
 @media (max-width: 768px) {
   .modal-content {
@@ -319,10 +257,6 @@
     height: 100%;
     max-height: 100vh;
     border-radius: 0;
-  }
-
-  .image-slider {
-    height: 300px;
   }
 
   .modal-details {
@@ -335,34 +269,5 @@
 
   .attributes-grid {
     grid-template-columns: 1fr;
-  }
-
-  .nav-button {
-    width: 40px;
-    height: 40px;
-    font-size: 24px;
-    border: none;
-    &.prev-button {
-      left: 10px;
-    }
-
-    &.next-button {
-      right: 10px;
-    }
-  }
-}
-
-.campsite-card {
-  background: white;
-  border: 2px solid #e9ecef;
-  border-radius: 12px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-  padding-bottom: 0.5rem;
-  padding-top: 0.5rem;
-
-  &:hover {
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   }
 }

@@ -1,42 +1,21 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import ImageGallery from "react-image-gallery";
+import "react-image-gallery/styles/scss/image-gallery.scss";
 import LoadingSpinner from "../common/LoadingSpinner/LoadingSpinner";
 import "./facility-details.scss";
 
 const FacilityDetails = ({ facility, handleViewCampsites }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
 
-  // Open image modal
-  const openImageModal = (imageUrl, index) => {
-    setSelectedImage(imageUrl);
-    setCurrentImageIndex(index);
-    setIsModalOpen(true);
-  };
-
-  // Close image modal
-  const closeImageModal = () => {
-    setIsModalOpen(false);
-    setSelectedImage(null);
-    setCurrentImageIndex(0);
-  };
-
-  const handlePrevImage = (e) => {
-    e.stopPropagation(); // Add this to prevent event bubbling
-    setCurrentImageIndex((prevIndex) =>
-      prevIndex === 0 ? facility.MEDIA.length - 1 : prevIndex - 1
-    );
-  };
-
-  const handleNextImage = (e) => {
-    e.stopPropagation(); // Add this to prevent event bubbling
-    setCurrentImageIndex((prevIndex) =>
-      prevIndex === facility.MEDIA.length - 1 ? 0 : prevIndex + 1
-    );
-  };
+  // Transform facility media into format required by react-image-gallery
+  const images =
+    facility.MEDIA?.map((media) => ({
+      original: media.URL,
+      thumbnail: media.URL,
+      description: media.Title,
+      originalAlt: media.Title,
+      thumbnailAlt: `Thumbnail of ${media.Title}`,
+    })) || [];
 
   const handleCampsitesClick = async () => {
     setIsLoading(true);
@@ -67,6 +46,7 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
           )}
         </button>
       </div>
+
       <h2>Facility Details</h2>
       <p>
         <strong>Facility Name:</strong> {facility.FacilityName}
@@ -88,7 +68,7 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
           : "Not Available"}
       </p>
       <p>
-        <strong>Longitude:</strong>{" "}
+        <strong>Latitude:</strong>{" "}
         {Array.isArray(facility.GEOJSON?.COORDINATES)
           ? facility.GEOJSON.COORDINATES[1]
           : "Not Available"}
@@ -104,106 +84,41 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
           </a>
         ) : null}
       </p>
-      {/* Render Description as HTML */}
+
       <div
         dangerouslySetInnerHTML={{
           __html:
             facility.FacilityDescription || "<p>No description available</p>",
         }}
       />
+
       <h2>Directions</h2>
-      {/* Render Directions as HTML */}
       <div
         dangerouslySetInnerHTML={{
           __html:
             facility.FacilityDirections || "<p>No directions available</p>",
         }}
       />
-      {/* Render Images */}
+
       <div className="media-section">
         <h2>Images</h2>
-        {facility.MEDIA && facility.MEDIA.length > 0 ? (
-          <div className="media-grid">
-            {facility.MEDIA.map((media, index) => (
-              <div key={media.EntityMediaID} className="media-item">
-                <img
-                  src={media.URL}
-                  alt={media.Title}
-                  onClick={() => openImageModal(media.URL, index)}
-                />
-                <p>{media.Title}</p>
-              </div>
-            ))}
-          </div>
+        {images.length > 0 ? (
+          <ImageGallery
+            items={images}
+            showPlayButton={false}
+            showFullscreenButton={true}
+            showNav={true}
+            thumbnailPosition="bottom"
+            slideInterval={3000}
+            slideDuration={450}
+            lazyLoad={true}
+            showIndex={true}
+            onErrorImageURL="/placeholder-image.jpg"
+          />
         ) : (
           <p>No images available</p>
         )}
       </div>
-
-      {isModalOpen && (
-        <div className="overlay" onClick={closeImageModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button
-              className="close-button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsModalOpen(false);
-              }}
-              aria-label="Close"
-            >
-              X
-            </button>
-
-            <div className="image-slider" onClick={(e) => e.stopPropagation()}>
-              {facility.MEDIA.length > 1 && (
-                <button
-                  className="nav-button prev-button"
-                  onClick={handlePrevImage}
-                  aria-label="Previous image"
-                />
-              )}
-              <img
-                src={facility.MEDIA[currentImageIndex].URL}
-                alt={facility.MEDIA[currentImageIndex].Title}
-                className="slider-image"
-                onClick={(e) => e.stopPropagation()}
-              />
-              {facility.MEDIA.length > 1 && (
-                <button
-                  className="nav-button next-button"
-                  onClick={handleNextImage}
-                  aria-label="Next image"
-                />
-              )}
-
-              <div className="image-caption">
-                {facility.MEDIA[currentImageIndex].Title}
-              </div>
-
-              <div className="image-counter">
-                {currentImageIndex + 1}/{facility.MEDIA.length}
-              </div>
-
-              <div className="thumbnails-nav">
-                {facility.MEDIA.map((media, index) => (
-                  <img
-                    key={media.EntityMediaID}
-                    src={media.URL}
-                    alt={`Thumbnail ${index + 1}`}
-                    className={`thumbnail ${
-                      index === currentImageIndex ? "active" : ""
-                    }`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setCurrentImageIndex(index);
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

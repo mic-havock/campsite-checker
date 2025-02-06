@@ -1,4 +1,6 @@
 import { useState } from "react";
+import ImageGallery from "react-image-gallery";
+import "react-image-gallery/styles/scss/image-gallery.scss";
 import "./campsite.scss";
 
 const Campsite = ({ campsite }) => {
@@ -9,46 +11,29 @@ const Campsite = ({ campsite }) => {
     ENTITYMEDIA,
     ATTRIBUTES,
     PERMITTEDEQUIPMENT,
-    CampsiteLatitude,
-    CampsiteLongitude,
   } = campsite;
   const [isExpanded, setIsExpanded] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const thumbnail = ENTITYMEDIA?.[currentImageIndex]?.URL;
-
-  const handleClose = (e) => {
-    if (e.target.classList.contains("overlay")) {
-      setIsExpanded(false);
-    }
-  };
-
-  const handleNextImage = (e) => {
-    e.stopPropagation();
-    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % ENTITYMEDIA.length);
-  };
-
-  const handlePrevImage = (e) => {
-    e.stopPropagation();
-    setCurrentImageIndex((prevIndex) =>
-      prevIndex === 0 ? ENTITYMEDIA.length - 1 : prevIndex - 1
-    );
-  };
+  // Transform campsite media into format required by react-image-gallery
+  const images =
+    ENTITYMEDIA?.map((media) => ({
+      original: media.URL,
+      thumbnail: media.URL,
+      description: media.Title,
+      originalAlt: media.Title,
+      thumbnailAlt: `Thumbnail of ${media.Title}`,
+    })) || [];
 
   return (
     <div className="campsite-card">
       <div className="campsite-content" onClick={() => setIsExpanded(true)}>
-        {thumbnail && (
-          <div>
-            <img
-              src={thumbnail}
-              alt={`${CampsiteName} thumbnail`}
-              className="campsite-thumbnail"
-            />
-          </div>
-        )}
-
-        {!thumbnail && (
+        {images.length > 0 ? (
+          <img
+            src={images[0].original}
+            alt={images[0].originalAlt}
+            className="campsite-thumbnail"
+          />
+        ) : (
           <div className="no-image-container">No Image Available</div>
         )}
 
@@ -62,7 +47,7 @@ const Campsite = ({ campsite }) => {
       </div>
 
       {isExpanded && (
-        <div className="overlay" onClick={handleClose}>
+        <div className="overlay" onClick={() => setIsExpanded(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button
               className="close-button"
@@ -72,36 +57,24 @@ const Campsite = ({ campsite }) => {
               ×
             </button>
 
-            {thumbnail && (
-              <div className="image-slider">
-                {ENTITYMEDIA.length > 1 && (
-                  <button
-                    className="nav-button prev-button"
-                    onClick={handlePrevImage}
-                    aria-label="Previous image"
-                  >
-                    ‹
-                  </button>
-                )}
-                <img
-                  src={thumbnail}
-                  alt={`${CampsiteName} view ${currentImageIndex + 1}`}
-                  className="slider-image"
+            <div className="media-section">
+              {images.length > 0 ? (
+                <ImageGallery
+                  items={images}
+                  showPlayButton={false}
+                  showFullscreenButton={true}
+                  showNav={true}
+                  thumbnailPosition="bottom"
+                  slideInterval={3000}
+                  slideDuration={450}
+                  lazyLoad={true}
+                  showIndex={true}
+                  onErrorImageURL="/placeholder-image.jpg"
                 />
-                {ENTITYMEDIA.length > 1 && (
-                  <button
-                    className="nav-button next-button"
-                    onClick={handleNextImage}
-                    aria-label="Next image"
-                  >
-                    ›
-                  </button>
-                )}
-                <div className="image-counter">
-                  {currentImageIndex + 1}/{ENTITYMEDIA.length}
-                </div>
-              </div>
-            )}
+              ) : (
+                <div className="no-image-container">No Images Available</div>
+              )}
+            </div>
 
             <div className="modal-details">
               <h2>Campsite: {CampsiteName}</h2>
@@ -130,9 +103,9 @@ const Campsite = ({ campsite }) => {
                 <div className="attributes-section">
                   <h3>Permitted Equipment</h3>
                   <div className="attributes-grid">
-                    {PERMITTEDEQUIPMENT.map((permittedEquipment, index) => (
+                    {PERMITTEDEQUIPMENT.map((equipment, index) => (
                       <div key={index} className="attribute-item">
-                        {permittedEquipment.EquipmentName}
+                        {equipment.EquipmentName}
                       </div>
                     ))}
                   </div>

@@ -46,6 +46,7 @@
       margin-bottom: 10px;
 
       button {
+        @include button-primary;
         min-width: 150px;
       }
 

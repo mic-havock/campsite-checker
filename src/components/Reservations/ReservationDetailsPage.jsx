@@ -207,7 +207,7 @@ const ReservationDetailsPage = () => {
     // Calculate dynamic height based on number of rows
     const rowHeight = 30; // height of each row
     const headerHeight = 30; // height of the header
-    const calculatedHeight = rowData.length * rowHeight + headerHeight;
+    const calculatedHeight = rowData.length * rowHeight + headerHeight + 20;
     const gridHeight = Math.min(calculatedHeight, 700); // Cap at 700px
 
     const gridStyle = {

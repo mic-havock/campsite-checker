@@ -1,14 +1,12 @@
 @import "../../styles/variables";
 
 .facility-details {
-  background-color: $background-light;
+  background-color: white;
   border: 2px solid $primary-color;
   border-radius: $button-border-radius;
   padding: 20px;
   margin-top: 20px;
   position: relative;
-  border: 1px solid #ccc;
-  border-radius: 8px;
 
   .view-campsites-wrapper {
     position: absolute;
@@ -17,204 +15,87 @@
     z-index: 10;
   }
 
-  .image-gallery img {
-    cursor: pointer;
-    margin: 5px;
-    border-radius: $button-border-radius;
-    box-shadow: $shadow-md;
-  }
-
-  .modal-image {
-    max-width: 100%;
-    max-height: 80vh;
-    margin: 0 auto;
-  }
-
   .media-section {
-    margin-top: 20px;
+    margin: 2rem 0;
 
-    .media-grid {
-      display: flex;
-      flex-wrap: wrap;
+    .image-gallery {
+      max-width: 800px;
+      margin: 0 auto;
+    }
 
-      .media-item {
-        margin: 10px;
-        width: 200px;
+    .image-gallery-slide img {
+      width: 100%;
+      height: auto;
+      max-height: 500px;
+      object-fit: contain;
+    }
 
-        img {
-          width: 100%;
-          height: auto;
-          border-radius: 5px;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          cursor: pointer;
+    .image-gallery-thumbnails {
+      .image-gallery-thumbnails-container {
+        text-align: center;
+
+        .image-gallery-thumbnail {
+          width: 100px;
+          margin: 0 5px;
+
+          &.active {
+            border: 2px solid $primary-color;
+          }
         }
       }
     }
-  }
-}
 
-.image-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1rem;
-}
-
-.image-item {
-  cursor: pointer;
-  transition: $button-transition;
-
-  &:hover {
-    transform: translateY(-4px);
-  }
-
-  .image-container {
-    width: 100%;
-    height: 200px;
-    overflow: hidden;
-    border-radius: $button-border-radius;
-    box-shadow: $shadow-sm;
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    .image-gallery-description {
+      background: rgba(0, 0, 0, 0.7);
+      bottom: 0;
     }
   }
-
-  p {
-    margin-top: 0.5rem;
-    color: $text-primary;
-    font-size: 0.9rem;
-    text-align: center;
-  }
 }
 
-// Modal styles
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba($background-dark, 0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
-.nav-button {
-  @include button-base;
-  background: rgba($color-stone, 0.15);
-  backdrop-filter: blur(8px);
-  color: $text-light;
-  box-shadow: $shadow-sm;
-
-  &::before {
-    content: "";
-    display: inline-block;
-    width: 12px;
-    height: 12px;
-    border: 2px solid $text-light;
-    border-left: 0;
-    border-bottom: 0;
-    transition: $button-transition;
-  }
+// Customize react-image-gallery controls
+.image-gallery-icon {
+  color: $primary-color;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.3));
+  padding: 0;
+  background: transparent !important;
 
   &:hover {
-    background: rgba($color-stone, 0.25);
+    color: $secondary-color;
+    background: transparent !important;
   }
 
-  &.prev-button::before {
-    transform: rotate(-135deg);
-    margin-left: 4px;
+  &:focus {
+    outline: none;
+    background: transparent !important;
   }
 
-  &.next-button::before {
-    transform: rotate(45deg);
-    margin-right: 4px;
+  &.image-gallery-left-nav,
+  &.image-gallery-right-nav {
+    padding: 0;
+    width: 30px;
+    height: 30px;
+
+    .image-gallery-svg {
+      width: 30px;
+      height: 30px;
+    }
   }
 }
 
-.image-counter {
-  background: rgba($color-stone, 0.2);
-  color: $text-light;
-  padding: 8px 16px;
-  border-radius: 20px;
+.image-gallery-fullscreen-button {
+  bottom: 0;
+}
+
+.image-gallery-play-button {
+  bottom: 0;
+}
+
+.image-gallery-index {
+  background: rgba(0, 0, 0, 0.7);
+  padding: 5px 10px;
+  border-radius: 3px;
 }
 
 .camground-btn {
   @include button-primary;
-}
-
-.modal-content {
-  position: relative;
-  max-width: 90vw;
-  max-height: 90vh;
-
-  .close-button {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background-color: #ff4d4d;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 10px 15px;
-    font-size: 16px;
-    cursor: pointer;
-    z-index: 1100;
-    transition: background-color 0.3s ease;
-
-    &:hover {
-      background-color: #e60000;
-    }
-  }
-}
-
-.image-slider {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  .slider-image {
-    max-width: 100%;
-    max-height: 70vh;
-    object-fit: contain;
-  }
-}
-
-.thumbnails-nav {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
-  overflow-x: auto;
-  padding: 10px;
-
-  .thumbnail {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    cursor: pointer;
-    border-radius: 4px;
-    opacity: 0.6;
-    transition: opacity 0.3s ease;
-
-    &.active {
-      opacity: 1;
-      border: 2px solid $primary-color;
-    }
-
-    &:hover {
-      opacity: 0.8;
-    }
-  }
-}
-
-.image-caption {
-  color: $text-light;
-  margin-top: 10px;
-  text-align: center;
 }
