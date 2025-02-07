@@ -84,6 +84,7 @@ const FacilityGrid = ({ rowData, onRowSelected }) => {
         rowSelection={rowSelection}
         defaultColDef={defaultColDef}
         onSelectionChanged={onSelectionChanged}
+        headerHeight={30}
       />
     </div>
   );

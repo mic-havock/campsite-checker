@@ -182,6 +182,20 @@ const FacilitiesFinder = () => {
         setSelectedFacility(JSON.parse(savedSelectedFacility));
       setInputValue(JSON.parse(savedSearchParams)?.query || "");
     }
+
+    // Add event listener for browser/tab close
+    const handleUnload = () => {
+      localStorage.removeItem("searchParams");
+      localStorage.removeItem("facilities");
+      localStorage.removeItem("selectedFacility");
+    };
+
+    window.addEventListener("beforeunload", handleUnload);
+
+    // Cleanup function to remove event listener
+    return () => {
+      window.removeEventListener("beforeunload", handleUnload);
+    };
   }, [location.state]);
 
   return (

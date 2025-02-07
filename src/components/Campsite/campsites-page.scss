@@ -81,11 +81,11 @@ $transition: all 0.2s ease;
 // Campsites Grid
 .campsites-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  grid-template-columns: repeat(auto-fit, 300px);
+  justify-content: center;
   gap: 2rem;
   margin: 2rem auto;
   width: 100%;
-  max-width: 1600px;
   padding: 0 1rem;
 
   @media (max-width: 768px) {
@@ -97,7 +97,7 @@ $transition: all 0.2s ease;
 // Error Container
 .error-container {
   text-align: center;
-  padding: 3rem 2rem;
+  padding: 2rem 2rem;
   background: white;
   border-radius: $border-radius;
   box-shadow: $box-shadow;

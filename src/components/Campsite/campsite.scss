@@ -32,10 +32,14 @@
 }
 
 .no-image-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   width: auto;
-  height: 285px;
+  height: 280px;
   border-radius: $button-border-radius;
+  background: $background-light;
   margin-bottom: 2.5rem;
   box-shadow: $shadow-sm;
 }
