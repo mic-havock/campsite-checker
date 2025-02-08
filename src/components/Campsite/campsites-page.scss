@@ -13,7 +13,7 @@ $transition: all 0.2s ease;
   border-radius: $button-border-radius;
   padding: 20px;
   margin: 0;
-  width: 100vw;
+  width: 99vw;
   box-sizing: border-box;
   overflow-x: hidden;
 
@@ -80,8 +80,9 @@ $transition: all 0.2s ease;
 
 // Campsites Grid
 .campsites-grid {
+  overflow-x: hidden;
   display: grid;
-  grid-template-columns: repeat(auto-fit, 300px);
+  grid-template-columns: repeat(auto-fit, 330px);
   justify-content: center;
   gap: 2rem;
   margin: 2rem auto;
