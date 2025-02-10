@@ -6,7 +6,7 @@ import {
   TextFilterModule,
 } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchCampgroundAvailability } from "../../api/campsites";
 import reservationsAPI from "../../api/reservations";
@@ -41,6 +41,7 @@ const ReservationDetailsPage = () => {
   });
   const [startDate, setStartDate] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [hideNotReservable, setHideNotReservable] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -179,7 +180,7 @@ const ReservationDetailsPage = () => {
     const dates = Array.from(
       new Set(
         campsites.flatMap((campsite) =>
-          Object.keys(campsite.quantities).map(
+          Object.keys(campsite.availabilities).map(
             (date) => new Date(date).toISOString().split("T")[0]
           )
         )
@@ -196,8 +197,9 @@ const ReservationDetailsPage = () => {
 
       dates.forEach((date) => {
         row[date] = {
-          available: campsite.quantities[`${date}T00:00:00Z`] > 0,
-          quantity: campsite.quantities[`${date}T00:00:00Z`],
+          available:
+            campsite.availabilities[`${date}T00:00:00Z`] === "Available",
+          status: campsite.availabilities[`${date}T00:00:00Z`],
         };
       });
 
@@ -240,8 +242,9 @@ const ReservationDetailsPage = () => {
       },
       ...dates.map((date) => ({
         headerName: new Date(date).toLocaleDateString("en-US", {
-          month: "2-digit",
-          day: "2-digit",
+          timeZone: "UTC",
+          month: "numeric",
+          day: "numeric",
         }),
         field: date,
         width: 90,
@@ -277,6 +280,31 @@ const ReservationDetailsPage = () => {
               </div>
             );
           } else {
+            const getBackgroundColor = (status) => {
+              switch (status) {
+                case "NYR":
+                  return "#4a90e2"; // blue for NYR
+                case "Not Reservable":
+                  return "#707070"; // gray for Not Reservable
+                default:
+                  return "#d65140"; // red for other unavailable statuses
+              }
+            };
+
+            const getHoverColor = (status) => {
+              switch (status) {
+                case "NYR":
+                  return "#67a7ed"; // lighter blue for NYR hover
+                case "Not Reservable":
+                  return "#8a8a8a"; // lighter gray for Not Reservable hover
+                default:
+                  return "#ff6b5b"; // lighter red for other statuses
+              }
+            };
+
+            const baseColor = getBackgroundColor(data.status);
+            const hoverColor = getHoverColor(data.status);
+
             return (
               <div
                 style={{
@@ -285,23 +313,34 @@ const ReservationDetailsPage = () => {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  cursor: "pointer",
-                  backgroundColor: "#d65140",
+                  cursor:
+                    data.status === "Not Reservable"
+                      ? "not-allowed"
+                      : "pointer",
+                  backgroundColor: baseColor,
                   transition: "background-color 0.2s ease",
                   margin: "-1px",
                   position: "relative",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "#ff6b5b";
+                  e.currentTarget.style.backgroundColor = hoverColor;
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "#d65140";
+                  e.currentTarget.style.backgroundColor = baseColor;
                 }}
                 onClick={() =>
+                  data.status !== "Not Reservable" &&
                   handleUnavailableClick(params.data.campsiteObj, date)
                 }
+                title={data.status}
               >
-                X
+                {data.status === "NYR"
+                  ? "NYR"
+                  : data.status === "Not Reservable"
+                  ? "NR"
+                  : data.status === "Reserved"
+                  ? "R"
+                  : "X"}
               </div>
             );
           }
@@ -313,134 +352,180 @@ const ReservationDetailsPage = () => {
       })),
     ];
 
+    // Precompute a map of row IDs to their "Not Reservable" status
+    const notReservableMap = useMemo(() => {
+      const map = new Map();
+      rowData.forEach((row) => {
+        const isNotReservable = dates.every(
+          (date) =>
+            row.campsiteObj.availabilities[`${date}T00:00:00Z`] ===
+            "Not Reservable"
+        );
+        map.set(row.campsite, isNotReservable);
+      });
+      return map;
+    }, [rowData, dates]);
+
+    // Use the precomputed map to filter rows
+    const filteredRows = useMemo(() => {
+      if (!hideNotReservable) return rowData;
+      return rowData.filter((row) => !notReservableMap.get(row.campsite));
+    }, [rowData, hideNotReservable, notReservableMap]);
+
     return (
-      <div className="calendar-container" style={gridStyle}>
-        <AgGridReact
-          columnDefs={columnDefs}
-          rowData={rowData}
-          defaultColDef={{
-            sortable: true,
-            resizable: true,
-            filter: true,
+      <div className="reservation-details-container">
+        {isLoading && <LoadingSpinner fullPage />}
+
+        <div className="reservation-details-header">
+          <h1>Campground Availability</h1>
+
+          <div className="availability-section">
+            <select
+              id="month-select"
+              value={selectedMonth}
+              onChange={handleSelectChange}
+              disabled={isLoading}
+            >
+              <option value="">Select a month to see availability...</option>
+              {getNextMonths().map((month) => (
+                <option key={month.value} value={month.value}>
+                  {month.label}
+                </option>
+              ))}
+            </select>
+            <button
+              onClick={handleMonthChange}
+              className="check-availability-btn"
+              disabled={!selectedMonth || isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <LoadingSpinner size="small" />
+                  <span style={{ marginLeft: "8px" }}>Loading...</span>
+                </>
+              ) : (
+                "Check Availability"
+              )}
+            </button>
+          </div>
+
+          <div className="info-text">
+            <p>Click on an unavailable date to create a reservation alert</p>
+          </div>
+        </div>
+
+        <div
+          style={{
+            padding: "10px 0",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            position: "relative",
+            zIndex: 1,
           }}
-          onGridReady={(params) => {
-            setGridApi(params.api);
-            params.api.sizeColumnsToFit();
+        >
+          <input
+            type="checkbox"
+            id="hideNotReservable"
+            checked={hideNotReservable}
+            onChange={(e) => setHideNotReservable(e.target.checked)}
+            style={{ cursor: "pointer" }}
+          />
+          <label htmlFor="hideNotReservable" style={{ cursor: "pointer" }}>
+            Hide campsites that are not reservable
+          </label>
+        </div>
+
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            justifyContent: "flex-start",
+            paddingLeft: "20px",
           }}
-          headerHeight={headerHeight}
-          rowHeight={rowHeight}
-          domLayout="normal"
-        />
+        >
+          <div className="ag-theme-alpine" style={gridStyle}>
+            <AgGridReact
+              rowData={filteredRows}
+              columnDefs={columnDefs}
+              suppressHorizontalScroll={false}
+              defaultColDef={{
+                sortable: true,
+                resizable: true,
+                filter: true,
+              }}
+              onGridReady={(params) => {
+                setGridApi(params.api);
+                params.api.sizeColumnsToFit();
+              }}
+              headerHeight={headerHeight}
+              rowHeight={rowHeight}
+              domLayout="normal"
+            />
+          </div>
+        </div>
+
+        <button className="back-button" onClick={() => navigate(-1)}>
+          <span>←</span> Back to Campsites
+        </button>
+
+        {alertModal && (
+          <>
+            <div className="modal">
+              <h2>Create Availability Alert</h2>
+              <h3>{`Campsite: ${selectedCampsite.site} - ${selectedCampsite.loop}`}</h3>
+              <input
+                type="text"
+                placeholder="Name"
+                value={alertDetails.name}
+                onChange={(e) =>
+                  setAlertDetails((prev) => ({ ...prev, name: e.target.value }))
+                }
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                value={alertDetails.email}
+                onChange={(e) =>
+                  setAlertDetails((prev) => ({
+                    ...prev,
+                    email: e.target.value,
+                  }))
+                }
+              />
+              <label>Start Date:</label>
+              <input
+                type="date"
+                value={alertDetails.startDate}
+                onChange={(e) =>
+                  setAlertDetails((prev) => ({
+                    ...prev,
+                    startDate: e.target.value,
+                  }))
+                }
+              />
+              <label>End Date:</label>
+              <input
+                type="date"
+                value={alertDetails.endDate}
+                onChange={(e) =>
+                  setAlertDetails((prev) => ({
+                    ...prev,
+                    endDate: e.target.value,
+                  }))
+                }
+              />
+              <button onClick={handleCreateAlert}>Create Alert</button>
+              <button onClick={() => setAlertModal(false)}>Cancel</button>
+            </div>
+          </>
+        )}
       </div>
     );
   };
 
-  return (
-    <div className="reservation-details-container">
-      {isLoading && <LoadingSpinner fullPage />}
-
-      <div className="reservation-details-header">
-        <h1>Campground Availability</h1>
-
-        <div className="availability-section">
-          <select
-            id="month-select"
-            value={selectedMonth}
-            onChange={handleSelectChange}
-            disabled={isLoading}
-          >
-            <option value="">Select a month to see availability...</option>
-            {getNextMonths().map((month) => (
-              <option key={month.value} value={month.value}>
-                {month.label}
-              </option>
-            ))}
-          </select>
-          <button
-            onClick={handleMonthChange}
-            className="check-availability-btn"
-            disabled={!selectedMonth || isLoading}
-          >
-            {isLoading ? (
-              <>
-                <LoadingSpinner size="small" />
-                <span style={{ marginLeft: "8px" }}>Loading...</span>
-              </>
-            ) : (
-              "Check Availability"
-            )}
-          </button>
-        </div>
-
-        <div className="info-text">
-          <p>Click on an unavailable date to create a reservation alert</p>
-        </div>
-      </div>
-
-      <div>
-        {isLoading ? (
-          <div>
-            <p>Loading availability data...</p>
-          </div>
-        ) : (
-          renderCalendar()
-        )}
-      </div>
-
-      <button className="back-button" onClick={() => navigate(-1)}>
-        <span>←</span> Back to Campsites
-      </button>
-
-      {alertModal && (
-        <>
-          <div className="modal">
-            <h2>Create Availability Alert</h2>
-            <h3>{`Campsite: ${selectedCampsite.site} - ${selectedCampsite.loop}`}</h3>
-            <input
-              type="text"
-              placeholder="Name"
-              value={alertDetails.name}
-              onChange={(e) =>
-                setAlertDetails((prev) => ({ ...prev, name: e.target.value }))
-              }
-            />
-            <input
-              type="email"
-              placeholder="Email"
-              value={alertDetails.email}
-              onChange={(e) =>
-                setAlertDetails((prev) => ({ ...prev, email: e.target.value }))
-              }
-            />
-            <label>Start Date:</label>
-            <input
-              type="date"
-              value={alertDetails.startDate}
-              onChange={(e) =>
-                setAlertDetails((prev) => ({
-                  ...prev,
-                  startDate: e.target.value,
-                }))
-              }
-            />
-            <label>End Date:</label>
-            <input
-              type="date"
-              value={alertDetails.endDate}
-              onChange={(e) =>
-                setAlertDetails((prev) => ({
-                  ...prev,
-                  endDate: e.target.value,
-                }))
-              }
-            />
-            <button onClick={handleCreateAlert}>Create Alert</button>
-            <button onClick={() => setAlertModal(false)}>Cancel</button>
-          </div>
-        </>
-      )}
-    </div>
-  );
+  return renderCalendar();
 };
 
 export default ReservationDetailsPage;
