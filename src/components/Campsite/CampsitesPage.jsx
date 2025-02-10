@@ -87,6 +87,7 @@ const CampsitesPage = () => {
         state: {
           availabilityData: data,
           facilityID: facilityID,
+          campsiteName: facilityName,
         },
       });
     } catch (error) {
@@ -98,9 +99,6 @@ const CampsitesPage = () => {
   };
 
   const availableMonths = getNextMonths();
-  const selectedMonthData = availableMonths.find(
-    (m) => m.value === selectedMonth
-  );
 
   if (!campsites || campsites.length === 0) {
     return (
