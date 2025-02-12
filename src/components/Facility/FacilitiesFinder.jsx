@@ -6,10 +6,10 @@ import {
 } from "@trussworks/react-uswds";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { fetchCampsitesByFacility } from "../api/campsites";
-import { getFacilities } from "../api/facilities";
-import FacilityDetails from "./Facility/FacilityDetails";
-import FacilityGrid from "./Facility/FacilityGrid";
+import { fetchCampsitesByFacility } from "../../api/campsites";
+import { getFacilities } from "../../api/facilities";
+import FacilityDetails from "./FacilityDetails";
+import FacilityGrid from "./FacilityGrid";
 import "./facilities-finder.scss";
 
 const FacilitiesFinder = () => {

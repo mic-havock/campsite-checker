@@ -1,7 +1,7 @@
 import { useState } from "react";
 import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/scss/image-gallery.scss";
-import LoadingSpinner from "../common/LoadingSpinner/LoadingSpinner";
+import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
 import "./facility-details.scss";
 
 const FacilityDetails = ({ facility, handleViewCampsites }) => {

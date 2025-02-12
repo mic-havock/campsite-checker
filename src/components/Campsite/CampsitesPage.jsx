@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchCampgroundAvailability } from "../../api/campsites";
-import LoadingSpinner from "../common/LoadingSpinner/LoadingSpinner";
+import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
 import Campsite from "./Campsite";
 import "./campsites-page.scss";
 

@@ -10,7 +10,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchCampgroundAvailability } from "../../api/campsites";
 import reservationsAPI from "../../api/reservations";
-import LoadingSpinner from "../common/LoadingSpinner/LoadingSpinner";
+import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
 import "./reservation-details.scss";
 
 // Register all required modules
@@ -28,6 +28,7 @@ const ReservationDetailsPage = () => {
     location.state?.availabilityData
   );
   const facilityID = location.state?.facilityID;
+  const campsiteName = location.state?.campsiteName;
   const [alertModal, setAlertModal] = useState(false);
   const [selectedCampsite, setSelectedCampsite] = useState(null);
   const [tableWidth, setTableWidth] = useState(window.innerWidth);
@@ -87,6 +88,8 @@ const ReservationDetailsPage = () => {
       name,
       email_address: email,
       campsite_id: selectedCampsite.campsite_id,
+      campsite_number: selectedCampsite.site,
+      campsite_name: campsiteName,
       reservation_start_date: startDate,
       reservation_end_date: endDate,
       monitoring_active: true,
@@ -416,35 +419,86 @@ const ReservationDetailsPage = () => {
 
         <div
           style={{
-            padding: "10px 0",
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            position: "relative",
-            zIndex: 1,
-          }}
-        >
-          <input
-            type="checkbox"
-            id="hideNotReservable"
-            checked={hideNotReservable}
-            onChange={(e) => setHideNotReservable(e.target.checked)}
-            style={{ cursor: "pointer" }}
-          />
-          <label htmlFor="hideNotReservable" style={{ cursor: "pointer" }}>
-            Hide campsites that are not reservable
-          </label>
-        </div>
-
-        <div
-          style={{
             width: "100%",
             height: "100%",
             display: "flex",
-            justifyContent: "flex-start",
-            paddingLeft: "20px",
+            flexDirection: "column",
+            alignItems: "flex-start",
+            paddingLeft: "5px",
           }}
         >
+          <div
+            style={{
+              display: "flex",
+              gap: "20px",
+              marginBottom: "10px",
+              fontSize: "14px",
+              alignItems: "center",
+            }}
+          >
+            <span
+              style={{
+                backgroundColor: "#4caf50",
+                color: "white",
+                padding: "2px 8px",
+                borderRadius: "4px",
+              }}
+            >
+              A = Available
+            </span>
+            <span
+              style={{
+                backgroundColor: "#d65140",
+                color: "white",
+                padding: "2px 8px",
+                borderRadius: "4px",
+              }}
+            >
+              R = Reserved
+            </span>
+            <span
+              style={{
+                backgroundColor: "#4a90e2",
+                color: "white",
+                padding: "2px 8px",
+                borderRadius: "4px",
+              }}
+            >
+              NYR = Not Yet Released
+            </span>
+            <span
+              style={{
+                backgroundColor: "#707070",
+                color: "white",
+                padding: "2px 8px",
+                borderRadius: "4px",
+              }}
+            >
+              NR = Not Reservable
+            </span>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                marginLeft: "20px",
+                borderLeft: "1px solid #ccc",
+                paddingLeft: "20px",
+              }}
+            >
+              <input
+                type="checkbox"
+                id="hideNotReservable"
+                checked={hideNotReservable}
+                onChange={(e) => setHideNotReservable(e.target.checked)}
+                style={{ cursor: "pointer" }}
+              />
+              <label htmlFor="hideNotReservable" style={{ cursor: "pointer" }}>
+                Hide campsites that are not reservable for all dates
+              </label>
+            </div>
+          </div>
+
           <div className="ag-theme-alpine" style={gridStyle}>
             <AgGridReact
               rowData={filteredRows}

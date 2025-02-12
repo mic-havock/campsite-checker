@@ -8,12 +8,13 @@ const Campsite = ({ campsite }) => {
     CampsiteName,
     CampsiteReservable,
     CampsiteType,
+    Loop,
     ENTITYMEDIA,
     ATTRIBUTES,
     PERMITTEDEQUIPMENT,
   } = campsite;
   const [isExpanded, setIsExpanded] = useState(false);
-
+  console.log(JSON.stringify(campsite, null, 2));
   // Transform campsite media into format required by react-image-gallery
   const images =
     ENTITYMEDIA?.map((media) => ({
@@ -39,10 +40,13 @@ const Campsite = ({ campsite }) => {
 
         <div className="campsite-info">
           <h3>
-            {CampsiteName} -{" "}
-            {CampsiteReservable ? "Reservable" : "Not Reservable"}
+            {CampsiteName} - {Loop}
           </h3>
-          <div className="campsite-tags">{CampsiteType}</div>
+          <div className="campsite-tags">
+            {CampsiteReservable ? "Reservable" : "Not Reservable"}
+            <br />
+            {CampsiteType}
+          </div>
         </div>
       </div>
 
