@@ -132,3 +132,42 @@ $transition: all 0.2s ease;
     left: 1rem;
   }
 }
+
+.filters {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  margin: 0 auto 0 auto;
+  margin-bottom: -2rem;
+  align-items: center;
+  max-width: 600px;
+  justify-content: center;
+
+  input[type="text"],
+  select {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    min-width: 200px;
+  }
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    input[type="checkbox"] {
+      margin: 0;
+    }
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+
+    input[type="text"],
+    select {
+      min-width: 100%;
+    }
+  }
+}

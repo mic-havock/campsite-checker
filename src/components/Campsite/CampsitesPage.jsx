@@ -13,6 +13,8 @@ const CampsitesPage = () => {
   const [selectedMonth, setSelectedMonth] = useState("");
   const facilityID = campsites?.[0]?.FacilityID;
   const [isLoading, setIsLoading] = useState(false);
+  const [showReservableOnly, setShowReservableOnly] = useState(false);
+  const [selectedLoop, setSelectedLoop] = useState("");
 
   useEffect(() => {
     // Filter out campsites with "Don't Use" in the name and sort the rest alphabetically
@@ -100,6 +102,16 @@ const CampsitesPage = () => {
 
   const availableMonths = getNextMonths();
 
+  // Get unique loops for the dropdown
+  const uniqueLoops = [...new Set(campsiteData.map((site) => site.Loop))];
+
+  // Filter campsites based on both reservable and loop filters
+  const filteredCampsites = campsiteData.filter((campsite) => {
+    const reservableMatch = !showReservableOnly || campsite.CampsiteReservable;
+    const loopMatch = !selectedLoop || campsite.Loop === selectedLoop;
+    return reservableMatch && loopMatch;
+  });
+
   if (!campsites || campsites.length === 0) {
     return (
       <div className="campsites-page">
@@ -158,8 +170,31 @@ const CampsitesPage = () => {
         </button>
       </div>
 
+      <div className="filters">
+        <select
+          value={selectedLoop}
+          onChange={(e) => setSelectedLoop(e.target.value)}
+        >
+          <option value="">All Loops</option>
+          {uniqueLoops.map((loop) => (
+            <option key={loop} value={loop}>
+              {loop}
+            </option>
+          ))}
+        </select>
+
+        <label>
+          <input
+            type="checkbox"
+            checked={showReservableOnly}
+            onChange={(e) => setShowReservableOnly(e.target.checked)}
+          />
+          Show Only Reservable Sites
+        </label>
+      </div>
+
       <div className="campsites-grid">
-        {campsiteData.map((campsite) => (
+        {filteredCampsites.map((campsite) => (
           <Campsite key={campsite.CampsiteID} campsite={campsite} />
         ))}
       </div>
