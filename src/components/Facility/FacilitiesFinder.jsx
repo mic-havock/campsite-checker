@@ -200,8 +200,19 @@ const FacilitiesFinder = () => {
 
   return (
     <GridContainer className="facilities-finder">
-      <h1>Recreation Information Database (RIDB)</h1>
-      <h1>Campground Finder</h1>
+      <div className="header">
+        <div className="brand">
+          <img src="/kampscout.svg" alt="Kamp Scout Logo" className="logo" />
+          <h1>Kamp Scout</h1>
+        </div>
+        <p className="description">
+          Find and explore campgrounds across the United States with ease.
+          Search by state or name to discover the perfect spot for your next
+          outdoor adventure. If your desired campsite isn’t available, set an
+          alert, and we’ll notify you when it opens up!
+        </p>
+      </div>
+
       <form
         onSubmit={handleSubmit}
         className="facilities-finder__form"

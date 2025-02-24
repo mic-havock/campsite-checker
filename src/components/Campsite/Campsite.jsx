@@ -12,6 +12,7 @@ const Campsite = ({ campsite }) => {
     ENTITYMEDIA,
     ATTRIBUTES,
     PERMITTEDEQUIPMENT,
+    CampsiteID,
   } = campsite;
   const [isExpanded, setIsExpanded] = useState(false);
   console.log(JSON.stringify(campsite, null, 2));
@@ -86,6 +87,14 @@ const Campsite = ({ campsite }) => {
                 {CampsiteType} -{" "}
                 {CampsiteReservable ? "Reservable" : "Not Reservable"}
               </div>
+              <a
+                href={`https://www.recreation.gov/camping/campsites/${CampsiteID}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="recreation-link"
+              >
+                View on Recreation.gov →
+              </a>
 
               {ATTRIBUTES && ATTRIBUTES.length > 0 && (
                 <div className="attributes-section">

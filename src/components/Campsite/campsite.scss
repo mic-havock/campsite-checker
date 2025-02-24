@@ -275,3 +275,20 @@
     grid-template-columns: 1fr;
   }
 }
+
+.recreation-link {
+  display: inline-block;
+  margin: 1rem 0;
+  margin-bottom: -1rem;
+  padding: 0.5rem 1rem;
+  color: #2e7d32;
+  text-decoration: none;
+  border: 1px solid #2e7d32;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #2e7d32;
+    color: white;
+  }
+}
