@@ -289,8 +289,10 @@ const ReservationDetailsPage = () => {
                   return "#4a90e2"; // blue for NYR
                 case "Not Reservable":
                   return "#707070"; // gray for Not Reservable
+                case "Reserved":
+                  return "#d65140"; // blue for Reserved
                 default:
-                  return "#d65140"; // red for other unavailable statuses
+                  return "#707070"; // red for other unavailable statuses
               }
             };
 
@@ -300,8 +302,10 @@ const ReservationDetailsPage = () => {
                   return "#67a7ed"; // lighter blue for NYR hover
                 case "Not Reservable":
                   return "#8a8a8a"; // lighter gray for Not Reservable hover
-                default:
+                case "Reserved":
                   return "#ff6b5b"; // lighter red for other statuses
+                default:
+                  return "#8a8a8a"; // lighter red for other statuses
               }
             };
 
@@ -317,7 +321,9 @@ const ReservationDetailsPage = () => {
                   alignItems: "center",
                   justifyContent: "center",
                   cursor:
-                    data.status === "Not Reservable"
+                    data.status === "Not Reservable" ||
+                    data.status === "" ||
+                    !data.status
                       ? "not-allowed"
                       : "pointer",
                   backgroundColor: baseColor,
@@ -343,7 +349,8 @@ const ReservationDetailsPage = () => {
                   ? "NR"
                   : data.status === "Reserved"
                   ? "R"
-                  : "X"}
+                  : "NR"}
+                {/* //If no status campsite is not reservable */}
               </div>
             );
           }
@@ -359,11 +366,10 @@ const ReservationDetailsPage = () => {
     const notReservableMap = useMemo(() => {
       const map = new Map();
       rowData.forEach((row) => {
-        const isNotReservable = dates.every(
-          (date) =>
-            row.campsiteObj.availabilities[`${date}T00:00:00Z`] ===
-            "Not Reservable"
-        );
+        const isNotReservable = dates.every((date) => {
+          const status = row.campsiteObj.availabilities[`${date}T00:00:00Z`];
+          return status === "Not Reservable" || status === "" || !status;
+        });
         map.set(row.campsite, isNotReservable);
       });
       return map;
