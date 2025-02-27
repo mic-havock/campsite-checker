@@ -56,9 +56,8 @@ const Campsite = ({ campsite }) => {
             {CampsiteName} - {Loop}
           </h3>
           <div className="campsite-tags">
+            {toTitleCase(CampsiteType)} -{" "}
             {CampsiteReservable ? "Reservable" : "Not Reservable"}
-            <br />
-            {CampsiteType}
           </div>
         </div>
       </div>
@@ -87,7 +86,9 @@ const Campsite = ({ campsite }) => {
 
             <div className="modal-details">
               <div className="campsite-header">
-                <h2>Campsite: {CampsiteName}</h2>
+                <h2>
+                  Campsite: {CampsiteName} - {Loop}
+                </h2>
                 <a
                   href={`https://www.recreation.gov/camping/campsites/${CampsiteID}`}
                   target="_blank"
