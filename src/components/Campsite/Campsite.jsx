@@ -15,7 +15,19 @@ const Campsite = ({ campsite }) => {
     CampsiteID,
   } = campsite;
   const [isExpanded, setIsExpanded] = useState(false);
-  console.log(JSON.stringify(campsite, null, 2));
+
+  const toTitleCase = (str) => {
+    const exceptions = ["AM", "PM", "N/A"];
+    return str
+      .split(" ")
+      .map((word) => {
+        if (exceptions.includes(word)) {
+          return word;
+        }
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      })
+      .join(" ");
+  };
   // Transform campsite media into format required by react-image-gallery
   const images =
     ENTITYMEDIA?.map((media) => ({
@@ -54,14 +66,6 @@ const Campsite = ({ campsite }) => {
       {isExpanded && (
         <div className="overlay" onClick={() => setIsExpanded(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button
-              className="close-button"
-              onClick={() => setIsExpanded(false)}
-              aria-label="Close"
-            >
-              ×
-            </button>
-
             <div className="media-section">
               {images.length > 0 ? (
                 <ImageGallery
@@ -82,43 +86,48 @@ const Campsite = ({ campsite }) => {
             </div>
 
             <div className="modal-details">
-              <h2>Campsite: {CampsiteName}</h2>
-              <div className="campsite-tags">
-                {CampsiteType} -{" "}
-                {CampsiteReservable ? "Reservable" : "Not Reservable"}
+              <div className="campsite-header">
+                <h2>Campsite: {CampsiteName}</h2>
+                <a
+                  href={`https://www.recreation.gov/camping/campsites/${CampsiteID}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="recreation-link"
+                >
+                  View on Recreation.gov →
+                </a>
               </div>
-              <a
-                href={`https://www.recreation.gov/camping/campsites/${CampsiteID}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="recreation-link"
-              >
-                View on Recreation.gov →
-              </a>
 
               {ATTRIBUTES && ATTRIBUTES.length > 0 && (
                 <div className="attributes-section">
                   <h3>Campsite Details</h3>
                   <div className="attributes-grid">
+                    <div className="attribute-item">
+                      <span className="attribute-name">TYPE: </span>
+                      {toTitleCase(CampsiteType)}
+                    </div>
+                    <div className="attribute-item">
+                      <span className="attribute-name">RESERVABLE: </span>
+                      {CampsiteReservable ? "Reservable" : "Not Reservable"}
+                    </div>
                     {ATTRIBUTES.map((attribute, index) => (
                       <div key={index} className="attribute-item">
                         <span className="attribute-name">
-                          {attribute.AttributeName}:
+                          {attribute.AttributeName.toUpperCase()}:
                         </span>
-                        {attribute.AttributeValue}
+                        {toTitleCase(attribute.AttributeValue)}
                       </div>
                     ))}
                   </div>
                 </div>
               )}
-
               {PERMITTEDEQUIPMENT && PERMITTEDEQUIPMENT.length > 0 && (
                 <div className="attributes-section">
                   <h3>Permitted Equipment</h3>
                   <div className="attributes-grid">
                     {PERMITTEDEQUIPMENT.map((equipment, index) => (
                       <div key={index} className="attribute-item">
-                        {equipment.EquipmentName}
+                        {toTitleCase(equipment.EquipmentName)}
                       </div>
                     ))}
                   </div>

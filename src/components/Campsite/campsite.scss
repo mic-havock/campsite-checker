@@ -44,10 +44,31 @@
   box-shadow: $shadow-sm;
 }
 
+.campsite-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  margin-top: -1rem;
+  margin-bottom: -1rem;
+  box-sizing: border-box;
+
+  h2 {
+    margin: 0;
+  }
+
+  .recreation-link {
+    margin: 0;
+  }
+}
+
 .campsite-info {
   padding: 0;
   text-align: center;
   margin-top: -2rem;
+
   .campsite-tags {
     margin-top: -1.4rem;
     padding: 0;
@@ -82,39 +103,32 @@
   opacity: 0;
   transform: scale(0.9);
   animation: modalPop 0.3s ease-out 0.1s forwards;
-  padding-top: 60px;
-}
+  padding-top: 3rem;
 
-.close-button {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background: #dc3545;
-  color: white;
-  border: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 4px;
-  font-size: 24px;
-  cursor: pointer;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background: #c82333;
-    transform: scale(1.1);
+  // Add these styles for the scrollbar
+  &::-webkit-scrollbar {
+    width: 10px;
   }
 
-  &:active {
-    transform: scale(0.95);
+  &::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 0 16px 16px 0;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+    border: 2px solid white;
+  }
+
+  &::-webkit-scrollbar-corner {
+    background: transparent;
   }
 }
 
 .modal-details {
-  padding: 32px;
+  padding: 2rem;
+  //margin-top: -2.5rem;
 
   h2 {
     margin: 0 0 16px;
@@ -125,10 +139,7 @@
 }
 
 .attributes-section {
-  margin-top: 32px;
-  padding-top: 24px;
-  border-top: 1px solid #e9ecef;
-
+  margin-top: 0.5rem;
   h3 {
     margin: 0 0 20px;
     color: #2c3e50;
@@ -138,21 +149,23 @@
 }
 
 .attributes-grid {
+  margin-top: -1rem;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 16px;
 }
 
 .attribute-item {
-  background: #f8f9fa;
+  background: $background-light;
   border-radius: 12px;
   display: flex;
   flex-direction: column;
   padding: 4px;
+  font-size: 0.9rem;
+  padding-left: 0.5rem;
 
   .attribute-name {
     color: #6c757d;
-    font-size: 0.9rem;
   }
 }
 
@@ -179,11 +192,12 @@
 
 // Media section and Image Gallery styles
 .media-section {
-  margin: 2rem 0;
+  // margin: 2rem 0;
 
   .image-gallery {
-    max-width: 800px;
+    max-width: 850px;
     margin: 0 auto;
+    margin-top: -1rem;
     padding: 1rem;
     background-color: $background-light;
     border: 1px solid #e0e0e0;
@@ -277,7 +291,7 @@
   }
 
   .attributes-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 2fr;
   }
 }
 
