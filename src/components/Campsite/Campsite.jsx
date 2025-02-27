@@ -17,7 +17,7 @@ const Campsite = ({ campsite }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const toTitleCase = (str) => {
-    const exceptions = ["AM", "PM"];
+    const exceptions = ["AM", "PM", "RV"];
     return str
       .split(" ")
       .map((word) => {
