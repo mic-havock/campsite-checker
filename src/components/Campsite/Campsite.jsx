@@ -17,12 +17,22 @@ const Campsite = ({ campsite }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const toTitleCase = (str) => {
-    const exceptions = ["AM", "PM", "N/A"];
+    const exceptions = ["AM", "PM"];
     return str
       .split(" ")
       .map((word) => {
         if (exceptions.includes(word)) {
           return word;
+        }
+        // Handle words with slashes
+        if (word.includes("/")) {
+          return word
+            .split("/")
+            .map(
+              (part) =>
+                part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
+            )
+            .join("/");
         }
         return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
       })
