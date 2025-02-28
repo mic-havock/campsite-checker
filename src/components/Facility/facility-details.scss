@@ -16,6 +16,40 @@
     z-index: 10;
   }
 
+  .facility-info-row {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+
+    p {
+      margin-right: 1rem;
+      flex: 1;
+    }
+  }
+
+  .facility-details-table {
+    width: 100%;
+    margin-bottom: 1.5rem;
+    border-collapse: collapse;
+
+    td {
+      padding: 0.5rem 1rem 0.5rem 0;
+      vertical-align: top;
+
+      &:first-child {
+        width: 50%;
+      }
+    }
+
+    tr {
+      border-bottom: 1px solid #f0f0f0;
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+
   .media-section {
     margin: 2rem 0;
 
@@ -108,4 +142,22 @@
 
 .camground-btn {
   @include button-primary;
+}
+
+.recreation-link {
+  display: block;
+  margin-top: -1rem !important;
+  margin: 0 auto;
+  width: fit-content;
+  padding: 0.5rem 1rem;
+  color: #2e7d32;
+  text-decoration: none;
+  border: 1px solid #2e7d32;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #2e7d32;
+    color: white;
+  }
 }

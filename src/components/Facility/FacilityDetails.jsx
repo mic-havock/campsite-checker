@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { useState } from "react";
 import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/scss/image-gallery.scss";
@@ -48,42 +49,52 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
       </div>
 
       <h2>Facility Details</h2>
-      <p>
-        <strong>Facility Name:</strong> {facility.FacilityName}
-      </p>
-      <p>
-        <strong>Facility Type:</strong> {facility.FacilityTypeDescription}
-      </p>
-      <p>
-        <strong>Phone:</strong> {facility.FacilityPhone}
-      </p>
-      <p>
-        <strong>Email:</strong>{" "}
-        {facility.FacilityEmail ? facility.FacilityEmail : "None Available"}
-      </p>
-      <p>
-        <strong>Longitude:</strong>{" "}
-        {Array.isArray(facility.GEOJSON?.COORDINATES)
-          ? facility.GEOJSON.COORDINATES[0]
-          : "Not Available"}
-      </p>
-      <p>
-        <strong>Latitude:</strong>{" "}
-        {Array.isArray(facility.GEOJSON?.COORDINATES)
-          ? facility.GEOJSON.COORDINATES[1]
-          : "Not Available"}
-      </p>
-      <p>
-        {Array.isArray(facility.GEOJSON?.COORDINATES) ? (
-          <a
-            href={`https://www.google.com/maps?q=${facility.GEOJSON.COORDINATES[1]},${facility.GEOJSON.COORDINATES[0]}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            View on Google Maps
-          </a>
-        ) : null}
-      </p>
+      <table className="facility-details-table">
+        <tbody>
+          <tr>
+            <td>
+              <strong>Facility Name:</strong> {facility.FacilityName}
+            </td>
+            <td>
+              <strong>Facility Type:</strong> {facility.FacilityTypeDescription}
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Phone:</strong> {facility.FacilityPhone}
+            </td>
+            <td>
+              <strong>Email:</strong>{" "}
+              {facility.FacilityEmail
+                ? facility.FacilityEmail
+                : "None Available"}
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Latitude, Longitude:</strong>{" "}
+              {Array.isArray(facility.GEOJSON?.COORDINATES)
+                ? facility.GEOJSON.COORDINATES[1]
+                : "Not Available"}
+              {", "}
+              {Array.isArray(facility.GEOJSON?.COORDINATES)
+                ? facility.GEOJSON.COORDINATES[0]
+                : "Not Available"}
+            </td>
+            <td>
+              {Array.isArray(facility.GEOJSON?.COORDINATES) ? (
+                <a
+                  href={`https://www.google.com/maps?q=${facility.GEOJSON.COORDINATES[1]},${facility.GEOJSON.COORDINATES[0]}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View on Google Maps
+                </a>
+              ) : null}
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
       <div
         dangerouslySetInnerHTML={{
@@ -119,8 +130,39 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
           <p>No images available</p>
         )}
       </div>
+      <a
+        href={`https://www.recreation.gov/camping/campgrounds/${facility.FacilityID}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="recreation-link"
+      >
+        View on Recreation.gov →
+      </a>
     </div>
   );
+};
+
+// Define PropTypes for the component
+FacilityDetails.propTypes = {
+  facility: PropTypes.shape({
+    FacilityID: PropTypes.string.isRequired,
+    FacilityName: PropTypes.string.isRequired,
+    FacilityTypeDescription: PropTypes.string,
+    FacilityPhone: PropTypes.string,
+    FacilityEmail: PropTypes.string,
+    FacilityDescription: PropTypes.string,
+    FacilityDirections: PropTypes.string,
+    MEDIA: PropTypes.arrayOf(
+      PropTypes.shape({
+        URL: PropTypes.string.isRequired,
+        Title: PropTypes.string,
+      })
+    ),
+    GEOJSON: PropTypes.shape({
+      COORDINATES: PropTypes.array,
+    }),
+  }).isRequired,
+  handleViewCampsites: PropTypes.func.isRequired,
 };
 
 export default FacilityDetails;
