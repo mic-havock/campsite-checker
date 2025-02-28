@@ -184,6 +184,30 @@
     &:last-of-type {
       @include button-danger;
     }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+  }
+
+  .modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+
+    .create-alert-btn,
+    .cancel-btn {
+      min-width: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .loading-spinner {
+        margin-right: 0;
+      }
+    }
   }
 }
 

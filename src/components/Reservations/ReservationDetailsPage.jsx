@@ -42,6 +42,7 @@ const ReservationDetailsPage = () => {
   });
   const [startDate, setStartDate] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isCreatingAlert, setIsCreatingAlert] = useState(false);
   const [hideNotReservable, setHideNotReservable] = useState(false);
 
   useEffect(() => {
@@ -98,6 +99,7 @@ const ReservationDetailsPage = () => {
     };
 
     try {
+      setIsCreatingAlert(true);
       const result = await reservationsAPI.create(reservationData);
       setAlertModal(false);
       alert(
@@ -107,6 +109,8 @@ const ReservationDetailsPage = () => {
     } catch (error) {
       console.error("Error creating reservation:", error);
       alert("Failed to create alert. Please try again.");
+    } finally {
+      setIsCreatingAlert(false);
     }
   };
 
@@ -542,6 +546,7 @@ const ReservationDetailsPage = () => {
                 onChange={(e) =>
                   setAlertDetails((prev) => ({ ...prev, name: e.target.value }))
                 }
+                disabled={isCreatingAlert}
               />
               <input
                 type="email"
@@ -553,6 +558,7 @@ const ReservationDetailsPage = () => {
                     email: e.target.value,
                   }))
                 }
+                disabled={isCreatingAlert}
               />
               <label>Start Date:</label>
               <input
@@ -564,6 +570,7 @@ const ReservationDetailsPage = () => {
                     startDate: e.target.value,
                   }))
                 }
+                disabled={isCreatingAlert}
               />
               <label>End Date:</label>
               <input
@@ -575,9 +582,31 @@ const ReservationDetailsPage = () => {
                     endDate: e.target.value,
                   }))
                 }
+                disabled={isCreatingAlert}
               />
-              <button onClick={handleCreateAlert}>Create Alert</button>
-              <button onClick={() => setAlertModal(false)}>Cancel</button>
+              <div className="modal-buttons">
+                <button
+                  onClick={handleCreateAlert}
+                  disabled={isCreatingAlert}
+                  className="create-alert-btn"
+                >
+                  {isCreatingAlert ? (
+                    <>
+                      <LoadingSpinner size="small" />
+                      <span style={{ marginLeft: "8px" }}>Creating...</span>
+                    </>
+                  ) : (
+                    "Create Alert"
+                  )}
+                </button>
+                <button
+                  onClick={() => setAlertModal(false)}
+                  disabled={isCreatingAlert}
+                  className="cancel-btn"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </>
         )}
