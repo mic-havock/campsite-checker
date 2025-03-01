@@ -6,7 +6,7 @@ import {
   TextFilterModule,
 } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchCampgroundAvailability } from "../../api/campsites";
 import reservationsAPI from "../../api/reservations";
@@ -44,6 +44,9 @@ const ReservationDetailsPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isCreatingAlert, setIsCreatingAlert] = useState(false);
   const [hideNotReservable, setHideNotReservable] = useState(false);
+  const isMounted = useRef(true);
+  const isSubmitting = useRef(false);
+  const [forceUpdateCounter, setForceUpdateCounter] = useState(0);
 
   useEffect(() => {
     const handleResize = () => {
@@ -56,6 +59,71 @@ const ReservationDetailsPage = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [gridApi]);
+
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  const { dates, rowData } = useMemo(() => {
+    if (!availabilityData || !availabilityData.campsites) {
+      return { dates: [], rowData: [] };
+    }
+
+    const campsitesData = Object.values(availabilityData.campsites);
+    const datesArray = Array.from(
+      new Set(
+        campsitesData.flatMap((campsite) =>
+          Object.keys(campsite.availabilities).map(
+            (date) => new Date(date).toISOString().split("T")[0]
+          )
+        )
+      )
+    ).sort();
+
+    // Transform data for AG Grid
+    const rowDataArray = campsitesData.map((campsite) => {
+      const row = {
+        campsite: `${campsite.site}`,
+        loop: `${campsite.loop}`,
+        campsiteObj: campsite, // Store full campsite object for reference
+      };
+
+      datesArray.forEach((date) => {
+        row[date] = {
+          available:
+            campsite.availabilities[`${date}T00:00:00Z`] === "Available",
+          status: campsite.availabilities[`${date}T00:00:00Z`],
+        };
+      });
+
+      return row;
+    });
+
+    return { dates: datesArray, rowData: rowDataArray };
+  }, [availabilityData]);
+
+  const notReservableMap = useMemo(() => {
+    const map = new Map();
+
+    if (!dates.length || !rowData.length) return map;
+
+    rowData.forEach((row) => {
+      const isNotReservable = dates.every((date) => {
+        const status = row.campsiteObj?.availabilities[`${date}T00:00:00Z`];
+        return status === "Not Reservable" || status === "" || !status;
+      });
+      map.set(row.campsite, isNotReservable);
+    });
+    return map;
+  }, [rowData, dates]);
+
+  const filteredRows = useMemo(() => {
+    if (!rowData.length) return [];
+    if (!hideNotReservable) return rowData;
+    return rowData.filter((row) => !notReservableMap.get(row.campsite));
+  }, [rowData, hideNotReservable, notReservableMap]);
 
   if (!availabilityData || !availabilityData.campsites) {
     return (
@@ -77,14 +145,36 @@ const ReservationDetailsPage = () => {
     setAlertModal(true);
   };
 
+  const forceUpdate = () => {
+    setForceUpdateCounter((prev) => prev + 1);
+  };
+
   const handleCreateAlert = async () => {
-    console.log("Creating alert:", alertDetails);
+    // Prevent duplicate submissions
+    if (isSubmitting.current) {
+      return;
+    }
+
+    // Form validation
     const { name, email, startDate, endDate } = alertDetails;
     if (!name || !email || !startDate || !endDate) {
       alert("Please fill in all fields.");
       return;
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+
+    // Set loading state
+    isSubmitting.current = true;
+    setIsCreatingAlert(true);
+    // Force a re-render to ensure loading state is visible
+    forceUpdate();
+
+    // Prepare data
     const reservationData = {
       name,
       email_address: email,
@@ -99,18 +189,59 @@ const ReservationDetailsPage = () => {
     };
 
     try {
-      setIsCreatingAlert(true);
       const result = await reservationsAPI.create(reservationData);
-      setAlertModal(false);
-      alert(
-        `\nAlert created successfully! Reservation ID: ${result.id} \n\nIf your selection becomes available, you will receive an email.`
-      );
-      setAlertDetails({ name: "", email: "", startDate: "", endDate: "" });
-    } catch (error) {
-      console.error("Error creating reservation:", error);
-      alert("Failed to create alert. Please try again.");
-    } finally {
+
+      // Reset states BEFORE showing alert
       setIsCreatingAlert(false);
+      isSubmitting.current = false;
+      // Force a re-render to ensure loading state is updated
+      forceUpdate();
+
+      // Ensure the spinner is hidden using direct DOM manipulation as a fallback
+      try {
+        const spinnerElements = document.querySelectorAll(
+          ".create-alert-btn .loading-spinner"
+        );
+        spinnerElements.forEach((el) => {
+          el.style.display = "none";
+        });
+      } catch {
+        // Silently handle any DOM manipulation errors
+      }
+
+      // Close modal and reset form
+      setAlertModal(false);
+      setAlertDetails({ name: "", email: "", startDate: "", endDate: "" });
+
+      // Show success message AFTER state updates
+      window.setTimeout(() => {
+        alert(
+          `Alert created successfully! Reservation ID: ${result.id}\n\nIf your selection becomes available, you will receive an email.`
+        );
+      }, 50);
+    } catch (error) {
+      // Reset states BEFORE showing alert
+      setIsCreatingAlert(false);
+      isSubmitting.current = false;
+      // Force a re-render to ensure loading state is updated
+      forceUpdate();
+
+      // Ensure the spinner is hidden using direct DOM manipulation as a fallback
+      try {
+        const spinnerElements = document.querySelectorAll(
+          ".create-alert-btn .loading-spinner"
+        );
+        spinnerElements.forEach((el) => {
+          el.style.display = "none";
+        });
+      } catch {
+        // Silently handle any DOM manipulation errors
+      }
+
+      // Show error message AFTER state updates
+      window.setTimeout(() => {
+        alert(error.message || "Failed to create alert. Please try again.");
+      }, 50);
     }
   };
 
@@ -183,36 +314,6 @@ const ReservationDetailsPage = () => {
   };
 
   const renderCalendar = () => {
-    const campsites = Object.values(availabilityData.campsites);
-    const dates = Array.from(
-      new Set(
-        campsites.flatMap((campsite) =>
-          Object.keys(campsite.availabilities).map(
-            (date) => new Date(date).toISOString().split("T")[0]
-          )
-        )
-      )
-    ).sort();
-
-    // Transform data for AG Grid
-    const rowData = campsites.map((campsite) => {
-      const row = {
-        campsite: `${campsite.site}`,
-        loop: `${campsite.loop}`,
-        campsiteObj: campsite, // Store full campsite object for reference
-      };
-
-      dates.forEach((date) => {
-        row[date] = {
-          available:
-            campsite.availabilities[`${date}T00:00:00Z`] === "Available",
-          status: campsite.availabilities[`${date}T00:00:00Z`],
-        };
-      });
-
-      return row;
-    });
-
     // Calculate dynamic height based on number of rows
     const rowHeight = 30; // height of each row
     const headerHeight = 30; // height of the header
@@ -366,25 +467,6 @@ const ReservationDetailsPage = () => {
       })),
     ];
 
-    // Precompute a map of row IDs to their "Not Reservable" status
-    const notReservableMap = useMemo(() => {
-      const map = new Map();
-      rowData.forEach((row) => {
-        const isNotReservable = dates.every((date) => {
-          const status = row.campsiteObj.availabilities[`${date}T00:00:00Z`];
-          return status === "Not Reservable" || status === "" || !status;
-        });
-        map.set(row.campsite, isNotReservable);
-      });
-      return map;
-    }, [rowData, dates]);
-
-    // Use the precomputed map to filter rows
-    const filteredRows = useMemo(() => {
-      if (!hideNotReservable) return rowData;
-      return rowData.filter((row) => !notReservableMap.get(row.campsite));
-    }, [rowData, hideNotReservable, notReservableMap]);
-
     return (
       <div className="reservation-details-container">
         {isLoading && <LoadingSpinner fullPage />}
@@ -536,7 +618,10 @@ const ReservationDetailsPage = () => {
 
         {alertModal && (
           <>
-            <div className="modal">
+            <div
+              className="modal"
+              key={`alert-modal-${isCreatingAlert}-${forceUpdateCounter}`}
+            >
               <h2>Create Availability Alert</h2>
               <h3>{`Campsite: ${selectedCampsite.site} - ${selectedCampsite.loop}`}</h3>
               <input
