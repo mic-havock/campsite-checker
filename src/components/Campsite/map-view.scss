@@ -3,31 +3,28 @@
 .map-view-page {
   min-height: 100vh;
   background-color: $background-light;
-  padding: 20px;
+  padding: 0;
   margin: 0;
-  width: 99vw;
+  width: 95vw;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
 
   @media (max-width: 768px) {
-    padding: 1rem;
+    padding: 0;
   }
 }
 
 .map-view-header {
   text-align: center;
   max-width: 1200px;
-  margin: 0 auto 20px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 1rem;
 
   h1 {
-    margin-bottom: 0.5rem;
-    color: $primary-color;
-  }
-
-  .campsite-count {
-    color: $color-earth;
-    margin-top: 0;
+    margin-bottom: 0;
+    margin-top: 3rem;
   }
 }
 
@@ -103,20 +100,23 @@
 
 .map-container {
   flex: 1;
-  margin: 0 auto;
+  margin: 0 0 auto;
+  margin-left: 2.5rem;
   width: 100%;
-  max-width: 1200px;
+  // max-width: 1200px;
+  padding: 0;
 
   .campsite-map-container {
     margin: 0;
-    height: calc(100vh - 250px); // Adjusted for filters
+    height: calc(100vh - 250px);
 
     .map-wrapper {
       height: 100%;
+      width: 100%;
     }
 
     h2 {
-      display: none; // Hide the title since we already have one in the header
+      display: none;
     }
   }
 }
@@ -128,18 +128,11 @@
 
   .back-button {
     @include button-primary;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 20px;
-    font-size: 1rem;
-    position: static !important; // Override the fixed position from campsites-page.scss
-    bottom: auto !important;
-    left: auto !important;
-
-    .back-arrow {
-      font-size: 1.2rem;
-    }
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+    z-index: 100;
+    box-shadow: $shadow-md;
   }
 }
 

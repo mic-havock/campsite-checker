@@ -60,6 +60,7 @@ const CampsiteMap = ({ campsites, facilityName }) => {
   const [hasValidCoordinates, setHasValidCoordinates] = useState(false);
   const [sitesWithCoords, setSitesWithCoords] = useState([]);
   const [initialMapSetup, setInitialMapSetup] = useState(false);
+  const [isSatelliteView, setIsSatelliteView] = useState(false);
   const previousCampsitesLength = useRef(0);
 
   useEffect(() => {
@@ -102,7 +103,7 @@ const CampsiteMap = ({ campsites, facilityName }) => {
           const avgLng = totalLng / validSites.length;
 
           setMapCenter([avgLat, avgLng]);
-          setZoom(validSites.length > 5 ? 13 : 14); // Adjust zoom based on number of sites
+          setZoom(17);
           setInitialMapSetup(true);
         }
       } else {
@@ -142,9 +143,26 @@ const CampsiteMap = ({ campsites, facilityName }) => {
           zoom={zoom}
           style={{ height: "400px", width: "100%" }}
         >
+          <div className="map-controls leaflet-top leaflet-right">
+            <button
+              onClick={() => setIsSatelliteView(!isSatelliteView)}
+              className="view-toggle-button leaflet-control"
+            >
+              {isSatelliteView ? "Standard View" : "Satellite View"}
+            </button>
+          </div>
+
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution={
+              isSatelliteView
+                ? "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
+                : '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }
+            url={
+              isSatelliteView
+                ? "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                : "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            }
           />
 
           <MapUpdater

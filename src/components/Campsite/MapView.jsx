@@ -69,11 +69,7 @@ const MapView = () => {
   return (
     <div className="map-view-page">
       <div className="map-view-header">
-        <h1>{facilityName || "Campground"} - Campsite Map</h1>
-        <p className="campsite-count">
-          {filteredCampsites.length} of {campsiteData.length}{" "}
-          {campsiteData.length === 1 ? "Campsite" : "Campsites"} displayed
-        </p>
+        <h1>{facilityName || "Campground"}</h1>
       </div>
 
       <div className="map-filters">
@@ -99,7 +95,7 @@ const MapView = () => {
 
       <div className="map-view-footer">
         <button onClick={() => navigate(-1)} className="back-button">
-          <span className="back-arrow">←</span> Back to Campsites
+          <span>←</span> Back to Campsites
         </button>
       </div>
     </div>
