@@ -104,6 +104,7 @@ $transition: all 0.2s ease;
     border-radius: $button-border-radius;
     width: 100%;
     order: 3;
+    margin-top: 1rem;
 
     &::before {
       content: "🗺️";
@@ -119,6 +120,17 @@ $transition: all 0.2s ease;
     &:focus {
       outline: none;
       box-shadow: 0 0 0 3px rgba($color-earth, 0.3);
+    }
+
+    &:disabled {
+      background-color: lighten($color-earth, 20%);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+
+      &::before {
+        content: "";
+      }
     }
   }
 }

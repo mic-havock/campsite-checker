@@ -19,6 +19,7 @@ const CampsitesPage = () => {
   const [campsiteData, setCampsiteData] = useState([]);
   const facilityID = campsites?.[0]?.FacilityID;
   const [isLoading, setIsLoading] = useState(false);
+  const [isMapLoading, setIsMapLoading] = useState(false);
   const [showReservableOnly, setShowReservableOnly] = useState(false);
   const [selectedLoops, setSelectedLoops] = useState([]);
 
@@ -35,18 +36,29 @@ const CampsitesPage = () => {
     setCampsiteData(filteredAndSortedCampsites);
   }, [campsites]);
 
+  /**
+   * Navigate to the map view with the filtered campsite data
+   * Shows a loading spinner while preparing to navigate
+   */
   const navigateToMapView = () => {
     if (!campsiteData || campsiteData.length === 0) {
       alert("No campsite data available to display on the map.");
       return;
     }
 
-    navigate("/map-view", {
-      state: {
-        campsites: campsiteData,
-        facilityName: facilityName || "Campground",
-      },
-    });
+    setIsMapLoading(true);
+
+    // Simulate a short delay to show the loading spinner
+    // In a real app, this might be time spent preparing map data
+    setTimeout(() => {
+      navigate("/map-view", {
+        state: {
+          campsites: filteredCampsites, // Use filtered campsites instead of all campsites
+          facilityName: facilityName || "Campground",
+        },
+      });
+      setIsMapLoading(false);
+    }, 500);
   };
 
   // Filter campsites based on both reservable and loop filters
@@ -105,8 +117,19 @@ const CampsitesPage = () => {
             />
           </div>
 
-          <button onClick={navigateToMapView} className="view-map-btn">
-            View on Map
+          <button
+            onClick={navigateToMapView}
+            className="view-map-btn"
+            disabled={isMapLoading}
+          >
+            {isMapLoading ? (
+              <>
+                <LoadingSpinner size="small" />
+                <span style={{ marginLeft: "8px" }}>Loading...</span>
+              </>
+            ) : (
+              "View on Map"
+            )}
           </button>
         </div>
       </div>
