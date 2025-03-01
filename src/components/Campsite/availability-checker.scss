@@ -1,0 +1,109 @@
+@import "../../styles/variables";
+
+// Availability Card
+.availability-card {
+  background-color: transparent;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border-radius: $button-border-radius;
+  box-shadow: $shadow-sm;
+
+  .availability-header {
+    background-color: $accent-color;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: $button-border-radius $button-border-radius 0 0;
+
+    h2 {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 600;
+      text-align: center;
+      width: 100%;
+    }
+  }
+
+  .availability-body {
+    padding: 1rem;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    background-color: white;
+    border-radius: 0 0 $button-border-radius $button-border-radius;
+
+    .availability-row {
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+      align-items: center;
+
+      .month-select {
+        width: 100%;
+        flex: 1;
+        padding: 0.65rem;
+        font-size: 0.95rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: white;
+        appearance: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover,
+        &:focus {
+          border-color: $accent-color;
+          box-shadow: 0 0 0 2px rgba($accent-color, 0.1);
+        }
+      }
+
+      .check-availability-btn {
+        background-color: $accent-color;
+        color: white;
+        border: none;
+        padding: 0.65rem 1rem;
+        border-radius: $button-border-radius;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        white-space: nowrap;
+        min-width: 100px;
+
+        &:hover:not(:disabled) {
+          background-color: darken($accent-color, 10%);
+          box-shadow: $shadow-md;
+        }
+
+        &:focus {
+          outline: none;
+          box-shadow: 0 0 0 3px rgba($accent-color, 0.3);
+        }
+
+        &:disabled {
+          background-color: lighten($accent-color, 20%);
+          cursor: not-allowed;
+        }
+      }
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        width: 100%;
+
+        .check-availability-btn {
+          width: 100%;
+        }
+      }
+    }
+  }
+}

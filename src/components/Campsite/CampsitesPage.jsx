@@ -1,23 +1,26 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { fetchCampgroundAvailability } from "../../api/campsites";
 import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
+import AvailabilityChecker from "./AvailabilityChecker";
 import Campsite from "./Campsite";
+import CampsiteFilter from "./CampsiteFilter";
 import "./campsites-page.scss";
 
+/**
+ * CampsitesPage component displays a list of campsites for a selected facility
+ * with filtering and availability checking functionality
+ *
+ * @returns {JSX.Element} - Rendered component
+ */
 const CampsitesPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { campsites, facilityName } = location.state || {};
   const [campsiteData, setCampsiteData] = useState([]);
-  const [selectedMonth, setSelectedMonth] = useState("");
   const facilityID = campsites?.[0]?.FacilityID;
   const [isLoading, setIsLoading] = useState(false);
   const [showReservableOnly, setShowReservableOnly] = useState(false);
   const [selectedLoops, setSelectedLoops] = useState([]);
-  const [showLoopFilter, setShowLoopFilter] = useState(false);
-  const loopFilterRef = useRef(null);
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
 
   useEffect(() => {
     if (!campsites || campsites.length === 0) {
@@ -32,119 +35,6 @@ const CampsitesPage = () => {
     setCampsiteData(filteredAndSortedCampsites);
   }, [campsites]);
 
-  /**
-   * Handle click outside of the loop filter dropdown to close it
-   */
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        loopFilterRef.current &&
-        !loopFilterRef.current.contains(event.target)
-      ) {
-        setShowLoopFilter(false);
-      }
-    };
-
-    // Add event listener when dropdown is open
-    if (showLoopFilter) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    // Clean up event listener
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [showLoopFilter]);
-
-  /**
-   * Calculate and set the position of the dropdown when it opens
-   */
-  const handleToggleLoopFilter = () => {
-    if (!showLoopFilter && loopFilterRef.current) {
-      const rect = loopFilterRef.current.getBoundingClientRect();
-      setDropdownPosition({
-        top: rect.bottom + window.scrollY,
-        left: rect.left + window.scrollX,
-      });
-    }
-    setShowLoopFilter(!showLoopFilter);
-  };
-
-  const getNextMonths = () => {
-    const months = [];
-    const currentDate = new Date();
-    const monthNames = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
-
-    for (let i = 0; i < 12; i++) {
-      const date = new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth() + i,
-        1
-      );
-
-      const monthName = monthNames[date.getMonth()];
-      const year = date.getFullYear();
-
-      months.push({
-        value: date.toISOString(),
-        label: `${monthName} ${year}`,
-        month: monthName,
-        year: year,
-      });
-    }
-    return months;
-  };
-
-  const handleMonthChange = (event) => {
-    setSelectedMonth(event.target.value);
-  };
-
-  const fetchAvailability = async () => {
-    if (!selectedMonth) {
-      alert("Please select a month.");
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const startDate = new Date(selectedMonth);
-      const utcDate = new Date(
-        Date.UTC(startDate.getFullYear(), startDate.getMonth(), 1, 0, 0, 0, 0)
-      );
-
-      const data = await fetchCampgroundAvailability(
-        facilityID,
-        utcDate.toISOString()
-      );
-
-      navigate("/reservation-details", {
-        state: {
-          availabilityData: data,
-          facilityID: facilityID,
-          campsiteName: facilityName,
-        },
-      });
-    } catch (error) {
-      console.error("Error fetching availability data:", error);
-      alert("Could not fetch availability. Please try again later.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const navigateToMapView = () => {
     if (!campsiteData || campsiteData.length === 0) {
       alert("No campsite data available to display on the map.");
@@ -158,52 +48,6 @@ const CampsitesPage = () => {
       },
     });
   };
-
-  /**
-   * Get unique loops from the campsites array
-   * @returns {Array} Array of unique loop names
-   */
-  const getUniqueLoops = () => {
-    if (!campsiteData) return [];
-    return [...new Set(campsiteData.map((site) => site.Loop))]
-      .filter(Boolean)
-      .sort();
-  };
-
-  /**
-   * Toggle a loop selection in the selectedLoops array
-   * @param {string} loop - Loop name to toggle
-   */
-  const toggleLoopSelection = (loop) => {
-    setSelectedLoops((prevSelected) => {
-      if (prevSelected.includes(loop)) {
-        return prevSelected.filter((l) => l !== loop);
-      } else {
-        return [...prevSelected, loop];
-      }
-    });
-  };
-
-  /**
-   * Clear all selected loops
-   */
-  const clearAllLoops = () => {
-    setSelectedLoops([]);
-  };
-
-  /**
-   * Get the appropriate text for the loop filter toggle button
-   * @returns {string} Text to display on the button
-   */
-  const getLoopFilterButtonText = () => {
-    if (selectedLoops.length > 0) {
-      return `Loops (${selectedLoops.length} selected)`;
-    }
-    return "Filter by loop";
-  };
-
-  const availableMonths = getNextMonths();
-  const uniqueLoops = getUniqueLoops();
 
   // Filter campsites based on both reservable and loop filters
   const filteredCampsites = campsiteData.filter((campsite) => {
@@ -240,126 +84,25 @@ const CampsitesPage = () => {
 
       <div className="controls-wrapper">
         <div className="controls-container">
-          <div className="unified-controls">
-            <div className="controls-header">
-              <h2>Filter Campsites</h2>
-            </div>
-
-            <div className="controls-body">
-              <div className="filter-options">
-                <div className="loop-filter" ref={loopFilterRef}>
-                  <button
-                    className="loop-filter-toggle"
-                    onClick={handleToggleLoopFilter}
-                  >
-                    <span className="filter-button-text">
-                      {getLoopFilterButtonText()}
-                    </span>
-                    <span className="toggle-icon">
-                      {showLoopFilter ? "▲" : "▼"}
-                    </span>
-                  </button>
-
-                  {showLoopFilter && (
-                    <div
-                      className="loop-checkbox-container"
-                      style={{
-                        top: `${dropdownPosition.top}px`,
-                        left: `${dropdownPosition.left}px`,
-                      }}
-                    >
-                      <div className="loop-filter-header">
-                        <p className="loop-filter-info">
-                          Select one or more loops to filter campsites
-                        </p>
-                        <div className="loop-actions">
-                          {selectedLoops.length > 0 && (
-                            <button
-                              className="clear-all-btn"
-                              onClick={clearAllLoops}
-                            >
-                              Clear All
-                            </button>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="loop-checkbox-list">
-                        {uniqueLoops.length > 0 ? (
-                          uniqueLoops.map((loop) => (
-                            <label key={loop} className="loop-checkbox-item">
-                              <input
-                                type="checkbox"
-                                checked={selectedLoops.includes(loop)}
-                                onChange={() => toggleLoopSelection(loop)}
-                              />
-                              {loop}
-                            </label>
-                          ))
-                        ) : (
-                          <p className="no-loops-message">
-                            No loop information available
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <label className="reservable-checkbox">
-                  <input
-                    type="checkbox"
-                    checked={showReservableOnly}
-                    onChange={(e) => setShowReservableOnly(e.target.checked)}
-                  />
-                  Show Only Reservable Sites
-                </label>
-              </div>
-              <p className="filtered-count">
-                Showing {filteredCampsites.length} of {campsiteData.length}{" "}
-                sites
-              </p>
-            </div>
+          <div className="filter-section">
+            {/* CampsiteFilter component */}
+            <CampsiteFilter
+              campsiteData={campsiteData}
+              filteredCampsites={filteredCampsites}
+              setShowReservableOnly={setShowReservableOnly}
+              showReservableOnly={showReservableOnly}
+              selectedLoops={selectedLoops}
+              setSelectedLoops={setSelectedLoops}
+            />
           </div>
 
           <div className="right-controls">
-            <div className="availability-card">
-              <div className="availability-header">
-                <h2>Check Availability</h2>
-              </div>
-              <div className="availability-body">
-                <div className="availability-row">
-                  <select
-                    id="month-select"
-                    value={selectedMonth}
-                    onChange={handleMonthChange}
-                    className="month-select"
-                    disabled={isLoading}
-                  >
-                    <option value="">Select a month...</option>
-                    {availableMonths.map((month) => (
-                      <option key={month.value} value={month.value}>
-                        {month.label}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    onClick={fetchAvailability}
-                    className="check-availability-btn"
-                    disabled={!selectedMonth || isLoading}
-                  >
-                    {isLoading ? (
-                      <>
-                        <LoadingSpinner size="small" />
-                        <span style={{ marginLeft: "8px" }}>Loading...</span>
-                      </>
-                    ) : (
-                      "Check"
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
+            {/* AvailabilityChecker component */}
+            <AvailabilityChecker
+              facilityID={facilityID}
+              facilityName={facilityName}
+              setIsLoading={setIsLoading}
+            />
           </div>
 
           <button onClick={navigateToMapView} className="view-map-btn">
