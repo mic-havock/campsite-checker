@@ -101,14 +101,6 @@ const Campsite = ({ campsite }) => {
                   Campsite: {CampsiteName}
                   {Loop && Loop.trim() ? ` - ${Loop}` : ""}{" "}
                 </h2>
-                <a
-                  href={`https://www.recreation.gov/camping/campsites/${CampsiteID}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="recreation-link"
-                >
-                  View on Recreation.gov →
-                </a>
               </div>
 
               {ATTRIBUTES && ATTRIBUTES.length > 0 && (
@@ -147,6 +139,14 @@ const Campsite = ({ campsite }) => {
                 </div>
               )}
             </div>
+            <a
+              href={`https://www.recreation.gov/camping/campsites/${CampsiteID}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="recreation-link"
+            >
+              View on Recreation.gov →
+            </a>
           </div>
         </div>
       )}

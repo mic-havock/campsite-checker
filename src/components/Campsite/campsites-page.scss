@@ -35,56 +35,99 @@ $transition: all 0.2s ease;
   }
 }
 
+// Controls Wrapper
+.controls-wrapper {
+  background-color: white;
+  border-radius: $button-border-radius;
+  box-shadow: $shadow-md;
+  max-width: 1200px;
+  margin: 0 auto 1.5rem;
+  padding: 0;
+  overflow: visible;
+  position: relative;
+}
+
 // Controls Container
 .controls-container {
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 1.5rem;
-  max-width: 1200px;
-  margin: 0 auto 1.5rem;
-  padding: 0 1rem;
+  align-items: stretch;
+  width: 100%;
+  overflow: hidden;
+  border-radius: $button-border-radius;
+  flex-wrap: wrap;
 
   @media (max-width: 992px) {
     flex-direction: column;
-    align-items: stretch;
-    gap: 1rem;
+  }
+
+  .view-map-btn {
+    background-color: $color-earth;
+    color: white;
+    border: none;
+    padding: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: $transition;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
+    font-size: 1.1rem;
+    margin: 0;
+    border-radius: 0 0 $button-border-radius $button-border-radius;
+    width: 100%;
+    order: 3;
+
+    &::before {
+      content: "🗺️";
+      font-size: 1.2rem;
+    }
+
+    &:hover {
+      background-color: darken($color-earth, 10%);
+      box-shadow: $shadow-md;
+      transform: translateY(-2px);
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba($color-earth, 0.3);
+    }
   }
 }
 
 // Unified Controls Section
 .unified-controls {
   flex: 1;
-  background-color: white;
-  border-radius: $button-border-radius;
-  box-shadow: $shadow-md;
   position: relative;
+  border-right: 1px solid #eee;
+  overflow: visible;
+  order: 1;
+
+  @media (max-width: 992px) {
+    border-right: none;
+    border-bottom: 1px solid #eee;
+  }
 
   .controls-header {
     background-color: $color-forest-green;
     color: white;
     padding: 0.75rem 1.5rem;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    border-radius: $button-border-radius $button-border-radius 0 0;
 
     h2 {
       margin: 0;
       font-size: 1.2rem;
       font-weight: 600;
-    }
-
-    .filtered-count {
-      margin: 0;
-      font-size: 0.9rem;
-      opacity: 0.9;
+      text-align: center;
     }
 
     @media (max-width: 768px) {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.5rem;
       padding: 1rem 1.5rem;
     }
   }
@@ -92,10 +135,10 @@ $transition: all 0.2s ease;
   .controls-body {
     padding: 1.25rem;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    text-align: center;
     gap: 1.5rem;
-    border-radius: 0 0 $button-border-radius $button-border-radius;
+    overflow: visible;
 
     @media (max-width: 768px) {
       flex-direction: column;
@@ -104,101 +147,77 @@ $transition: all 0.2s ease;
     }
 
     .filter-options {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
       flex: 1;
+      overflow: visible;
 
-      @media (max-width: 768px) {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 1rem;
+      .filtered-count {
+        margin: 0 0 0.5rem 0;
+        font-size: 0.9rem;
+        color: $secondary-color;
+        font-weight: 500;
         width: 100%;
       }
-    }
-
-    .view-options {
-      display: flex;
-      justify-content: flex-end;
-      min-width: 150px;
 
       @media (max-width: 768px) {
         width: 100%;
-        min-width: auto;
-      }
-
-      .view-map-btn {
-        background-color: $color-forest-green;
-        color: white;
-        border: none;
-        padding: 0.75rem 1.5rem;
-        border-radius: $button-border-radius;
-        font-weight: 600;
-        cursor: pointer;
-        transition: $transition;
-        box-shadow: $shadow-sm;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        white-space: nowrap;
-        width: 100%;
-
-        &::before {
-          content: "🗺️";
-          font-size: 1.2rem;
-        }
-
-        &:hover {
-          background-color: darken($color-forest-green, 10%);
-          box-shadow: $shadow-md;
-          transform: translateY(-2px);
-        }
-
-        &:focus {
-          outline: none;
-          box-shadow: 0 0 0 3px rgba($color-forest-green, 0.3);
-        }
       }
     }
   }
 }
 
+// Right Controls Section
+.right-controls {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #f9f9f9;
+  order: 2;
+}
+
 // Availability Card
 .availability-card {
-  width: 300px;
-  background-color: white;
-  border-radius: $button-border-radius;
-  box-shadow: $shadow-md;
+  background-color: transparent;
   overflow: hidden;
-
-  @media (max-width: 992px) {
-    width: 100%;
-  }
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 
   .availability-header {
     background-color: $accent-color;
     color: white;
     padding: 0.75rem 1.5rem;
-    border-radius: $button-border-radius $button-border-radius 0 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     h2 {
       margin: 0;
       font-size: 1.2rem;
       font-weight: 600;
       text-align: center;
+      width: 100%;
     }
   }
 
   .availability-body {
     padding: 1.25rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 
     .availability-row {
       display: flex;
-      gap: 0.5rem;
+      flex-direction: row;
+      gap: 1rem;
       align-items: center;
 
       .month-select {
+        width: 100%;
         flex: 1;
         padding: 0.75rem;
         font-size: 0.95rem;
@@ -229,7 +248,7 @@ $transition: all 0.2s ease;
         align-items: center;
         justify-content: center;
         white-space: nowrap;
-        min-width: 80px;
+        min-width: 100px;
 
         &:hover:not(:disabled) {
           background-color: darken($accent-color, 10%);
@@ -246,6 +265,15 @@ $transition: all 0.2s ease;
           cursor: not-allowed;
         }
       }
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        width: 100%;
+
+        .check-availability-btn {
+          width: 100%;
+        }
+      }
     }
   }
 }
@@ -254,7 +282,7 @@ $transition: all 0.2s ease;
 .loop-filter {
   position: relative;
   min-width: 200px;
-  z-index: 20;
+  z-index: 100;
 
   .loop-filter-toggle {
     width: 100%;
@@ -268,9 +296,11 @@ $transition: all 0.2s ease;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    transition: $transition;
 
     &:hover {
       border-color: $accent-color;
+      background-color: #f9f9f9;
     }
 
     &:focus {
@@ -291,30 +321,34 @@ $transition: all 0.2s ease;
     .toggle-icon {
       margin-left: 8px;
       font-size: 0.8rem;
+      color: $color-forest-green;
     }
   }
 
   .loop-checkbox-container {
-    position: absolute;
-    top: 100%;
-    left: 0;
+    position: fixed;
     width: 100%;
+    max-width: 300px;
     max-height: 300px;
     overflow-y: auto;
     background-color: white;
     border: 1px solid #ddd;
     border-radius: 4px;
     box-shadow: $shadow-md;
-    z-index: 30;
-    margin-top: 4px;
+    z-index: 110;
+
+    @media (max-width: 768px) {
+      max-width: 90vw;
+    }
 
     .loop-filter-header {
-      padding: 8px;
+      position: sticky;
+      top: 0;
       border-bottom: 1px solid #eee;
       background-color: white;
+      z-index: 2;
 
       .loop-filter-info {
-        margin: 0 0 8px 0;
         font-size: 0.85rem;
         color: $secondary-color;
         text-align: center;
@@ -352,14 +386,21 @@ $transition: all 0.2s ease;
         padding: 6px 8px;
         cursor: pointer;
         font-size: 0.9rem;
+        transition: background-color 0.15s ease;
+        border-radius: 4px;
+        color: $text-primary;
 
         &:hover {
           background-color: #f5f5f5;
+          color: $text-primary;
         }
 
         input[type="checkbox"] {
           margin: 0;
           cursor: pointer;
+          width: 16px;
+          height: 16px;
+          accent-color: $accent-color;
         }
       }
 
@@ -377,12 +418,14 @@ $transition: all 0.2s ease;
 
 .reservable-checkbox {
   display: flex;
+  justify-content: center;
   align-items: center;
   gap: 8px;
   font-size: 0.95rem;
   color: $text-primary;
   cursor: pointer;
   white-space: nowrap;
+  margin-top: 0.25rem;
 
   input[type="checkbox"] {
     margin: 0;
@@ -440,11 +483,6 @@ $transition: all 0.2s ease;
   left: 1rem;
   z-index: 100;
   box-shadow: $shadow-md;
-
-  @media (max-width: 768px) {
-    bottom: 1rem;
-    left: 1rem;
-  }
 }
 
 // Fix for Leaflet map container

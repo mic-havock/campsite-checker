@@ -183,6 +183,16 @@ const FacilitiesFinder = () => {
       setInputValue(JSON.parse(savedSearchParams)?.query || "");
     }
 
+    // Set a session storage flag to detect browser close
+    if (!sessionStorage.getItem("isSessionActive")) {
+      sessionStorage.setItem("isSessionActive", "true");
+
+      // Clear localStorage from previous sessions
+      localStorage.removeItem("searchParams");
+      localStorage.removeItem("facilities");
+      localStorage.removeItem("selectedFacility");
+    }
+
     // Add event listener for browser/tab close
     const handleUnload = () => {
       localStorage.removeItem("searchParams");
@@ -192,11 +202,38 @@ const FacilitiesFinder = () => {
 
     window.addEventListener("beforeunload", handleUnload);
 
-    // Cleanup function to remove event listener
+    // Add a visibilitychange event listener as a backup
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        // This might be triggered when switching tabs, but also when closing
+        sessionStorage.setItem("lastHidden", Date.now().toString());
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    // Cleanup function to remove event listeners
     return () => {
       window.removeEventListener("beforeunload", handleUnload);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [location.state]);
+
+  // Second useEffect to check for session resumption
+  useEffect(() => {
+    // Check if this is a new session by comparing timestamps
+    const lastHidden = sessionStorage.getItem("lastHidden");
+    const now = Date.now();
+
+    // If returning after more than 5 minutes or no lastHidden (new session)
+    // we consider it a new session and clear localStorage
+    if (lastHidden && now - parseInt(lastHidden, 10) > 5 * 60 * 1000) {
+      localStorage.removeItem("searchParams");
+      localStorage.removeItem("facilities");
+      localStorage.removeItem("selectedFacility");
+      sessionStorage.removeItem("lastHidden");
+    }
+  }, []);
 
   return (
     <GridContainer className="facilities-finder">
@@ -208,8 +245,8 @@ const FacilitiesFinder = () => {
         <p className="description">
           Find and explore campgrounds across the United States with ease.
           Search by state or name to discover the perfect spot for your next
-          outdoor adventure. If your desired campsite isn’t available, set an
-          alert, and we’ll notify you when it opens up!
+          outdoor adventure. If your desired campsite isn&apos;t available, set
+          an alert, and we&apos;ll notify you when it opens up!
         </p>
       </div>
 

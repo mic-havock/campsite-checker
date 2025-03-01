@@ -17,6 +17,7 @@ const CampsitesPage = () => {
   const [selectedLoops, setSelectedLoops] = useState([]);
   const [showLoopFilter, setShowLoopFilter] = useState(false);
   const loopFilterRef = useRef(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
 
   useEffect(() => {
     if (!campsites || campsites.length === 0) {
@@ -54,6 +55,20 @@ const CampsitesPage = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showLoopFilter]);
+
+  /**
+   * Calculate and set the position of the dropdown when it opens
+   */
+  const handleToggleLoopFilter = () => {
+    if (!showLoopFilter && loopFilterRef.current) {
+      const rect = loopFilterRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + window.scrollY,
+        left: rect.left + window.scrollX,
+      });
+    }
+    setShowLoopFilter(!showLoopFilter);
+  };
 
   const getNextMonths = () => {
     const months = [];
@@ -223,124 +238,133 @@ const CampsitesPage = () => {
         <h1>{facilityName || "Campground's Campsites"}</h1>
       </div>
 
-      <div className="controls-container">
-        <div className="unified-controls">
-          <div className="controls-header">
-            <h2>Filter Campsites</h2>
-            <p className="filtered-count">
-              Showing {filteredCampsites.length} of {campsiteData.length} sites
-            </p>
-          </div>
+      <div className="controls-wrapper">
+        <div className="controls-container">
+          <div className="unified-controls">
+            <div className="controls-header">
+              <h2>Filter Campsites</h2>
+            </div>
 
-          <div className="controls-body">
-            <div className="filter-options">
-              <div className="loop-filter" ref={loopFilterRef}>
-                <button
-                  className="loop-filter-toggle"
-                  onClick={() => setShowLoopFilter(!showLoopFilter)}
-                >
-                  <span className="filter-button-text">
-                    {getLoopFilterButtonText()}
-                  </span>
-                  <span className="toggle-icon">
-                    {showLoopFilter ? "▲" : "▼"}
-                  </span>
-                </button>
+            <div className="controls-body">
+              <div className="filter-options">
+                <div className="loop-filter" ref={loopFilterRef}>
+                  <button
+                    className="loop-filter-toggle"
+                    onClick={handleToggleLoopFilter}
+                  >
+                    <span className="filter-button-text">
+                      {getLoopFilterButtonText()}
+                    </span>
+                    <span className="toggle-icon">
+                      {showLoopFilter ? "▲" : "▼"}
+                    </span>
+                  </button>
 
-                {showLoopFilter && (
-                  <div className="loop-checkbox-container">
-                    <div className="loop-filter-header">
-                      <p className="loop-filter-info">
-                        Select one or more loops to filter campsites
-                      </p>
-                      <div className="loop-actions">
-                        {selectedLoops.length > 0 && (
-                          <button
-                            className="clear-all-btn"
-                            onClick={clearAllLoops}
-                          >
-                            Clear All
-                          </button>
+                  {showLoopFilter && (
+                    <div
+                      className="loop-checkbox-container"
+                      style={{
+                        top: `${dropdownPosition.top}px`,
+                        left: `${dropdownPosition.left}px`,
+                      }}
+                    >
+                      <div className="loop-filter-header">
+                        <p className="loop-filter-info">
+                          Select one or more loops to filter campsites
+                        </p>
+                        <div className="loop-actions">
+                          {selectedLoops.length > 0 && (
+                            <button
+                              className="clear-all-btn"
+                              onClick={clearAllLoops}
+                            >
+                              Clear All
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="loop-checkbox-list">
+                        {uniqueLoops.length > 0 ? (
+                          uniqueLoops.map((loop) => (
+                            <label key={loop} className="loop-checkbox-item">
+                              <input
+                                type="checkbox"
+                                checked={selectedLoops.includes(loop)}
+                                onChange={() => toggleLoopSelection(loop)}
+                              />
+                              {loop}
+                            </label>
+                          ))
+                        ) : (
+                          <p className="no-loops-message">
+                            No loop information available
+                          </p>
                         )}
                       </div>
                     </div>
+                  )}
+                </div>
 
-                    <div className="loop-checkbox-list">
-                      {uniqueLoops.length > 0 ? (
-                        uniqueLoops.map((loop) => (
-                          <label key={loop} className="loop-checkbox-item">
-                            <input
-                              type="checkbox"
-                              checked={selectedLoops.includes(loop)}
-                              onChange={() => toggleLoopSelection(loop)}
-                            />
-                            {loop}
-                          </label>
-                        ))
-                      ) : (
-                        <p className="no-loops-message">
-                          No loop information available
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                )}
+                <label className="reservable-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={showReservableOnly}
+                    onChange={(e) => setShowReservableOnly(e.target.checked)}
+                  />
+                  Show Only Reservable Sites
+                </label>
               </div>
-
-              <label className="reservable-checkbox">
-                <input
-                  type="checkbox"
-                  checked={showReservableOnly}
-                  onChange={(e) => setShowReservableOnly(e.target.checked)}
-                />
-                Show Only Reservable Sites
-              </label>
-            </div>
-
-            <div className="view-options">
-              <button onClick={navigateToMapView} className="view-map-btn">
-                View on Map
-              </button>
+              <p className="filtered-count">
+                Showing {filteredCampsites.length} of {campsiteData.length}{" "}
+                sites
+              </p>
             </div>
           </div>
-        </div>
 
-        <div className="availability-card">
-          <div className="availability-header">
-            <h2>Check Availability</h2>
-          </div>
-          <div className="availability-body">
-            <div className="availability-row">
-              <select
-                id="month-select"
-                value={selectedMonth}
-                onChange={handleMonthChange}
-                className="month-select"
-                disabled={isLoading}
-              >
-                <option value="">Select a month...</option>
-                {availableMonths.map((month) => (
-                  <option key={month.value} value={month.value}>
-                    {month.label}
-                  </option>
-                ))}
-              </select>
-              <button
-                onClick={fetchAvailability}
-                className="check-availability-btn"
-                disabled={!selectedMonth || isLoading}
-              >
-                {isLoading ? (
-                  <>
-                    <LoadingSpinner size="small" />
-                    <span style={{ marginLeft: "8px" }}>Loading...</span>
-                  </>
-                ) : (
-                  "Check"
-                )}
-              </button>
+          <div className="right-controls">
+            <div className="availability-card">
+              <div className="availability-header">
+                <h2>Check Availability</h2>
+              </div>
+              <div className="availability-body">
+                <div className="availability-row">
+                  <select
+                    id="month-select"
+                    value={selectedMonth}
+                    onChange={handleMonthChange}
+                    className="month-select"
+                    disabled={isLoading}
+                  >
+                    <option value="">Select a month...</option>
+                    {availableMonths.map((month) => (
+                      <option key={month.value} value={month.value}>
+                        {month.label}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    onClick={fetchAvailability}
+                    className="check-availability-btn"
+                    disabled={!selectedMonth || isLoading}
+                  >
+                    {isLoading ? (
+                      <>
+                        <LoadingSpinner size="small" />
+                        <span style={{ marginLeft: "8px" }}>Loading...</span>
+                      </>
+                    ) : (
+                      "Check"
+                    )}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
+
+          <button onClick={navigateToMapView} className="view-map-btn">
+            View on Map
+          </button>
         </div>
       </div>
 
