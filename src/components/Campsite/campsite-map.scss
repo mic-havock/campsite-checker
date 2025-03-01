@@ -1,0 +1,51 @@
+.campsite-map-container {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    color: #333;
+  }
+
+  .map-wrapper {
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+  }
+}
+
+.no-map-container {
+  margin: 20px 0;
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  text-align: center;
+  color: #666;
+  border: 1px dashed #ccc;
+
+  p {
+    margin: 0;
+    font-size: 1rem;
+  }
+}
+
+/* Fix for Leaflet popup styles */
+.leaflet-popup-content {
+  margin: 10px;
+
+  strong {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 1rem;
+  }
+
+  p {
+    margin: 3px 0;
+    font-size: 0.9rem;
+  }
+}

@@ -474,34 +474,44 @@ const ReservationDetailsPage = () => {
         <div className="reservation-details-header">
           <h1>Campground Availability</h1>
 
-          <div className="availability-section">
-            <select
-              id="month-select"
-              value={selectedMonth}
-              onChange={handleSelectChange}
-              disabled={isLoading}
-            >
-              <option value="">Select a month to see availability...</option>
-              {getNextMonths().map((month) => (
-                <option key={month.value} value={month.value}>
-                  {month.label}
-                </option>
-              ))}
-            </select>
-            <button
-              onClick={handleMonthChange}
-              className="check-availability-btn"
-              disabled={!selectedMonth || isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <LoadingSpinner size="small" />
-                  <span style={{ marginLeft: "8px" }}>Loading...</span>
-                </>
-              ) : (
-                "Check Availability"
-              )}
-            </button>
+          <div className="availability-card">
+            <div className="availability-header">
+              <h2>Check Availability</h2>
+            </div>
+            <div className="availability-body">
+              <div className="availability-row">
+                <select
+                  id="month-select"
+                  value={selectedMonth}
+                  onChange={handleSelectChange}
+                  className="month-select"
+                  disabled={isLoading}
+                >
+                  <option value="">
+                    Select a month to see availability...
+                  </option>
+                  {getNextMonths().map((month) => (
+                    <option key={month.value} value={month.value}>
+                      {month.label}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  onClick={handleMonthChange}
+                  className="check-availability-btn"
+                  disabled={!selectedMonth || isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <LoadingSpinner size="small" />
+                      <span style={{ marginLeft: "8px" }}>Loading...</span>
+                    </>
+                  ) : (
+                    "Check"
+                  )}
+                </button>
+              </div>
+            </div>
           </div>
 
           <div className="info-text">

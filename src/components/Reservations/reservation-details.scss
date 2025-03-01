@@ -9,6 +9,7 @@
 
   .reservation-details-header {
     margin: 0 auto 2rem;
+    max-width: 1200px;
 
     .info-text {
       text-align: center;
@@ -19,63 +20,84 @@
     }
   }
 
-  .availability-section {
-    margin: 2rem auto;
+  // Availability Card
+  .availability-card {
+    width: 100%;
+    max-width: 600px;
+    background-color: white;
+    border-radius: $button-border-radius;
+    box-shadow: $shadow-md;
+    overflow: hidden;
+    margin: 1.5rem auto;
 
-    .month-picker {
-      background: $text-light;
-      padding: 1.5rem;
-      border-radius: $button-border-radius;
-      box-shadow: $shadow-md;
+    .availability-header {
+      background-color: $accent-color;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: $button-border-radius $button-border-radius 0 0;
 
-      label {
-        display: block;
+      h2 {
+        margin: 0;
+        font-size: 1.2rem;
         font-weight: 600;
-        color: $text-primary;
-        margin-bottom: 1rem;
-        font-size: 1.1rem;
+        text-align: center;
       }
+    }
 
-      .select-wrapper {
-        position: relative;
+    .availability-body {
+      padding: 1.25rem;
 
-        &::after {
-          content: "▼";
-          position: absolute;
-          right: 1rem;
-          top: 50%;
-          transform: translateY(-50%);
-          color: $color-earth;
-          pointer-events: none;
-          font-size: 0.8rem;
+      .availability-row {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+
+        .month-select {
+          flex: 1;
+          padding: 0.75rem;
+          font-size: 0.95rem;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          background-color: white;
+          appearance: none;
+          cursor: pointer;
+          transition: all 0.2s ease;
+
+          &:hover,
+          &:focus {
+            border-color: $accent-color;
+            box-shadow: 0 0 0 2px rgba($accent-color, 0.1);
+          }
         }
 
-        select {
-          width: 100%;
-          padding: 0.8rem 1rem;
-          border: 2px solid $color-stone;
+        .check-availability-btn {
+          background-color: $accent-color;
+          color: white;
+          border: none;
+          padding: 0.75rem 1rem;
           border-radius: $button-border-radius;
-          background-color: $secondary-color;
-          font-size: 1rem;
-          color: $text-primary;
+          font-weight: 600;
           cursor: pointer;
-          appearance: none;
-          transition: $button-transition;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          white-space: nowrap;
+          min-width: 80px;
 
-          &:hover {
-            border-color: $secondary-color;
+          &:hover:not(:disabled) {
+            background-color: darken($accent-color, 10%);
+            box-shadow: $shadow-md;
           }
 
           &:focus {
             outline: none;
-            border-color: $primary-color;
-            box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+            box-shadow: 0 0 0 3px rgba($accent-color, 0.3);
           }
 
           &:disabled {
-            background-color: $color-stone;
+            background-color: lighten($accent-color, 20%);
             cursor: not-allowed;
-            opacity: 0.7;
           }
         }
       }
@@ -231,35 +253,5 @@
 .ag-header-cell-center {
   .ag-header-cell-label {
     justify-content: center;
-  }
-}
-
-.availability-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  background: $text-light;
-  padding: 2rem;
-  border-radius: $button-border-radius;
-  box-shadow: $shadow-md;
-  max-width: 800px;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  select {
-    flex: 0 1 300px;
-    min-width: 0;
-    padding: 0.8rem 1rem;
-    border: 2px solid $color-stone;
-    border-radius: $button-border-radius;
-    font-size: 1rem;
-    color: $text-primary;
-    cursor: pointer;
-    appearance: none;
-    transition: $button-transition;
   }
 }
