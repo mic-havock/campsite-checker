@@ -37,9 +37,7 @@ $transition: all 0.2s ease;
 
 // Controls Wrapper
 .controls-wrapper {
-  background-color: white;
-  border-radius: $button-border-radius;
-  box-shadow: $shadow-md;
+  background: none;
   max-width: 1200px;
   margin: 0 auto 1.5rem;
   padding: 0;
@@ -55,8 +53,9 @@ $transition: all 0.2s ease;
   align-items: stretch;
   width: 100%;
   overflow: hidden;
-  border-radius: $button-border-radius;
+  background: none;
   flex-wrap: wrap;
+  gap: 1rem;
 
   @media (max-width: 992px) {
     flex-direction: column;
@@ -66,13 +65,13 @@ $transition: all 0.2s ease;
   .filter-section {
     flex: 1;
     position: relative;
-    border-right: 1px solid #eee;
     overflow: visible;
     order: 1;
+    background: none;
+    border-right: none;
 
     @media (max-width: 992px) {
-      border-right: none;
-      border-bottom: 1px solid #eee;
+      border-bottom: none;
     }
   }
 
@@ -82,14 +81,9 @@ $transition: all 0.2s ease;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    background-color: #f9f9f9;
+    background: none;
     order: 2;
-    border-radius: 0 $button-border-radius 0 0;
     height: 100%;
-
-    @media (max-width: 992px) {
-      border-radius: 0;
-    }
   }
 
   .view-map-btn {
@@ -107,7 +101,7 @@ $transition: all 0.2s ease;
     white-space: nowrap;
     font-size: 1.1rem;
     margin: 0;
-    border-radius: 0 0 $button-border-radius $button-border-radius;
+    border-radius: $button-border-radius;
     width: 100%;
     order: 3;
 

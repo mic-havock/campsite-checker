@@ -31,12 +31,10 @@
 
   .availability-body {
     padding: 1rem;
-    padding-top: 2rem;
-    padding-bottom: 2rem;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: center;
     background-color: white;
     border-radius: 0 0 $button-border-radius $button-border-radius;
 
@@ -45,6 +43,8 @@
       flex-direction: row;
       gap: 1rem;
       align-items: center;
+      padding-top: 0.75rem;
+      padding-bottom: 1.25rem;
 
       .month-select {
         width: 100%;
