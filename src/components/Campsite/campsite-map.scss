@@ -5,6 +5,7 @@
   background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
 
   h2 {
     margin-top: 0;
@@ -41,6 +42,27 @@
       &:active {
         transform: translateY(1px);
       }
+    }
+  }
+
+  .selected-campsite-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+
+    .campsite-card {
+      max-width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      margin: 0;
     }
   }
 }
@@ -83,4 +105,27 @@
 
 .leaflet-top .leaflet-control {
   margin-top: 10px;
+}
+
+/* Fix for Leaflet container */
+.leaflet-container {
+  height: 100% !important;
+  width: 100% !important;
+  z-index: 1;
+}
+
+/* Tooltip styles */
+.leaflet-tooltip {
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+}
+
+.leaflet-tooltip-top:before {
+  border-top-color: rgba(255, 255, 255, 0.9);
 }

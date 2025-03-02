@@ -2,7 +2,14 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import PropTypes from "prop-types";
 import { useEffect, useRef, useState } from "react";
-import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
+import {
+  MapContainer,
+  Marker,
+  TileLayer,
+  Tooltip,
+  useMap,
+} from "react-leaflet";
+import Campsite from "./Campsite";
 import "./campsite-map.scss";
 
 // Fix for Leaflet marker icons in React
@@ -61,6 +68,7 @@ const CampsiteMap = ({ campsites, facilityName }) => {
   const [sitesWithCoords, setSitesWithCoords] = useState([]);
   const [initialMapSetup, setInitialMapSetup] = useState(false);
   const [isSatelliteView, setIsSatelliteView] = useState(false);
+  const [selectedCampsite, setSelectedCampsite] = useState(null);
   const previousCampsitesLength = useRef(0);
 
   useEffect(() => {
@@ -141,7 +149,7 @@ const CampsiteMap = ({ campsites, facilityName }) => {
         <MapContainer
           center={mapCenter}
           zoom={zoom}
-          style={{ height: "400px", width: "100%" }}
+          style={{ height: "600px", width: "100%" }}
         >
           <div className="map-controls leaflet-top leaflet-right">
             <button
@@ -178,21 +186,27 @@ const CampsiteMap = ({ campsites, facilityName }) => {
                 parseFloat(site.CampsiteLatitude),
                 parseFloat(site.CampsiteLongitude),
               ]}
+              eventHandlers={{
+                click: () => setSelectedCampsite(site),
+              }}
             >
-              <Popup>
-                <div>
-                  <strong>{site.CampsiteName}</strong>
-                  <p>{site.Loop ? `Loop: ${site.Loop}` : ""}</p>
-                  <p>
-                    {site.CampsiteType} -{" "}
-                    {site.CampsiteReservable ? "Reservable" : "Not Reservable"}
-                  </p>
-                </div>
-              </Popup>
+              <Tooltip permanent={false} direction="top">
+                {site.CampsiteName}
+              </Tooltip>
             </Marker>
           ))}
         </MapContainer>
       </div>
+      {selectedCampsite && (
+        <div
+          className="selected-campsite-overlay"
+          onClick={() => setSelectedCampsite(null)}
+        >
+          <div onClick={(e) => e.stopPropagation()}>
+            <Campsite campsite={selectedCampsite} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
