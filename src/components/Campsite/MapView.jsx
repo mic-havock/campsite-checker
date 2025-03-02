@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
+import AvailabilityChecker from "./AvailabilityChecker";
 import CampsiteFilter from "./CampsiteFilter";
 import CampsiteMap from "./CampsiteMap";
 import "./map-view.scss";
@@ -19,6 +20,7 @@ const MapView = () => {
   const [showReservableOnly, setShowReservableOnly] = useState(false);
   const [selectedLoops, setSelectedLoops] = useState([]);
   const [campsiteData, setCampsiteData] = useState([]);
+  const facilityID = campsites?.[0]?.FacilityID;
 
   useEffect(() => {
     // Check if we have the required data
@@ -38,6 +40,18 @@ const MapView = () => {
 
     return () => clearTimeout(timer);
   }, [campsites]);
+
+  /**
+   * Navigate back to the campsites page with the current data
+   */
+  const navigateToCampsitesPage = () => {
+    navigate("/campsites", {
+      state: {
+        campsites: campsiteData,
+        facilityName: facilityName || "Campground",
+      },
+    });
+  };
 
   // Filter campsites based on both reservable and loop filters
   const filteredCampsites = campsiteData.filter((campsite) => {
@@ -72,17 +86,36 @@ const MapView = () => {
         <h1>{facilityName || "Campground"}</h1>
       </div>
 
-      <div className="map-filters">
-        <div className="filter-container">
-          {/* Using the CampsiteFilter component */}
-          <CampsiteFilter
-            campsiteData={campsiteData}
-            filteredCampsites={filteredCampsites}
-            setShowReservableOnly={setShowReservableOnly}
-            showReservableOnly={showReservableOnly}
-            selectedLoops={selectedLoops}
-            setSelectedLoops={setSelectedLoops}
-          />
+      <div className="controls-wrapper">
+        <div className="controls-container">
+          <div className="filter-section">
+            {/* CampsiteFilter component */}
+            <CampsiteFilter
+              campsiteData={campsiteData}
+              filteredCampsites={filteredCampsites}
+              setShowReservableOnly={setShowReservableOnly}
+              showReservableOnly={showReservableOnly}
+              selectedLoops={selectedLoops}
+              setSelectedLoops={setSelectedLoops}
+            />
+          </div>
+
+          <div className="right-controls">
+            {/* AvailabilityChecker component */}
+            <AvailabilityChecker
+              facilityID={facilityID}
+              facilityName={facilityName}
+              setIsLoading={setIsLoading}
+            />
+          </div>
+
+          <button
+            onClick={navigateToCampsitesPage}
+            className="view-campsites-btn"
+          >
+            <span className="list-icon"></span>
+            View as List
+          </button>
         </div>
       </div>
 
@@ -91,12 +124,6 @@ const MapView = () => {
           campsites={filteredCampsites}
           facilityName={facilityName || "Campground"}
         />
-      </div>
-
-      <div className="map-view-footer">
-        <button onClick={() => navigate(-1)} className="back-button">
-          <span>←</span> Back to Campsites
-        </button>
       </div>
     </div>
   );

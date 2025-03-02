@@ -60,10 +60,6 @@
   h2 {
     margin: 0;
   }
-
-  .recreation-link {
-    margin: 0;
-  }
 }
 
 .campsite-info {
@@ -106,6 +102,7 @@
   transform: scale(0.9);
   animation: modalPop 0.3s ease-out 0.1s forwards;
   padding-top: 3rem;
+  padding-bottom: 1.5rem;
 
   // Add these styles for the scrollbar
   &::-webkit-scrollbar {
@@ -299,8 +296,6 @@
 
 .recreation-link {
   display: inline-block;
-  margin: 1rem 0;
-  margin-bottom: 1rem !important;
   padding: 0.5rem 1rem;
   color: #2e7d32;
   text-decoration: none;

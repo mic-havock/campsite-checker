@@ -1,14 +1,19 @@
 @import "../../styles/variables";
 
+$success-color: #28a745;
+$light-bg: #f8f9fa;
+$border-radius: 12px;
+$box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+$transition: all 0.2s ease;
+
 .map-view-page {
   min-height: 100vh;
   background-color: $background-light;
-  padding: 0;
+  padding: 20px;
   margin: 0;
-  width: 95vw;
+  width: 99vw;
   box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
+  overflow-x: hidden;
 
   @media (max-width: 768px) {
     padding: 0;
@@ -24,75 +29,111 @@
 
   h1 {
     margin-bottom: 0;
-    margin-top: 3rem;
   }
 }
-
-/* Map Filters */
-.map-filters {
+// Controls Wrapper
+.controls-wrapper {
+  background: none;
   max-width: 1200px;
-  width: 50%;
-  margin: 0 auto 20px;
-  background: white;
-  border-radius: $button-border-radius;
+  width: 100%;
+  margin: 0 auto 1.5rem;
+  padding: 0;
+  overflow: visible;
+  position: relative;
+}
+
+// Controls Container
+.controls-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: stretch;
+  width: 100%;
+  overflow: hidden;
+  background: none;
+  flex-wrap: wrap;
+  gap: 1rem;
 
   @media (max-width: 992px) {
-    width: 70%;
+    flex-direction: column;
   }
 
-  @media (max-width: 768px) {
-    width: 100%;
-  }
-
-  /* Override some styles from the CampsiteFilter component */
-  .unified-controls {
-    width: 100%;
+  // Filter Section
+  .filter-section {
+    flex: 1;
+    position: relative;
+    overflow: visible;
+    order: 1;
     background: none;
+    border-right: none;
 
-    .controls-header {
-      background-color: $color-forest-green;
-    }
-
-    .controls-body {
-      .filter-options {
-        .loop-filter {
-          min-width: 250px;
-
-          .loop-filter-toggle {
-            padding: 10px 15px;
-          }
-        }
-      }
+    @media (max-width: 992px) {
+      border-bottom: none;
     }
   }
 
-  /* Override some styles from the AvailabilityChecker component */
-  .availability-card {
+  // Right Controls Section
+  .right-controls {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: none;
+    order: 2;
+    height: 100%;
+  }
+
+  .view-campsites-btn {
+    background-color: $color-earth;
+    color: white;
+    border: none;
+    padding: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: $transition;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
+    font-size: 1.1rem;
+    margin: 0;
+    border-radius: $button-border-radius;
     width: 100%;
+    order: 3;
     margin-top: 1rem;
-    height: auto;
-    background: none;
 
-    .availability-header {
-      background-color: $accent-color;
+    &::before {
+      content: "";
+      display: inline-block;
+      width: 1.2rem;
+      height: 1.2rem;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='white' d='M64 144c26.5 0 48-21.5 48-48s-21.5-48-48-48S16 69.5 16 96s21.5 48 48 48zm0 64c-26.5 0-48 21.5-48 48s21.5 48 48 48 48-21.5 48-48-21.5-48-48-48zm0 128c-26.5 0-48 21.5-48 48s21.5 48 48 48 48-21.5 48-48-21.5-48-48-48zm448-16H176c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h336c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16zm0-128H176c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h336c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16zm0-128H176c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h336c8.8 0 16-7.2 16-16V80c0-8.8-7.2-16-16-16z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: contain;
+      margin-right: 0.5rem;
     }
 
-    .availability-body {
-      padding: 0.75rem;
-      background-color: white;
+    &:hover {
+      background-color: darken($color-earth, 10%);
+      box-shadow: $shadow-md;
+      transform: translateY(-2px);
+    }
 
-      .availability-row {
-        .month-select {
-          padding: 0.65rem 0.75rem;
-        }
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba($color-earth, 0.3);
+    }
 
-        .check-availability-btn {
-          padding: 0.65rem 0.75rem;
-        }
-      }
+    &:disabled {
+      background-color: lighten($color-earth, 20%);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
 
-      .availability-description {
-        margin-top: 0.5rem;
+      &::before {
+        content: "";
       }
     }
   }
@@ -101,7 +142,7 @@
 .map-container {
   flex: 1;
   margin: 0 0 auto;
-  margin-left: 2.5rem;
+  margin-left: 0.5rem;
   width: 100%;
   // max-width: 1200px;
   padding: 0;
@@ -118,21 +159,6 @@
     h2 {
       display: none;
     }
-  }
-}
-
-.map-view-footer {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-
-  .back-button {
-    @include button-primary;
-    position: fixed;
-    bottom: 1rem;
-    left: 1rem;
-    z-index: 100;
-    box-shadow: $shadow-md;
   }
 }
 

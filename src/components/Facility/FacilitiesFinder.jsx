@@ -1,9 +1,3 @@
-import {
-  Button,
-  Grid,
-  GridContainer,
-  TextInput,
-} from "@trussworks/react-uswds";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchCampsitesByFacility } from "../../api/campsites";
@@ -236,7 +230,7 @@ const FacilitiesFinder = () => {
   }, []);
 
   return (
-    <GridContainer className="facilities-finder">
+    <div className="facilities-finder">
       <div className="header">
         <div className="brand">
           <img src="/kampscout.svg" alt="Kamp Scout Logo" className="logo" />
@@ -256,18 +250,16 @@ const FacilitiesFinder = () => {
         style={{ width: "100%" }}
       >
         <div className="form-group">
-          <TextInput
+          <input
             id="campground-name"
             name="query"
             type="text"
-            label="Campground Name"
             value={inputValue}
             onChange={handleInputChange}
             placeholder="Enter campground name"
           />
         </div>
         <div className="form-group">
-          {/* <label htmlFor="state">State</label> */}
           <select
             id="state"
             name="state"
@@ -278,8 +270,6 @@ const FacilitiesFinder = () => {
                 state: e.target.value,
               }))
             }
-            className="dropdown"
-            placeholder="Select a state"
           >
             <option value="">Select a state</option>
             {states.map((state) => (
@@ -291,32 +281,32 @@ const FacilitiesFinder = () => {
         </div>
 
         <div className="buttons-container">
-          <Button type="submit" className="submit" disabled={loading}>
+          <button type="submit" className="submit" disabled={loading}>
             {loading ? "Loading..." : "Search"}
-          </Button>
-          <Button type="button" className="clear" onClick={handleClear}>
+          </button>
+          <button type="button" className="clear" onClick={handleClear}>
             Clear
-          </Button>
+          </button>
         </div>
       </form>
 
       {error && <p className="error">{error}</p>}
 
-      <Grid row>
-        <Grid col={12}>
+      <div className="grid-row">
+        <div className="grid-col">
           <FacilityGrid
             rowData={facilities}
             onRowSelected={handleRowSelection}
           />
-        </Grid>
-      </Grid>
+        </div>
+      </div>
       {selectedFacility && (
         <FacilityDetails
           facility={selectedFacility}
           handleViewCampsites={handleViewCampsites}
         />
       )}
-    </GridContainer>
+    </div>
   );
 };
 
