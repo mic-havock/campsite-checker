@@ -23,6 +23,24 @@
     cursor: pointer;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   }
+
+  .availability-loading,
+  .availability-error {
+    margin-top: 2rem;
+    padding: 1rem;
+    text-align: center;
+    border-radius: 8px;
+  }
+
+  .availability-loading {
+    background-color: #e3f2fd;
+    color: #1976d2;
+  }
+
+  .availability-error {
+    background-color: #ffebee;
+    color: #c62828;
+  }
 }
 
 .campsite-thumbnail {

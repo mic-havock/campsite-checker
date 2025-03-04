@@ -1,8 +1,16 @@
-import { useState } from "react";
+import PropTypes from "prop-types";
+import { useEffect, useState } from "react";
 import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/scss/image-gallery.scss";
+import { fetchCampsiteAvailability } from "../../api/campsites";
 import "./campsite.scss";
+import CampsiteAvailability from "./CampsiteAvailability";
 
+/**
+ * Campsite component that displays detailed information about a campsite
+ * @param {Object} props - Component props
+ * @param {Object} props.campsite - Campsite data object
+ */
 const Campsite = ({ campsite }) => {
   const {
     CampsiteName,
@@ -14,7 +22,30 @@ const Campsite = ({ campsite }) => {
     PERMITTEDEQUIPMENT,
     CampsiteID,
   } = campsite;
+
   const [isExpanded, setIsExpanded] = useState(false);
+  const [availabilityData, setAvailabilityData] = useState(null);
+  const [isLoadingAvailability, setIsLoadingAvailability] = useState(false);
+  const [availabilityError, setAvailabilityError] = useState(null);
+
+  useEffect(() => {
+    const loadAvailability = async () => {
+      if (isExpanded && !availabilityData && !isLoadingAvailability) {
+        setIsLoadingAvailability(true);
+        try {
+          const data = await fetchCampsiteAvailability(CampsiteID);
+          setAvailabilityData(data.availability.availabilities);
+        } catch (error) {
+          setAvailabilityError("Failed to load availability data");
+          console.error("Error loading availability:", error);
+        } finally {
+          setIsLoadingAvailability(false);
+        }
+      }
+    };
+
+    loadAvailability();
+  }, [isExpanded, CampsiteID, availabilityData, isLoadingAvailability]);
 
   const toTitleCase = (str) => {
     const exceptions = ["AM", "PM", "RV"];
@@ -38,6 +69,7 @@ const Campsite = ({ campsite }) => {
       })
       .join(" ");
   };
+
   // Transform campsite media into format required by react-image-gallery
   const images =
     ENTITYMEDIA?.map((media) => ({
@@ -126,6 +158,7 @@ const Campsite = ({ campsite }) => {
                   </div>
                 </div>
               )}
+
               {PERMITTEDEQUIPMENT && PERMITTEDEQUIPMENT.length > 0 && (
                 <div className="attributes-section">
                   <h3>Permitted Equipment</h3>
@@ -138,7 +171,18 @@ const Campsite = ({ campsite }) => {
                   </div>
                 </div>
               )}
+
+              {isLoadingAvailability ? (
+                <div className="availability-loading">
+                  Loading availability...
+                </div>
+              ) : availabilityError ? (
+                <div className="availability-error">{availabilityError}</div>
+              ) : availabilityData ? (
+                <CampsiteAvailability availabilities={availabilityData} />
+              ) : null}
             </div>
+
             <a
               href={`https://www.recreation.gov/camping/campsites/${CampsiteID}`}
               target="_blank"
@@ -152,6 +196,33 @@ const Campsite = ({ campsite }) => {
       )}
     </div>
   );
+};
+
+Campsite.propTypes = {
+  campsite: PropTypes.shape({
+    CampsiteName: PropTypes.string.isRequired,
+    CampsiteReservable: PropTypes.bool.isRequired,
+    CampsiteType: PropTypes.string.isRequired,
+    Loop: PropTypes.string,
+    ENTITYMEDIA: PropTypes.arrayOf(
+      PropTypes.shape({
+        URL: PropTypes.string.isRequired,
+        Title: PropTypes.string.isRequired,
+      })
+    ),
+    ATTRIBUTES: PropTypes.arrayOf(
+      PropTypes.shape({
+        AttributeName: PropTypes.string.isRequired,
+        AttributeValue: PropTypes.string.isRequired,
+      })
+    ),
+    PERMITTEDEQUIPMENT: PropTypes.arrayOf(
+      PropTypes.shape({
+        EquipmentName: PropTypes.string.isRequired,
+      })
+    ),
+    CampsiteID: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 export default Campsite;
