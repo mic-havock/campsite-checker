@@ -576,7 +576,7 @@ const ReservationDetailsPage = () => {
                 borderRadius: "4px",
               }}
             >
-              NR = Not Reservable
+              NR = Not Reservable/Not Available
             </span>
             <div
               style={{

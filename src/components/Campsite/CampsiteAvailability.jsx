@@ -39,16 +39,16 @@ const CampsiteAvailability = ({ availabilities }) => {
       case "Reserved":
         return "status-reserved";
       case "Available":
+      case "Open":
         return "status-available";
-      case "Not Available":
-      case "Not Available Cutoff":
-        return "status-not-available";
       case "Not Reservable":
+      case "Not Available":
+      case "Closed":
         return "status-not-reservable";
       case "NYR":
         return "status-nyr";
       default:
-        return "status-unknown";
+        return "status-reserved";
     }
   };
 
@@ -61,7 +61,6 @@ const CampsiteAvailability = ({ availabilities }) => {
 
   return (
     <div className="availability-section">
-      <h3>Availability Calendar</h3>
       <div className="availability-legend">
         <div className="legend-item">
           <span className="status-dot status-available"></span>
@@ -72,16 +71,12 @@ const CampsiteAvailability = ({ availabilities }) => {
           <span>Reserved</span>
         </div>
         <div className="legend-item">
-          <span className="status-dot status-not-available"></span>
-          <span>Not Available</span>
+          <span className="status-dot status-nyr"></span>
+          <span>Not Yet Released</span>
         </div>
         <div className="legend-item">
           <span className="status-dot status-not-reservable"></span>
-          <span>Not Reservable</span>
-        </div>
-        <div className="legend-item">
-          <span className="status-dot status-nyr"></span>
-          <span>Not Yet Released</span>
+          <span>Not Reservable/Not Available</span>
         </div>
       </div>
       <div className="monthly-calendars">

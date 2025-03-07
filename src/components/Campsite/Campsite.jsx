@@ -172,15 +172,18 @@ const Campsite = ({ campsite }) => {
                 </div>
               )}
 
-              {isLoadingAvailability ? (
-                <div className="availability-loading">
-                  Loading availability...
-                </div>
-              ) : availabilityError ? (
-                <div className="availability-error">{availabilityError}</div>
-              ) : availabilityData ? (
-                <CampsiteAvailability availabilities={availabilityData} />
-              ) : null}
+              <div className="attributes-section">
+                <h3>Availability Calendar</h3>
+                {isLoadingAvailability ? (
+                  <div className="availability-loading">
+                    Loading availability...
+                  </div>
+                ) : availabilityError ? (
+                  <div className="availability-error">{availabilityError}</div>
+                ) : availabilityData ? (
+                  <CampsiteAvailability availabilities={availabilityData} />
+                ) : null}
+              </div>
             </div>
 
             <a

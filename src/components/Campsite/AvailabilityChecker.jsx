@@ -111,7 +111,7 @@ const AvailabilityChecker = ({ facilityID, facilityName, setIsLoading }) => {
   return (
     <div className="availability-card">
       <div className="availability-header">
-        <h2>Check Availability</h2>
+        <h2>Check Campgound Availability</h2>
       </div>
       <div className="availability-body">
         <div className="availability-row">

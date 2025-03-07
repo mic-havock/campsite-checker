@@ -12,7 +12,7 @@
 .campsite-card {
   background: white;
   border: 2px solid #e9ecef;
-  border-radius: 12px;
+  border-radius: $button-border-radius;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding-left: 0.5rem;
   padding-right: 0.5rem;
@@ -109,8 +109,9 @@
 }
 
 .modal-content {
+  cursor: default;
   background: white;
-  border-radius: 16px;
+  border-radius: $button-border-radius;
   max-width: 1000px;
   width: 95%;
   max-height: 90vh;
@@ -174,7 +175,7 @@
 
 .attribute-item {
   background: $background-light;
-  border-radius: 12px;
+  border-radius: $button-border-radius;
   display: flex;
   flex-direction: column;
   padding: 4px;
@@ -218,7 +219,7 @@
     padding: 1rem;
     background-color: $background-light;
     border: 1px solid #e0e0e0;
-    border-radius: 8px;
+    border-radius: $button-border-radius;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 
     .image-gallery-thumbnails-wrapper {
@@ -318,7 +319,7 @@
   color: #2e7d32;
   text-decoration: none;
   border: 1px solid #2e7d32;
-  border-radius: 4px;
+  border-radius: $button-border-radius;
   transition: all 0.2s ease;
 
   &:hover {
