@@ -60,12 +60,13 @@
           display: grid;
           grid-template-columns: repeat(7, 1fr);
           gap: 1px;
-          background-color: #bcbcbc;
+          background-color: #cecece;
 
           .calendar-day {
             position: relative;
             aspect-ratio: 1;
-            background-color: #fff;
+            background-color: #969696;
+            color: #ffffff;
             padding: 0.25rem;
             display: flex;
             flex-direction: column;

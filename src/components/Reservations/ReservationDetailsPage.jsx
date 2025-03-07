@@ -11,6 +11,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { fetchCampgroundAvailability } from "../../api/campsites";
 import reservationsAPI from "../../api/reservations";
 import { isNonReservableStatus } from "../../config/reservationStatus";
+import AlertModal from "../Common/AlertModal/AlertModal";
 import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
 import "./reservation-details.scss";
 
@@ -618,85 +619,21 @@ const ReservationDetailsPage = () => {
           <span>←</span> Back to Campsites
         </button>
 
-        {alertModal && (
-          <>
-            <div
-              className="modal"
-              key={`alert-modal-${isCreatingAlert}-${forceUpdateCounter}`}
-            >
-              <h2>Create Availability Alert</h2>
-              <h3>{`Campsite: ${selectedCampsite.site} - ${selectedCampsite.loop}`}</h3>
-              <input
-                type="text"
-                placeholder="Name"
-                value={alertDetails.name}
-                onChange={(e) =>
-                  setAlertDetails((prev) => ({ ...prev, name: e.target.value }))
-                }
-                disabled={isCreatingAlert}
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                value={alertDetails.email}
-                onChange={(e) =>
-                  setAlertDetails((prev) => ({
-                    ...prev,
-                    email: e.target.value,
-                  }))
-                }
-                disabled={isCreatingAlert}
-              />
-              <label>Start Date:</label>
-              <input
-                type="date"
-                value={alertDetails.startDate}
-                onChange={(e) =>
-                  setAlertDetails((prev) => ({
-                    ...prev,
-                    startDate: e.target.value,
-                  }))
-                }
-                disabled={isCreatingAlert}
-              />
-              <label>End Date:</label>
-              <input
-                type="date"
-                value={alertDetails.endDate}
-                onChange={(e) =>
-                  setAlertDetails((prev) => ({
-                    ...prev,
-                    endDate: e.target.value,
-                  }))
-                }
-                disabled={isCreatingAlert}
-              />
-              <div className="modal-buttons">
-                <button
-                  onClick={handleCreateAlert}
-                  disabled={isCreatingAlert}
-                  className="create-alert-btn"
-                >
-                  {isCreatingAlert ? (
-                    <>
-                      <LoadingSpinner size="small" />
-                      <span style={{ marginLeft: "8px" }}>Creating...</span>
-                    </>
-                  ) : (
-                    "Create Alert"
-                  )}
-                </button>
-                <button
-                  onClick={() => setAlertModal(false)}
-                  disabled={isCreatingAlert}
-                  className="cancel-btn"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </>
-        )}
+        <AlertModal
+          isOpen={alertModal}
+          onClose={() => setAlertModal(false)}
+          onCreateAlert={handleCreateAlert}
+          title="Create Availability Alert"
+          subtitle={
+            selectedCampsite
+              ? `Campsite: ${selectedCampsite.site} - ${selectedCampsite.loop}`
+              : ""
+          }
+          alertDetails={alertDetails}
+          setAlertDetails={setAlertDetails}
+          isCreatingAlert={isCreatingAlert}
+          forceUpdateCounter={forceUpdateCounter}
+        />
       </div>
     );
   };
