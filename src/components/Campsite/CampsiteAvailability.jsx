@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import { useMemo } from "react";
+import { isNonReservableStatus } from "../../config/reservationStatus";
 import "./campsite-availability.scss";
 
 /**
@@ -41,13 +42,13 @@ const CampsiteAvailability = ({ availabilities }) => {
       case "Available":
       case "Open":
         return "status-available";
-      case "Not Reservable":
-      case "Not Available":
-      case "Closed":
-        return "status-not-reservable";
-      case "NYR":
-        return "status-nyr";
       default:
+        if (isNonReservableStatus(status)) {
+          return "status-not-reservable";
+        }
+        if (status === "NYR") {
+          return "status-nyr";
+        }
         return "status-reserved";
     }
   };

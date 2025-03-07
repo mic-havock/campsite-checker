@@ -10,6 +10,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchCampgroundAvailability } from "../../api/campsites";
 import reservationsAPI from "../../api/reservations";
+import { isNonReservableStatus } from "../../config/reservationStatus";
 import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
 import "./reservation-details.scss";
 
@@ -91,10 +92,10 @@ const ReservationDetailsPage = () => {
       };
 
       datesArray.forEach((date) => {
+        const status = campsite.availabilities[`${date}T00:00:00Z`];
         row[date] = {
-          available:
-            campsite.availabilities[`${date}T00:00:00Z`] === "Available",
-          status: campsite.availabilities[`${date}T00:00:00Z`],
+          available: status === "Available" || status === "Open",
+          status: status,
         };
       });
 
@@ -112,7 +113,7 @@ const ReservationDetailsPage = () => {
     rowData.forEach((row) => {
       const isNotReservable = dates.every((date) => {
         const status = row.campsiteObj?.availabilities[`${date}T00:00:00Z`];
-        return status === "Not Reservable" || status === "" || !status;
+        return isNonReservableStatus(status);
       });
       map.set(row.campsite, isNotReservable);
     });
@@ -392,12 +393,10 @@ const ReservationDetailsPage = () => {
               switch (status) {
                 case "NYR":
                   return "#4a90e2"; // blue for NYR
-                case "Not Reservable":
-                  return "#707070"; // gray for Not Reservable
                 case "Reserved":
                   return "#d65140"; // blue for Reserved
                 default:
-                  return "#707070"; // red for other unavailable statuses
+                  return "#707070";
               }
             };
 
@@ -405,12 +404,10 @@ const ReservationDetailsPage = () => {
               switch (status) {
                 case "NYR":
                   return "#67a7ed"; // lighter blue for NYR hover
-                case "Not Reservable":
-                  return "#8a8a8a"; // lighter gray for Not Reservable hover
                 case "Reserved":
                   return "#ff6b5b"; // lighter red for other statuses
                 default:
-                  return "#8a8a8a"; // lighter red for other statuses
+                  return "#8a8a8a";
               }
             };
 
@@ -425,12 +422,9 @@ const ReservationDetailsPage = () => {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  cursor:
-                    data.status === "Not Reservable" ||
-                    data.status === "" ||
-                    !data.status
-                      ? "not-allowed"
-                      : "pointer",
+                  cursor: isNonReservableStatus(data.status)
+                    ? "not-allowed"
+                    : "pointer",
                   backgroundColor: baseColor,
                   transition: "background-color 0.2s ease",
                   margin: "-1px",
@@ -443,15 +437,13 @@ const ReservationDetailsPage = () => {
                   e.currentTarget.style.backgroundColor = baseColor;
                 }}
                 onClick={() =>
-                  data.status !== "Not Reservable" &&
+                  !isNonReservableStatus(data.status) &&
                   handleUnavailableClick(params.data.campsiteObj, date)
                 }
                 title={data.status}
               >
                 {data.status === "NYR"
                   ? "NYR"
-                  : data.status === "Not Reservable"
-                  ? "NR"
                   : data.status === "Reserved"
                   ? "R"
                   : "NR"}
@@ -476,7 +468,7 @@ const ReservationDetailsPage = () => {
 
           <div className="availability-card">
             <div className="availability-header">
-              <h2>Check Availability</h2>
+              <h2>Check Campground Availability</h2>
             </div>
             <div className="availability-body">
               <div className="availability-row">
