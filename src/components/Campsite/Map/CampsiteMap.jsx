@@ -9,7 +9,7 @@ import {
   Tooltip,
   useMap,
 } from "react-leaflet";
-import Campsite from "./Campsite";
+import Campsite from "../Campsite";
 import "./campsite-map.scss";
 
 // Fix for Leaflet marker icons in React

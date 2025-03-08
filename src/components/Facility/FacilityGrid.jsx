@@ -68,14 +68,7 @@ const FacilityGrid = ({ rowData, onRowSelected }) => {
   };
 
   return (
-    <div
-      className="facility-grid-container"
-      style={{
-        width: "100%", // Full width
-        height: `300px`,
-        margin: "0 auto",
-      }}
-    >
+    <div className="facility-grid-container">
       <AgGridReact
         columnDefs={columnDefs}
         rowData={processedData}

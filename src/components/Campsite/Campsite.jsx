@@ -3,14 +3,10 @@ import { useEffect, useState } from "react";
 import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/scss/image-gallery.scss";
 import { fetchCampsiteAvailability } from "../../api/campsites";
-import "./campsite.scss";
 import CampsiteAvailability from "./CampsiteAvailability";
+import "./campsite.scss";
 
-/**
- * Campsite component that displays detailed information about a campsite
- * @param {Object} props - Component props
- * @param {Object} props.campsite - Campsite data object
- */
+//Campsite component that displays detailed information about a campsite
 const Campsite = ({ campsite, facilityName }) => {
   const {
     CampsiteName,

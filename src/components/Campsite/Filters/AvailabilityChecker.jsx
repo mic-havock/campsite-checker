@@ -1,26 +1,17 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchCampgroundAvailability } from "../../api/campsites";
-import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
+import { fetchCampgroundAvailability } from "../../../api/campsites";
+import LoadingSpinner from "../../Common/LoadingSpinner/LoadingSpinner";
 import "./availability-checker.scss";
 
-/**
- * Component for checking campsite availability for a selected month
- * @param {Object} props - Component props
- * @param {string} props.facilityID - ID of the facility to check availability for
- * @param {string} props.facilityName - Name of the facility
- * @param {Function} props.setIsLoading - Function to update loading state in parent component
- */
+//Component for checking campsite availability for a selected month
 const AvailabilityChecker = ({ facilityID, facilityName, setIsLoading }) => {
   const navigate = useNavigate();
   const [selectedMonth, setSelectedMonth] = useState("");
   const [localLoading, setLocalLoading] = useState(false);
 
-  /**
-   * Get the next 12 months from the current date
-   * @returns {Array} Array of month objects with value, label, month, and year properties
-   */
+  //Get the next 12 months from the current date
   const getNextMonths = () => {
     const months = [];
     const currentDate = new Date();
@@ -59,17 +50,10 @@ const AvailabilityChecker = ({ facilityID, facilityName, setIsLoading }) => {
     return months;
   };
 
-  /**
-   * Handle month selection change
-   * @param {Object} event - Change event
-   */
   const handleMonthChange = (event) => {
     setSelectedMonth(event.target.value);
   };
 
-  /**
-   * Fetch availability data for the selected month and navigate to the reservation details page
-   */
   const fetchAvailability = async () => {
     if (!selectedMonth) {
       alert("Please select a month.");

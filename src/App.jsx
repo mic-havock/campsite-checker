@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import CampsitesPage from "./components/Campsite/CampsitesPage";
-import MapView from "./components/Campsite/MapView";
+import MapView from "./components/Campsite/Map/MapView";
 import FacilitiesFinder from "./components/Facility/FacilitiesFinder";
 import ReservationDetailsPage from "./components/Reservations/ReservationDetailsPage";
 

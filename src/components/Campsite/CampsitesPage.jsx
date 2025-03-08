@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
-import AvailabilityChecker from "./AvailabilityChecker";
 import Campsite from "./Campsite";
-import CampsiteFilter from "./CampsiteFilter";
 import "./campsites-page.scss";
+import AvailabilityChecker from "./Filters/AvailabilityChecker";
+import CampsiteFilter from "./Filters/CampsiteFilter";
 
 /**
  * CampsitesPage component displays a list of campsites for a selected facility

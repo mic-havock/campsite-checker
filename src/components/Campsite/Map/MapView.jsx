@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
-import AvailabilityChecker from "./AvailabilityChecker";
-import CampsiteFilter from "./CampsiteFilter";
-import CampsiteMap from "./CampsiteMap";
+import LoadingSpinner from "../../Common/LoadingSpinner/LoadingSpinner";
+import AvailabilityChecker from "../Filters/AvailabilityChecker";
+import CampsiteFilter from "../Filters/CampsiteFilter";
+import CampsiteMap from "../Map/CampsiteMap";
 import "./map-view.scss";
 
 /**
