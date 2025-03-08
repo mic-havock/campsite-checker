@@ -11,7 +11,7 @@ import CampsiteAvailability from "./CampsiteAvailability";
  * @param {Object} props - Component props
  * @param {Object} props.campsite - Campsite data object
  */
-const Campsite = ({ campsite }) => {
+const Campsite = ({ campsite, facilityName }) => {
   const {
     CampsiteName,
     CampsiteReservable,
@@ -181,7 +181,12 @@ const Campsite = ({ campsite }) => {
                 ) : availabilityError ? (
                   <div className="availability-error">{availabilityError}</div>
                 ) : availabilityData ? (
-                  <CampsiteAvailability availabilities={availabilityData} />
+                  <CampsiteAvailability
+                    availabilities={availabilityData}
+                    facilityName={facilityName}
+                    campsiteNumber={CampsiteName}
+                    campsiteId={CampsiteID}
+                  />
                 ) : null}
               </div>
             </div>

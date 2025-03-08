@@ -1,6 +1,8 @@
 import PropTypes from "prop-types";
-import { useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
+import reservationsAPI from "../../api/reservations";
 import { isNonReservableStatus } from "../../config/reservationStatus";
+import AlertModal from "../Common/AlertModal/AlertModal";
 import "./campsite-availability.scss";
 
 /**
@@ -9,9 +11,31 @@ import "./campsite-availability.scss";
  * @param {Object} props.availabilities - Object containing availability data by date
  * @returns {JSX.Element} Monthly calendar view of campsite availability
  */
-const CampsiteAvailability = ({ availabilities }) => {
+const CampsiteAvailability = ({
+  availabilities,
+  facilityName,
+  campsiteNumber,
+  campsiteId,
+}) => {
+  const [alertModal, setAlertModal] = useState(false);
+  const [selectedDate, setSelectedDate] = useState("");
+  const [isCreatingAlert, setIsCreatingAlert] = useState(false);
+  const isSubmitting = useRef(false);
+  const [alertDetails, setAlertDetails] = useState({
+    name: "",
+    email: "",
+    startDate: "",
+    endDate: "",
+  });
+  const [forceUpdateCounter, setForceUpdateCounter] = useState(0);
+
+  const forceUpdate = () => {
+    setForceUpdateCounter((prev) => prev + 1);
+  };
+
   // Group availabilities by month
   const monthlyAvailabilities = useMemo(() => {
+    console.log(availabilities);
     const months = {};
 
     Object.entries(availabilities).forEach(([dateStr, status]) => {
@@ -60,6 +84,115 @@ const CampsiteAvailability = ({ availabilities }) => {
     });
   };
 
+  const handleDayClick = (status, date) => {
+    if (status === "Reserved" || status === "NYR") {
+      const formattedDate = new Date(date).toISOString().split("T")[0];
+      setSelectedDate(formattedDate);
+      setAlertDetails((prev) => ({
+        ...prev,
+        startDate: formattedDate,
+        endDate: formattedDate,
+      }));
+      setAlertModal(true);
+    }
+  };
+
+  const handleCreateAlert = async () => {
+    // Prevent duplicate submissions
+    if (isSubmitting.current) {
+      return;
+    }
+
+    // Form validation
+    const { name, email, startDate, endDate } = alertDetails;
+    if (!name || !email || !startDate || !endDate) {
+      alert("Please fill in all fields.");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+
+    // Set loading state
+    isSubmitting.current = true;
+    setIsCreatingAlert(true);
+    // Force a re-render to ensure loading state is visible
+    forceUpdate();
+
+    // Prepare data
+    const reservationData = {
+      name,
+      email_address: email,
+      campsite_id: campsiteId,
+      campsite_number: campsiteNumber,
+      campsite_name: facilityName,
+      reservation_start_date: startDate,
+      reservation_end_date: endDate,
+      monitoring_active: true,
+      attempts_made: 0,
+      success_sent: false,
+    };
+
+    try {
+      const result = await reservationsAPI.create(reservationData);
+
+      // Reset states BEFORE showing alert
+      setIsCreatingAlert(false);
+      isSubmitting.current = false;
+      // Force a re-render to ensure loading state is updated
+      forceUpdate();
+
+      // Ensure the spinner is hidden using direct DOM manipulation as a fallback
+      try {
+        const spinnerElements = document.querySelectorAll(
+          ".create-alert-btn .loading-spinner"
+        );
+        spinnerElements.forEach((el) => {
+          el.style.display = "none";
+        });
+      } catch {
+        // Silently handle any DOM manipulation errors
+      }
+
+      // Close modal and reset form
+      setAlertModal(false);
+      setAlertDetails({ name: "", email: "", startDate: "", endDate: "" });
+
+      // Show success message AFTER state updates
+      window.setTimeout(() => {
+        alert(
+          `Alert created successfully! Reservation ID: ${result.id}\n\nIf your selection becomes available, you will receive an email.`
+        );
+      }, 50);
+    } catch (error) {
+      // Reset states BEFORE showing alert
+      setIsCreatingAlert(false);
+      isSubmitting.current = false;
+      // Force a re-render to ensure loading state is updated
+      forceUpdate();
+
+      // Ensure the spinner is hidden using direct DOM manipulation as a fallback
+      try {
+        const spinnerElements = document.querySelectorAll(
+          ".create-alert-btn .loading-spinner"
+        );
+        spinnerElements.forEach((el) => {
+          el.style.display = "none";
+        });
+      } catch {
+        // Silently handle any DOM manipulation errors
+      }
+
+      // Show error message AFTER state updates
+      window.setTimeout(() => {
+        alert(error.message || "Failed to create alert. Please try again.");
+      }, 50);
+    }
+  };
+
   return (
     <div className="availability-section">
       <div className="availability-legend">
@@ -100,6 +233,7 @@ const CampsiteAvailability = ({ availabilities }) => {
                 }).map((_, index) => {
                   const dayNum = index + 1;
                   const status = days[dayNum];
+                  const date = new Date(year, month, dayNum);
                   return (
                     <div
                       key={dayNum}
@@ -112,6 +246,7 @@ const CampsiteAvailability = ({ availabilities }) => {
                             ? new Date(year, month, 1).getDay() + 1
                             : "auto",
                       }}
+                      onClick={() => handleDayClick(status, date)}
                     >
                       <span className="day-number">{dayNum}</span>
                       <span className="day-status">{status}</span>
@@ -123,6 +258,18 @@ const CampsiteAvailability = ({ availabilities }) => {
           </div>
         ))}
       </div>
+
+      <AlertModal
+        isOpen={alertModal}
+        onClose={() => setAlertModal(false)}
+        onCreateAlert={handleCreateAlert}
+        title="Create Availability Alert"
+        subtitle={`Date: ${selectedDate}`}
+        alertDetails={alertDetails}
+        setAlertDetails={setAlertDetails}
+        isCreatingAlert={isCreatingAlert}
+        forceUpdateCounter={forceUpdateCounter}
+      />
     </div>
   );
 };

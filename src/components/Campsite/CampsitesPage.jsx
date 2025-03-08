@@ -136,7 +136,11 @@ const CampsitesPage = () => {
 
       <div className="campsites-grid">
         {filteredCampsites.map((campsite) => (
-          <Campsite key={campsite.CampsiteID} campsite={campsite} />
+          <Campsite
+            key={campsite.CampsiteID}
+            campsite={campsite}
+            facilityName={facilityName}
+          />
         ))}
       </div>
 
