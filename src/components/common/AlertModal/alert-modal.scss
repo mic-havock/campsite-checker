@@ -11,20 +11,18 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;
+  z-index: 99999;
 }
 
 // Alert modal styling
 .modal {
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: relative;
   width: 400px;
   border: 2px solid $secondary-color;
   background-color: $text-light;
   box-shadow: $shadow-lg;
   border-radius: $button-border-radius;
-  z-index: 1000;
+  z-index: 100000;
   padding: 2rem;
 
   h2 {

@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import { createPortal } from "react-dom";
 import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
 import "./alert-modal.scss";
 
@@ -15,19 +16,14 @@ const AlertModal = ({
 }) => {
   if (!isOpen) return null;
 
-  /**
-   * Handles click on the modal backdrop
-   * Closes the modal when clicking outside the modal content
-   * @param {React.MouseEvent} event - The click event
-   */
+  // Closes the modal when clicking outside the modal content
   const handleBackdropClick = (event) => {
-    // Only close if clicking directly on the backdrop, not on modal content
     if (event.target === event.currentTarget) {
       onClose();
     }
   };
 
-  return (
+  const modalContent = (
     <div
       className="modal-backdrop"
       onClick={handleBackdropClick}
@@ -107,6 +103,8 @@ const AlertModal = ({
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 };
 
 AlertModal.propTypes = {
