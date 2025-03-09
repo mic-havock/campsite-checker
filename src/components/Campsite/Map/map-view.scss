@@ -186,6 +186,16 @@ $transition: all 0.2s ease;
   }
 }
 
+// Fixed Back Button
+.back-button {
+  @include button-primary;
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  z-index: 100;
+  box-shadow: $shadow-md;
+}
+
 /* Fix for Leaflet container */
 .leaflet-container {
   height: 100% !important;

@@ -65,7 +65,7 @@ const CampsitesPage = () => {
           <p>
             There are no campsites available for this facility at the moment.
           </p>
-          <button onClick={() => navigate(-1)} className="back-button">
+          <button onClick={() => navigate("/")} className="back-button">
             Back to Campgrounds
           </button>
         </div>
@@ -129,7 +129,7 @@ const CampsitesPage = () => {
         ))}
       </div>
 
-      <button onClick={() => navigate(-1)} className="back-button">
+      <button onClick={() => navigate("/")} className="back-button">
         <span className="back-arrow">←</span> Back to Campgrounds
       </button>
     </div>

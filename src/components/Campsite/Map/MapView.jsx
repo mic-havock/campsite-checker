@@ -114,6 +114,10 @@ const MapView = () => {
           facilityName={facilityName || "Campground"}
         />
       </div>
+
+      <button onClick={() => navigate("/")} className="back-button">
+        <span className="back-arrow">←</span> Back to Campgrounds
+      </button>
     </div>
   );
 };
