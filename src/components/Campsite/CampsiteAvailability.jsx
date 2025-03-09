@@ -39,7 +39,11 @@ const CampsiteAvailability = ({
     const months = {};
 
     Object.entries(availabilities).forEach(([dateStr, status]) => {
-      const date = new Date(dateStr);
+      const [year, month, day] = dateStr
+        .split("-")
+        .map((num) => parseInt(num, 10));
+      const date = new Date(year, month - 1, day);
+
       const monthKey = `${date.getFullYear()}-${String(
         date.getMonth() + 1
       ).padStart(2, "0")}`;
@@ -86,7 +90,9 @@ const CampsiteAvailability = ({
 
   const handleDayClick = (status, date) => {
     if (status === "Reserved" || status === "NYR") {
-      const formattedDate = new Date(date).toISOString().split("T")[0];
+      const formattedDate = `${date.getFullYear()}-${String(
+        date.getMonth() + 1
+      ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
       setSelectedDate(formattedDate);
       setAlertDetails((prev) => ({
         ...prev,
@@ -276,6 +282,9 @@ const CampsiteAvailability = ({
 
 CampsiteAvailability.propTypes = {
   availabilities: PropTypes.objectOf(PropTypes.string).isRequired,
+  facilityName: PropTypes.string.isRequired,
+  campsiteNumber: PropTypes.string.isRequired,
+  campsiteId: PropTypes.string.isRequired,
 };
 
 export default CampsiteAvailability;
