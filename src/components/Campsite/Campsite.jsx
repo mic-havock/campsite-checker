@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/scss/image-gallery.scss";
 import { fetchCampsiteAvailability } from "../../api/campsites";
@@ -43,6 +44,19 @@ const Campsite = ({ campsite, facilityName }) => {
     loadAvailability();
   }, [isExpanded, CampsiteID, availabilityData, isLoadingAvailability]);
 
+  // Prevent body scrolling when modal is open
+  useEffect(() => {
+    if (isExpanded) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isExpanded]);
+
   const toTitleCase = (str) => {
     const exceptions = ["AM", "PM", "RV"];
     return str
@@ -76,129 +90,138 @@ const Campsite = ({ campsite, facilityName }) => {
       thumbnailAlt: `Thumbnail of ${media.Title}`,
     })) || [];
 
-  return (
-    <div className="campsite-card">
-      <div className="campsite-content" onClick={() => setIsExpanded(true)}>
-        {images.length > 0 ? (
-          <img
-            src={images[0].original}
-            alt={images[0].originalAlt}
-            className="campsite-thumbnail"
-          />
-        ) : (
-          <div className="no-image-container">No Image Available</div>
-        )}
+  // Modal component to be rendered with portal
+  const Modal = () => {
+    if (!isExpanded) return null;
 
-        <div className="campsite-info">
-          <h3>
-            {CampsiteName}
-            {Loop && Loop.trim() ? ` - ${Loop}` : ""}
-          </h3>
-          <div className="campsite-tags">
-            {toTitleCase(CampsiteType)} -{" "}
-            {CampsiteReservable ? "Reservable" : "Not Reservable"}
+    return createPortal(
+      <div className="overlay" onClick={() => setIsExpanded(false)}>
+        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="media-section">
+            {images.length > 0 ? (
+              <ImageGallery
+                items={images}
+                showPlayButton={false}
+                showFullscreenButton={true}
+                showNav={true}
+                thumbnailPosition="bottom"
+                slideInterval={3000}
+                slideDuration={450}
+                lazyLoad={true}
+                showIndex={true}
+                onErrorImageURL="/placeholder-image.jpg"
+              />
+            ) : (
+              <div className="no-image-container">No Images Available</div>
+            )}
+          </div>
+
+          <div className="modal-details">
+            <div className="campsite-header">
+              <h2>
+                Campsite: {CampsiteName}
+                {Loop && Loop.trim() ? ` - ${Loop}` : ""}{" "}
+              </h2>
+            </div>
+
+            {ATTRIBUTES && ATTRIBUTES.length > 0 && (
+              <div className="attributes-section">
+                <h3>Campsite Details</h3>
+                <div className="attributes-grid">
+                  <div className="attribute-item">
+                    <span className="attribute-name">TYPE: </span>
+                    {toTitleCase(CampsiteType)}
+                  </div>
+                  <div className="attribute-item">
+                    <span className="attribute-name">RESERVABLE: </span>
+                    {CampsiteReservable ? "Reservable" : "Not Reservable"}
+                  </div>
+                  {ATTRIBUTES.map((attribute, index) => (
+                    <div key={index} className="attribute-item">
+                      <span className="attribute-name">
+                        {attribute.AttributeName.toUpperCase()}:
+                      </span>
+                      {toTitleCase(attribute.AttributeValue)}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {PERMITTEDEQUIPMENT && PERMITTEDEQUIPMENT.length > 0 && (
+              <div className="attributes-section">
+                <h3>Permitted Equipment</h3>
+                <div className="attributes-grid">
+                  {PERMITTEDEQUIPMENT.map((equipment, index) => (
+                    <div key={index} className="attribute-item">
+                      {toTitleCase(equipment.EquipmentName)}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="attributes-section">
+              <h3>Availability Calendar</h3>
+              {isLoadingAvailability ? (
+                <div className="availability-loading">
+                  Loading availability...
+                </div>
+              ) : availabilityError ? (
+                <div className="availability-error">{availabilityError}</div>
+              ) : availabilityData ? (
+                <CampsiteAvailability
+                  availabilities={availabilityData}
+                  facilityName={facilityName}
+                  campsiteNumber={CampsiteName}
+                  campsiteId={CampsiteID}
+                />
+              ) : null}
+            </div>
+          </div>
+
+          <a
+            href={`https://www.recreation.gov/camping/campsites/${CampsiteID}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="recreation-link"
+          >
+            View on Recreation.gov →
+          </a>
+        </div>
+      </div>,
+      document.body
+    );
+  };
+
+  return (
+    <>
+      <div className="campsite-card">
+        <div className="campsite-content" onClick={() => setIsExpanded(true)}>
+          {images.length > 0 ? (
+            <img
+              src={images[0].original}
+              alt={images[0].originalAlt}
+              className="campsite-thumbnail"
+            />
+          ) : (
+            <div className="no-image-container">No Image Available</div>
+          )}
+
+          <div className="campsite-info">
+            <h3>
+              {CampsiteName}
+              {Loop && Loop.trim() ? ` - ${Loop}` : ""}
+            </h3>
+            <div className="campsite-tags">
+              {toTitleCase(CampsiteType)} -{" "}
+              {CampsiteReservable ? "Reservable" : "Not Reservable"}
+            </div>
           </div>
         </div>
       </div>
-
-      {isExpanded && (
-        <div className="overlay" onClick={() => setIsExpanded(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="media-section">
-              {images.length > 0 ? (
-                <ImageGallery
-                  items={images}
-                  showPlayButton={false}
-                  showFullscreenButton={true}
-                  showNav={true}
-                  thumbnailPosition="bottom"
-                  slideInterval={3000}
-                  slideDuration={450}
-                  lazyLoad={true}
-                  showIndex={true}
-                  onErrorImageURL="/placeholder-image.jpg"
-                />
-              ) : (
-                <div className="no-image-container">No Images Available</div>
-              )}
-            </div>
-
-            <div className="modal-details">
-              <div className="campsite-header">
-                <h2>
-                  Campsite: {CampsiteName}
-                  {Loop && Loop.trim() ? ` - ${Loop}` : ""}{" "}
-                </h2>
-              </div>
-
-              {ATTRIBUTES && ATTRIBUTES.length > 0 && (
-                <div className="attributes-section">
-                  <h3>Campsite Details</h3>
-                  <div className="attributes-grid">
-                    <div className="attribute-item">
-                      <span className="attribute-name">TYPE: </span>
-                      {toTitleCase(CampsiteType)}
-                    </div>
-                    <div className="attribute-item">
-                      <span className="attribute-name">RESERVABLE: </span>
-                      {CampsiteReservable ? "Reservable" : "Not Reservable"}
-                    </div>
-                    {ATTRIBUTES.map((attribute, index) => (
-                      <div key={index} className="attribute-item">
-                        <span className="attribute-name">
-                          {attribute.AttributeName.toUpperCase()}:
-                        </span>
-                        {toTitleCase(attribute.AttributeValue)}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {PERMITTEDEQUIPMENT && PERMITTEDEQUIPMENT.length > 0 && (
-                <div className="attributes-section">
-                  <h3>Permitted Equipment</h3>
-                  <div className="attributes-grid">
-                    {PERMITTEDEQUIPMENT.map((equipment, index) => (
-                      <div key={index} className="attribute-item">
-                        {toTitleCase(equipment.EquipmentName)}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              <div className="attributes-section">
-                <h3>Availability Calendar</h3>
-                {isLoadingAvailability ? (
-                  <div className="availability-loading">
-                    Loading availability...
-                  </div>
-                ) : availabilityError ? (
-                  <div className="availability-error">{availabilityError}</div>
-                ) : availabilityData ? (
-                  <CampsiteAvailability
-                    availabilities={availabilityData}
-                    facilityName={facilityName}
-                    campsiteNumber={CampsiteName}
-                    campsiteId={CampsiteID}
-                  />
-                ) : null}
-              </div>
-            </div>
-
-            <a
-              href={`https://www.recreation.gov/camping/campsites/${CampsiteID}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="recreation-link"
-            >
-              View on Recreation.gov →
-            </a>
-          </div>
-        </div>
-      )}
-    </div>
+      <Modal />
+    </>
   );
 };
 
@@ -227,6 +250,7 @@ Campsite.propTypes = {
     ),
     CampsiteID: PropTypes.string.isRequired,
   }).isRequired,
+  facilityName: PropTypes.string.isRequired,
 };
 
 export default Campsite;

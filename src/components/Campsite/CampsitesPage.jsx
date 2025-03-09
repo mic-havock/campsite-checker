@@ -6,12 +6,8 @@ import "./campsites-page.scss";
 import AvailabilityChecker from "./Filters/AvailabilityChecker";
 import CampsiteFilter from "./Filters/CampsiteFilter";
 
-/**
- * CampsitesPage component displays a list of campsites for a selected facility
- * with filtering and availability checking functionality
- *
- * @returns {JSX.Element} - Rendered component
- */
+//CampsitesPage component displays a list of campsites for a selected facility
+//with filtering and availability checking functionality
 const CampsitesPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -36,10 +32,6 @@ const CampsitesPage = () => {
     setCampsiteData(filteredAndSortedCampsites);
   }, [campsites]);
 
-  /**
-   * Navigate to the map view with the filtered campsite data
-   * Shows a loading spinner while preparing to navigate
-   */
   const navigateToMapView = () => {
     if (!campsiteData || campsiteData.length === 0) {
       alert("No campsite data available to display on the map.");
@@ -48,20 +40,15 @@ const CampsitesPage = () => {
 
     setIsMapLoading(true);
 
-    // Simulate a short delay to show the loading spinner
-    // In a real app, this might be time spent preparing map data
-    setTimeout(() => {
-      navigate("/map-view", {
-        state: {
-          campsites: filteredCampsites, // Use filtered campsites instead of all campsites
-          facilityName: facilityName || "Campground",
-        },
-      });
-      setIsMapLoading(false);
-    }, 500);
+    navigate("/map-view", {
+      state: {
+        campsites: filteredCampsites,
+        facilityName: facilityName || "Campground",
+      },
+    });
+    setIsMapLoading(false);
   };
 
-  // Filter campsites based on both reservable and loop filters
   const filteredCampsites = campsiteData.filter((campsite) => {
     const reservableMatch = !showReservableOnly || campsite.CampsiteReservable;
     const loopMatch =
@@ -97,7 +84,6 @@ const CampsitesPage = () => {
       <div className="controls-wrapper">
         <div className="controls-container">
           <div className="filter-section">
-            {/* CampsiteFilter component */}
             <CampsiteFilter
               campsiteData={campsiteData}
               filteredCampsites={filteredCampsites}
@@ -109,7 +95,6 @@ const CampsitesPage = () => {
           </div>
 
           <div className="right-controls">
-            {/* AvailabilityChecker component */}
             <AvailabilityChecker
               facilityID={facilityID}
               facilityName={facilityName}

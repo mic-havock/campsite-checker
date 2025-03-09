@@ -6,11 +6,7 @@ import CampsiteFilter from "../Filters/CampsiteFilter";
 import CampsiteMap from "../Map/CampsiteMap";
 import "./map-view.scss";
 
-/**
- * MapView component displays a dedicated page with a map of campsite locations
- *
- * @returns {JSX.Element} - Rendered component
- */
+//MapView displays a dedicated page with a map of campsite locations
 const MapView = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -30,15 +26,8 @@ const MapView = () => {
       return;
     }
 
-    // Initialize campsite data
     setCampsiteData(campsites);
-
-    // Simulate loading for map resources
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 800);
-
-    return () => clearTimeout(timer);
+    setIsLoading(false);
   }, [campsites]);
 
   /**
