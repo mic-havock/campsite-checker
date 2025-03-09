@@ -42,7 +42,7 @@ const Campsite = ({ campsite, facilityName }) => {
     };
 
     loadAvailability();
-  }, [isExpanded, CampsiteID, availabilityData, isLoadingAvailability]);
+  }, [isExpanded, CampsiteID]);
 
   // Prevent body scrolling when modal is open
   useEffect(() => {
