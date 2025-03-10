@@ -105,11 +105,8 @@ const Campsite = ({ campsite, facilityName }) => {
                 showFullscreenButton={true}
                 showNav={true}
                 thumbnailPosition="bottom"
-                slideInterval={3000}
-                slideDuration={450}
                 lazyLoad={true}
                 showIndex={true}
-                onErrorImageURL="/placeholder-image.jpg"
               />
             ) : (
               <div className="no-image-container">No Images Available</div>

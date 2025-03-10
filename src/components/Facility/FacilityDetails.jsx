@@ -120,11 +120,8 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
             showFullscreenButton={true}
             showNav={true}
             thumbnailPosition="bottom"
-            slideInterval={3000}
-            slideDuration={450}
             lazyLoad={true}
             showIndex={true}
-            onErrorImageURL="/placeholder-image.jpg"
           />
         ) : (
           <p>No images available</p>
