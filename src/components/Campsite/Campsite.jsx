@@ -1,9 +1,8 @@
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import ImageGallery from "react-image-gallery";
-import "react-image-gallery/styles/scss/image-gallery.scss";
 import { fetchCampsiteAvailability } from "../../api/campsites";
+import ImageGallery from "../Common/ImageGallery/ImageGallery";
 import CampsiteAvailability from "./CampsiteAvailability";
 import "./campsite.scss";
 
@@ -97,21 +96,7 @@ const Campsite = ({ campsite, facilityName }) => {
     return createPortal(
       <div className="overlay" onClick={() => setIsExpanded(false)}>
         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-          <div className="media-section">
-            {images.length > 0 ? (
-              <ImageGallery
-                items={images}
-                showPlayButton={false}
-                showFullscreenButton={true}
-                showNav={true}
-                thumbnailPosition="bottom"
-                lazyLoad={true}
-                showIndex={true}
-              />
-            ) : (
-              <div className="no-image-container">No Images Available</div>
-            )}
-          </div>
+          <ImageGallery images={images} />
 
           <div className="modal-details">
             <div className="campsite-header">
