@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
-import ImageGallery from "react-image-gallery";
-import "react-image-gallery/styles/scss/image-gallery.scss";
+import ImageGallery from "../Common/ImageGallery/ImageGallery";
 import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
 import "./facility-details.scss";
 
@@ -113,19 +112,7 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
 
       <div className="media-section">
         <h2>Images</h2>
-        {images.length > 0 ? (
-          <ImageGallery
-            items={images}
-            showPlayButton={false}
-            showFullscreenButton={true}
-            showNav={true}
-            thumbnailPosition="bottom"
-            lazyLoad={true}
-            showIndex={true}
-          />
-        ) : (
-          <p>No images available</p>
-        )}
+        <ImageGallery images={images} />
       </div>
       <a
         href={`https://www.recreation.gov/camping/campgrounds/${facility.FacilityID}`}
