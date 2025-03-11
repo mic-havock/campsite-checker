@@ -11,6 +11,7 @@ const ImageGallery = ({
   thumbnailPosition = "bottom",
   lazyLoad = true,
   showIndex = true,
+  showBullets = false,
 }) => {
   if (!images || images.length === 0) {
     return <div className="no-image-container">No Images Available</div>;
@@ -25,6 +26,7 @@ const ImageGallery = ({
         showNav={showNav}
         thumbnailPosition={thumbnailPosition}
         lazyLoad={lazyLoad}
+        showBullets={showBullets}
         showIndex={showIndex}
       />
     </div>
@@ -47,6 +49,7 @@ ImageGallery.propTypes = {
   thumbnailPosition: PropTypes.oneOf(["bottom", "top", "left", "right"]),
   lazyLoad: PropTypes.bool,
   showIndex: PropTypes.bool,
+  showBullets: PropTypes.bool,
 };
 
 export default ImageGallery;
