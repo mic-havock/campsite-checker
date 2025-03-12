@@ -161,7 +161,11 @@ const CampsiteAvailability = ({ availabilities, facilityName, campsite }) => {
         isOpen={alertModal}
         onClose={() => setAlertModal(false)}
         title="Create Availability Alert"
-        subtitle={`Date: ${selectedDate}`}
+        subtitle={
+          campsite
+            ? `Campsite: ${campsite.CampsiteName} - ${campsite.Loop}`
+            : ""
+        }
         alertDetails={alertDetails}
         setAlertDetails={setAlertDetails}
         isCreatingAlert={isCreatingAlert}
