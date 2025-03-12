@@ -1,25 +1,82 @@
 import PropTypes from "prop-types";
+import { useRef } from "react";
 import { createPortal } from "react-dom";
+import reservationsAPI from "../../../api/reservations";
 import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
 import "./alert-modal.scss";
 
 const AlertModal = ({
   isOpen,
   onClose,
-  onCreateAlert,
   title,
   subtitle,
   alertDetails,
   setAlertDetails,
   isCreatingAlert,
+  setIsCreatingAlert,
+  selectedCampsite,
+  campsiteName,
   forceUpdateCounter,
 }) => {
+  const isSubmitting = useRef(false);
+
   if (!isOpen) return null;
 
   // Closes the modal when clicking outside the modal content
   const handleBackdropClick = (event) => {
     if (event.target === event.currentTarget) {
       onClose();
+    }
+  };
+
+  const handleCreateAlert = async () => {
+    if (isSubmitting.current) return;
+
+    const { name, email, startDate, endDate } = alertDetails;
+    if (!name || !email || !startDate || !endDate) {
+      alert("Please fill in all fields.");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+
+    isSubmitting.current = true;
+    setIsCreatingAlert(true);
+
+    const reservationData = {
+      name,
+      email_address: email,
+      campsite_id: selectedCampsite.campsite_id,
+      campsite_number: selectedCampsite.site,
+      campsite_name: campsiteName,
+      reservation_start_date: startDate,
+      reservation_end_date: endDate,
+      monitoring_active: true,
+      attempts_made: 0,
+      success_sent: false,
+    };
+
+    try {
+      const result = await reservationsAPI.create(reservationData);
+      setIsCreatingAlert(false);
+      isSubmitting.current = false;
+      onClose();
+      setAlertDetails({ name: "", email: "", startDate: "", endDate: "" });
+      window.setTimeout(() => {
+        alert(
+          `Alert created successfully! Reservation ID: ${result.id}\n\nIf your selection becomes available, you will receive an email.`
+        );
+      }, 20);
+    } catch (error) {
+      setIsCreatingAlert(false);
+      isSubmitting.current = false;
+      window.setTimeout(() => {
+        alert(error.message || "Failed to create alert. Please try again.");
+      }, 20);
     }
   };
 
@@ -79,7 +136,7 @@ const AlertModal = ({
         />
         <div className="modal-buttons">
           <button
-            onClick={onCreateAlert}
+            onClick={handleCreateAlert}
             disabled={isCreatingAlert}
             className="create-alert-btn"
           >
@@ -110,7 +167,6 @@ const AlertModal = ({
 AlertModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  onCreateAlert: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
   subtitle: PropTypes.string,
   alertDetails: PropTypes.shape({
@@ -121,6 +177,9 @@ AlertModal.propTypes = {
   }).isRequired,
   setAlertDetails: PropTypes.func.isRequired,
   isCreatingAlert: PropTypes.bool.isRequired,
+  setIsCreatingAlert: PropTypes.func.isRequired,
+  selectedCampsite: PropTypes.object.isRequired,
+  campsiteName: PropTypes.string.isRequired,
   forceUpdateCounter: PropTypes.number.isRequired,
 };
 

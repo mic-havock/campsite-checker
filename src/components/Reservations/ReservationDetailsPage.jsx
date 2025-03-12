@@ -9,7 +9,6 @@ import { AgGridReact } from "ag-grid-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchCampgroundAvailability } from "../../api/campsites";
-import reservationsAPI from "../../api/reservations";
 import { isNonReservableStatus } from "../../config/reservationStatus";
 import AlertModal from "../Common/AlertModal/AlertModal";
 import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
@@ -47,15 +46,10 @@ const ReservationDetailsPage = () => {
   const [isCreatingAlert, setIsCreatingAlert] = useState(false);
   const [hideNotReservable, setHideNotReservable] = useState(false);
   const isMounted = useRef(true);
-  const isSubmitting = useRef(false);
-  const [forceUpdateCounter, setForceUpdateCounter] = useState(0);
 
   useEffect(() => {
     const handleResize = () => {
       setTableWidth(window.innerWidth);
-      if (gridApi) {
-        gridApi.sizeColumnsToFit();
-      }
     };
 
     window.addEventListener("resize", handleResize);
@@ -147,106 +141,6 @@ const ReservationDetailsPage = () => {
     setAlertModal(true);
   };
 
-  const forceUpdate = () => {
-    setForceUpdateCounter((prev) => prev + 1);
-  };
-
-  const handleCreateAlert = async () => {
-    // Prevent duplicate submissions
-    if (isSubmitting.current) {
-      return;
-    }
-
-    // Form validation
-    const { name, email, startDate, endDate } = alertDetails;
-    if (!name || !email || !startDate || !endDate) {
-      alert("Please fill in all fields.");
-      return;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      alert("Please enter a valid email address.");
-      return;
-    }
-
-    // Set loading state
-    isSubmitting.current = true;
-    setIsCreatingAlert(true);
-    // Force a re-render to ensure loading state is visible
-    forceUpdate();
-
-    // Prepare data
-    const reservationData = {
-      name,
-      email_address: email,
-      campsite_id: selectedCampsite.campsite_id,
-      campsite_number: selectedCampsite.site,
-      campsite_name: campsiteName,
-      reservation_start_date: startDate,
-      reservation_end_date: endDate,
-      monitoring_active: true,
-      attempts_made: 0,
-      success_sent: false,
-    };
-
-    try {
-      const result = await reservationsAPI.create(reservationData);
-
-      // Reset states BEFORE showing alert
-      setIsCreatingAlert(false);
-      isSubmitting.current = false;
-      // Force a re-render to ensure loading state is updated
-      forceUpdate();
-
-      // Ensure the spinner is hidden using direct DOM manipulation as a fallback
-      try {
-        const spinnerElements = document.querySelectorAll(
-          ".create-alert-btn .loading-spinner"
-        );
-        spinnerElements.forEach((el) => {
-          el.style.display = "none";
-        });
-      } catch {
-        // Silently handle any DOM manipulation errors
-      }
-
-      // Close modal and reset form
-      setAlertModal(false);
-      setAlertDetails({ name: "", email: "", startDate: "", endDate: "" });
-
-      // Show success message AFTER state updates
-      window.setTimeout(() => {
-        alert(
-          `Alert created successfully! Reservation ID: ${result.id}\n\nIf your selection becomes available, you will receive an email.`
-        );
-      }, 50);
-    } catch (error) {
-      // Reset states BEFORE showing alert
-      setIsCreatingAlert(false);
-      isSubmitting.current = false;
-      // Force a re-render to ensure loading state is updated
-      forceUpdate();
-
-      // Ensure the spinner is hidden using direct DOM manipulation as a fallback
-      try {
-        const spinnerElements = document.querySelectorAll(
-          ".create-alert-btn .loading-spinner"
-        );
-        spinnerElements.forEach((el) => {
-          el.style.display = "none";
-        });
-      } catch {
-        // Silently handle any DOM manipulation errors
-      }
-
-      // Show error message AFTER state updates
-      window.setTimeout(() => {
-        alert(error.message || "Failed to create alert. Please try again.");
-      }, 50);
-    }
-  };
-
   const getNextMonths = () => {
     const months = [];
     const currentDate = new Date();
@@ -304,8 +198,6 @@ const ReservationDetailsPage = () => {
       }
 
       const data = await fetchCampgroundAvailability(facilityID, startDate);
-
-      // Update the state with new data
       setAvailabilityData(data);
       setIsLoading(false);
     } catch (error) {
@@ -334,6 +226,9 @@ const ReservationDetailsPage = () => {
         pinned: "left",
         lockPinned: true,
         width: 150,
+        minWidth: 150,
+        maxWidth: 150,
+        suppressSizeToFit: true,
         cellStyle: {
           backgroundColor: "#f8f9fa",
           //borderRight: "1px solid#c4c4c4",
@@ -345,6 +240,9 @@ const ReservationDetailsPage = () => {
         pinned: "left",
         lockPinned: true,
         width: 150,
+        minWidth: 150,
+        maxWidth: 150,
+        suppressSizeToFit: true,
         cellStyle: {
           backgroundColor: "#f8f9fa",
           //borderRight: "1px solid #dde2eb",
@@ -606,7 +504,7 @@ const ReservationDetailsPage = () => {
               }}
               onGridReady={(params) => {
                 setGridApi(params.api);
-                params.api.sizeColumnsToFit();
+                // Don't auto-size columns to ensure fixed widths are respected
               }}
               headerHeight={headerHeight}
               rowHeight={rowHeight}
@@ -622,7 +520,6 @@ const ReservationDetailsPage = () => {
         <AlertModal
           isOpen={alertModal}
           onClose={() => setAlertModal(false)}
-          onCreateAlert={handleCreateAlert}
           title="Create Availability Alert"
           subtitle={
             selectedCampsite
@@ -632,7 +529,9 @@ const ReservationDetailsPage = () => {
           alertDetails={alertDetails}
           setAlertDetails={setAlertDetails}
           isCreatingAlert={isCreatingAlert}
-          forceUpdateCounter={forceUpdateCounter}
+          setIsCreatingAlert={setIsCreatingAlert}
+          selectedCampsite={selectedCampsite}
+          campsiteName={campsiteName}
         />
       </div>
     );
