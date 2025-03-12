@@ -157,6 +157,7 @@ const Campsite = ({ campsite, facilityName }) => {
                   facilityName={facilityName}
                   campsiteNumber={CampsiteName}
                   campsiteId={CampsiteID}
+                  campsite={campsite}
                 />
               ) : null}
             </div>
