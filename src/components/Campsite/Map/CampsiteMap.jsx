@@ -203,7 +203,7 @@ const CampsiteMap = ({ campsites, facilityName }) => {
           onClick={() => setSelectedCampsite(null)}
         >
           <div onClick={(e) => e.stopPropagation()}>
-            <Campsite campsite={selectedCampsite} />
+            <Campsite campsite={selectedCampsite} facilityName={facilityName} />
           </div>
         </div>
       )}
