@@ -65,7 +65,6 @@ const UserManagement = () => {
    * @param {boolean} active - New monitoring status
    */
   const handleBatchMonitoringUpdate = async (active) => {
-    console.log("reservations", JSON.stringify(reservations, null, 2));
     if (!email) return;
 
     try {
@@ -79,6 +78,10 @@ const UserManagement = () => {
         }))
       );
       setAllMonitoringActive(active);
+
+      // Refresh stats
+      const statsData = await fetchUserStats(email);
+      setStats(statsData.stats);
     } catch (err) {
       setError(err.message);
     }
@@ -99,6 +102,10 @@ const UserManagement = () => {
           res.id === id ? { ...res, monitoring_active: active ? 1 : 0 } : res
         )
       );
+
+      // Refresh stats
+      const statsData = await fetchUserStats(email);
+      setStats(statsData.stats);
     } catch (err) {
       setError(err.message);
     }
@@ -141,6 +148,10 @@ const UserManagement = () => {
 
       // Update local state
       setReservations((prev) => prev.filter((res) => res.id !== id));
+
+      // Refresh stats
+      const statsData = await fetchUserStats(email);
+      setStats(statsData.stats);
     } catch (err) {
       setError(err.message);
     }
@@ -232,72 +243,78 @@ const UserManagement = () => {
       {reservations.length > 0 && (
         <div className="reservations-list">
           <h3>Reservations</h3>
-          {reservations.map((reservation) => (
-            <div key={reservation.id} className="reservation-card">
-              <div className="reservation-header">
-                <h4>Reservation #{reservation.id}</h4>
-                <div className="reservation-actions">
-                  <button
-                    onClick={() => setSelectedReservation(reservation)}
-                    className="edit-button"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(reservation.id)}
-                    className="delete-button"
-                  >
-                    Delete
-                  </button>
+          <div className="reservations-grid">
+            {reservations.map((reservation) => (
+              <div key={reservation.id} className="reservation-card">
+                <div className="reservation-header">
+                  <h4>
+                    {reservation.campsite_name || "N/A"}
+                    {reservation.campsite_number &&
+                      ` #${reservation.campsite_number}`}
+                    <br />
+                  </h4>
+                  <div className="reservation-actions">
+                    <button
+                      onClick={() => setSelectedReservation(reservation)}
+                      className="edit-button"
+                      title="Edit reservation dates"
+                    >
+                      Edit Dates
+                    </button>
+                    <button
+                      onClick={() => handleDelete(reservation.id)}
+                      className="delete-button"
+                      title="Delete reservation"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+                <div className="reservation-details">
+                  <p className="dates">
+                    <strong>Dates:</strong>
+                    {new Date(
+                      reservation.reservation_start_date
+                    ).toLocaleDateString()}{" "}
+                    -{" "}
+                    {new Date(
+                      reservation.reservation_end_date
+                    ).toLocaleDateString()}
+                  </p>
+                  <p className="monitoring">
+                    <span
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem",
+                      }}
+                    >
+                      <strong>Monitoring:</strong>
+                      <label className="toggle-switch">
+                        <input
+                          type="checkbox"
+                          checked={reservation.monitoring_active}
+                          onChange={() =>
+                            handleMonitoringUpdate(
+                              reservation.id,
+                              !reservation.monitoring_active
+                            )
+                          }
+                        />
+                        <span className="toggle-slider">
+                          <span className="toggle-text active">Active</span>
+                          <span className="toggle-text inactive">Inactive</span>
+                        </span>
+                      </label>
+                    </span>
+                    <span className="attempts">
+                      {reservation.attempts_made} attempts
+                    </span>
+                  </p>
                 </div>
               </div>
-              <div className="reservation-details">
-                <p>
-                  <strong>Campsite Name:</strong>{" "}
-                  {reservation.campsite_name || "N/A"}
-                </p>
-                <p>
-                  <strong>Campsite Number:</strong>{" "}
-                  {reservation.campsite_number || "N/A"}
-                </p>
-                <p>
-                  <strong>Start Date:</strong>{" "}
-                  {new Date(
-                    reservation.reservation_start_date
-                  ).toLocaleDateString()}
-                </p>
-                <p>
-                  <strong>End Date:</strong>{" "}
-                  {new Date(
-                    reservation.reservation_end_date
-                  ).toLocaleDateString()}
-                </p>
-                <p>
-                  <strong>Monitoring Status:</strong>{" "}
-                  <label className="toggle-switch">
-                    <input
-                      type="checkbox"
-                      checked={reservation.monitoring_active}
-                      onChange={() =>
-                        handleMonitoringUpdate(
-                          reservation.id,
-                          !reservation.monitoring_active
-                        )
-                      }
-                    />
-                    <span className="toggle-slider">
-                      <span className="toggle-text active">Active</span>
-                      <span className="toggle-text inactive">Inactive</span>
-                    </span>
-                  </label>
-                </p>
-                <p>
-                  <strong>Notifications Sent:</strong>{" "}
-                  {reservation.attempts_made}
-                </p>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
 
