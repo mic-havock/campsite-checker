@@ -65,6 +65,7 @@ const UserManagement = () => {
    * @param {boolean} active - New monitoring status
    */
   const handleBatchMonitoringUpdate = async (active) => {
+    console.log("reservations", JSON.stringify(reservations, null, 2));
     if (!email) return;
 
     try {
@@ -158,7 +159,7 @@ const UserManagement = () => {
 
   return (
     <div className="user-management">
-      <h2>User Management</h2>
+      <h1>User Management</h1>
 
       {/* Search Form */}
       <form onSubmit={handleSubmit} className="search-form">
@@ -273,43 +274,27 @@ const UserManagement = () => {
                 </p>
                 <p>
                   <strong>Monitoring Status:</strong>{" "}
-                  <span
-                    className={`status ${
-                      reservation.monitoring_active ? "active" : "inactive"
-                    }`}
-                  >
-                    {reservation.monitoring_active ? "Active" : "Inactive"}
-                  </span>
+                  <label className="toggle-switch">
+                    <input
+                      type="checkbox"
+                      checked={reservation.monitoring_active}
+                      onChange={() =>
+                        handleMonitoringUpdate(
+                          reservation.id,
+                          !reservation.monitoring_active
+                        )
+                      }
+                    />
+                    <span className="toggle-slider">
+                      <span className="toggle-text active">Active</span>
+                      <span className="toggle-text inactive">Inactive</span>
+                    </span>
+                  </label>
                 </p>
-                {reservation.last_check && (
-                  <p>
-                    <strong>Last Check:</strong>{" "}
-                    {new Date(reservation.last_check).toLocaleString()}
-                  </p>
-                )}
-                {reservation.notification_count > 0 && (
-                  <p>
-                    <strong>Notifications Sent:</strong>{" "}
-                    {reservation.notification_count}
-                  </p>
-                )}
-              </div>
-              <div className="monitoring-toggle">
-                <button
-                  onClick={() =>
-                    handleMonitoringUpdate(
-                      reservation.id,
-                      !reservation.monitoring_active
-                    )
-                  }
-                  className={`toggle-button ${
-                    reservation.monitoring_active ? "active" : "inactive"
-                  }`}
-                >
-                  {reservation.monitoring_active
-                    ? "Disable Monitoring"
-                    : "Enable Monitoring"}
-                </button>
+                <p>
+                  <strong>Notifications Sent:</strong>{" "}
+                  {reservation.attempts_made}
+                </p>
               </div>
             </div>
           ))}
