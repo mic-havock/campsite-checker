@@ -1,12 +1,10 @@
 import { useState } from "react";
 import {
-  deleteReservation,
   fetchReservations,
   fetchUserStats,
   updateBatchMonitoringStatus,
-  updateMonitoringStatus,
-  updateReservationDates,
 } from "../../api/userManagement";
+import ReservationCard from "../UserManagement/ReservationCard/ReservationCard";
 import "./user-management.scss";
 
 /**
@@ -21,11 +19,6 @@ const UserManagement = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [selectedReservation, setSelectedReservation] = useState(null);
-  const [dateRange, setDateRange] = useState({
-    startDate: "",
-    endDate: "",
-  });
   const [allMonitoringActive, setAllMonitoringActive] = useState(false);
 
   /**
@@ -88,76 +81,6 @@ const UserManagement = () => {
   };
 
   /**
-   * Updates monitoring status for a reservation
-   * @param {number} id - Reservation ID
-   * @param {boolean} active - New monitoring status
-   */
-  const handleMonitoringUpdate = async (id, active) => {
-    try {
-      await updateMonitoringStatus(id, active);
-
-      // Update local state
-      setReservations((prev) =>
-        prev.map((res) =>
-          res.id === id ? { ...res, monitoring_active: active ? 1 : 0 } : res
-        )
-      );
-
-      // Refresh stats
-      const statsData = await fetchUserStats(email);
-      setStats(statsData.stats);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  /**
-   * Updates reservation dates
-   * @param {number} id - Reservation ID
-   * @param {string} startDate - New start date
-   * @param {string} endDate - New end date
-   */
-  const handleDateUpdate = async (id, startDate, endDate) => {
-    try {
-      await updateReservationDates(id, startDate, endDate);
-
-      // Update local state
-      setReservations((prev) =>
-        prev.map((res) =>
-          res.id === id
-            ? {
-                ...res,
-                reservation_start_date: startDate,
-                reservation_end_date: endDate,
-              }
-            : res
-        )
-      );
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  /**
-   * Deletes a reservation
-   * @param {number} id - Reservation ID to delete
-   */
-  const handleDelete = async (id) => {
-    try {
-      await deleteReservation(id);
-
-      // Update local state
-      setReservations((prev) => prev.filter((res) => res.id !== id));
-
-      // Refresh stats
-      const statsData = await fetchUserStats(email);
-      setStats(statsData.stats);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  /**
    * Handles form submission for searching reservations
    * @param {Event} e - Form submission event
    */
@@ -168,27 +91,62 @@ const UserManagement = () => {
     }
   };
 
+  /**
+   * Handles deletion of a reservation
+   * @param {number} id - ID of the reservation to delete
+   */
+  const handleReservationDelete = (id) => {
+    setReservations((prev) => prev.filter((res) => res.id !== id));
+  };
+
+  /**
+   * Handles stats update after a reservation change
+   */
+  const handleStatsUpdate = async () => {
+    if (!email) return;
+    try {
+      const statsData = await fetchUserStats(email);
+      setStats(statsData.stats);
+    } catch (err) {
+      console.error("Failed to update stats:", err);
+    }
+  };
+
   return (
     <div className="user-management">
-      <h1>User Management</h1>
+      <div className="page-header">
+        <h1>User Management</h1>
+      </div>
 
       {/* Search Form */}
-      <form onSubmit={handleSubmit} className="search-form">
-        <div className="form-group">
-          <label htmlFor="email">Email Address:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            placeholder="Enter email address"
-          />
+      <div className="unified-controls">
+        <div className="controls-header">
+          <h2>Search For Reservations</h2>
         </div>
-        <button type="submit" disabled={loading}>
-          {loading ? "Searching..." : "Search"}
-        </button>
-      </form>
+        <div className="controls-body">
+          <form onSubmit={handleSubmit} className="filter-options">
+            <div className="form-group">
+              <div className="input-button-group">
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder="Enter email address"
+                />
+                <button
+                  type="submit"
+                  className="search-button"
+                  disabled={loading}
+                >
+                  {loading ? "Searching..." : "Search"}
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
 
       {/* Error Display */}
       {error && <div className="error-message">{error}</div>}
@@ -196,7 +154,7 @@ const UserManagement = () => {
       {/* User Stats */}
       {stats && (
         <div className="user-stats">
-          <h3>User Statistics</h3>
+          <h2>User Statistics</h2>
           <div className="stats-grid">
             <div className="stat-item">
               <span className="stat-label">Total Reservations:</span>
@@ -242,139 +200,16 @@ const UserManagement = () => {
       {/* Reservations List */}
       {reservations.length > 0 && (
         <div className="reservations-list">
-          <h3>Reservations</h3>
+          <h2>Reservations</h2>
           <div className="reservations-grid">
             {reservations.map((reservation) => (
-              <div key={reservation.id} className="reservation-card">
-                <div className="reservation-header">
-                  <h4>
-                    {reservation.campsite_name || "N/A"}
-                    {reservation.campsite_number &&
-                      ` #${reservation.campsite_number}`}
-                    <br />
-                  </h4>
-                  <div className="reservation-actions">
-                    <button
-                      onClick={() => setSelectedReservation(reservation)}
-                      className="edit-button"
-                      title="Edit reservation dates"
-                    >
-                      Edit Dates
-                    </button>
-                    <button
-                      onClick={() => handleDelete(reservation.id)}
-                      className="delete-button"
-                      title="Delete reservation"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-                <div className="reservation-details">
-                  <p className="dates">
-                    <strong>Dates:</strong>
-                    {new Date(
-                      reservation.reservation_start_date
-                    ).toLocaleDateString()}{" "}
-                    -{" "}
-                    {new Date(
-                      reservation.reservation_end_date
-                    ).toLocaleDateString()}
-                  </p>
-                  <p className="monitoring">
-                    <span
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.5rem",
-                      }}
-                    >
-                      <strong>Monitoring:</strong>
-                      <label className="toggle-switch">
-                        <input
-                          type="checkbox"
-                          checked={reservation.monitoring_active}
-                          onChange={() =>
-                            handleMonitoringUpdate(
-                              reservation.id,
-                              !reservation.monitoring_active
-                            )
-                          }
-                        />
-                        <span className="toggle-slider">
-                          <span className="toggle-text active">Active</span>
-                          <span className="toggle-text inactive">Inactive</span>
-                        </span>
-                      </label>
-                    </span>
-                    <span className="attempts">
-                      {reservation.attempts_made} attempts
-                    </span>
-                  </p>
-                </div>
-              </div>
+              <ReservationCard
+                key={reservation.id}
+                reservation={reservation}
+                onDelete={handleReservationDelete}
+                onStatsUpdate={handleStatsUpdate}
+              />
             ))}
-          </div>
-        </div>
-      )}
-
-      {/* Edit Modal */}
-      {selectedReservation && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h3>Edit Reservation</h3>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleDateUpdate(
-                  selectedReservation.id,
-                  dateRange.startDate,
-                  dateRange.endDate
-                );
-                setSelectedReservation(null);
-              }}
-            >
-              <div className="form-group">
-                <label htmlFor="startDate">Start Date:</label>
-                <input
-                  type="date"
-                  id="startDate"
-                  value={dateRange.startDate}
-                  onChange={(e) =>
-                    setDateRange((prev) => ({
-                      ...prev,
-                      startDate: e.target.value,
-                    }))
-                  }
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="endDate">End Date:</label>
-                <input
-                  type="date"
-                  id="endDate"
-                  value={dateRange.endDate}
-                  onChange={(e) =>
-                    setDateRange((prev) => ({
-                      ...prev,
-                      endDate: e.target.value,
-                    }))
-                  }
-                  required
-                />
-              </div>
-              <div className="modal-actions">
-                <button type="submit">Save Changes</button>
-                <button
-                  type="button"
-                  onClick={() => setSelectedReservation(null)}
-                  className="cancel-button"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
           </div>
         </div>
       )}
