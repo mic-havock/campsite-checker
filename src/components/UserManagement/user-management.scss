@@ -25,7 +25,6 @@
     }
   }
 
-  // Unified Controls Section (Matching CampsiteFilter style)
   .unified-controls {
     max-width: 1200px;
     margin: 0 auto 1.5rem;
@@ -161,22 +160,6 @@
           }
         }
       }
-
-      .filtered-count {
-        margin: 0;
-        font-size: 0.9rem;
-        color: $secondary-color;
-        font-weight: 500;
-        white-space: nowrap;
-        text-align: center;
-        width: 100%;
-        margin-top: 0.75rem;
-
-        @media (max-width: 768px) {
-          text-align: center;
-          width: 100%;
-        }
-      }
     }
   }
 
@@ -282,362 +265,6 @@
         grid-template-columns: 1fr;
       }
     }
-
-    .reservation-card {
-      background-color: white;
-      border-radius: $button-border-radius;
-      box-shadow: $shadow-md;
-      padding: 1rem;
-      transition: $button-transition;
-      min-height: 200px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-
-      &:hover {
-        box-shadow: $shadow-lg;
-        transform: translateY(-1px);
-      }
-
-      .reservation-header {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-        margin-bottom: 0.75rem;
-
-        h4 {
-          margin: 0;
-          color: $text-primary;
-          font-size: 1rem;
-          line-height: 1.4;
-          font-weight: 600;
-        }
-
-        .reservation-actions {
-          display: flex;
-          gap: 0.75rem;
-
-          button {
-            @include button-base;
-            padding: 0.5rem;
-            font-size: 0.85rem;
-            flex: 1;
-            white-space: nowrap;
-
-            &.edit-button {
-              @include button-secondary;
-            }
-
-            &.delete-button {
-              @include button-danger;
-            }
-          }
-        }
-      }
-
-      .reservation-details {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-
-        p {
-          margin: 0;
-          color: $text-primary;
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          font-size: 0.9rem;
-          line-height: 1.4;
-
-          &.dates {
-            flex-wrap: wrap;
-          }
-
-          &.monitoring {
-            justify-content: space-between;
-            align-items: center;
-            gap: 0.75rem;
-          }
-
-          strong {
-            color: $text-primary;
-            font-size: 0.9rem;
-            white-space: nowrap;
-          }
-
-          .attempts {
-            font-size: 0.85rem;
-            color: $color-stone;
-            white-space: nowrap;
-          }
-
-          .toggle-switch {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            cursor: pointer;
-            margin-left: 0.5rem;
-
-            input {
-              opacity: 0;
-              width: 0;
-              height: 0;
-
-              &:checked + .toggle-slider {
-                background-color: $color-forest-green;
-
-                &:before {
-                  transform: translateX(26px);
-                }
-              }
-
-              &:focus + .toggle-slider {
-                box-shadow: 0 0 1px $color-forest-green;
-              }
-            }
-
-            .toggle-slider {
-              position: absolute;
-              left: 0;
-              top: 0;
-              width: 100px;
-              height: 32px;
-              background-color: #e74c3c;
-              transition: 0.4s;
-              border-radius: 16px;
-              overflow: hidden;
-
-              .toggle-text {
-                position: absolute;
-                top: 50%;
-                transform: translateY(-50%);
-                font-size: 0.8rem;
-                font-weight: 600;
-                color: white;
-                transition: 0.4s;
-                white-space: nowrap;
-
-                &.active {
-                  left: 12px;
-                  opacity: 0;
-                }
-
-                &.inactive {
-                  right: 12px;
-                  opacity: 1;
-                }
-              }
-
-              &:before {
-                position: absolute;
-                content: "";
-                height: 24px;
-                width: 24px;
-                left: 4px;
-                bottom: 4px;
-                background-color: white;
-                transition: 0.4s;
-                border-radius: 50%;
-                z-index: 1;
-              }
-            }
-
-            input:checked + .toggle-slider {
-              background-color: $color-forest-green;
-
-              &:before {
-                transform: translateX(68px);
-              }
-
-              .toggle-text {
-                &.active {
-                  opacity: 1;
-                }
-
-                &.inactive {
-                  opacity: 0;
-                }
-              }
-            }
-          }
-        }
-      }
-
-      .monitoring-toggle {
-        display: flex;
-        justify-content: center;
-        margin-top: 1rem;
-
-        .toggle-switch {
-          position: relative;
-          display: inline-flex;
-          align-items: center;
-          cursor: pointer;
-          padding-left: 60px;
-
-          input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-
-            &:checked + .toggle-slider {
-              background-color: $color-forest-green;
-
-              &:before {
-                transform: translateX(26px);
-              }
-            }
-
-            &:focus + .toggle-slider {
-              box-shadow: 0 0 1px $color-forest-green;
-            }
-          }
-
-          .toggle-slider {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 50px;
-            height: 24px;
-            background-color: #ccc;
-            transition: 0.4s;
-            border-radius: 24px;
-            overflow: hidden;
-
-            .toggle-text {
-              position: absolute;
-              top: 50%;
-              transform: translateY(-50%);
-              font-size: 0.7rem;
-              font-weight: 600;
-              color: white;
-              transition: 0.4s;
-              white-space: nowrap;
-
-              &.active {
-                left: 6px;
-                opacity: 0;
-              }
-
-              &.inactive {
-                right: 6px;
-                opacity: 1;
-              }
-            }
-
-            &:before {
-              position: absolute;
-              content: "";
-              height: 16px;
-              width: 16px;
-              left: 4px;
-              bottom: 4px;
-              background-color: white;
-              transition: 0.4s;
-              border-radius: 50%;
-              z-index: 1;
-            }
-          }
-
-          .toggle-label {
-            margin-left: 10px;
-            color: $text-primary;
-            font-weight: 500;
-          }
-        }
-      }
-    }
-  }
-
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.85);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-
-    .modal-content {
-      background-color: white;
-      padding: 2rem;
-      border-radius: $button-border-radius;
-      width: 90%;
-      max-width: 500px;
-      box-shadow: $shadow-lg;
-      max-height: 90vh;
-      overflow-y: auto;
-
-      &::-webkit-scrollbar {
-        width: 10px;
-      }
-
-      &::-webkit-scrollbar-track {
-        background: transparent;
-        border-radius: 0 16px 16px 0;
-      }
-
-      &::-webkit-scrollbar-thumb {
-        background: #888;
-        border-radius: 10px;
-        border: 2px solid white;
-      }
-
-      &::-webkit-scrollbar-corner {
-        background: transparent;
-      }
-
-      h3 {
-        margin-bottom: 1.5rem;
-        color: $text-primary;
-        text-align: center;
-      }
-
-      .form-group {
-        margin-bottom: 1rem;
-
-        label {
-          display: block;
-          margin-bottom: 0.5rem;
-          color: $text-primary;
-          font-weight: 600;
-        }
-
-        input {
-          width: 100%;
-          padding: 0.75rem;
-          border: 2px solid $secondary-color;
-          border-radius: $button-border-radius;
-          font-size: 1rem;
-          transition: $button-transition;
-
-          &:focus {
-            outline: none;
-            border-color: $primary-color;
-            box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
-          }
-        }
-      }
-
-      .modal-actions {
-        display: flex;
-        gap: 1rem;
-        justify-content: flex-end;
-        margin-top: 1.5rem;
-
-        button {
-          @include button-base;
-          min-width: 100px;
-
-          &.cancel-button {
-            @include button-secondary;
-          }
-        }
-      }
-    }
   }
 
   .batch-monitoring {
@@ -653,81 +280,46 @@
     width: 100%;
     box-sizing: border-box;
 
-    .toggle-switch {
-      position: relative;
-      display: inline-flex;
+    .simple-toggle {
+      display: flex;
       align-items: center;
+      gap: 0.75rem;
+      background: none;
+      border: none;
       cursor: pointer;
-      padding-left: 60px;
+      padding: 0.75rem 1rem;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+      font-size: 1rem;
 
-      input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-
-        &:checked + .toggle-slider {
-          background-color: $color-forest-green;
-
-          &:before {
-            transform: translateX(26px);
-          }
-        }
-
-        &:focus + .toggle-slider {
-          box-shadow: 0 0 1px $color-forest-green;
-        }
+      &:hover {
+        background-color: rgba($color-stone, 0.1);
       }
 
-      .toggle-slider {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 50px;
-        height: 24px;
-        background-color: #ccc;
-        transition: 0.4s;
-        border-radius: 24px;
-        overflow: hidden;
+      .toggle-icon {
+        font-size: 1.75rem;
+      }
+
+      &.active {
+        .toggle-icon {
+          color: $color-forest-green;
+        }
 
         .toggle-text {
-          position: absolute;
-          top: 50%;
-          transform: translateY(-50%);
-          font-size: 0.7rem;
+          color: $color-forest-green;
           font-weight: 600;
-          color: white;
-          transition: 0.4s;
-          white-space: nowrap;
-
-          &.active {
-            left: 6px;
-            opacity: 0;
-          }
-
-          &.inactive {
-            right: 6px;
-            opacity: 1;
-          }
-        }
-
-        &:before {
-          position: absolute;
-          content: "";
-          height: 16px;
-          width: 16px;
-          left: 4px;
-          bottom: 4px;
-          background-color: white;
-          transition: 0.4s;
-          border-radius: 50%;
-          z-index: 1;
         }
       }
 
-      .toggle-label {
-        margin-left: 10px;
-        color: $text-primary;
-        font-weight: 500;
+      &.inactive {
+        .toggle-icon {
+          color: #e74c3c;
+        }
+
+        .toggle-text {
+          color: #e74c3c;
+          font-weight: 600;
+        }
       }
     }
   }

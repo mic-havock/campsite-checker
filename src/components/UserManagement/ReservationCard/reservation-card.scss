@@ -4,13 +4,14 @@
   background-color: white;
   border-radius: $button-border-radius;
   box-shadow: $shadow-md;
-  padding: 1rem;
+  padding: 1.5rem;
   transition: $button-transition;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   height: auto;
   min-height: 0;
+  text-align: center;
 
   &:hover {
     box-shadow: $shadow-lg;
@@ -19,8 +20,9 @@
 
   .reservation-header {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
     gap: 0.75rem;
 
     h4 {
@@ -35,47 +37,30 @@
       display: flex;
       gap: 0.5rem;
       flex-shrink: 0;
-
-      button {
-        padding: 0.4rem 0.6rem;
-        font-size: 0.8rem;
-        border-radius: $button-border-radius;
-        font-weight: 500;
-        cursor: pointer;
-        transition: $button-transition;
-        border: none;
-
-        &.edit-button {
-          background-color: $secondary-color;
-          color: $text-light;
-
-          &:hover {
-            background-color: darken($secondary-color, 10%);
-            transform: translateY(-1px);
-          }
-        }
-
-        &.delete-button {
-          background-color: $color-danger;
-          color: $text-light;
-
-          &:hover {
-            background-color: darken($color-danger, 10%);
-            transform: translateY(-1px);
-          }
-        }
-      }
+      justify-content: center;
     }
+  }
+
+  .attempts {
+    font-size: 0.8rem;
+    color: $color-stone;
+    background-color: $background-light;
+    padding: 0.25rem 0.5rem;
+    margin-bottom: -0.5rem;
+    border-radius: 4px;
+    flex-shrink: 0;
   }
 
   .reservation-details {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    align-items: center;
 
     .detail-row {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
+      justify-content: center;
       margin: 0;
       padding: 0.25rem 0;
       border-bottom: 1px solid rgba($color-stone, 0.2);
@@ -88,7 +73,7 @@
         font-weight: 600;
         color: $text-primary;
         min-width: 60px;
-        margin-right: 0.5rem;
+        //margin-right: 0.5rem;
         flex-shrink: 0;
       }
 
@@ -110,93 +95,77 @@
         gap: 0.5rem;
       }
 
-      .attempts {
-        font-size: 0.8rem;
-        color: $color-stone;
-        background-color: $background-light;
-        padding: 0.2rem 0.4rem;
-        border-radius: 12px;
-        flex-shrink: 0;
-      }
+      .simple-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 4px;
+        transition: all 0.2s ease;
 
-      .toggle-switch {
-        position: relative;
-        display: inline-block;
-        width: 40px;
-        height: 20px;
-        margin-left: 0.5rem;
-
-        input {
-          opacity: 0;
-          width: 0;
-          height: 0;
-          position: absolute;
+        &:hover {
+          background-color: rgba($color-stone, 0.1);
         }
 
-        .toggle-slider {
-          position: absolute;
-          cursor: pointer;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background-color: #e74c3c;
-          transition: 0.3s;
-          border-radius: 20px;
-          overflow: hidden;
+        .toggle-icon {
+          font-size: 1.5rem;
+        }
 
-          &:before {
-            position: absolute;
-            content: "";
-            height: 14px;
-            width: 14px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: 0.3s;
-            border-radius: 50%;
-            z-index: 1;
+        &.active {
+          .toggle-icon {
+            color: $primary-color;
           }
 
           .toggle-text {
-            position: absolute;
-            font-size: 0.6rem;
+            color: $primary-color;
             font-weight: 600;
-            color: white;
-            transition: 0.3s;
-
-            &.active {
-              left: 6px;
-              top: 4px;
-              opacity: 0;
-            }
-
-            &.inactive {
-              right: 6px;
-              top: 4px;
-              opacity: 1;
-            }
           }
         }
 
-        input:checked + .toggle-slider {
-          background-color: $primary-color;
-
-          &:before {
-            transform: translateX(20px);
+        &.inactive {
+          .toggle-icon {
+            color: #e74c3c;
           }
 
           .toggle-text {
-            &.active {
-              opacity: 1;
-            }
-
-            &.inactive {
-              opacity: 0;
-            }
+            color: #e74c3c;
+            font-weight: 600;
           }
         }
       }
+    }
+  }
+}
+
+button {
+  font-size: 0.8rem;
+  border-radius: $button-border-radius;
+  font-weight: 500;
+  cursor: pointer;
+  transition: $button-transition;
+  border: none;
+
+  &.edit-button {
+    background-color: $primary-color;
+    color: $text-light;
+    margin-right: 0.5rem;
+
+    &:hover {
+      background-color: darken($secondary-color, 10%);
+      transform: translateY(-1px);
+    }
+  }
+
+  &.delete-button {
+    background-color: $color-danger;
+    color: $text-light;
+
+    &:hover {
+      background-color: darken($color-danger, 10%);
+      transform: translateY(-1px);
     }
   }
 }
@@ -215,7 +184,7 @@
 
   .modal-content {
     background-color: white;
-    padding: 2rem;
+    //padding: 2rem;
     border-radius: $button-border-radius;
     width: 90%;
     max-width: 450px;

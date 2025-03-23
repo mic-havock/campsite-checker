@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { FaToggleOff, FaToggleOn } from "react-icons/fa";
 import {
   fetchReservations,
   fetchUserStats,
@@ -181,19 +182,30 @@ const UserManagement = () => {
       {/* Batch Monitoring Toggle */}
       {reservations.length > 0 && (
         <div className="batch-monitoring">
-          <label className="toggle-switch">
-            <input
-              type="checkbox"
-              checked={allMonitoringActive}
-              onChange={(e) => handleBatchMonitoringUpdate(e.target.checked)}
-            />
-            <span className="toggle-slider"></span>
-            <span className="toggle-label">
-              {allMonitoringActive
-                ? "Disable All Monitoring"
-                : "Enable All Monitoring"}
-            </span>
-          </label>
+          <button
+            className={`simple-toggle ${
+              allMonitoringActive ? "active" : "inactive"
+            }`}
+            onClick={() => handleBatchMonitoringUpdate(!allMonitoringActive)}
+            aria-pressed={allMonitoringActive}
+            title={
+              allMonitoringActive
+                ? "Disable all monitoring"
+                : "Enable all monitoring"
+            }
+          >
+            {allMonitoringActive ? (
+              <>
+                <FaToggleOn className="toggle-icon" />
+                <span className="toggle-text">Disable All Monitoring</span>
+              </>
+            ) : (
+              <>
+                <FaToggleOff className="toggle-icon" />
+                <span className="toggle-text">Enable All Monitoring</span>
+              </>
+            )}
+          </button>
         </div>
       )}
 

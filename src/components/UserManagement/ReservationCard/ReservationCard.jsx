@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
+import { FaToggleOff, FaToggleOn } from "react-icons/fa";
 import {
   deleteReservation,
   updateMonitoringStatus,
@@ -105,15 +106,25 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
         <div className="reservation-header">
           <h4>
             {reservation.campsite_name || "N/A"}
-            {reservation.campsite_number && ` #${reservation.campsite_number}`}
+            <br />
+            {reservation.campsite_number && `${reservation.campsite_number}`}
           </h4>
+        </div>
+        <div className="reservation-details">
+          <span className="attempts">{reservation.attempts_made} attempts</span>
+          <div className="detail-row">
+            <span className="detail-value">
+              {formatDate(reservation.reservation_start_date)} –{" "}
+              {formatDate(reservation.reservation_end_date)}
+            </span>
+          </div>
           <div className="reservation-actions">
             <button
               onClick={() => setSelectedReservation(reservation)}
               className="edit-button"
               title="Edit reservation dates"
             >
-              Edit
+              Edit Dates
             </button>
             <button
               onClick={handleDelete}
@@ -123,33 +134,33 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
               Delete
             </button>
           </div>
-        </div>
-        <div className="reservation-details">
-          <div className="detail-row">
-            <span className="detail-label">Dates:</span>
-            <span className="detail-value">
-              {formatDate(reservation.reservation_start_date)} –{" "}
-              {formatDate(reservation.reservation_end_date)}
-            </span>
-          </div>
           <div className="monitoring-row">
             <div className="monitoring-control">
-              <span className="detail-label">Monitor:</span>
-              <label className="toggle-switch">
-                <input
-                  type="checkbox"
-                  checked={isMonitoringActive}
-                  onChange={() => handleMonitoringUpdate(!isMonitoringActive)}
-                />
-                <span className="toggle-slider">
-                  <span className="toggle-text active">On</span>
-                  <span className="toggle-text inactive">Off</span>
-                </span>
-              </label>
+              <button
+                className={`simple-toggle ${
+                  isMonitoringActive ? "active" : "inactive"
+                }`}
+                onClick={() => handleMonitoringUpdate(!isMonitoringActive)}
+                aria-pressed={isMonitoringActive}
+                title={
+                  isMonitoringActive
+                    ? "Disable monitoring"
+                    : "Enable monitoring"
+                }
+              >
+                {isMonitoringActive ? (
+                  <>
+                    <FaToggleOn className="toggle-icon" />
+                    <span className="toggle-text">Monitoring Enabled</span>
+                  </>
+                ) : (
+                  <>
+                    <FaToggleOff className="toggle-icon" />
+                    <span className="toggle-text">Monitoring Disabled</span>
+                  </>
+                )}
+              </button>
             </div>
-            <span className="attempts">
-              {reservation.attempts_made} attempts
-            </span>
           </div>
         </div>
       </div>
