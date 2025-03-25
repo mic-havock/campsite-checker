@@ -5,7 +5,7 @@ import {
   deleteReservation,
   updateMonitoringStatus,
   updateReservationDates,
-} from "../../../api/userManagement";
+} from "../../../api/reservationManagement";
 import "./reservation-card.scss";
 
 /**

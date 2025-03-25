@@ -4,17 +4,11 @@ import {
   fetchReservations,
   fetchUserStats,
   updateBatchMonitoringStatus,
-} from "../../api/userManagement";
-import ReservationCard from "../UserManagement/ReservationCard/ReservationCard";
-import "./user-management.scss";
+} from "../../api/reservationManagement";
+import ReservationCard from "./ReservationCard/ReservationCard";
+import "./reservation-management.scss";
 
-/**
- * UserManagement component for managing user reservations
- * Allows searching by email and managing individual reservations
- *
- * @returns {JSX.Element} - Rendered component
- */
-const UserManagement = () => {
+const ReservationManagement = () => {
   const [email, setEmail] = useState("");
   const [reservations, setReservations] = useState([]);
   const [stats, setStats] = useState(null);
@@ -22,10 +16,6 @@ const UserManagement = () => {
   const [error, setError] = useState(null);
   const [allMonitoringActive, setAllMonitoringActive] = useState(false);
 
-  /**
-   * Fetches reservations and stats for a given email address
-   * @param {string} emailAddress - Email address to search for
-   */
   const handleSearch = async (emailAddress) => {
     try {
       setLoading(true);
@@ -54,10 +44,6 @@ const UserManagement = () => {
     }
   };
 
-  /**
-   * Updates monitoring status for all reservations
-   * @param {boolean} active - New monitoring status
-   */
   const handleBatchMonitoringUpdate = async (active) => {
     if (!email) return;
 
@@ -81,10 +67,6 @@ const UserManagement = () => {
     }
   };
 
-  /**
-   * Handles form submission for searching reservations
-   * @param {Event} e - Form submission event
-   */
   const handleSubmit = (e) => {
     e.preventDefault();
     if (email) {
@@ -92,17 +74,10 @@ const UserManagement = () => {
     }
   };
 
-  /**
-   * Handles deletion of a reservation
-   * @param {number} id - ID of the reservation to delete
-   */
   const handleReservationDelete = (id) => {
     setReservations((prev) => prev.filter((res) => res.id !== id));
   };
 
-  /**
-   * Handles stats update after a reservation change
-   */
   const handleStatsUpdate = async () => {
     if (!email) return;
     try {
@@ -116,7 +91,7 @@ const UserManagement = () => {
   return (
     <div className="user-management">
       <div className="page-header">
-        <h1>User Management</h1>
+        <h1>Reservation Management</h1>
       </div>
 
       {/* Search Form */}
@@ -229,4 +204,4 @@ const UserManagement = () => {
   );
 };
 
-export default UserManagement;
+export default ReservationManagement;
