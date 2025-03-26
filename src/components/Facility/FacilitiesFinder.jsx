@@ -231,6 +231,13 @@ const FacilitiesFinder = () => {
 
   return (
     <div className="facilities-finder">
+      <button
+        className="floating-reservation-button"
+        onClick={() => navigate("/reservation-management")}
+        aria-label="Go to reservation management"
+      >
+        Manage Reservations
+      </button>
       <div className="header">
         <div className="brand">
           <img src="/kampscout.svg" alt="Kamp Scout Logo" className="logo" />

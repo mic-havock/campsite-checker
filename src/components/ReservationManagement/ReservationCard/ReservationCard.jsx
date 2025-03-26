@@ -8,27 +8,6 @@ import {
 } from "../../../api/reservationManagement";
 import "./reservation-card.scss";
 
-/**
- * Type definition for a reservation
- * @typedef {Object} Reservation
- * @property {number} id - Unique identifier for the reservation
- * @property {string} campsite_name - Name of the campsite
- * @property {string} campsite_number - Number of the campsite
- * @property {string} reservation_start_date - Start date of the reservation
- * @property {string} reservation_end_date - End date of the reservation
- * @property {number} monitoring_active - Whether monitoring is active (0 or 1)
- * @property {number} attempts_made - Number of attempts made
- */
-
-/**
- * ReservationCard component for displaying and managing a single reservation
- *
- * @param {Object} props - Component props
- * @param {Reservation} props.reservation - The reservation data
- * @param {Function} props.onDelete - Callback function when reservation is deleted
- * @param {Function} props.onStatsUpdate - Callback function when stats need to be updated
- * @returns {JSX.Element} - Rendered component
- */
 const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
   const [selectedReservation, setSelectedReservation] = useState(null);
   const [dateRange, setDateRange] = useState({
@@ -167,8 +146,11 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
 
       {/* Edit Modal */}
       {selectedReservation && (
-        <div className="modal-overlay">
-          <div className="modal-content">
+        <div
+          className="modal-overlay"
+          onClick={() => setSelectedReservation(null)}
+        >
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <h3>Edit Reservation</h3>
             <form
               onSubmit={(e) => {

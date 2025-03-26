@@ -9,6 +9,38 @@
   box-sizing: border-box;
   overflow-x: hidden;
 
+  .floating-button {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    padding: 12px 24px;
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: #357abd;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3);
+    }
+  }
+
   @media (max-width: 768px) {
     padding: 1rem;
   }
@@ -114,9 +146,9 @@
 
             input {
               flex: 1;
-              padding: 0.75rem;
+              padding: 0.6rem;
               border: 1px solid #ddd;
-              border-radius: $button-border-radius 0 0 $button-border-radius;
+              border-radius: $button-border-radius;
               font-size: 1rem;
               transition: $button-transition;
               height: 100%;
@@ -133,9 +165,8 @@
               min-width: 120px;
               padding: 0.75rem 1.5rem;
               height: 100%;
-              border-radius: 0 $button-border-radius $button-border-radius 0;
-              margin-left: -1px; // Adjust for border overlap
-
+              border-radius: $button-border-radius;
+              margin-left: 1rem;
               &:disabled {
                 background-color: lighten($primary-color, 20%);
                 cursor: not-allowed;
@@ -302,22 +333,22 @@
 
       &.active {
         .toggle-icon {
-          color: $color-forest-green;
+          color: $primary-color;
         }
 
         .toggle-text {
-          color: $color-forest-green;
+          color: $primary-color;
           font-weight: 600;
         }
       }
 
       &.inactive {
         .toggle-icon {
-          color: #e74c3c;
+          color: $color-stone;
         }
 
         .toggle-text {
-          color: #e74c3c;
+          color: $color-stone;
           font-weight: 600;
         }
       }

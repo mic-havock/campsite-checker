@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FaToggleOff, FaToggleOn } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import {
   fetchReservations,
   fetchUserStats,
@@ -9,6 +10,7 @@ import ReservationCard from "./ReservationCard/ReservationCard";
 import "./reservation-management.scss";
 
 const ReservationManagement = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [reservations, setReservations] = useState([]);
   const [stats, setStats] = useState(null);
@@ -90,6 +92,13 @@ const ReservationManagement = () => {
 
   return (
     <div className="user-management">
+      <button
+        className="floating-button"
+        onClick={() => navigate("/")}
+        aria-label="Back to homepage"
+      >
+        Back to Homepage
+      </button>
       <div className="page-header">
         <h1>Reservation Management</h1>
       </div>
@@ -172,12 +181,12 @@ const ReservationManagement = () => {
             {allMonitoringActive ? (
               <>
                 <FaToggleOn className="toggle-icon" />
-                <span className="toggle-text">Disable All Monitoring</span>
+                <span className="toggle-text">All Monitoring - Enabled</span>
               </>
             ) : (
               <>
                 <FaToggleOff className="toggle-icon" />
-                <span className="toggle-text">Enable All Monitoring</span>
+                <span className="toggle-text">All Monitoring - Disabled</span>
               </>
             )}
           </button>
