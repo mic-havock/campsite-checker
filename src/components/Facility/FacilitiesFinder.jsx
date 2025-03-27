@@ -236,7 +236,9 @@ const FacilitiesFinder = () => {
         onClick={() => navigate("/reservation-management")}
         aria-label="Go to reservation management"
       >
-        Manage Reservations
+        Manage
+        <br />
+        Reservation Alerts
       </button>
       <div className="header">
         <div className="brand">

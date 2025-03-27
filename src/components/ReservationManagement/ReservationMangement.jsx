@@ -97,7 +97,9 @@ const ReservationManagement = () => {
         onClick={() => navigate("/")}
         aria-label="Back to homepage"
       >
-        Back to Homepage
+        Back to
+        <br />
+        Homepage
       </button>
       <div className="page-header">
         <h1>Reservation Management</h1>
@@ -106,7 +108,7 @@ const ReservationManagement = () => {
       {/* Search Form */}
       <div className="unified-controls">
         <div className="controls-header">
-          <h2>Search For Reservations</h2>
+          <h2>Search For Reservation Alerts</h2>
         </div>
         <div className="controls-body">
           <form onSubmit={handleSubmit} className="filter-options">

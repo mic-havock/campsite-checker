@@ -83,14 +83,12 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
     <>
       <div className="reservation-card">
         <div className="reservation-header">
+          <h4>{reservation.campsite_name || "N/A"}</h4>
           <h4>
-            {reservation.campsite_name || "N/A"}
-            <br />
             {reservation.campsite_number && `${reservation.campsite_number}`}
           </h4>
         </div>
         <div className="reservation-details">
-          <span className="attempts">{reservation.attempts_made} attempts</span>
           <div className="detail-row">
             <span className="detail-value">
               {formatDate(reservation.reservation_start_date)} –{" "}
