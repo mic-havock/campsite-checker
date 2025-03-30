@@ -12,7 +12,6 @@ import "./campsite-availability.scss";
  */
 const CampsiteAvailability = ({ availabilities, facilityName, campsite }) => {
   const [alertModal, setAlertModal] = useState(false);
-  const [selectedDate, setSelectedDate] = useState("");
   const [isCreatingAlert, setIsCreatingAlert] = useState(false);
   const [alertDetails, setAlertDetails] = useState({
     name: "",

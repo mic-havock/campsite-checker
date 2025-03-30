@@ -243,7 +243,6 @@ const FacilitiesFinder = () => {
       <div className="header">
         <div className="brand">
           <img src="/kampscout.svg" alt="Kamp Scout Logo" className="logo" />
-          <h1>Kamp Scout</h1>
         </div>
         <p className="description">
           Find and explore campgrounds across the United States with ease.
