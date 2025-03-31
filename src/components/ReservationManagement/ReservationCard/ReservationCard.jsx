@@ -1,11 +1,13 @@
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import { FaToggleOff, FaToggleOn } from "react-icons/fa";
+import { fetchCampsiteDetails } from "../../../api/campsites";
 import {
   deleteReservation,
   updateMonitoringStatus,
   updateReservationDates,
 } from "../../../api/reservationManagement";
+import Campsite from "../../Campsite/Campsite";
 import "./reservation-card.scss";
 
 const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
@@ -17,11 +19,30 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
   const [isMonitoringActive, setIsMonitoringActive] = useState(
     Boolean(reservation.monitoring_active)
   );
+  const [campsiteDetails, setCampsiteDetails] = useState(null);
+  const [showCampsiteModal, setShowCampsiteModal] = useState(false);
 
   // Update local state when the prop changes
   useEffect(() => {
     setIsMonitoringActive(Boolean(reservation.monitoring_active));
   }, [reservation.monitoring_active]);
+
+  // Fetch campsite details when component mounts
+  useEffect(() => {
+    const loadCampsiteDetails = async () => {
+      if (reservation.campsite_id) {
+        try {
+          const details = await fetchCampsiteDetails(reservation.campsite_id);
+          console.log("Campsite details:", details); // Debug log
+          setCampsiteDetails(details);
+        } catch (err) {
+          console.error("Failed to fetch campsite details:", err);
+        }
+      }
+    };
+
+    loadCampsiteDetails();
+  }, [reservation.campsite_id]);
 
   /**
    * Updates monitoring status for a reservation
@@ -110,6 +131,15 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
             >
               Delete
             </button>
+            {campsiteDetails && (
+              <button
+                onClick={() => setShowCampsiteModal(true)}
+                className="view-button"
+                title="View campsite details"
+              >
+                View Campsite
+              </button>
+            )}
           </div>
           <div className="monitoring-row">
             <div className="monitoring-control">
@@ -200,6 +230,34 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
           </div>
         </div>
       )}
+
+      {/* Campsite Component */}
+      {showCampsiteModal && campsiteDetails && campsiteDetails[0] && (
+        <div
+          className="modal-overlay"
+          onClick={() => setShowCampsiteModal(false)}
+        >
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <Campsite
+              campsite={{
+                CampsiteName:
+                  campsiteDetails[0].CampsiteName || "Unknown Campsite",
+                CampsiteReservable:
+                  campsiteDetails[0].CampsiteReservable ?? true,
+                CampsiteType: campsiteDetails[0].CampsiteType || "Unknown Type",
+                Loop: campsiteDetails[0].Loop || "",
+                CampsiteID:
+                  campsiteDetails[0].CampsiteID ||
+                  reservation.campsite_id.toString(),
+                ENTITYMEDIA: campsiteDetails[0].ENTITYMEDIA || [],
+                ATTRIBUTES: campsiteDetails[0].ATTRIBUTES || [],
+                PERMITTEDEQUIPMENT: campsiteDetails[0].PERMITTEDEQUIPMENT || [],
+              }}
+              facilityName={reservation.facility_name || "Unknown Facility"}
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 };
@@ -209,6 +267,8 @@ ReservationCard.propTypes = {
     id: PropTypes.number.isRequired,
     campsite_name: PropTypes.string,
     campsite_number: PropTypes.string,
+    campsite_id: PropTypes.number.isRequired,
+    facility_name: PropTypes.string,
     reservation_start_date: PropTypes.string.isRequired,
     reservation_end_date: PropTypes.string.isRequired,
     monitoring_active: PropTypes.oneOfType([PropTypes.number, PropTypes.bool])

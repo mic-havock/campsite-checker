@@ -113,7 +113,6 @@
     position: absolute;
     top: 10px;
     right: 10px;
-    z-index: 1000;
     padding: 6px 12px;
     background-color: #4a90e2;
     color: white;
@@ -122,8 +121,6 @@
     font-size: 1rem;
     font-weight: 400;
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.3s ease;
     width: 160px;
     max-width: 200px;
     white-space: normal;

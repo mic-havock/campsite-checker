@@ -46,3 +46,17 @@ export const fetchCampsitesByFacility = async (facilityId) => {
     throw error;
   }
 };
+
+// Fetch details for a specific campsite
+export const fetchCampsiteDetails = async (campsiteId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/campsites/${campsiteId}`);
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error fetching campsite details:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
