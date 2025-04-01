@@ -145,7 +145,7 @@ const CampsiteAvailability = ({ availabilities, facilityName, campsite }) => {
                       onClick={() => handleDayClick(status, date)}
                     >
                       <span className="day-number">{dayNum}</span>
-                      <span className="day-status">{status}</span>
+                      {/* <span className="day-status">{status}</span> */}
                     </div>
                   );
                 })}

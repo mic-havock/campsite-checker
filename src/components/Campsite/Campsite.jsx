@@ -7,7 +7,11 @@ import CampsiteAvailability from "./CampsiteAvailability";
 import "./campsite.scss";
 
 //Campsite component that displays detailed information about a campsite
-const Campsite = ({ campsite, facilityName }) => {
+const Campsite = ({
+  campsite,
+  facilityName,
+  isExpanded: initialIsExpanded = false,
+}) => {
   const {
     CampsiteName,
     CampsiteReservable,
@@ -19,7 +23,7 @@ const Campsite = ({ campsite, facilityName }) => {
     CampsiteID,
   } = campsite;
 
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(initialIsExpanded);
   const [availabilityData, setAvailabilityData] = useState(null);
   const [isLoadingAvailability, setIsLoadingAvailability] = useState(false);
   const [availabilityError, setAvailabilityError] = useState(null);
@@ -234,6 +238,7 @@ Campsite.propTypes = {
     CampsiteID: PropTypes.string.isRequired,
   }).isRequired,
   facilityName: PropTypes.string.isRequired,
+  isExpanded: PropTypes.bool,
 };
 
 export default Campsite;

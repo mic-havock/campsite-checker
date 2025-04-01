@@ -118,11 +118,10 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
           </div>
           <div className="reservation-actions">
             <button
-              onClick={() => setSelectedReservation(reservation)}
+              onClick={() => setShowCampsiteModal(true)}
               className="edit-button"
-              title="Edit reservation dates"
             >
-              Edit Dates
+              View Campsite
             </button>
             <button
               onClick={handleDelete}
@@ -131,15 +130,6 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
             >
               Delete
             </button>
-            {campsiteDetails && (
-              <button
-                onClick={() => setShowCampsiteModal(true)}
-                className="view-button"
-                title="View campsite details"
-              >
-                View Campsite
-              </button>
-            )}
           </div>
           <div className="monitoring-row">
             <div className="monitoring-control">
@@ -254,6 +244,7 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
                 PERMITTEDEQUIPMENT: campsiteDetails[0].PERMITTEDEQUIPMENT || [],
               }}
               facilityName={reservation.facility_name || "Unknown Facility"}
+              isExpanded={true}
             />
           </div>
         </div>
