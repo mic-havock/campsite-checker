@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchCampsitesByFacility } from "../../api/campsites";
 import { getFacilities } from "../../api/facilities";
+import { CONTENT } from "../../config/content";
 import FacilityDetails from "./FacilityDetails";
 import FacilityGrid from "./FacilityGrid";
 import "./facilities-finder.scss";
@@ -244,12 +245,7 @@ const FacilitiesFinder = () => {
         <div className="brand">
           <img src="/kampscout.svg" alt="Kamp Scout Logo" className="logo" />
         </div>
-        <p className="description">
-          Find and explore campgrounds across the United States with ease.
-          Search by state or name to discover the perfect spot for your next
-          outdoor adventure. If your desired campsite isn&apos;t available, set
-          an alert, and we&apos;ll notify you when it opens up!
-        </p>
+        <p className="description">{CONTENT.FACILITIES_FINDER.DESCRIPTION}</p>
       </div>
 
       <form

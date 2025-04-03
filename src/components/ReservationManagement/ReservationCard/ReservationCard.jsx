@@ -27,7 +27,6 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
       if (reservation.campsite_id) {
         try {
           const details = await fetchCampsiteDetails(reservation.campsite_id);
-          console.log("Campsite details:", details); // Debug log
           setCampsiteDetails(details);
         } catch (err) {
           console.error("Failed to fetch campsite details:", err);
@@ -165,7 +164,7 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
                 PERMITTEDEQUIPMENT: campsiteDetails[0].PERMITTEDEQUIPMENT || [],
               }}
               facilityName={reservation.facility_name || "Unknown Facility"}
-              isExpanded={true}
+              isExpanded={false}
             />
           </div>
         </div>

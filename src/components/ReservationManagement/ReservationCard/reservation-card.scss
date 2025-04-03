@@ -61,14 +61,6 @@
         border-bottom: none;
       }
 
-      .detail-label {
-        font-weight: 600;
-        color: $text-primary;
-        min-width: 60px;
-        //margin-right: 0.5rem;
-        flex-shrink: 0;
-      }
-
       .detail-value {
         color: $text-primary;
         word-break: break-word;
@@ -186,74 +178,6 @@ button {
     width: 90%;
     max-width: 450px;
     box-shadow: $shadow-lg;
-
-    h3 {
-      margin-top: -1rem;
-      color: $primary-color;
-      text-align: center;
-      font-weight: 600;
-    }
-
-    .form-group {
-      margin-bottom: 1.25rem;
-
-      label {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: $text-primary;
-        font-weight: 600;
-      }
-
-      input {
-        width: 100%;
-        padding: 0.75rem;
-        border: 1px solid $color-stone;
-        border-radius: $button-border-radius;
-        font-size: 1rem;
-        transition: $button-transition;
-
-        &:focus {
-          outline: none;
-          border-color: $primary-color;
-          box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
-        }
-      }
-    }
-
-    .modal-actions {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      margin-top: 1.5rem;
-
-      button {
-        padding: 0.7rem 1.25rem;
-        border-radius: $button-border-radius;
-        border: none;
-        font-weight: 500;
-        cursor: pointer;
-        transition: $button-transition;
-        min-width: 120px;
-
-        &:first-child {
-          background-color: $primary-color;
-          color: $text-light;
-
-          &:hover {
-            background-color: darken($primary-color, 10%);
-          }
-        }
-
-        &.cancel-button {
-          background-color: $secondary-color;
-          color: $text-light;
-
-          &:hover {
-            background-color: darken($secondary-color, 10%);
-          }
-        }
-      }
-    }
   }
 }
 
