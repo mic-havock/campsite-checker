@@ -5,17 +5,11 @@ import { fetchCampsiteDetails } from "../../../api/campsites";
 import {
   deleteReservation,
   updateMonitoringStatus,
-  updateReservationDates,
 } from "../../../api/reservationManagement";
 import Campsite from "../../Campsite/Campsite";
 import "./reservation-card.scss";
 
 const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
-  const [selectedReservation, setSelectedReservation] = useState(null);
-  const [dateRange, setDateRange] = useState({
-    startDate: "",
-    endDate: "",
-  });
   const [isMonitoringActive, setIsMonitoringActive] = useState(
     Boolean(reservation.monitoring_active)
   );
@@ -56,20 +50,6 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
     } catch (err) {
       setIsMonitoringActive(!active); // Revert on error
       console.error("Failed to update monitoring status:", err);
-    }
-  };
-
-  /**
-   * Updates reservation dates
-   * @param {string} startDate - New start date
-   * @param {string} endDate - New end date
-   */
-  const handleDateUpdate = async (startDate, endDate) => {
-    try {
-      await updateReservationDates(reservation.id, startDate, endDate);
-      setSelectedReservation(null);
-    } catch (err) {
-      console.error("Failed to update reservation dates:", err);
     }
   };
 
@@ -161,65 +141,6 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
           </div>
         </div>
       </div>
-
-      {/* Edit Modal */}
-      {selectedReservation && (
-        <div
-          className="modal-overlay"
-          onClick={() => setSelectedReservation(null)}
-        >
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h3>Edit Reservation</h3>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleDateUpdate(dateRange.startDate, dateRange.endDate);
-              }}
-            >
-              <div className="form-group">
-                <label htmlFor="startDate">Start Date:</label>
-                <input
-                  type="date"
-                  id="startDate"
-                  value={dateRange.startDate}
-                  onChange={(e) =>
-                    setDateRange((prev) => ({
-                      ...prev,
-                      startDate: e.target.value,
-                    }))
-                  }
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="endDate">End Date:</label>
-                <input
-                  type="date"
-                  id="endDate"
-                  value={dateRange.endDate}
-                  onChange={(e) =>
-                    setDateRange((prev) => ({
-                      ...prev,
-                      endDate: e.target.value,
-                    }))
-                  }
-                  required
-                />
-              </div>
-              <div className="modal-actions">
-                <button type="submit">Save Changes</button>
-                <button
-                  type="button"
-                  onClick={() => setSelectedReservation(null)}
-                  className="cancel-button"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
       {/* Campsite Component */}
       {showCampsiteModal && campsiteDetails && campsiteDetails[0] && (
