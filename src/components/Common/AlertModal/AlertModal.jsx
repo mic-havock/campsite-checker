@@ -25,8 +25,14 @@ const AlertModal = ({
   // Closes the modal when clicking outside the modal content
   const handleBackdropClick = (event) => {
     if (event.target === event.currentTarget) {
-      onClose();
+      handleClose();
     }
+  };
+
+  // Clear form data and close modal
+  const handleClose = () => {
+    setAlertDetails({ name: "", email: "", startDate: "", endDate: "" });
+    onClose();
   };
 
   const handleCreateAlert = async () => {
@@ -64,8 +70,7 @@ const AlertModal = ({
       const result = await reservationsAPI.create(reservationData);
       setIsCreatingAlert(false);
       isSubmitting.current = false;
-      onClose();
-      setAlertDetails({ name: "", email: "", startDate: "", endDate: "" });
+      handleClose();
       window.setTimeout(() => {
         alert(
           `Alert created successfully! Reservation ID: ${result.id}\n\nIf your selection becomes available, you will receive an email.`
@@ -150,7 +155,7 @@ const AlertModal = ({
             )}
           </button>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             disabled={isCreatingAlert}
             className="cancel-btn"
           >
