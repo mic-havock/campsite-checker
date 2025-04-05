@@ -406,7 +406,10 @@ const ReservationDetailsPage = () => {
           </div>
 
           <div className="info-text">
-            <p>Click on an unavailable date to create a reservation alert</p>
+            <p>
+              Click on a Reserved or Not Yet Released date to create an
+              availability alert
+            </p>
           </div>
         </div>
 

@@ -5,6 +5,6 @@
 export const CONTENT = {
   FACILITIES_FINDER: {
     DESCRIPTION:
-      "Search and explore campgrounds across the United States by state or name to plan your perfect outdoor adventure. Can't find availability? Set up alerts for your favorite campgrounds and get notified the moment a spot becomes available. Never miss a booking opportunity again!",
+      "Tired of refreshing websites for that perfect campsite? KampScout makes finding your dream outdoor spot fun and stress-free! Search campgrounds across the United States, and when that ideal site is booked solid, let us do the hard work. Set up alerts and we'll monitor 24/7, instantly notifying you when an opening becomes available. Your perfect outdoor adventure is just a notification away!",
   },
 };

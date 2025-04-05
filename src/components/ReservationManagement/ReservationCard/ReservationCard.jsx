@@ -1,3 +1,4 @@
+import { format, parseISO } from "date-fns";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import { FaToggleOff, FaToggleOn } from "react-icons/fa";
@@ -66,17 +67,20 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
   };
 
   /**
-   * Format date to readable string
-   * @param {string} dateString - ISO date string
-   * @returns {string} - Formatted date
+   * Format date string to readable format
+   * @param {string} dateString - Date string in YYYY-MM-DD format
+   * @returns {string} Formatted date string
    */
   const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString(undefined, {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
+    if (!dateString) return "";
+    try {
+      // parseISO correctly handles timezone issues
+      const date = parseISO(dateString);
+      return format(date, "MMM d, yyyy");
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return dateString;
+    }
   };
 
   return (
@@ -91,7 +95,7 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
         <div className="reservation-details">
           <div className="detail-row">
             <span className="detail-value">
-              {formatDate(reservation.reservation_start_date)} –{" "}
+              {formatDate(reservation.reservation_start_date)} -{" "}
               {formatDate(reservation.reservation_end_date)}
             </span>
           </div>

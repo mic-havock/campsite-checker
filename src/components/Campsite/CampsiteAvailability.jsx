@@ -108,6 +108,10 @@ const CampsiteAvailability = ({ availabilities, facilityName, campsite }) => {
           <span className="status-dot status-not-reservable"></span>
           <span>Not Reservable/Not Available</span>
         </div>
+        <p className="info-text">
+          Click on a Reserved or Not Yet Released date to create an availability
+          alert
+        </p>
       </div>
       <div className="monthly-calendars">
         {monthlyAvailabilities.map(({ year, month, days }) => (
