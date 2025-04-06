@@ -95,18 +95,18 @@
       }
     }
   }
-}
 
-.info-text {
-  text-align: center;
-  background-color: rgba($accent-color, 0.1);
-  border-radius: $button-border-radius;
-  margin-top: -0.5rem;
-  margin-bottom: -1rem;
-  padding: 0.15rem;
-  font-size: 0.9rem;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+  .info-text {
+    text-align: center;
+    background-color: rgba($accent-color, 0.1);
+    border-radius: $button-border-radius;
+    margin-top: -0.5rem;
+    margin-bottom: -1rem;
+    padding: 0.15rem;
+    font-size: 0.9rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
 }
 
 // Status colors
