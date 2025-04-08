@@ -296,13 +296,8 @@ const FacilitiesFinder = () => {
 
       {error && <p className="error">{error}</p>}
 
-      <div className="grid-row">
-        <div className="grid-col">
-          <FacilityGrid
-            rowData={facilities}
-            onRowSelected={handleRowSelection}
-          />
-        </div>
+      <div className="grid-col">
+        <FacilityGrid rowData={facilities} onRowSelected={handleRowSelection} />
       </div>
       {selectedFacility && (
         <FacilityDetails

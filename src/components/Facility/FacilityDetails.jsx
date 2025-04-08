@@ -47,12 +47,12 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
         </button>
       </div>
 
-      <h2>Facility Details</h2>
+      <h2>Campground Details</h2>
       <table className="facility-details-table">
         <tbody>
           <tr>
             <td>
-              <strong>Facility Name:</strong> {facility.FacilityName}
+              <strong>Campground Name:</strong> {facility.FacilityName}
             </td>
             <td>
               <strong>Facility Type:</strong> {facility.FacilityTypeDescription}

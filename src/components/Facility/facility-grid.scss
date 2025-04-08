@@ -1,7 +1,20 @@
 @import "../../styles/variables";
 
 .facility-grid-container {
-  border-radius: $button-border-radius;
+  box-shadow: $shadow-sm;
   height: 400px;
   width: 100%;
+
+  // AG Grid specific styles
+  .ag-root-wrapper {
+    border-radius: $button-border-radius;
+    border: 2px solid $primary-color;
+  }
+
+  // Header column separator styles
+  .ag-header-cell {
+    &:last-child {
+      border-right: none; // Remove border from last column
+    }
+  }
 }

@@ -152,13 +152,15 @@ const ReservationManagement = () => {
               <span className="stat-value">{stats.activeMonitoring}</span>
             </div>
             <div className="stat-item">
-              <span className="stat-label">Successful Notifications:</span>
+              <span className="stat-label">
+                Availability Notifications Sent:
+              </span>
               <span className="stat-value">
                 {stats.successfulNotifications}
               </span>
             </div>
             <div className="stat-item">
-              <span className="stat-label">Total Attempts:</span>
+              <span className="stat-label">Total Availability Checks:</span>
               <span className="stat-value">{stats.totalAttempts}</span>
             </div>
           </div>

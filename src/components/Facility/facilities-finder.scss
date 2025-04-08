@@ -203,10 +203,11 @@
   }
 }
 
-.grid-row {
-  width: 100%;
-}
-
 .grid-col {
   width: 100%;
+  margin-bottom: 5rem;
+
+  &:has(+ .facility-details) {
+    margin-bottom: 0;
+  }
 }
