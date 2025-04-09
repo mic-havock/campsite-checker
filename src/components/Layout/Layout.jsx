@@ -32,6 +32,22 @@ const Layout = ({ children }) => {
         </header>
       )}
       <main className="flex-grow">{children}</main>
+      {/* Footer centered using inline styles */}
+      <footer
+        style={{
+          height: "5rem",
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <p style={{ color: "#4B5563", fontStyle: "italic" }}>
+          {" "}
+          {/* text-gray-600 equivalent */}© {new Date().getFullYear()}{" "}
+          Kampscout. All rights reserved.
+        </p>
+      </footer>
     </div>
   );
 };
