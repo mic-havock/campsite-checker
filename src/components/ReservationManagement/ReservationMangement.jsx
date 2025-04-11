@@ -2,8 +2,8 @@ import { useState } from "react";
 import { FaToggleOff, FaToggleOn } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import {
-  fetchReservations,
-  fetchUserStats,
+  fetchReservationsActive,
+  fetchUserStatsActive,
   updateBatchMonitoringStatus,
 } from "../../api/reservationManagement";
 import ReservationCard from "./ReservationCard/ReservationCard";
@@ -24,8 +24,8 @@ const ReservationManagement = () => {
       setError(null);
 
       const [reservationsData, statsData] = await Promise.all([
-        fetchReservations(emailAddress),
-        fetchUserStats(emailAddress),
+        fetchReservationsActive(emailAddress),
+        fetchUserStatsActive(emailAddress),
       ]);
 
       setReservations(reservationsData.reservations);
@@ -62,7 +62,7 @@ const ReservationManagement = () => {
       setAllMonitoringActive(active);
 
       // Refresh stats
-      const statsData = await fetchUserStats(email);
+      const statsData = await fetchUserStatsActive(email);
       setStats(statsData.stats);
     } catch (err) {
       setError(err.message);
@@ -83,7 +83,7 @@ const ReservationManagement = () => {
   const handleStatsUpdate = async () => {
     if (!email) return;
     try {
-      const statsData = await fetchUserStats(email);
+      const statsData = await fetchUserStatsActive(email);
       setStats(statsData.stats);
     } catch (err) {
       console.error("Failed to update stats:", err);

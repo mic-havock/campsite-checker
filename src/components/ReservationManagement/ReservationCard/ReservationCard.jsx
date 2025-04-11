@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { FaToggleOff, FaToggleOn } from "react-icons/fa";
 import { fetchCampsiteDetails } from "../../../api/campsites";
 import {
-  deleteReservation,
   updateMonitoringStatus,
+  userDeleteReservation,
 } from "../../../api/reservationManagement";
 import Campsite from "../../Campsite/Campsite";
 import "./reservation-card.scss";
@@ -58,7 +58,7 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
    */
   const handleDelete = async () => {
     try {
-      await deleteReservation(reservation.id);
+      await userDeleteReservation(reservation.id);
       onDelete(reservation.id);
       onStatsUpdate();
     } catch (err) {

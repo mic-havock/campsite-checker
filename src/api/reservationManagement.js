@@ -27,6 +27,24 @@ export const fetchReservations = async (emailAddress) => {
 };
 
 /**
+ * Fetches reservations for a given email address
+ * @param {string} emailAddress - Email address to search for
+ * @returns {Promise<Object>} - Response containing reservations data
+ * @throws {Error} - If the API call fails
+ */
+export const fetchReservationsActive = async (emailAddress) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/user/reservations/active?email=${emailAddress}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching reservations active:", error);
+    throw error.response?.data || error.message;
+  }
+};
+
+/**
  * Fetches user statistics for a given email address
  * @param {string} emailAddress - Email address to get stats for
  * @returns {Promise<Object>} - Response containing user statistics
@@ -40,6 +58,24 @@ export const fetchUserStats = async (emailAddress) => {
     return response.data;
   } catch (error) {
     console.error("Error fetching user stats:", error);
+    throw error.response?.data || error.message;
+  }
+};
+
+/**
+ * Fetches user statistics for a given email address
+ * @param {string} emailAddress - Email address to get stats for
+ * @returns {Promise<Object>} - Response containing user statistics
+ * @throws {Error} - If the API call fails
+ */
+export const fetchUserStatsActive = async (emailAddress) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/user/stats/active?email=${emailAddress}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user stats active:", error);
     throw error.response?.data || error.message;
   }
 };
@@ -102,6 +138,24 @@ export const updateReservationDates = async (id, startDate, endDate) => {
 export const deleteReservation = async (id) => {
   try {
     const response = await axios.delete(`${BASE_URL}/user/reservations/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error deleting reservation ${id}:`, error);
+    throw error.response?.data || error.message;
+  }
+};
+
+/**
+ * Soft deletes a reservation
+ * @param {number} id - Reservation ID to delete
+ * @returns {Promise<Object>} - Response containing success message
+ * @throws {Error} - If the API call fails
+ */
+export const userDeleteReservation = async (id) => {
+  try {
+    const response = await axios.patch(
+      `${BASE_URL}/user/reservations/${id}/user-delete`
+    );
     return response.data;
   } catch (error) {
     console.error(`Error deleting reservation ${id}:`, error);
