@@ -7,6 +7,12 @@ import "./facility-details.scss";
 const FacilityDetails = ({ facility, handleViewCampsites }) => {
   const [isLoading, setIsLoading] = useState(false);
 
+  const processFacilityDescription = (description) => {
+    if (!description) return "<p>No description available</p>";
+    // Replace any section containing contact_info with "Contact Info"
+    return description.replace(/contact_info/g, "Contact Info");
+  };
+
   // Transform facility media into format required by react-image-gallery
   const images =
     facility.MEDIA?.map((media) => ({
@@ -97,8 +103,7 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
 
       <div
         dangerouslySetInnerHTML={{
-          __html:
-            facility.FacilityDescription || "<p>No description available</p>",
+          __html: processFacilityDescription(facility.FacilityDescription),
         }}
       />
 
