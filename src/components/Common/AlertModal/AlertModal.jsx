@@ -73,7 +73,7 @@ const AlertModal = ({
       handleClose();
       window.setTimeout(() => {
         alert(
-          `Alert created successfully! Reservation ID: ${result.id}\n\nIf your selection becomes available, you will receive an email.`
+          `Alert created successfully!\n\nYou will receive a confirmation email shortly.\n\nIf your selection becomes available, you will receive another email notification.`
         );
       }, 20);
     } catch (error) {
