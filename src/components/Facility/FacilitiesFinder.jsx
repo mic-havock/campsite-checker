@@ -163,6 +163,12 @@ const FacilitiesFinder = () => {
   const handleRowSelection = (row) => {
     setSelectedFacility(row);
     localStorage.setItem("selectedFacility", JSON.stringify(row));
+
+    // Scroll to the grid-col element
+    const gridElement = document.querySelector(".grid-col");
+    if (gridElement) {
+      gridElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   };
 
   useEffect(() => {
