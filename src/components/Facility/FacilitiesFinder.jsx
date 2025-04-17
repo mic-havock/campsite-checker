@@ -10,6 +10,7 @@ import "./facilities-finder.scss";
 const FacilitiesFinder = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [hasSelectedOnce, setHasSelectedOnce] = useState(false);
 
   const states = [
     { code: "AL", name: "Alabama" },
@@ -164,10 +165,13 @@ const FacilitiesFinder = () => {
     setSelectedFacility(row);
     localStorage.setItem("selectedFacility", JSON.stringify(row));
 
-    // Scroll to the grid-col element
-    const gridElement = document.querySelector(".grid-col");
-    if (gridElement) {
-      gridElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    // Only scroll into view on first selection
+    if (!hasSelectedOnce) {
+      const gridElement = document.querySelector(".grid-col");
+      if (gridElement) {
+        gridElement.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      setHasSelectedOnce(true);
     }
   };
 
