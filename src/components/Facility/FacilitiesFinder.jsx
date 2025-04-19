@@ -167,10 +167,20 @@ const FacilitiesFinder = () => {
 
     // Only scroll into view on first selection
     if (!hasSelectedOnce) {
-      const gridElement = document.querySelector(".grid-col");
-      if (gridElement) {
-        gridElement.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
+      console.log("scrolling");
+
+      // Use setTimeout to ensure DOM updates are complete before scrolling
+      setTimeout(() => {
+        const gridElement = document.querySelector(".grid-col");
+        if (gridElement) {
+          // Adjust scrolling to ensure the element is fully visible at the top
+          window.scrollTo({
+            top: gridElement.offsetTop - 5, // Add small offset for better visibility
+            behavior: "smooth",
+          });
+        }
+      }, 100);
+
       setHasSelectedOnce(true);
     }
   };
