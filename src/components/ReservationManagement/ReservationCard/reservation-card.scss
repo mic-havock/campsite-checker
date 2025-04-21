@@ -49,6 +49,20 @@
     gap: 0.5rem;
     align-items: center;
 
+    .reservation-actions {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+
+      button {
+        padding: 0.25rem 0.75rem;
+        font-size: 0.9rem;
+        line-height: 1.2;
+      }
+    }
+
     .detail-row {
       display: flex;
       align-items: center;
@@ -129,13 +143,6 @@
 }
 
 button {
-  font-size: 0.8rem;
-  border-radius: $button-border-radius;
-  font-weight: 500;
-  cursor: pointer;
-  transition: $button-transition;
-  border: none;
-
   &.edit-button {
     background-color: $primary-color;
     color: $text-light;

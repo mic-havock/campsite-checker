@@ -46,6 +46,12 @@ h1 {
 }
 
 button {
+  padding: 6px 12px;
+  font-style: bold;
+  font-size: 1rem;
+  font-weight: 400;
+  text-align: center;
+  line-height: 1.2;
   @include button-primary;
 }
 
