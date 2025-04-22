@@ -78,7 +78,7 @@ const CampsitesPage = () => {
       {isLoading && <LoadingSpinner fullPage />}
 
       <div className="page-header">
-        <h1>{facilityName || "Campground's Campsites"}</h1>
+        <h1>{facilityName + " - Campsites" || "Campground's Campsites"}</h1>
       </div>
 
       <div className="controls-wrapper">

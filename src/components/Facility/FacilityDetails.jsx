@@ -27,6 +27,8 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
     setIsLoading(true);
     try {
       await handleViewCampsites();
+      // Scroll to the top of the page after loading completes
+      window.scrollTo(0, 0);
     } finally {
       setIsLoading(false);
     }
