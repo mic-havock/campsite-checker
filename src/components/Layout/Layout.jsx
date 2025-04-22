@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 /**
@@ -8,9 +9,33 @@ import { Link, useLocation } from "react-router-dom";
 const Layout = ({ children }) => {
   const location = useLocation();
   const isMainPage = location.pathname === "/";
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  // Update viewport height variable for mobile browsers (fixes 100vh issues)
+  useEffect(() => {
+    const setVhVariable = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
+    };
+
+    // Handle window resize for responsive layout
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      setVhVariable();
+    };
+
+    // Set initial value
+    setVhVariable();
+
+    // Add event listener
+    window.addEventListener("resize", handleResize);
+
+    // Clean up
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col full-height">
       {!isMainPage && (
         <header>
           <div>
@@ -20,7 +45,7 @@ const Layout = ({ children }) => {
                 alt="Kampscout Logo"
                 className="h-[150px] mx-auto block"
                 style={{
-                  height: "150px",
+                  height: isMobile ? "100px" : "150px",
                   display: "block",
                   marginLeft: "auto",
                   marginRight: "auto",
@@ -40,9 +65,13 @@ const Layout = ({ children }) => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          padding: "0 1rem",
+          flexShrink: 0,
         }}
       >
-        <p style={{ color: "#4B5563", fontStyle: "italic" }}>
+        <p
+          style={{ color: "#4B5563", fontStyle: "italic", textAlign: "center" }}
+        >
           {" "}
           {/* text-gray-600 equivalent */}© {new Date().getFullYear()}{" "}
           Kampscout. All rights reserved.

@@ -1,0 +1,144 @@
+// Breakpoints
+$breakpoint-xs: 320px;
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
+
+// Media query mixins
+@mixin xs {
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    @content;
+  }
+}
+
+@mixin sm {
+  @media (min-width: #{$breakpoint-sm}) and (max-width: #{$breakpoint-md - 1px}) {
+    @content;
+  }
+}
+
+@mixin md {
+  @media (min-width: #{$breakpoint-md}) and (max-width: #{$breakpoint-lg - 1px}) {
+    @content;
+  }
+}
+
+@mixin lg {
+  @media (min-width: #{$breakpoint-lg}) and (max-width: #{$breakpoint-xl - 1px}) {
+    @content;
+  }
+}
+
+@mixin xl {
+  @media (min-width: #{$breakpoint-xl}) {
+    @content;
+  }
+}
+
+// For mobile and below
+@mixin mobile {
+  @media (max-width: #{$breakpoint-md - 1px}) {
+    @content;
+  }
+}
+
+// For tablet and above
+@mixin tablet {
+  @media (min-width: #{$breakpoint-md}) {
+    @content;
+  }
+}
+
+// For desktop and above
+@mixin desktop {
+  @media (min-width: #{$breakpoint-lg}) {
+    @content;
+  }
+}
+
+// Touch device detection
+@mixin touch-device {
+  @media (hover: none) and (pointer: coarse) {
+    @content;
+  }
+}
+
+// Safari-specific fixes
+@mixin safari {
+  @media not all and (min-resolution: 0.001dpcm) {
+    @supports (-webkit-appearance: none) {
+      @content;
+    }
+  }
+}
+
+// Firefox-specific fixes
+@mixin firefox {
+  @-moz-document url-prefix() {
+    @content;
+  }
+}
+
+// Mobile-first responsive typography
+:root {
+  font-size: 16px;
+
+  @include mobile {
+    font-size: 14px;
+  }
+}
+
+// Basic responsive layout rules
+body {
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  -webkit-text-size-adjust: 100%;
+}
+
+// Fix input elements on mobile
+input,
+select,
+textarea,
+button {
+  font-size: 16px !important; // Prevents zoom on focus in iOS
+
+  @include touch-device {
+    -webkit-appearance: none;
+    border-radius: 0;
+    &:focus {
+      outline: none;
+    }
+  }
+}
+
+// Fix for hover states on touch devices
+@include touch-device {
+  .hover-effect {
+    &:hover {
+      // Reset hover effects on touch devices
+      transform: none !important;
+      box-shadow: none !important;
+    }
+  }
+}
+
+// Prevent scroll when modals are open
+body.modal-open {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+// Fix 100vh issue on mobile browsers
+.full-height {
+  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
+}
+
+// Custom scroll behavior
+.smooth-scroll {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
