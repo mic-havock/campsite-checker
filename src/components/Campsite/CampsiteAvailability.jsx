@@ -22,7 +22,6 @@ const CampsiteAvailability = ({ availabilities, facilityName, campsite }) => {
 
   // Group availabilities by month
   const monthlyAvailabilities = useMemo(() => {
-    console.log(JSON.stringify(campsite));
     const months = {};
 
     Object.entries(availabilities).forEach(([dateStr, status]) => {

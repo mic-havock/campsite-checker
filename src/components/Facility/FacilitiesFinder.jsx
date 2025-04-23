@@ -167,8 +167,6 @@ const FacilitiesFinder = () => {
 
     // Only scroll into view on first selection
     if (!hasSelectedOnce) {
-      console.log("scrolling");
-
       // Use setTimeout to ensure DOM updates are complete before scrolling
       setTimeout(() => {
         const gridElement = document.querySelector(".grid-col");
