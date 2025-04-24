@@ -4,12 +4,6 @@ import { isNonReservableStatus } from "../../config/reservationStatus";
 import AlertModal from "../Common/AlertModal/AlertModal";
 import "./campsite-availability.scss";
 
-/**
- * Groups availability data by month and displays a calendar view for each month
- * @param {Object} props - Component props
- * @param {Object} props.availabilities - Object containing availability data by date
- * @returns {JSX.Element} Monthly calendar view of campsite availability
- */
 const CampsiteAvailability = ({ availabilities, facilityName, campsite }) => {
   const [alertModal, setAlertModal] = useState(false);
   const [isCreatingAlert, setIsCreatingAlert] = useState(false);
