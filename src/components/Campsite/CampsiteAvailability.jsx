@@ -43,7 +43,14 @@ const CampsiteAvailability = ({ availabilities, facilityName, campsite }) => {
   }, [availabilities]);
 
   // Get status color class
-  const getStatusClass = (status) => {
+  const getStatusClass = (status, date) => {
+    // Check if date has passed
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (date < today) {
+      return "status-not-reservable";
+    }
+
     switch (status) {
       case "Reserved":
         return "status-reserved";
@@ -131,7 +138,7 @@ const CampsiteAvailability = ({ availabilities, facilityName, campsite }) => {
                     <div
                       key={dayNum}
                       className={`calendar-day ${
-                        status ? getStatusClass(status) : ""
+                        status ? getStatusClass(status, date) : ""
                       }`}
                       style={{
                         gridColumnStart:
