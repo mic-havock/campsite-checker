@@ -109,8 +109,7 @@ const CampsiteAvailability = ({ availabilities, facilityName, campsite }) => {
           <span>Not Reservable/Not Available</span>
         </div>
         <p className="info-text">
-          Click on a Reserved or Not Yet Released date to create an availability
-          alert
+          Click Reserved/NYR Dates for Availability Alerts{" "}
         </p>
       </div>
       <div className="monthly-calendars">

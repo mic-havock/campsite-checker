@@ -406,10 +406,7 @@ const ReservationDetailsPage = () => {
           </div>
 
           <div className="info-text">
-            <p>
-              Click on a Reserved or Not Yet Released date to create an
-              availability alert
-            </p>
+            <p>Click Reserved/NYR Dates for Availability Alerts</p>
           </div>
         </div>
 
