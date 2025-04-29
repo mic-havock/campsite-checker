@@ -39,6 +39,8 @@ body {
   color: $text-primary;
   width: 100%;
   overflow-x: hidden;
+  max-width: 100vw;
+  position: relative;
 }
 
 h1 {
@@ -67,6 +69,10 @@ button {
 // This addresses the iOS Safari 100vh issue
 html {
   height: -webkit-fill-available;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+  position: relative;
 }
 
 @media (prefers-color-scheme: light) {

@@ -484,7 +484,18 @@ const ReservationDetailsPage = () => {
                 id="hideNotReservable"
                 checked={hideNotReservable}
                 onChange={(e) => setHideNotReservable(e.target.checked)}
-                style={{ cursor: "pointer" }}
+                style={{
+                  cursor: "pointer",
+                  width: "16px",
+                  height: "16px",
+                  appearance: "auto",
+                  WebkitAppearance: "checkbox",
+                  MozAppearance: "checkbox",
+                  border: "1px solid #ccc",
+                  borderRadius: "3px",
+                  margin: "0",
+                  verticalAlign: "middle",
+                }}
               />
               <label htmlFor="hideNotReservable" style={{ cursor: "pointer" }}>
                 Hide campsites that are not reservable for all dates
