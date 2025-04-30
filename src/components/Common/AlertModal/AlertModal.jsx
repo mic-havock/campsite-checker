@@ -151,7 +151,7 @@ const AlertModal = ({
                 <span style={{ marginLeft: "8px" }}>Creating...</span>
               </>
             ) : (
-              "Create Alert"
+              "Create"
             )}
           </button>
           <button

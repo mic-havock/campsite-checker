@@ -231,7 +231,6 @@ const ReservationDetailsPage = () => {
         suppressSizeToFit: true,
         cellStyle: {
           backgroundColor: "#f8f9fa",
-          //borderRight: "1px solid#c4c4c4",
         },
       },
       {
@@ -245,7 +244,6 @@ const ReservationDetailsPage = () => {
         suppressSizeToFit: true,
         cellStyle: {
           backgroundColor: "#f8f9fa",
-          //borderRight: "1px solid #dde2eb",
         },
       },
       ...dates.map((date) => ({
@@ -260,6 +258,12 @@ const ReservationDetailsPage = () => {
         valueFormatter: (params) => {
           return params.value.available ? "A" : "X";
         },
+        cellStyle: {
+          padding: "0",
+          textAlign: "center",
+          border: "none",
+          borderRight: "1px solid #e0e0e0",
+        },
         cellRenderer: (params) => {
           const data = params.value;
           if (data.available) {
@@ -272,16 +276,26 @@ const ReservationDetailsPage = () => {
                   alignItems: "center",
                   justifyContent: "center",
                   cursor: "not-allowed",
-                  backgroundColor: "#7ee875",
-                  transition: "background-color 0.2s ease",
-                  margin: "-1px",
+                  backgroundColor: "#4caf50",
+                  transition: "all 0.2s ease",
                   position: "relative",
+                  boxShadow: "none",
+                  transform: "scale(1)",
+                  opacity: "1",
+                  color: "#f8f9fa",
+                  fontSize: "16px",
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = "#90ff88";
+                  e.currentTarget.style.boxShadow = "0 2px 4px rgba(0,0,0,0.1)";
+                  e.currentTarget.style.transform = "scale(1.02)";
+                  e.currentTarget.style.opacity = "0.95";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "#7ee875";
+                  e.currentTarget.style.backgroundColor = "#4caf50";
+                  e.currentTarget.style.boxShadow = "none";
+                  e.currentTarget.style.transform = "scale(1)";
+                  e.currentTarget.style.opacity = "1";
                 }}
               >
                 A
@@ -325,15 +339,25 @@ const ReservationDetailsPage = () => {
                     ? "not-allowed"
                     : "pointer",
                   backgroundColor: baseColor,
-                  transition: "background-color 0.2s ease",
-                  margin: "-1px",
+                  transition: "all 0.2s ease",
                   position: "relative",
+                  boxShadow: "none",
+                  transform: "scale(1)",
+                  opacity: "1",
+                  color: "#f8f9fa",
+                  fontSize: "16px",
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = hoverColor;
+                  e.currentTarget.style.boxShadow = "0 2px 4px rgba(0,0,0,0.1)";
+                  e.currentTarget.style.transform = "scale(1.02)";
+                  e.currentTarget.style.opacity = "0.95";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = baseColor;
+                  e.currentTarget.style.boxShadow = "none";
+                  e.currentTarget.style.transform = "scale(1)";
+                  e.currentTarget.style.opacity = "1";
                 }}
                 onClick={() =>
                   !isNonReservableStatus(data.status) &&
@@ -346,14 +370,9 @@ const ReservationDetailsPage = () => {
                   : data.status === "Reserved"
                   ? "R"
                   : "NR"}
-                {/* //If no status campsite is not reservable */}
               </div>
             );
           }
-        },
-        cellStyle: {
-          padding: "0",
-          textAlign: "center",
         },
       })),
     ];
@@ -515,7 +534,6 @@ const ReservationDetailsPage = () => {
               }}
               onGridReady={(params) => {
                 setGridApi(params.api);
-                // Don't auto-size columns to ensure fixed widths are respected
               }}
               headerHeight={headerHeight}
               rowHeight={rowHeight}
@@ -531,7 +549,7 @@ const ReservationDetailsPage = () => {
         <AlertModal
           isOpen={alertModal}
           onClose={() => setAlertModal(false)}
-          title="Create Availability Alert"
+          title="Availability Alert"
           subtitle={
             selectedCampsite
               ? `Campsite: ${selectedCampsite.site} - ${selectedCampsite.loop}`
