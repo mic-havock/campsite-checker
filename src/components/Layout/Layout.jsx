@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 /**
@@ -10,6 +10,14 @@ const Layout = ({ children }) => {
   const location = useLocation();
   const isMainPage = location.pathname === "/";
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const mainRef = useRef(null);
+
+  // Scroll to top when location changes
+  useEffect(() => {
+    if (mainRef.current) {
+      mainRef.current.scrollIntoView({ behavior: "instant" });
+    }
+  }, [location.pathname]);
 
   // Update viewport height variable for mobile browsers (fixes 100vh issues)
   useEffect(() => {
@@ -56,7 +64,9 @@ const Layout = ({ children }) => {
           </div>
         </header>
       )}
-      <main className="flex-grow">{children}</main>
+      <main ref={mainRef} className="flex-grow">
+        {children}
+      </main>
       {/* Footer centered using inline styles */}
       <footer
         style={{
