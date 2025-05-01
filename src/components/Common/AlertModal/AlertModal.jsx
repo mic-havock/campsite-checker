@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { useRef } from "react";
 import { createPortal } from "react-dom";
-import reservationsAPI from "../../../api/reservations";
+import { createReservation } from "../../../api/reservations";
 import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
 import "./alert-modal.scss";
 
@@ -67,7 +67,7 @@ const AlertModal = ({
     };
 
     try {
-      const result = await reservationsAPI.create(reservationData);
+      await createReservation(reservationData);
       setIsCreatingAlert(false);
       isSubmitting.current = false;
       handleClose();

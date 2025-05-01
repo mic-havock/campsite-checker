@@ -1,19 +1,8 @@
-/**
- * API service for user management functionality
- * Handles all API calls related to user reservations and monitoring
- */
-
 import axios from "axios";
 
-// Base URL configured from the environment
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-/**
- * Fetches reservations for a given email address
- * @param {string} emailAddress - Email address to search for
- * @returns {Promise<Object>} - Response containing reservations data
- * @throws {Error} - If the API call fails
- */
+// Fetches reservation alerts for a given email address
 export const fetchReservations = async (emailAddress) => {
   try {
     const response = await axios.get(
@@ -26,12 +15,7 @@ export const fetchReservations = async (emailAddress) => {
   }
 };
 
-/**
- * Fetches reservations for a given email address
- * @param {string} emailAddress - Email address to search for
- * @returns {Promise<Object>} - Response containing reservations data
- * @throws {Error} - If the API call fails
- */
+// Fetches active reservations for a given email address
 export const fetchReservationsActive = async (emailAddress) => {
   try {
     const response = await axios.get(
@@ -44,12 +28,7 @@ export const fetchReservationsActive = async (emailAddress) => {
   }
 };
 
-/**
- * Fetches user statistics for a given email address
- * @param {string} emailAddress - Email address to get stats for
- * @returns {Promise<Object>} - Response containing user statistics
- * @throws {Error} - If the API call fails
- */
+// Fetches user statistics for a given email address
 export const fetchUserStats = async (emailAddress) => {
   try {
     const response = await axios.get(
@@ -62,12 +41,7 @@ export const fetchUserStats = async (emailAddress) => {
   }
 };
 
-/**
- * Fetches user statistics for a given email address
- * @param {string} emailAddress - Email address to get stats for
- * @returns {Promise<Object>} - Response containing user statistics
- * @throws {Error} - If the API call fails
- */
+// Fetches user statistics for active alerts for a given email address
 export const fetchUserStatsActive = async (emailAddress) => {
   try {
     const response = await axios.get(
@@ -80,13 +54,7 @@ export const fetchUserStatsActive = async (emailAddress) => {
   }
 };
 
-/**
- * Updates monitoring status for a reservation
- * @param {number} id - Reservation ID
- * @param {boolean} active - New monitoring status
- * @returns {Promise<Object>} - Response containing updated reservation data
- * @throws {Error} - If the API call fails
- */
+// Updates monitoring status for a reservation alert
 export const updateMonitoringStatus = async (id, active) => {
   try {
     const response = await axios.patch(
@@ -105,14 +73,7 @@ export const updateMonitoringStatus = async (id, active) => {
   }
 };
 
-/**
- * Updates reservation dates
- * @param {number} id - Reservation ID
- * @param {string} startDate - New start date
- * @param {string} endDate - New end date
- * @returns {Promise<Object>} - Response containing updated reservation data
- * @throws {Error} - If the API call fails
- */
+// Updates reservation alert dates
 export const updateReservationDates = async (id, startDate, endDate) => {
   try {
     const response = await axios.patch(
@@ -129,12 +90,7 @@ export const updateReservationDates = async (id, startDate, endDate) => {
   }
 };
 
-/**
- * Deletes a reservation
- * @param {number} id - Reservation ID to delete
- * @returns {Promise<Object>} - Response containing success message
- * @throws {Error} - If the API call fails
- */
+// Deletes a reservation alert
 export const deleteReservation = async (id) => {
   try {
     const response = await axios.delete(`${BASE_URL}/user/reservations/${id}`);
@@ -145,12 +101,7 @@ export const deleteReservation = async (id) => {
   }
 };
 
-/**
- * Soft deletes a reservation
- * @param {number} id - Reservation ID to delete
- * @returns {Promise<Object>} - Response containing success message
- * @throws {Error} - If the API call fails
- */
+// Soft deletes a reservation alert (user-initiated)
 export const userDeleteReservation = async (id) => {
   try {
     const response = await axios.patch(
@@ -163,14 +114,7 @@ export const userDeleteReservation = async (id) => {
   }
 };
 
-/**
- * Updates monitoring status for multiple reservations
- * @param {string} emailAddress - Email address of the user
- * @param {boolean} active - New monitoring status
- * @param {number[]} [ids] - Optional array of specific reservation IDs to update
- * @returns {Promise<Object>} - Response containing updated reservations data
- * @throws {Error} - If the API call fails
- */
+// Updates monitoring status for multiple reservation alerts
 export const updateBatchMonitoringStatus = async (
   emailAddress,
   active,

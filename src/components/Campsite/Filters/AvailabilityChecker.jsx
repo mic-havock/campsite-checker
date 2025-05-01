@@ -5,63 +5,65 @@ import { fetchCampgroundAvailability } from "../../../api/campsites";
 import LoadingSpinner from "../../Common/LoadingSpinner/LoadingSpinner";
 import "./availability-checker.scss";
 
+const MONTH_NAMES = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+const getNextMonthsFromDate = (currentDate) => {
+  const months = [];
+
+  for (let i = 0; i < 12; i++) {
+    const date = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + i,
+      1
+    );
+
+    const monthName = MONTH_NAMES[date.getMonth()];
+    const year = date.getFullYear();
+
+    months.push({
+      value: date.toISOString(),
+      label: `${monthName} ${year}`,
+      month: monthName,
+      year: year,
+    });
+  }
+  return months;
+};
+
 //Component for checking campsite availability for a selected month
 const AvailabilityChecker = ({ facilityID, facilityName, setIsLoading }) => {
   const navigate = useNavigate();
   const [selectedMonth, setSelectedMonth] = useState("");
   const [localLoading, setLocalLoading] = useState(false);
-
-  //Get the next 12 months from the current date
-  const getNextMonths = () => {
-    const months = [];
-    const currentDate = new Date();
-    const monthNames = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
-
-    for (let i = 0; i < 12; i++) {
-      const date = new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth() + i,
-        1
-      );
-
-      const monthName = monthNames[date.getMonth()];
-      const year = date.getFullYear();
-
-      months.push({
-        value: date.toISOString(),
-        label: `${monthName} ${year}`,
-        month: monthName,
-        year: year,
-      });
-    }
-    return months;
-  };
+  const [error, setError] = useState("");
 
   const handleMonthChange = (event) => {
     setSelectedMonth(event.target.value);
+    setError("");
   };
 
   const fetchAvailability = async () => {
     if (!selectedMonth) {
-      alert("Please select a month.");
+      setError("Please select a month.");
       return;
     }
 
     setLocalLoading(true);
     setIsLoading(true);
+    setError("");
 
     try {
       const startDate = new Date(selectedMonth);
@@ -83,19 +85,19 @@ const AvailabilityChecker = ({ facilityID, facilityName, setIsLoading }) => {
       });
     } catch (error) {
       console.error("Error fetching availability data:", error);
-      alert("Could not fetch availability. Please try again later.");
+      setError("Could not fetch availability. Please try again later.");
     } finally {
       setLocalLoading(false);
       setIsLoading(false);
     }
   };
 
-  const availableMonths = getNextMonths();
+  const availableMonths = getNextMonthsFromDate(new Date());
 
   return (
     <div className="availability-card">
       <div className="availability-header">
-        <h2>Check Campgound Availability</h2>
+        <h2>Check Campground Availability</h2>
       </div>
       <div className="availability-body">
         <div className="availability-row">
@@ -105,6 +107,7 @@ const AvailabilityChecker = ({ facilityID, facilityName, setIsLoading }) => {
             onChange={handleMonthChange}
             className="month-select"
             disabled={localLoading}
+            aria-label="Select a month"
           >
             <option value="">Select a month...</option>
             {availableMonths.map((month) => (
@@ -117,6 +120,7 @@ const AvailabilityChecker = ({ facilityID, facilityName, setIsLoading }) => {
             onClick={fetchAvailability}
             className="check-availability-btn"
             disabled={!selectedMonth || localLoading}
+            aria-label="Check availability"
           >
             {localLoading ? (
               <>
@@ -128,6 +132,11 @@ const AvailabilityChecker = ({ facilityID, facilityName, setIsLoading }) => {
             )}
           </button>
         </div>
+        {error && (
+          <div className="error-message" role="alert">
+            {error}
+          </div>
+        )}
       </div>
     </div>
   );
