@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
 import Campsite from "./Campsite";
@@ -6,16 +6,38 @@ import "./campsites-page.scss";
 import AvailabilityChecker from "./Filters/AvailabilityChecker";
 import CampsiteFilter from "./Filters/CampsiteFilter";
 
-//CampsitesPage component displays a list of campsites for a selected facility
-//with filtering and availability checking functionality
+//  Custom hook for managing campsite filtering logic
+const useFilteredCampsites = (
+  campsiteData,
+  showReservableOnly,
+  selectedLoops
+) => {
+  return useMemo(() => {
+    return campsiteData.filter((campsite) => {
+      const reservableMatch =
+        !showReservableOnly || campsite.CampsiteReservable;
+      const loopMatch =
+        selectedLoops.length === 0 ||
+        (campsite.Loop && selectedLoops.includes(campsite.Loop));
+      return reservableMatch && loopMatch;
+    });
+  }, [campsiteData, showReservableOnly, selectedLoops]);
+};
+
+/**
+ * Component for displaying a list of campsites with filtering and availability checking
+ * @returns {JSX.Element} CampsitesPage component
+ */
 const CampsitesPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { campsites, facilityName } = location.state || {};
   const [campsiteData, setCampsiteData] = useState([]);
   const facilityID = campsites?.[0]?.FacilityID;
-  const [isLoading, setIsLoading] = useState(false);
-  const [isMapLoading, setIsMapLoading] = useState(false);
+  const [loadingState, setLoadingState] = useState({
+    isLoading: false,
+    isMapLoading: false,
+  });
   const [showReservableOnly, setShowReservableOnly] = useState(false);
   const [selectedLoops, setSelectedLoops] = useState([]);
 
@@ -32,13 +54,19 @@ const CampsitesPage = () => {
     setCampsiteData(filteredAndSortedCampsites);
   }, [campsites]);
 
+  const filteredCampsites = useFilteredCampsites(
+    campsiteData,
+    showReservableOnly,
+    selectedLoops
+  );
+
   const navigateToMapView = () => {
     if (!campsiteData || campsiteData.length === 0) {
       alert("No campsite data available to display on the map.");
       return;
     }
 
-    setIsMapLoading(true);
+    setLoadingState((prev) => ({ ...prev, isMapLoading: true }));
 
     navigate("/map-view", {
       state: {
@@ -46,16 +74,8 @@ const CampsitesPage = () => {
         facilityName: facilityName || "Campground",
       },
     });
-    setIsMapLoading(false);
+    setLoadingState((prev) => ({ ...prev, isMapLoading: false }));
   };
-
-  const filteredCampsites = campsiteData.filter((campsite) => {
-    const reservableMatch = !showReservableOnly || campsite.CampsiteReservable;
-    const loopMatch =
-      selectedLoops.length === 0 ||
-      (campsite.Loop && selectedLoops.includes(campsite.Loop));
-    return reservableMatch && loopMatch;
-  });
 
   if (!campsites || campsites.length === 0) {
     return (
@@ -75,7 +95,7 @@ const CampsitesPage = () => {
 
   return (
     <div className="campsites-page">
-      {isLoading && <LoadingSpinner fullPage />}
+      {loadingState.isLoading && <LoadingSpinner fullPage />}
 
       <div className="page-header">
         <h1>{facilityName + " - Campsites" || "Campground's Campsites"}</h1>
@@ -98,16 +118,18 @@ const CampsitesPage = () => {
             <AvailabilityChecker
               facilityID={facilityID}
               facilityName={facilityName}
-              setIsLoading={setIsLoading}
+              setIsLoading={(isLoading) =>
+                setLoadingState((prev) => ({ ...prev, isLoading }))
+              }
             />
           </div>
 
           <button
             onClick={navigateToMapView}
             className="view-map-btn"
-            disabled={isMapLoading}
+            disabled={loadingState.isMapLoading}
           >
-            {isMapLoading ? (
+            {loadingState.isMapLoading ? (
               <>
                 <LoadingSpinner size="small" />
                 <span style={{ marginLeft: "8px" }}>Loading...</span>

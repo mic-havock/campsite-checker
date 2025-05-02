@@ -1,29 +1,14 @@
 import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { fetchCampsiteAvailability } from "../../api/campsites";
+import { toTitleCase } from "../../utils/stringUtils";
 import ImageGallery from "../Common/ImageGallery/ImageGallery";
-import CampsiteAvailability from "./CampsiteAvailability";
 import "./campsite.scss";
+import CampsiteAvailability from "./CampsiteAvailability";
 
-//Campsite component that displays detailed information about a campsite
-const Campsite = ({
-  campsite,
-  facilityName,
-  isExpanded: initialIsExpanded = false,
-}) => {
-  const {
-    CampsiteName,
-    CampsiteReservable,
-    CampsiteType,
-    Loop,
-    ENTITYMEDIA,
-    ATTRIBUTES,
-    PERMITTEDEQUIPMENT,
-    CampsiteID,
-  } = campsite;
-
-  const [isExpanded, setIsExpanded] = useState(initialIsExpanded);
+// Custom hook for managing availability data
+const useAvailabilityData = (campsiteId, isExpanded) => {
   const [availabilityData, setAvailabilityData] = useState(null);
   const [isLoadingAvailability, setIsLoadingAvailability] = useState(false);
   const [availabilityError, setAvailabilityError] = useState(null);
@@ -33,7 +18,7 @@ const Campsite = ({
       if (isExpanded && !availabilityData && !isLoadingAvailability) {
         setIsLoadingAvailability(true);
         try {
-          const data = await fetchCampsiteAvailability(CampsiteID);
+          const data = await fetchCampsiteAvailability(campsiteId);
           setAvailabilityData(data.availability.availabilities);
         } catch (error) {
           setAvailabilityError("Failed to load availability data");
@@ -45,7 +30,155 @@ const Campsite = ({
     };
 
     loadAvailability();
-  }, [isExpanded, CampsiteID]);
+  }, [isExpanded, campsiteId, availabilityData, isLoadingAvailability]);
+
+  return { availabilityData, isLoadingAvailability, availabilityError };
+};
+
+// Modal component
+const CampsiteModal = ({
+  isExpanded,
+  onClose,
+  images,
+  campsite,
+  facilityName,
+  availabilityData,
+  isLoadingAvailability,
+  availabilityError,
+}) => {
+  if (!isExpanded) return null;
+
+  const {
+    CampsiteName,
+    CampsiteReservable,
+    CampsiteType,
+    Loop,
+    ATTRIBUTES,
+    PERMITTEDEQUIPMENT,
+    CampsiteID,
+  } = campsite;
+
+  return createPortal(
+    <div className="overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <ImageGallery images={images} />
+
+        <div className="modal-details">
+          <div className="campsite-header">
+            <h2>
+              Campsite: {CampsiteName}
+              {Loop && Loop.trim() ? ` - ${Loop}` : ""}{" "}
+            </h2>
+          </div>
+
+          {ATTRIBUTES && ATTRIBUTES.length > 0 && (
+            <div className="attributes-section">
+              <h3>Campsite Details</h3>
+              <div className="attributes-grid">
+                <div className="attribute-item">
+                  <span className="attribute-name">TYPE: </span>
+                  {toTitleCase(CampsiteType)}
+                </div>
+                <div className="attribute-item">
+                  <span className="attribute-name">RESERVABLE: </span>
+                  {CampsiteReservable ? "Reservable" : "Not Reservable"}
+                </div>
+                {ATTRIBUTES.map((attribute, index) => (
+                  <div key={index} className="attribute-item">
+                    <span className="attribute-name">
+                      {attribute.AttributeName.toUpperCase()}:
+                    </span>
+                    {toTitleCase(attribute.AttributeValue)}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {PERMITTEDEQUIPMENT && PERMITTEDEQUIPMENT.length > 0 && (
+            <div className="attributes-section">
+              <h3>Permitted Equipment</h3>
+              <div className="attributes-grid">
+                {PERMITTEDEQUIPMENT.map((equipment, index) => (
+                  <div key={index} className="attribute-item">
+                    {toTitleCase(equipment.EquipmentName)}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="attributes-section">
+            <h3>Availability Calendar</h3>
+            {isLoadingAvailability ? (
+              <div className="availability-loading">
+                Loading availability...
+              </div>
+            ) : availabilityError ? (
+              <div className="availability-error">{availabilityError}</div>
+            ) : availabilityData ? (
+              <CampsiteAvailability
+                availabilities={availabilityData}
+                facilityName={facilityName}
+                campsiteNumber={CampsiteName}
+                campsiteId={CampsiteID}
+                campsite={campsite}
+              />
+            ) : null}
+          </div>
+        </div>
+
+        <a
+          href={`https://www.recreation.gov/camping/campsites/${CampsiteID}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="recreation-link"
+        >
+          View on Recreation.gov →
+        </a>
+      </div>
+    </div>,
+    document.body
+  );
+};
+
+CampsiteModal.propTypes = {
+  isExpanded: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  images: PropTypes.arrayOf(
+    PropTypes.shape({
+      original: PropTypes.string.isRequired,
+      thumbnail: PropTypes.string.isRequired,
+      description: PropTypes.string.isRequired,
+      originalAlt: PropTypes.string.isRequired,
+      thumbnailAlt: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  campsite: PropTypes.object.isRequired,
+  facilityName: PropTypes.string.isRequired,
+  availabilityData: PropTypes.object,
+  isLoadingAvailability: PropTypes.bool.isRequired,
+  availabilityError: PropTypes.string,
+};
+
+// Main Campsite component
+const Campsite = ({
+  campsite,
+  facilityName,
+  isExpanded: initialIsExpanded = false,
+}) => {
+  const {
+    CampsiteName,
+    CampsiteReservable,
+    CampsiteType,
+    Loop,
+    ENTITYMEDIA,
+    CampsiteID,
+  } = campsite;
+
+  const [isExpanded, setIsExpanded] = useState(initialIsExpanded);
+  const { availabilityData, isLoadingAvailability, availabilityError } =
+    useAvailabilityData(CampsiteID, isExpanded);
 
   // Prevent body scrolling when modal is open
   useEffect(() => {
@@ -60,126 +193,18 @@ const Campsite = ({
     };
   }, [isExpanded]);
 
-  const toTitleCase = (str) => {
-    const exceptions = ["AM", "PM", "RV"];
-    return str
-      .split(" ")
-      .map((word) => {
-        if (exceptions.includes(word)) {
-          return word;
-        }
-        // Handle words with slashes
-        if (word.includes("/")) {
-          return word
-            .split("/")
-            .map(
-              (part) =>
-                part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
-            )
-            .join("/");
-        }
-        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-      })
-      .join(" ");
-  };
-
-  // Transform campsite media into format required by react-image-gallery
-  const images =
-    ENTITYMEDIA?.map((media) => ({
-      original: media.URL,
-      thumbnail: media.URL,
-      description: media.Title,
-      originalAlt: media.Title,
-      thumbnailAlt: `Thumbnail of ${media.Title}`,
-    })) || [];
-
-  // Modal component to be rendered with portal
-  const Modal = () => {
-    if (!isExpanded) return null;
-
-    return createPortal(
-      <div className="overlay" onClick={() => setIsExpanded(false)}>
-        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-          <ImageGallery images={images} />
-
-          <div className="modal-details">
-            <div className="campsite-header">
-              <h2>
-                Campsite: {CampsiteName}
-                {Loop && Loop.trim() ? ` - ${Loop}` : ""}{" "}
-              </h2>
-            </div>
-
-            {ATTRIBUTES && ATTRIBUTES.length > 0 && (
-              <div className="attributes-section">
-                <h3>Campsite Details</h3>
-                <div className="attributes-grid">
-                  <div className="attribute-item">
-                    <span className="attribute-name">TYPE: </span>
-                    {toTitleCase(CampsiteType)}
-                  </div>
-                  <div className="attribute-item">
-                    <span className="attribute-name">RESERVABLE: </span>
-                    {CampsiteReservable ? "Reservable" : "Not Reservable"}
-                  </div>
-                  {ATTRIBUTES.map((attribute, index) => (
-                    <div key={index} className="attribute-item">
-                      <span className="attribute-name">
-                        {attribute.AttributeName.toUpperCase()}:
-                      </span>
-                      {toTitleCase(attribute.AttributeValue)}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {PERMITTEDEQUIPMENT && PERMITTEDEQUIPMENT.length > 0 && (
-              <div className="attributes-section">
-                <h3>Permitted Equipment</h3>
-                <div className="attributes-grid">
-                  {PERMITTEDEQUIPMENT.map((equipment, index) => (
-                    <div key={index} className="attribute-item">
-                      {toTitleCase(equipment.EquipmentName)}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div className="attributes-section">
-              <h3>Availability Calendar</h3>
-              {isLoadingAvailability ? (
-                <div className="availability-loading">
-                  Loading availability...
-                </div>
-              ) : availabilityError ? (
-                <div className="availability-error">{availabilityError}</div>
-              ) : availabilityData ? (
-                <CampsiteAvailability
-                  availabilities={availabilityData}
-                  facilityName={facilityName}
-                  campsiteNumber={CampsiteName}
-                  campsiteId={CampsiteID}
-                  campsite={campsite}
-                />
-              ) : null}
-            </div>
-          </div>
-
-          <a
-            href={`https://www.recreation.gov/camping/campsites/${CampsiteID}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="recreation-link"
-          >
-            View on Recreation.gov →
-          </a>
-        </div>
-      </div>,
-      document.body
-    );
-  };
+  // Memoize images transformation
+  const images = useMemo(
+    () =>
+      ENTITYMEDIA?.map((media) => ({
+        original: media.URL,
+        thumbnail: media.URL,
+        description: media.Title,
+        originalAlt: media.Title,
+        thumbnailAlt: `Thumbnail of ${media.Title}`,
+      })) || [],
+    [ENTITYMEDIA]
+  );
 
   return (
     <>
@@ -207,7 +232,16 @@ const Campsite = ({
           </div>
         </div>
       </div>
-      <Modal />
+      <CampsiteModal
+        isExpanded={isExpanded}
+        onClose={() => setIsExpanded(false)}
+        images={images}
+        campsite={campsite}
+        facilityName={facilityName}
+        availabilityData={availabilityData}
+        isLoadingAvailability={isLoadingAvailability}
+        availabilityError={availabilityError}
+      />
     </>
   );
 };

@@ -13,7 +13,7 @@ const ImageGallery = ({
   showIndex = true,
   showBullets = false,
 }) => {
-  if (!images || images.length === 0) {
+  if (!images?.length) {
     return <div className="no-image-container">No Images Available</div>;
   }
 
