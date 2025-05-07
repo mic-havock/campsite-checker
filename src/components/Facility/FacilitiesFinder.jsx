@@ -1,95 +1,54 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchCampsitesByFacility } from "../../api/campsites";
 import { getFacilities } from "../../api/facilities";
 import { CONTENT } from "../../config/content";
+import { STATES } from "../../config/states";
 import FacilityDetails from "./FacilityDetails";
 import FacilityGrid from "./FacilityGrid";
 import "./facilities-finder.scss";
+
+const STORAGE_KEYS = {
+  SEARCH_PARAMS: "searchParams",
+  FACILITIES: "facilities",
+  SELECTED_FACILITY: "selectedFacility",
+  SESSION_ACTIVE: "isSessionActive",
+  LAST_HIDDEN: "lastHidden",
+};
 
 const FacilitiesFinder = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [hasSelectedOnce, setHasSelectedOnce] = useState(false);
-
-  const states = [
-    { code: "AL", name: "Alabama" },
-    { code: "AK", name: "Alaska" },
-    { code: "AZ", name: "Arizona" },
-    { code: "AR", name: "Arkansas" },
-    { code: "CA", name: "California" },
-    { code: "CO", name: "Colorado" },
-    { code: "CT", name: "Connecticut" },
-    { code: "DE", name: "Delaware" },
-    { code: "FL", name: "Florida" },
-    { code: "GA", name: "Georgia" },
-    { code: "HI", name: "Hawaii" },
-    { code: "ID", name: "Idaho" },
-    { code: "IL", name: "Illinois" },
-    { code: "IN", name: "Indiana" },
-    { code: "IA", name: "Iowa" },
-    { code: "KS", name: "Kansas" },
-    { code: "KY", name: "Kentucky" },
-    { code: "LA", name: "Louisiana" },
-    { code: "ME", name: "Maine" },
-    { code: "MD", name: "Maryland" },
-    { code: "MA", name: "Massachusetts" },
-    { code: "MI", name: "Michigan" },
-    { code: "MN", name: "Minnesota" },
-    { code: "MS", name: "Mississippi" },
-    { code: "MO", name: "Missouri" },
-    { code: "MT", name: "Montana" },
-    { code: "NE", name: "Nebraska" },
-    { code: "NV", name: "Nevada" },
-    { code: "NH", name: "New Hampshire" },
-    { code: "NJ", name: "New Jersey" },
-    { code: "NM", name: "New Mexico" },
-    { code: "NY", name: "New York" },
-    { code: "NC", name: "North Carolina" },
-    { code: "ND", name: "North Dakota" },
-    { code: "OH", name: "Ohio" },
-    { code: "OK", name: "Oklahoma" },
-    { code: "OR", name: "Oregon" },
-    { code: "PA", name: "Pennsylvania" },
-    { code: "RI", name: "Rhode Island" },
-    { code: "SC", name: "South Carolina" },
-    { code: "SD", name: "South Dakota" },
-    { code: "TN", name: "Tennessee" },
-    { code: "TX", name: "Texas" },
-    { code: "UT", name: "Utah" },
-    { code: "VT", name: "Vermont" },
-    { code: "VA", name: "Virginia" },
-    { code: "WA", name: "Washington" },
-    { code: "WV", name: "West Virginia" },
-    { code: "WI", name: "Wisconsin" },
-    { code: "WY", name: "Wyoming" },
-    { code: "DC", name: "Washington DC" },
-  ];
-
-  const [inputValue, setInputValue] = useState(
-    location.state?.searchParams?.query ||
-      JSON.parse(localStorage.getItem("searchParams"))?.query ||
-      ""
-  );
-  const [searchParams, setSearchParams] = useState(
-    location.state?.searchParams ||
-      JSON.parse(localStorage.getItem("searchParams")) || {
-        query: "",
-      }
-  );
-  const [facilities, setFacilities] = useState(
-    location.state?.facilities ||
-      JSON.parse(localStorage.getItem("facilities")) ||
-      []
-  );
-  const [selectedFacility, setSelectedFacility] = useState(
-    location.state?.selectedFacility ||
-      JSON.parse(localStorage.getItem("selectedFacility")) ||
-      null
-  );
+  const [inputValue, setInputValue] = useState("");
+  const [searchParams, setSearchParams] = useState({ query: "" });
+  const [facilities, setFacilities] = useState([]);
+  const [selectedFacility, setSelectedFacility] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Storage management functions
+  const clearStorage = useCallback(() => {
+    Object.values(STORAGE_KEYS).forEach((key) => {
+      if (
+        key !== STORAGE_KEYS.SESSION_ACTIVE &&
+        key !== STORAGE_KEYS.LAST_HIDDEN
+      ) {
+        localStorage.removeItem(key);
+      }
+    });
+  }, []);
+
+  const saveToStorage = useCallback((key, value) => {
+    localStorage.setItem(key, JSON.stringify(value));
+  }, []);
+
+  const loadFromStorage = useCallback((key) => {
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : null;
+  }, []);
+
+  // Event handlers
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
   };
@@ -97,10 +56,9 @@ const FacilitiesFinder = () => {
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
 
-    // Filter out empty or undefined parameters
     const updatedSearchParams = Object.fromEntries(
       Object.entries({ ...searchParams, query: inputValue }).filter(
-        ([, value]) => value !== "" && value !== null && value !== undefined
+        ([, value]) => value !== "" && value != null
       )
     );
 
@@ -109,15 +67,13 @@ const FacilitiesFinder = () => {
     setError("");
 
     try {
-      const response = await getFacilities(updatedSearchParams); // Pass only non-empty params
+      const response = await getFacilities(updatedSearchParams);
       const filteredFacilities = response.RECDATA.filter(
         (facility) => facility.FacilityTypeDescription === "Campground"
       );
       setFacilities(filteredFacilities);
-
-      // Save updated searchParams and facilities in localStorage
-      localStorage.setItem("searchParams", JSON.stringify(updatedSearchParams));
-      localStorage.setItem("facilities", JSON.stringify(response.RECDATA));
+      saveToStorage(STORAGE_KEYS.SEARCH_PARAMS, updatedSearchParams);
+      saveToStorage(STORAGE_KEYS.FACILITIES, response.RECDATA);
     } catch (err) {
       console.error(err);
       setError("Error fetching facilities");
@@ -127,130 +83,100 @@ const FacilitiesFinder = () => {
   };
 
   const handleClear = () => {
-    // Reset inputValue and searchParams to defaults
     setInputValue("");
-    setSearchParams({
-      query: "",
-      state: "",
-    });
-
-    // Clear facilities and selected facility
+    setSearchParams({ query: "" });
     setFacilities([]);
     setSelectedFacility(null);
     setError("");
-
-    // Remove saved data from localStorage
-    localStorage.removeItem("searchParams");
-    localStorage.removeItem("facilities");
-    localStorage.removeItem("selectedFacility");
+    clearStorage();
   };
 
   const handleViewCampsites = async () => {
-    if (selectedFacility) {
+    if (!selectedFacility) return;
+
+    try {
       const response = await fetchCampsitesByFacility(
         selectedFacility.FacilityID
       );
       const campsites = response.RECDATA || [];
-      localStorage.setItem(
-        "selectedFacility",
-        JSON.stringify(selectedFacility)
-      );
+      saveToStorage(STORAGE_KEYS.SELECTED_FACILITY, selectedFacility);
       navigate("/campsites", {
         state: { campsites, facilityName: selectedFacility.FacilityName },
       });
+    } catch (err) {
+      console.error(err);
+      setError("Error fetching campsites");
     }
   };
 
   const handleRowSelection = (row) => {
     setSelectedFacility(row);
-    localStorage.setItem("selectedFacility", JSON.stringify(row));
+    saveToStorage(STORAGE_KEYS.SELECTED_FACILITY, row);
 
-    // Only scroll into view on first selection
     if (!hasSelectedOnce) {
-      // Use requestAnimationFrame for better timing with DOM updates
       requestAnimationFrame(() => {
         const gridElement = document.querySelector(".grid-col");
-
-        if (gridElement) {
-          // Use scrollIntoView with smooth behavior
-          gridElement.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
-            inline: "nearest",
-          });
-        } else {
-          console.warn("Grid element not found in DOM"); // Debug log
-        }
+        gridElement?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+          inline: "nearest",
+        });
       });
-
       setHasSelectedOnce(true);
     }
   };
 
+  // Session management
   useEffect(() => {
-    if (!location.state) {
-      const savedFacilities = localStorage.getItem("facilities");
-      const savedSearchParams = localStorage.getItem("searchParams");
-      const savedSelectedFacility = localStorage.getItem("selectedFacility");
-
-      if (savedFacilities) setFacilities(JSON.parse(savedFacilities));
-      if (savedSearchParams) setSearchParams(JSON.parse(savedSearchParams));
-      if (savedSelectedFacility)
-        setSelectedFacility(JSON.parse(savedSelectedFacility));
-      setInputValue(JSON.parse(savedSearchParams)?.query || "");
+    if (!sessionStorage.getItem(STORAGE_KEYS.SESSION_ACTIVE)) {
+      sessionStorage.setItem(STORAGE_KEYS.SESSION_ACTIVE, "true");
+      clearStorage();
     }
 
-    // Set a session storage flag to detect browser close
-    if (!sessionStorage.getItem("isSessionActive")) {
-      sessionStorage.setItem("isSessionActive", "true");
-
-      // Clear localStorage from previous sessions
-      localStorage.removeItem("searchParams");
-      localStorage.removeItem("facilities");
-      localStorage.removeItem("selectedFacility");
-    }
-
-    // Add event listener for browser/tab close
-    const handleUnload = () => {
-      localStorage.removeItem("searchParams");
-      localStorage.removeItem("facilities");
-      localStorage.removeItem("selectedFacility");
-    };
-
-    window.addEventListener("beforeunload", handleUnload);
-
-    // Add a visibilitychange event listener as a backup
+    const handleUnload = () => clearStorage();
     const handleVisibilityChange = () => {
       if (document.visibilityState === "hidden") {
-        // This might be triggered when switching tabs, but also when closing
-        sessionStorage.setItem("lastHidden", Date.now().toString());
+        sessionStorage.setItem(STORAGE_KEYS.LAST_HIDDEN, Date.now().toString());
       }
     };
 
+    window.addEventListener("beforeunload", handleUnload);
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
-    // Cleanup function to remove event listeners
     return () => {
       window.removeEventListener("beforeunload", handleUnload);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [location.state]);
+  }, [clearStorage]);
 
-  // Second useEffect to check for session resumption
+  // Load saved state
   useEffect(() => {
-    // Check if this is a new session by comparing timestamps
-    const lastHidden = sessionStorage.getItem("lastHidden");
+    if (!location.state) {
+      const savedFacilities = loadFromStorage(STORAGE_KEYS.FACILITIES);
+      const savedSearchParams = loadFromStorage(STORAGE_KEYS.SEARCH_PARAMS);
+      const savedSelectedFacility = loadFromStorage(
+        STORAGE_KEYS.SELECTED_FACILITY
+      );
+
+      if (savedFacilities) setFacilities(savedFacilities);
+      if (savedSearchParams) {
+        setSearchParams(savedSearchParams);
+        setInputValue(savedSearchParams.query || "");
+      }
+      if (savedSelectedFacility) setSelectedFacility(savedSelectedFacility);
+    }
+  }, [location.state, loadFromStorage]);
+
+  // Session timeout check
+  useEffect(() => {
+    const lastHidden = sessionStorage.getItem(STORAGE_KEYS.LAST_HIDDEN);
     const now = Date.now();
 
-    // If returning after more than 5 minutes or no lastHidden (new session)
-    // we consider it a new session and clear localStorage
     if (lastHidden && now - parseInt(lastHidden, 10) > 5 * 60 * 1000) {
-      localStorage.removeItem("searchParams");
-      localStorage.removeItem("facilities");
-      localStorage.removeItem("selectedFacility");
-      sessionStorage.removeItem("lastHidden");
+      clearStorage();
+      sessionStorage.removeItem(STORAGE_KEYS.LAST_HIDDEN);
     }
-  }, []);
+  }, [clearStorage]);
 
   return (
     <div className="facilities-finder">
@@ -298,7 +224,7 @@ const FacilitiesFinder = () => {
             }
           >
             <option value="">Select a state</option>
-            {states.map((state) => (
+            {STATES.map((state) => (
               <option key={state.code} value={state.code}>
                 {state.name}
               </option>
