@@ -12,8 +12,6 @@ const STORAGE_KEYS = {
   SEARCH_PARAMS: "searchParams",
   FACILITIES: "facilities",
   SELECTED_FACILITY: "selectedFacility",
-  SESSION_ACTIVE: "isSessionActive",
-  LAST_HIDDEN: "lastHidden",
 };
 
 const FacilitiesFinder = () => {
@@ -30,21 +28,16 @@ const FacilitiesFinder = () => {
   // Storage management functions
   const clearStorage = useCallback(() => {
     Object.values(STORAGE_KEYS).forEach((key) => {
-      if (
-        key !== STORAGE_KEYS.SESSION_ACTIVE &&
-        key !== STORAGE_KEYS.LAST_HIDDEN
-      ) {
-        localStorage.removeItem(key);
-      }
+      sessionStorage.removeItem(key);
     });
   }, []);
 
   const saveToStorage = useCallback((key, value) => {
-    localStorage.setItem(key, JSON.stringify(value));
+    sessionStorage.setItem(key, JSON.stringify(value));
   }, []);
 
   const loadFromStorage = useCallback((key) => {
-    const item = localStorage.getItem(key);
+    const item = sessionStorage.getItem(key);
     return item ? JSON.parse(item) : null;
   }, []);
 
@@ -126,29 +119,6 @@ const FacilitiesFinder = () => {
     }
   };
 
-  // Session management
-  useEffect(() => {
-    if (!sessionStorage.getItem(STORAGE_KEYS.SESSION_ACTIVE)) {
-      sessionStorage.setItem(STORAGE_KEYS.SESSION_ACTIVE, "true");
-      clearStorage();
-    }
-
-    const handleUnload = () => clearStorage();
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "hidden") {
-        sessionStorage.setItem(STORAGE_KEYS.LAST_HIDDEN, Date.now().toString());
-      }
-    };
-
-    window.addEventListener("beforeunload", handleUnload);
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleUnload);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, [clearStorage]);
-
   // Load saved state
   useEffect(() => {
     if (!location.state) {
@@ -166,17 +136,6 @@ const FacilitiesFinder = () => {
       if (savedSelectedFacility) setSelectedFacility(savedSelectedFacility);
     }
   }, [location.state, loadFromStorage]);
-
-  // Session timeout check
-  useEffect(() => {
-    const lastHidden = sessionStorage.getItem(STORAGE_KEYS.LAST_HIDDEN);
-    const now = Date.now();
-
-    if (lastHidden && now - parseInt(lastHidden, 10) > 5 * 60 * 1000) {
-      clearStorage();
-      sessionStorage.removeItem(STORAGE_KEYS.LAST_HIDDEN);
-    }
-  }, [clearStorage]);
 
   return (
     <div className="facilities-finder">

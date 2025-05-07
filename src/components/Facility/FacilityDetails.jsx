@@ -4,24 +4,51 @@ import ImageGallery from "../Common/ImageGallery/ImageGallery";
 import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
 import "./facility-details.scss";
 
+const transformMedia = (media = []) =>
+  media.map(({ URL, Title }) => ({
+    original: URL,
+    thumbnail: URL,
+    description: Title,
+    originalAlt: Title,
+    thumbnailAlt: `Thumbnail of ${Title}`,
+  }));
+
+const formatCoordinates = (coordinates) => {
+  if (!Array.isArray(coordinates) || coordinates.length !== 2) return null;
+  const [longitude, latitude] = coordinates;
+  return {
+    display: `${latitude}, ${longitude}`,
+    mapUrl: `https://www.google.com/maps?q=${latitude},${longitude}`,
+  };
+};
+
+const FacilityInfoRow = ({ label, value, secondLabel, secondValue }) => (
+  <tr>
+    <td>
+      <strong>{label}:</strong> {value}
+    </td>
+    {secondLabel && (
+      <td>
+        <strong>{secondLabel}:</strong> {secondValue}
+      </td>
+    )}
+  </tr>
+);
+
+FacilityInfoRow.propTypes = {
+  label: PropTypes.string.isRequired,
+  value: PropTypes.node.isRequired,
+  secondLabel: PropTypes.string,
+  secondValue: PropTypes.node,
+};
+
 const FacilityDetails = ({ facility, handleViewCampsites }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const processFacilityDescription = (description) => {
     if (!description) return "<p>No description available</p>";
-    // Replace any section containing contact_info with "Contact Info"
     return description.replace(/contact_info/g, "Contact Info");
   };
-
-  // Transform facility media into format required by react-image-gallery
-  const images =
-    facility.MEDIA?.map((media) => ({
-      original: media.URL,
-      thumbnail: media.URL,
-      description: media.Title,
-      originalAlt: media.Title,
-      thumbnailAlt: `Thumbnail of ${media.Title}`,
-    })) || [];
 
   const handleCampsitesClick = async () => {
     setIsLoading(true);
@@ -31,6 +58,9 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
       setIsLoading(false);
     }
   };
+
+  const coordinates = formatCoordinates(facility.GEOJSON?.COORDINATES);
+  const images = transformMedia(facility.MEDIA);
 
   return (
     <div className="facility-details">
@@ -56,48 +86,33 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
       <h2>Campground Details</h2>
       <table className="facility-details-table">
         <tbody>
-          <tr>
-            <td>
-              <strong>Campground Name:</strong> {facility.FacilityName}
-            </td>
-            <td>
-              <strong>Facility Type:</strong> {facility.FacilityTypeDescription}
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <strong>Phone:</strong> {facility.FacilityPhone}
-            </td>
-            <td>
-              <strong>Email:</strong>{" "}
-              {facility.FacilityEmail
-                ? facility.FacilityEmail
-                : "None Available"}
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <strong>Latitude, Longitude:</strong>{" "}
-              {Array.isArray(facility.GEOJSON?.COORDINATES)
-                ? facility.GEOJSON.COORDINATES[1]
-                : "Not Available"}
-              {", "}
-              {Array.isArray(facility.GEOJSON?.COORDINATES)
-                ? facility.GEOJSON.COORDINATES[0]
-                : "Not Available"}
-            </td>
-            <td>
-              {Array.isArray(facility.GEOJSON?.COORDINATES) ? (
+          <FacilityInfoRow
+            label="Campground Name"
+            value={facility.FacilityName}
+            secondLabel="Facility Type"
+            secondValue={facility.FacilityTypeDescription}
+          />
+          <FacilityInfoRow
+            label="Phone"
+            value={facility.FacilityPhone}
+            secondLabel="Email"
+            secondValue={facility.FacilityEmail || "None Available"}
+          />
+          <FacilityInfoRow
+            label="Latitude, Longitude"
+            value={coordinates?.display || "Not Available"}
+            secondValue={
+              coordinates && (
                 <a
-                  href={`https://www.google.com/maps?q=${facility.GEOJSON.COORDINATES[1]},${facility.GEOJSON.COORDINATES[0]}`}
+                  href={coordinates.mapUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   View on Google Maps
                 </a>
-              ) : null}
-            </td>
-          </tr>
+              )
+            }
+          />
         </tbody>
       </table>
 
@@ -131,7 +146,6 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
   );
 };
 
-// Define PropTypes for the component
 FacilityDetails.propTypes = {
   facility: PropTypes.shape({
     FacilityID: PropTypes.string.isRequired,

@@ -24,41 +24,63 @@ ModuleRegistry.registerModules([
 
 const FacilityGrid = ({ rowData, onRowSelected }) => {
   const [processedData, setProcessedData] = useState([]);
+  const [error, setError] = useState(null);
 
-  const [columnDefs] = useState([
-    { headerName: "Campground Name", field: "FacilityName" },
-    { headerName: "City", field: "City" },
-    { headerName: "State", field: "State" },
-  ]);
+  const columnDefs = useMemo(
+    () => [
+      { headerName: "Campground Name", field: "FacilityName" },
+      { headerName: "City", field: "City" },
+      { headerName: "State", field: "State" },
+    ],
+    []
+  );
 
   useEffect(() => {
     const updateLocations = async () => {
-      const updatedData = await Promise.all(
-        rowData.map(async (row) => {
-          const { city, state } = await fetchCityAndState(row.FacilityID);
-          return { ...row, City: city, State: state };
-        })
-      );
-      setProcessedData(updatedData);
+      try {
+        const updatedData = await Promise.all(
+          rowData.map(async (row) => {
+            try {
+              const { city, state } = await fetchCityAndState(row.FacilityID);
+              return { ...row, City: city, State: state };
+            } catch (err) {
+              console.error(
+                `Failed to fetch location for facility ${row.FacilityID}:`,
+                err
+              );
+              return { ...row, City: "Unknown", State: "Unknown" };
+            }
+          })
+        );
+        setProcessedData(updatedData);
+        setError(null);
+      } catch (err) {
+        console.error("Failed to update locations:", err);
+        setError("Failed to load facility locations");
+        setProcessedData(rowData);
+      }
     };
 
     updateLocations();
   }, [rowData]);
 
-  const defaultColDef = useMemo(() => {
-    return {
-      flex: 1,
-      minWidth: 100,
-    };
-  }, []);
-
-  const rowSelection = useMemo(() => {
-    return {
-      mode: "singleRow",
-      checkboxes: false,
-      enableClickSelection: true,
-    };
-  }, []);
+  const gridConfig = useMemo(
+    () => ({
+      defaultColDef: {
+        flex: 1,
+        minWidth: 100,
+      },
+      rowSelection: {
+        mode: "singleRow",
+        checkboxes: false,
+        enableClickSelection: true,
+      },
+      pagination: true,
+      paginationPageSize: 20,
+      headerHeight: 30,
+    }),
+    []
+  );
 
   const onSelectionChanged = (event) => {
     const selectedRows = event.api.getSelectedRows();
@@ -69,15 +91,12 @@ const FacilityGrid = ({ rowData, onRowSelected }) => {
 
   return (
     <div className="facility-grid-container">
+      {error && <div className="error-message">{error}</div>}
       <AgGridReact
         columnDefs={columnDefs}
         rowData={processedData}
-        pagination={true}
-        paginationPageSize={20} // Default page size of 20
-        rowSelection={rowSelection}
-        defaultColDef={defaultColDef}
+        {...gridConfig}
         onSelectionChanged={onSelectionChanged}
-        headerHeight={30}
       />
     </div>
   );
