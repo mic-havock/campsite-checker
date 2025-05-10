@@ -12,7 +12,7 @@ import { fetchCampgroundAvailability } from "../../api/campsites";
 import { isNonReservableStatus } from "../../config/reservationStatus";
 import AlertModal from "../Common/AlertModal/AlertModal";
 import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
-import "./reservation-details.scss";
+import "./campground-availability.scss";
 
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
@@ -78,7 +78,7 @@ const calculateGridStyle = (rowData, tableWidth, rowHeight, headerHeight) => {
   };
 };
 
-const ReservationDetailsPage = () => {
+const CampgroundAvailability = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [availabilityData, setAvailabilityData] = useState(
@@ -372,10 +372,10 @@ const ReservationDetailsPage = () => {
     ];
 
     return (
-      <div className="reservation-details-container">
+      <div className="campground-availability-container">
         {isLoading && <LoadingSpinner fullPage />}
 
-        <div className="reservation-details-header">
+        <div className="campground-availability-header">
           <h1>Campground Availability</h1>
 
           <div className="availability-card">
@@ -563,4 +563,4 @@ const ReservationDetailsPage = () => {
   return renderCalendar();
 };
 
-export default ReservationDetailsPage;
+export default CampgroundAvailability;

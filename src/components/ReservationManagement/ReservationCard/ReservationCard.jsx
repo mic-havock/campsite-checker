@@ -95,7 +95,7 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
             {reservation.campsite_number && `${reservation.campsite_number}`}
           </h4>
         </div>
-        <div className="reservation-details">
+        <div className="campground-availability">
           <div className="detail-row">
             <span className="detail-value">
               {formatDate(reservation.reservation_start_date)} -{" "}

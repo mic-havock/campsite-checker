@@ -76,7 +76,7 @@ const AvailabilityChecker = ({ facilityID, facilityName, setIsLoading }) => {
         utcDate.toISOString()
       );
 
-      navigate("/reservation-details", {
+      navigate("/campground-availability", {
         state: {
           availabilityData: data,
           facilityID: facilityID,

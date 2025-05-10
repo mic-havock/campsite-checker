@@ -1,6 +1,6 @@
 @import "../../styles/variables";
 
-.reservation-details-container {
+.campground-availability-container {
   max-width: 100%;
   min-height: 100vh;
   background-color: $background-light;
@@ -8,7 +8,7 @@
   padding: 1rem;
   margin: 0.25rem;
 
-  .reservation-details-header {
+  .campground-availability-header {
     margin: 0 auto 2rem;
     max-width: 1200px;
 
@@ -132,10 +132,10 @@
 
 // Responsive adjustments
 @media (max-width: 768px) {
-  .reservation-details-container {
+  .campground-availability-container {
     padding: 1rem;
 
-    .reservation-details-header h1 {
+    .campground-availability-header h1 {
       font-size: 2rem;
     }
 

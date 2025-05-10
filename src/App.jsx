@@ -1,10 +1,10 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import CampgroundAvailability from "./components/CampgroundAvailability/CampgroundAvailability";
 import CampsitesPage from "./components/Campsite/CampsitesPage";
 import MapView from "./components/Campsite/Map/MapView";
 import FacilitiesFinder from "./components/Facility/FacilitiesFinder";
 import Layout from "./components/Layout/Layout";
 import ReservationManagement from "./components/ReservationManagement/ReservationMangement";
-import ReservationDetailsPage from "./components/Reservations/ReservationDetailsPage";
 
 const App = () => (
   <BrowserRouter>
@@ -14,8 +14,8 @@ const App = () => (
         <Route path="/campsites" element={<CampsitesPage />} />
         <Route path="/map-view" element={<MapView />} />
         <Route
-          path="/reservation-details"
-          element={<ReservationDetailsPage />}
+          path="/campground-availability"
+          element={<CampgroundAvailability />}
         />
         <Route
           path="/reservation-management"

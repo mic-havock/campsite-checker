@@ -53,7 +53,7 @@ npm run dev
 
 ## Key Components
 
-### ReservationDetailsPage
+### CampgroundAvailability
 
 The main component that handles the reservation grid display and interactions:
 
