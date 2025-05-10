@@ -10,6 +10,33 @@ import {
 import Campsite from "../../Campsite/Campsite";
 import "./reservation-card.scss";
 
+const formatDate = (dateString) => {
+  if (!dateString) return "";
+  try {
+    const date = parseISO(dateString);
+    return format(date, "MMM d, yyyy");
+  } catch (error) {
+    console.error("Error formatting date:", error);
+    return dateString;
+  }
+};
+
+const toTitleCase = (str) => {
+  if (!str) return "";
+  return str.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
+};
+
+const transformCampsiteData = (details, reservation) => ({
+  CampsiteName: details.CampsiteName || "Unknown Campsite",
+  CampsiteReservable: details.CampsiteReservable ?? true,
+  CampsiteType: details.CampsiteType || "Unknown Type",
+  Loop: details.Loop || "",
+  CampsiteID: details.CampsiteID || reservation.campsite_id.toString(),
+  ENTITYMEDIA: details.ENTITYMEDIA || [],
+  ATTRIBUTES: details.ATTRIBUTES || [],
+  PERMITTEDEQUIPMENT: details.PERMITTEDEQUIPMENT || [],
+});
+
 const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
   const [isMonitoringActive, setIsMonitoringActive] = useState(
     Boolean(reservation.monitoring_active)
@@ -17,12 +44,10 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
   const [campsiteDetails, setCampsiteDetails] = useState(null);
   const [showCampsiteModal, setShowCampsiteModal] = useState(false);
 
-  // Update local state when the prop changes
   useEffect(() => {
     setIsMonitoringActive(Boolean(reservation.monitoring_active));
   }, [reservation.monitoring_active]);
 
-  // Fetch campsite details when component mounts
   useEffect(() => {
     const loadCampsiteDetails = async () => {
       if (reservation.campsite_id) {
@@ -38,24 +63,17 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
     loadCampsiteDetails();
   }, [reservation.campsite_id]);
 
-  /**
-   * Updates monitoring status for a reservation
-   * @param {boolean} active - New monitoring status
-   */
   const handleMonitoringUpdate = async (active) => {
     try {
-      setIsMonitoringActive(active); // Update UI immediately
+      setIsMonitoringActive(active);
       await updateMonitoringStatus(reservation.id, active);
       onStatsUpdate();
     } catch (err) {
-      setIsMonitoringActive(!active); // Revert on error
+      setIsMonitoringActive(!active);
       console.error("Failed to update monitoring status:", err);
     }
   };
 
-  /**
-   * Deletes a reservation
-   */
   const handleDelete = async () => {
     try {
       await userDeleteReservation(reservation.id);
@@ -66,29 +84,14 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
     }
   };
 
-  /**
-   * Format date string to readable format
-   * @param {string} dateString - Date string in YYYY-MM-DD format
-   * @returns {string} Formatted date string
-   */
-  const formatDate = (dateString) => {
-    if (!dateString) return "";
-    try {
-      // parseISO correctly handles timezone issues
-      const date = parseISO(dateString);
-      return format(date, "MMM d, yyyy");
-    } catch (error) {
-      console.error("Error formatting date:", error);
-      return dateString;
-    }
-  };
-
   return (
     <>
       <div className="reservation-card">
         <div className="reservation-header">
-          <h4>{reservation.campsite_name || "N/A"}</h4>
-          <h4>
+          <h4 className="campsite-name">
+            {toTitleCase(reservation.campsite_name) || "N/A"}
+          </h4>
+          <h4 className="campsite-number">
             {reservation.campsite_number && `${reservation.campsite_number}`}
           </h4>
         </div>
@@ -145,7 +148,6 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
         </div>
       </div>
 
-      {/* Campsite Component */}
       {showCampsiteModal && campsiteDetails && campsiteDetails[0] && (
         <div
           className="modal-overlay"
@@ -153,20 +155,7 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
         >
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <Campsite
-              campsite={{
-                CampsiteName:
-                  campsiteDetails[0].CampsiteName || "Unknown Campsite",
-                CampsiteReservable:
-                  campsiteDetails[0].CampsiteReservable ?? true,
-                CampsiteType: campsiteDetails[0].CampsiteType || "Unknown Type",
-                Loop: campsiteDetails[0].Loop || "",
-                CampsiteID:
-                  campsiteDetails[0].CampsiteID ||
-                  reservation.campsite_id.toString(),
-                ENTITYMEDIA: campsiteDetails[0].ENTITYMEDIA || [],
-                ATTRIBUTES: campsiteDetails[0].ATTRIBUTES || [],
-                PERMITTEDEQUIPMENT: campsiteDetails[0].PERMITTEDEQUIPMENT || [],
-              }}
+              campsite={transformCampsiteData(campsiteDetails[0], reservation)}
               facilityName={reservation.facility_name || "Unknown Facility"}
               isExpanded={false}
             />

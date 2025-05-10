@@ -14,13 +14,69 @@ import AlertModal from "../Common/AlertModal/AlertModal";
 import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
 import "./reservation-details.scss";
 
-// Register all required modules
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
   ColumnAutoSizeModule,
   CellStyleModule,
   TextFilterModule,
 ]);
+
+const getNextMonths = () => {
+  const months = [];
+  const currentDate = new Date();
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  for (let i = 0; i < 12; i++) {
+    const date = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + i,
+      1
+    );
+    const monthName = monthNames[date.getMonth()];
+    const year = date.getFullYear();
+
+    months.push({
+      value: date.toISOString(),
+      label: `${monthName} ${year}`,
+      month: monthName,
+      year: year,
+    });
+  }
+  return months;
+};
+
+const getStatusColors = (status) => {
+  const colors = {
+    NYR: { base: "#4a90e2", hover: "#67a7ed" },
+    Reserved: { base: "#d65140", hover: "#ff6b5b" },
+    default: { base: "#707070", hover: "#8a8a8a" },
+  };
+
+  return colors[status] || colors.default;
+};
+
+const calculateGridStyle = (rowData, tableWidth, rowHeight, headerHeight) => {
+  const calculatedHeight = rowData.length * rowHeight + headerHeight + 20;
+  const gridHeight = Math.min(calculatedHeight, 700);
+
+  return {
+    height: `${gridHeight}px`,
+    width: `${tableWidth * 0.96}px`,
+  };
+};
 
 const ReservationDetailsPage = () => {
   const location = useLocation();
@@ -46,6 +102,8 @@ const ReservationDetailsPage = () => {
   const [isCreatingAlert, setIsCreatingAlert] = useState(false);
   const [hideNotReservable, setHideNotReservable] = useState(false);
   const isMounted = useRef(true);
+  const rowHeight = 30;
+  const headerHeight = 30;
 
   useEffect(() => {
     const handleResize = () => {
@@ -78,12 +136,11 @@ const ReservationDetailsPage = () => {
       )
     ).sort();
 
-    // Transform data for AG Grid
     const rowDataArray = campsitesData.map((campsite) => {
       const row = {
         campsite: `${campsite.site}`,
         loop: `${campsite.loop}`,
-        campsiteObj: campsite, // Store full campsite object for reference
+        campsiteObj: campsite,
       };
 
       datesArray.forEach((date) => {
@@ -141,44 +198,6 @@ const ReservationDetailsPage = () => {
     setAlertModal(true);
   };
 
-  const getNextMonths = () => {
-    const months = [];
-    const currentDate = new Date();
-    const monthNames = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
-
-    for (let i = 0; i < 12; i++) {
-      const date = new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth() + i,
-        1
-      );
-
-      const monthName = monthNames[date.getMonth()];
-      const year = date.getFullYear();
-
-      months.push({
-        value: date.toISOString(),
-        label: `${monthName} ${year}`,
-        month: monthName,
-        year: year,
-      });
-    }
-    return months;
-  };
-
   const handleSelectChange = async (event) => {
     setSelectedMonth(event.target.value);
     const startDate = new Date(event.target.value);
@@ -208,16 +227,12 @@ const ReservationDetailsPage = () => {
   };
 
   const renderCalendar = () => {
-    // Calculate dynamic height based on number of rows
-    const rowHeight = 30; // height of each row
-    const headerHeight = 30; // height of the header
-    const calculatedHeight = rowData.length * rowHeight + headerHeight + 20;
-    const gridHeight = Math.min(calculatedHeight, 700); // Cap at 700px
-
-    const gridStyle = {
-      height: `${gridHeight}px`,
-      width: `${tableWidth * 0.96}px`,
-    };
+    const gridStyle = calculateGridStyle(
+      rowData,
+      tableWidth,
+      rowHeight,
+      headerHeight
+    );
 
     const columnDefs = [
       {
@@ -302,30 +317,9 @@ const ReservationDetailsPage = () => {
               </div>
             );
           } else {
-            const getBackgroundColor = (status) => {
-              switch (status) {
-                case "NYR":
-                  return "#4a90e2"; // blue for NYR
-                case "Reserved":
-                  return "#d65140"; // blue for Reserved
-                default:
-                  return "#707070";
-              }
-            };
-
-            const getHoverColor = (status) => {
-              switch (status) {
-                case "NYR":
-                  return "#67a7ed"; // lighter blue for NYR hover
-                case "Reserved":
-                  return "#ff6b5b"; // lighter red for other statuses
-                default:
-                  return "#8a8a8a";
-              }
-            };
-
-            const baseColor = getBackgroundColor(data.status);
-            const hoverColor = getHoverColor(data.status);
+            const { base: baseColor, hover: hoverColor } = getStatusColors(
+              data.status
+            );
 
             return (
               <div

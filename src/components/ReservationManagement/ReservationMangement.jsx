@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { useState } from "react";
 import { FaToggleOff, FaToggleOn } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -8,6 +9,65 @@ import {
 } from "../../api/reservationManagement";
 import ReservationCard from "./ReservationCard/ReservationCard";
 import "./reservation-management.scss";
+
+const StatsDisplay = ({ stats }) => (
+  <div className="user-stats">
+    <h2>User Statistics</h2>
+    <div className="stats-grid">
+      <div className="stat-item">
+        <span className="stat-label">Total Reservations:</span>
+        <span className="stat-value">{stats.totalReservations}</span>
+      </div>
+      <div className="stat-item">
+        <span className="stat-label">Active Monitoring:</span>
+        <span className="stat-value">{stats.activeMonitoring}</span>
+      </div>
+      <div className="stat-item">
+        <span className="stat-label">Availability Notifications Sent:</span>
+        <span className="stat-value">{stats.successfulNotifications}</span>
+      </div>
+      <div className="stat-item">
+        <span className="stat-label">Total Availability Checks:</span>
+        <span className="stat-value">{stats.totalAttempts}</span>
+      </div>
+    </div>
+  </div>
+);
+
+StatsDisplay.propTypes = {
+  stats: PropTypes.shape({
+    totalReservations: PropTypes.number.isRequired,
+    activeMonitoring: PropTypes.number.isRequired,
+    successfulNotifications: PropTypes.number.isRequired,
+    totalAttempts: PropTypes.number.isRequired,
+  }).isRequired,
+};
+
+const MonitoringToggle = ({ active, onToggle }) => (
+  <button
+    className={`simple-toggle ${active ? "active" : "inactive"}`}
+    onClick={() => onToggle(!active)}
+    aria-pressed={active}
+    title={active ? "Disable all monitoring" : "Enable all monitoring"}
+  >
+    {active ? (
+      <>
+        <FaToggleOn className="toggle-icon" />
+        <span className="toggle-text">All Monitoring - Enabled</span>
+      </>
+    ) : (
+      <>
+        <FaToggleOff className="toggle-icon" />
+        <span className="toggle-text">All Monitoring - Disabled</span>
+      </>
+    )}
+  </button>
+);
+
+MonitoringToggle.propTypes = {
+  active: PropTypes.bool.isRequired,
+  onToggle: PropTypes.func.isRequired,
+};
 
 const ReservationManagement = () => {
   const navigate = useNavigate();
@@ -30,12 +90,9 @@ const ReservationManagement = () => {
 
       setReservations(reservationsData.reservations);
       setStats(statsData.stats);
-
-      // Update all monitoring status based on current reservations
-      const allActive = reservationsData.reservations.every(
-        (res) => res.monitoring_active
+      setAllMonitoringActive(
+        reservationsData.reservations.every((res) => res.monitoring_active)
       );
-      setAllMonitoringActive(allActive);
     } catch (err) {
       setError(err.message);
       setReservations([]);
@@ -51,8 +108,6 @@ const ReservationManagement = () => {
 
     try {
       await updateBatchMonitoringStatus(email, active);
-
-      // Update local state
       setReservations((prev) =>
         prev.map((res) => ({
           ...res,
@@ -61,8 +116,7 @@ const ReservationManagement = () => {
       );
       setAllMonitoringActive(active);
 
-      // Refresh stats
-      const statsData = await fetchUserStatsActive(email);
+      const { stats: statsData } = await fetchUserStatsActive(email);
       setStats(statsData.stats);
     } catch (err) {
       setError(err.message);
@@ -83,7 +137,7 @@ const ReservationManagement = () => {
   const handleStatsUpdate = async () => {
     if (!email) return;
     try {
-      const statsData = await fetchUserStatsActive(email);
+      const { stats: statsData } = await fetchUserStatsActive(email);
       setStats(statsData.stats);
     } catch (err) {
       console.error("Failed to update stats:", err);
@@ -105,7 +159,6 @@ const ReservationManagement = () => {
         <h1>Reservation Management</h1>
       </div>
 
-      {/* Search Form */}
       <div className="unified-controls">
         <div className="controls-header">
           <h2>Search For Reservation Alerts</h2>
@@ -135,69 +188,18 @@ const ReservationManagement = () => {
         </div>
       </div>
 
-      {/* Error Display */}
       {error && <div className="error-message">{error}</div>}
+      {stats && <StatsDisplay stats={stats} />}
 
-      {/* User Stats */}
-      {stats && (
-        <div className="user-stats">
-          <h2>User Statistics</h2>
-          <div className="stats-grid">
-            <div className="stat-item">
-              <span className="stat-label">Total Reservations:</span>
-              <span className="stat-value">{stats.totalReservations}</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-label">Active Monitoring:</span>
-              <span className="stat-value">{stats.activeMonitoring}</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-label">
-                Availability Notifications Sent:
-              </span>
-              <span className="stat-value">
-                {stats.successfulNotifications}
-              </span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-label">Total Availability Checks:</span>
-              <span className="stat-value">{stats.totalAttempts}</span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Batch Monitoring Toggle */}
       {reservations.length > 0 && (
         <div className="batch-monitoring">
-          <button
-            className={`simple-toggle ${
-              allMonitoringActive ? "active" : "inactive"
-            }`}
-            onClick={() => handleBatchMonitoringUpdate(!allMonitoringActive)}
-            aria-pressed={allMonitoringActive}
-            title={
-              allMonitoringActive
-                ? "Disable all monitoring"
-                : "Enable all monitoring"
-            }
-          >
-            {allMonitoringActive ? (
-              <>
-                <FaToggleOn className="toggle-icon" />
-                <span className="toggle-text">All Monitoring - Enabled</span>
-              </>
-            ) : (
-              <>
-                <FaToggleOff className="toggle-icon" />
-                <span className="toggle-text">All Monitoring - Disabled</span>
-              </>
-            )}
-          </button>
+          <MonitoringToggle
+            active={allMonitoringActive}
+            onToggle={handleBatchMonitoringUpdate}
+          />
         </div>
       )}
 
-      {/* Reservations List */}
       {reservations.length > 0 && (
         <div className="reservations-list">
           <h2>Reservations</h2>

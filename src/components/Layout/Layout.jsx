@@ -2,10 +2,6 @@ import PropTypes from "prop-types";
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
-/**
- * Layout component that wraps the application content with header and footer
- * Header is hidden on the main page (FacilitiesFinder)
- */
 const Layout = ({ children }) => {
   const location = useLocation();
   const isMainPage = location.pathname === "/";
