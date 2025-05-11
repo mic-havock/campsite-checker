@@ -1,6 +1,10 @@
-# Campsite Reservation System
+# Kampscout
 
-A React-based application for managing campsite reservations with an interactive calendar interface using AG Grid.
+A modern web application for finding and managing campsite reservations, featuring an interactive calendar interface and real-time availability tracking.
+
+## Live Application
+
+Visit [kampscout.com](https://kampscout.com) to use the application.
 
 ## Features
 
@@ -22,32 +26,32 @@ A React-based application for managing campsite reservations with an interactive
 
 Before you begin, ensure you have the following installed:
 
-- Node.js (v14.0.0 or higher)
-- npm (v6.0.0 or higher)
+- Node.js (v18.0.0 or higher)
+- npm (v8.0.0 or higher)
 
 ## Installation
 
 1. Clone the repository:
 
-```
+```bash
 git clone https://github.com/mkovach302/campsite-reservation-system.git
 ```
 
 2. Navigate to the project directory:
 
-```
+```bash
 cd campsite-reservation-system
 ```
 
 3. Install dependencies:
 
-```
+```bash
 npm install
 ```
 
 4. Start the development server:
 
-```
+```bash
 npm run dev
 ```
 
@@ -75,38 +79,12 @@ The main component that handles the reservation grid display and interactions:
   - Campsite column pinned to left
   - Date columns with uniform width
 
-## Configuration
-
-### AG Grid Setup
-
-The application uses AG Grid with the following modules:
-
-- ClientSideRowModelModule
-- ColumnAutoSizeModule
-- CellStyleModule
-
-### Theme Configuration
-
-Uses AG Grid's Alpine theme with legacy support:
-
-```javascript
-theme = "legacy";
-```
-
 ## Development Notes
 
 - Uses Cursor's Integrated Powershell with Administrator rights for development
 - Chrome browser recommended for optimal development experience
 - Implements strict TypeScript notation
 - Follows specific string handling conventions (double quotes, template literals)
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
 
 ## Code Standards
 
@@ -118,14 +96,16 @@ theme = "legacy";
 - Include JSDoc comments for functions
 - Use template literals for string interpolation
 
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
 ## Contact
 
-Your Name - [mkovach302@gmail.com]
+Michael Kovach - [mkovach302@gmail.com]
 
 Project Link: [https://github.com/mkovach302/campsite-reservation-system]
-
-## Acknowledgments
-
-- AG Grid Documentation
-- React Documentation
-- TypeScript Documentation
