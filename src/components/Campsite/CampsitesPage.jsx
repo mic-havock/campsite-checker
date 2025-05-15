@@ -7,7 +7,6 @@ import "./campsites-page.scss";
 import AvailabilityChecker from "./Filters/AvailabilityChecker";
 import CampsiteFilter from "./Filters/CampsiteFilter";
 
-//  Custom hook for managing campsite filtering logic
 const useFilteredCampsites = (
   campsiteData,
   showReservableOnly,
@@ -25,10 +24,6 @@ const useFilteredCampsites = (
   }, [campsiteData, showReservableOnly, selectedLoops]);
 };
 
-/**
- * Component for displaying a list of campsites with filtering and availability checking
- * @returns {JSX.Element} CampsitesPage component
- */
 const CampsitesPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -47,7 +42,6 @@ const CampsitesPage = () => {
       return;
     }
 
-    // Filter out campsites with "Don't Use" in the name and sort the rest alphabetically
     const filteredAndSortedCampsites = campsites
       .filter((campsite) => !campsite.CampsiteName.includes("Don't Use"))
       .sort((a, b) => a.CampsiteName.localeCompare(b.CampsiteName));

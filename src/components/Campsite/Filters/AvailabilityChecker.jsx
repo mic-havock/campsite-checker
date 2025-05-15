@@ -43,7 +43,6 @@ const getNextMonthsFromDate = (currentDate) => {
   return months;
 };
 
-//Component for checking campsite availability for a selected month
 const AvailabilityChecker = ({ facilityID, facilityName, setIsLoading }) => {
   const navigate = useNavigate();
   const [selectedMonth, setSelectedMonth] = useState("");

@@ -12,8 +12,6 @@ import {
 import Campsite from "../Campsite";
 import "./campsite-map.scss";
 
-// Fix for Leaflet marker icons in React
-// This is needed because Leaflet's default icon paths are not compatible with React's build system
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
@@ -22,22 +20,11 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
 });
 
-/**
- * MapUpdater component to update the map view when center or zoom changes
- * Only used for initial setup, not for filter changes
- *
- * @param {Object} props - Component props
- * @param {Array} props.center - Center coordinates [lat, lng]
- * @param {number} props.zoom - Zoom level
- * @param {boolean} props.shouldUpdate - Whether to update the map view
- * @returns {null} - This component doesn't render anything
- */
 const MapUpdater = ({ center, zoom, shouldUpdate }) => {
   const map = useMap();
   const hasUpdatedRef = useRef(false);
 
   useEffect(() => {
-    // Only update the map view on initial load, not when filters change
     if (center && zoom && shouldUpdate && !hasUpdatedRef.current) {
       map.setView(center, zoom);
       hasUpdatedRef.current = true;
@@ -53,14 +40,6 @@ MapUpdater.propTypes = {
   shouldUpdate: PropTypes.bool.isRequired,
 };
 
-/**
- * CampsiteMap component displays a map with markers for each campsite location
- *
- * @param {Object} props - Component props
- * @param {Array} props.campsites - Array of campsite objects with location data
- * @param {string} props.facilityName - Name of the facility/campground
- * @returns {JSX.Element} - Rendered component
- */
 const CampsiteMap = ({ campsites, facilityName }) => {
   const [mapCenter, setMapCenter] = useState([39.8283, -98.5795]); // Default center of US
   const [zoom, setZoom] = useState(4);
@@ -72,15 +51,12 @@ const CampsiteMap = ({ campsites, facilityName }) => {
   const previousCampsitesLength = useRef(0);
 
   useEffect(() => {
-    // Calculate the center of the map based on campsite coordinates
-    // Only do this on initial load or when the total dataset changes significantly
     if (
       campsites &&
       campsites.length > 0 &&
       (!initialMapSetup ||
         Math.abs(campsites.length - previousCampsitesLength.current) > 5)
     ) {
-      // Filter campsites with valid coordinates
       const validSites = campsites.filter(
         (site) =>
           site.CampsiteLatitude &&
@@ -89,15 +65,12 @@ const CampsiteMap = ({ campsites, facilityName }) => {
           !isNaN(parseFloat(site.CampsiteLongitude))
       );
 
-      // Update the reference to the previous length
       previousCampsitesLength.current = campsites.length;
 
       if (validSites.length > 0) {
         setHasValidCoordinates(true);
 
-        // Only calculate center and zoom if this is the initial setup
         if (!initialMapSetup) {
-          // Calculate the average lat/lng as the center
           const totalLat = validSites.reduce(
             (sum, site) => sum + parseFloat(site.CampsiteLatitude),
             0
@@ -121,7 +94,6 @@ const CampsiteMap = ({ campsites, facilityName }) => {
       setHasValidCoordinates(false);
     }
 
-    // Always update the sites with coordinates for markers
     if (campsites && campsites.length > 0) {
       const validSites = campsites.filter(
         (site) =>

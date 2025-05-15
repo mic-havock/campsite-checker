@@ -80,7 +80,6 @@
   }
 }
 
-// Modal styles
 .overlay {
   position: fixed;
   top: 0;
@@ -107,7 +106,6 @@
   position: relative;
   padding: 2rem 0.5rem;
 
-  // Add these styles for the scrollbar
   &::-webkit-scrollbar {
     width: 10px;
   }
@@ -130,7 +128,6 @@
 
 .modal-details {
   padding: 2rem;
-  //margin-top: -2.5rem;
 
   h2 {
     margin: 0 0 16px;
@@ -171,7 +168,6 @@
   }
 }
 
-// Responsive adjustments
 @media (max-width: 768px) {
   .modal-content {
     width: 100%;
@@ -208,5 +204,4 @@
   }
 }
 
-// Import the no-image-container style for the card view
 @import "../Common/ImageGallery/image-gallery.scss";

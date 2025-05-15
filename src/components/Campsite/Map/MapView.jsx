@@ -7,7 +7,6 @@ import CampsiteFilter from "../Filters/CampsiteFilter";
 import CampsiteMap from "../Map/CampsiteMap";
 import "./map-view.scss";
 
-//MapView displays a dedicated page with a map of campsite locations
 const MapView = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -20,7 +19,6 @@ const MapView = () => {
   const facilityID = campsites?.[0]?.FacilityID;
 
   useEffect(() => {
-    // Check if we have the required data
     if (!campsites || !Array.isArray(campsites) || campsites.length === 0) {
       setError("No campsite data available. Please go back and try again.");
       setIsLoading(false);
@@ -31,9 +29,6 @@ const MapView = () => {
     setIsLoading(false);
   }, [campsites]);
 
-  /**
-   * Navigate back to the campsites page with the current data
-   */
   const navigateToCampsitesPage = () => {
     navigate("/campsites", {
       state: {
@@ -43,7 +38,6 @@ const MapView = () => {
     });
   };
 
-  // Filter campsites based on both reservable and loop filters
   const filteredCampsites = campsiteData.filter((campsite) => {
     const reservableMatch = !showReservableOnly || campsite.CampsiteReservable;
     const loopMatch =
@@ -90,7 +84,6 @@ const MapView = () => {
         <div className="controls-wrapper">
           <div className="controls-container">
             <div className="filter-section">
-              {/* CampsiteFilter component */}
               <CampsiteFilter
                 campsiteData={campsiteData}
                 filteredCampsites={filteredCampsites}
@@ -102,7 +95,6 @@ const MapView = () => {
             </div>
 
             <div className="right-controls">
-              {/* AvailabilityChecker component */}
               <AvailabilityChecker
                 facilityID={facilityID}
                 facilityName={facilityName}

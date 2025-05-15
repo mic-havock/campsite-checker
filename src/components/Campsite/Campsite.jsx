@@ -7,7 +7,6 @@ import ImageGallery from "../Common/ImageGallery/ImageGallery";
 import "./campsite.scss";
 import CampsiteAvailability from "./CampsiteAvailability";
 
-// Custom hook for managing availability data
 const useAvailabilityData = (campsiteId, isExpanded) => {
   const [availabilityData, setAvailabilityData] = useState(null);
   const [isLoadingAvailability, setIsLoadingAvailability] = useState(false);
@@ -35,7 +34,6 @@ const useAvailabilityData = (campsiteId, isExpanded) => {
   return { availabilityData, isLoadingAvailability, availabilityError };
 };
 
-// Modal component
 const CampsiteModal = ({
   isExpanded,
   onClose,
@@ -161,7 +159,6 @@ CampsiteModal.propTypes = {
   availabilityError: PropTypes.string,
 };
 
-// Main Campsite component
 const Campsite = ({
   campsite,
   facilityName,
@@ -180,7 +177,6 @@ const Campsite = ({
   const { availabilityData, isLoadingAvailability, availabilityError } =
     useAvailabilityData(CampsiteID, isExpanded);
 
-  // Prevent body scrolling when modal is open
   useEffect(() => {
     if (isExpanded) {
       document.body.style.overflow = "hidden";
@@ -193,7 +189,6 @@ const Campsite = ({
     };
   }, [isExpanded]);
 
-  // Memoize images transformation
   const images = useMemo(
     () =>
       ENTITYMEDIA?.map((media) => ({

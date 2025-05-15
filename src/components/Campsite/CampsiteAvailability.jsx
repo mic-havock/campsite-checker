@@ -14,7 +14,6 @@ const CampsiteAvailability = ({ availabilities, facilityName, campsite }) => {
     endDate: "",
   });
 
-  // Group availabilities by month
   const monthlyAvailabilities = useMemo(() => {
     const months = {};
 
@@ -42,9 +41,7 @@ const CampsiteAvailability = ({ availabilities, facilityName, campsite }) => {
     return Object.values(months);
   }, [availabilities]);
 
-  // Get status color class
   const getStatusClass = (status, date) => {
-    // Check if date has passed
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     if (date < today) {
@@ -68,7 +65,6 @@ const CampsiteAvailability = ({ availabilities, facilityName, campsite }) => {
     }
   };
 
-  // Get month name
   const getMonthName = (monthIndex) => {
     return new Date(2000, monthIndex).toLocaleString("default", {
       month: "long",
@@ -148,7 +144,6 @@ const CampsiteAvailability = ({ availabilities, facilityName, campsite }) => {
                       onClick={() => handleDayClick(status, date)}
                     >
                       <span className="day-number">{dayNum}</span>
-                      {/* <span className="day-status">{status}</span> */}
                     </div>
                   );
                 })}
