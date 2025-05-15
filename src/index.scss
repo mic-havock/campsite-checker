@@ -1,11 +1,10 @@
 @import "./styles/variables";
 @import "./styles/responsive";
 
-// Outdoor-specific theme colors
 $primary-color: #003c1f;
 $secondary-color: $background-light;
-$accent-color: #8b4513; // Saddle brown
-$hover-color: #a0522d; // Darker brown
+$accent-color: #8b4513;
+$hover-color: #a0522d;
 
 :root {
   font-family: "Inter", sans-serif;
@@ -25,7 +24,7 @@ a {
   text-decoration: none;
 
   &:hover {
-    color: darken($primary-color, 10%); // Slightly darker olive green
+    color: darken($primary-color, 10%);
   }
 }
 
@@ -62,11 +61,9 @@ button {
   text-align: center;
   line-height: 1.2;
   @include button-primary;
-  touch-action: manipulation; // Improves touch event handling
+  touch-action: manipulation;
 }
 
-// Add viewport height fix for mobile browsers
-// This addresses the iOS Safari 100vh issue
 html {
   height: -webkit-fill-available;
   overflow-x: hidden;
@@ -77,22 +74,20 @@ html {
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: $primary-color; // Olive green text
-    background-color: $secondary-color; // Off-white background
+    color: $primary-color;
+    background-color: $secondary-color;
   }
 
   a:hover {
-    color: darken($primary-color, 15%); // Slightly darker olive green
+    color: darken($primary-color, 15%);
   }
 }
 
-// Ensure proper image scaling
 img {
   max-width: 100%;
   height: auto;
 }
 
-// Improve form elements for touch
 input,
 select,
 textarea,
@@ -100,7 +95,7 @@ button {
   margin: 0;
 
   @include mobile {
-    min-height: 44px; // Apple's recommended minimum touch target size
+    min-height: 44px;
   }
 }
 

@@ -1,8 +1,3 @@
-/**
- * Converts a string to title case, handling special cases and slashes
- * @param {string} str - The string to convert to title case
- * @returns {string} - The converted string in title case
- */
 export const toTitleCase = (str) => {
   if (!str) return "";
 
@@ -13,7 +8,6 @@ export const toTitleCase = (str) => {
       if (exceptions.includes(word)) {
         return word;
       }
-      // Handle words with slashes
       if (word.includes("/")) {
         return word
           .split("/")

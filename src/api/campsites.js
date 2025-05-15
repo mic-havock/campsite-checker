@@ -1,8 +1,6 @@
 import axios from "axios";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
-
-// Fetch availability for a campground
 export const fetchCampgroundAvailability = async (campgroundId, startDate) => {
   try {
     const response = await axios.get(
@@ -17,8 +15,6 @@ export const fetchCampgroundAvailability = async (campgroundId, startDate) => {
     throw error;
   }
 };
-
-// Fetch availability for a specific campsite
 export const fetchCampsiteAvailability = async (campsiteId) => {
   try {
     const response = await axios.get(
@@ -30,14 +26,12 @@ export const fetchCampsiteAvailability = async (campsiteId) => {
     throw error;
   }
 };
-
-// Get campsites for a facility
 export const fetchCampsitesByFacility = async (facilityId) => {
   try {
     const response = await axios.get(
       `${BASE_URL}/facilities/${facilityId}/campsites`
     );
-    return response.data || []; // Return campsites (RECDATA)
+    return response.data || [];
   } catch (error) {
     console.error(
       "Error fetching campsites by facility:",
@@ -46,8 +40,6 @@ export const fetchCampsitesByFacility = async (facilityId) => {
     throw error;
   }
 };
-
-// Fetch details for a specific campsite
 export const fetchCampsiteDetails = async (campsiteId) => {
   try {
     const response = await axios.get(`${BASE_URL}/campsites/${campsiteId}`);

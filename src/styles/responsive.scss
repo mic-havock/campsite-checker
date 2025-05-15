@@ -1,11 +1,9 @@
-// Breakpoints
 $breakpoint-xs: 320px;
 $breakpoint-sm: 576px;
 $breakpoint-md: 768px;
 $breakpoint-lg: 992px;
 $breakpoint-xl: 1200px;
 
-// Media query mixins
 @mixin xs {
   @media (max-width: #{$breakpoint-sm - 1px}) {
     @content;
@@ -36,35 +34,30 @@ $breakpoint-xl: 1200px;
   }
 }
 
-// For mobile and below
 @mixin mobile {
   @media (max-width: #{$breakpoint-md - 1px}) {
     @content;
   }
 }
 
-// For tablet and above
 @mixin tablet {
   @media (min-width: #{$breakpoint-md}) {
     @content;
   }
 }
 
-// For desktop and above
 @mixin desktop {
   @media (min-width: #{$breakpoint-lg}) {
     @content;
   }
 }
 
-// Touch device detection
 @mixin touch-device {
   @media (hover: none) and (pointer: coarse) {
     @content;
   }
 }
 
-// Safari-specific fixes
 @mixin safari {
   @media not all and (min-resolution: 0.001dpcm) {
     @supports (-webkit-appearance: none) {
@@ -73,14 +66,12 @@ $breakpoint-xl: 1200px;
   }
 }
 
-// Firefox-specific fixes
 @mixin firefox {
   @-moz-document url-prefix() {
     @content;
   }
 }
 
-// Mobile-first responsive typography
 :root {
   font-size: 16px;
 
@@ -89,19 +80,17 @@ $breakpoint-xl: 1200px;
   }
 }
 
-// Basic responsive layout rules
 body {
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   -webkit-text-size-adjust: 100%;
 }
 
-// Fix input elements on mobile
 input,
 select,
 textarea,
 button {
-  font-size: 16px !important; // Prevents zoom on focus in iOS
+  font-size: 16px !important;
 
   @include touch-device {
     -webkit-appearance: none;
@@ -112,18 +101,15 @@ button {
   }
 }
 
-// Fix for hover states on touch devices
 @include touch-device {
   .hover-effect {
     &:hover {
-      // Reset hover effects on touch devices
       transform: none !important;
       box-shadow: none !important;
     }
   }
 }
 
-// Prevent scroll when modals are open
 body.modal-open {
   overflow: hidden;
   position: fixed;
@@ -131,13 +117,11 @@ body.modal-open {
   height: 100%;
 }
 
-// Fix 100vh issue on mobile browsers
 .full-height {
   height: 100vh;
   height: calc(var(--vh, 1vh) * 100);
 }
 
-// Custom scroll behavior
 .smooth-scroll {
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;

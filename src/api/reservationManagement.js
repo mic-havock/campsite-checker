@@ -1,8 +1,6 @@
 import axios from "axios";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
-
-// Fetches reservation alerts for a given email address
 export const fetchReservations = async (emailAddress) => {
   try {
     const response = await axios.get(
@@ -14,8 +12,6 @@ export const fetchReservations = async (emailAddress) => {
     throw error.response?.data || error.message;
   }
 };
-
-// Fetches active reservations for a given email address
 export const fetchReservationsActive = async (emailAddress) => {
   try {
     const response = await axios.get(
@@ -27,8 +23,6 @@ export const fetchReservationsActive = async (emailAddress) => {
     throw error.response?.data || error.message;
   }
 };
-
-// Fetches user statistics for a given email address
 export const fetchUserStats = async (emailAddress) => {
   try {
     const response = await axios.get(
@@ -40,8 +34,6 @@ export const fetchUserStats = async (emailAddress) => {
     throw error.response?.data || error.message;
   }
 };
-
-// Fetches user statistics for active alerts for a given email address
 export const fetchUserStatsActive = async (emailAddress) => {
   try {
     const response = await axios.get(
@@ -53,8 +45,6 @@ export const fetchUserStatsActive = async (emailAddress) => {
     throw error.response?.data || error.message;
   }
 };
-
-// Updates monitoring status for a reservation alert
 export const updateMonitoringStatus = async (id, active) => {
   try {
     const response = await axios.patch(
@@ -72,8 +62,6 @@ export const updateMonitoringStatus = async (id, active) => {
     throw error.response?.data || error.message;
   }
 };
-
-// Updates reservation alert dates
 export const updateReservationDates = async (id, startDate, endDate) => {
   try {
     const response = await axios.patch(
@@ -89,8 +77,6 @@ export const updateReservationDates = async (id, startDate, endDate) => {
     throw error.response?.data || error.message;
   }
 };
-
-// Deletes a reservation alert
 export const deleteReservation = async (id) => {
   try {
     const response = await axios.delete(`${BASE_URL}/user/reservations/${id}`);
@@ -100,8 +86,6 @@ export const deleteReservation = async (id) => {
     throw error.response?.data || error.message;
   }
 };
-
-// Soft deletes a reservation alert (user-initiated)
 export const userDeleteReservation = async (id) => {
   try {
     const response = await axios.patch(
@@ -113,8 +97,6 @@ export const userDeleteReservation = async (id) => {
     throw error.response?.data || error.message;
   }
 };
-
-// Updates monitoring status for multiple reservation alerts
 export const updateBatchMonitoringStatus = async (
   emailAddress,
   active,

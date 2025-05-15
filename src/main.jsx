@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App"; // Ensure this matches the corrected App.jsx
-import "./index.scss"; // Adjust or remove if you don't have this file
+import App from "./App";
+import "./index.scss";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

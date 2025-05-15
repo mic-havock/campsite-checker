@@ -1,7 +1,3 @@
-/**
- * Application text content configuration
- * Contains all static text content used throughout the application
- */
 export const CONTENT = {
   FACILITIES_FINDER: {
     DESCRIPTION:
