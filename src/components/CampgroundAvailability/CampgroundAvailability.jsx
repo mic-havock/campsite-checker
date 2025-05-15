@@ -7,6 +7,7 @@ import {
 } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchCampgroundAvailability } from "../../api/campsites";
 import { isNonReservableStatus } from "../../config/reservationStatus";
@@ -371,192 +372,217 @@ const CampgroundAvailability = () => {
       })),
     ];
 
+    const availabilitySchema = {
+      "@context": "https://schema.org",
+      "@type": "Event",
+      name: "Campground Availability Calendar",
+      description: "Real-time availability calendar for campground bookings",
+      eventStatus: "https://schema.org/EventScheduled",
+      eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+      offers: {
+        "@type": "Offer",
+        availability: "https://schema.org/InStock",
+        availabilityStarts: startDate,
+        availabilityEnds: alertDetails.endDate,
+      },
+    };
+
     return (
-      <div className="campground-availability-container">
-        {isLoading && <LoadingSpinner fullPage />}
+      <>
+        <Helmet>
+          <script type="application/ld+json">
+            {JSON.stringify(availabilitySchema)}
+          </script>
+        </Helmet>
+        <div className="campground-availability-container">
+          {isLoading && <LoadingSpinner fullPage />}
 
-        <div className="campground-availability-header">
-          <h1>Campground Availability</h1>
+          <div className="campground-availability-header">
+            <h1>Campground Availability</h1>
 
-          <div className="availability-card">
-            <div className="availability-header">
-              <h2>Check Campground Availability</h2>
-            </div>
-            <div className="availability-body">
-              <div className="availability-row">
-                <select
-                  id="month-select"
-                  value={selectedMonth}
-                  onChange={handleSelectChange}
-                  className="month-select"
-                  disabled={isLoading}
-                >
-                  <option value="">
-                    Select a month to see availability...
-                  </option>
-                  {getNextMonths().map((month) => (
-                    <option key={month.value} value={month.value}>
-                      {month.label}
+            <div className="availability-card">
+              <div className="availability-header">
+                <h2>Check Campground Availability</h2>
+              </div>
+              <div className="availability-body">
+                <div className="availability-row">
+                  <select
+                    id="month-select"
+                    value={selectedMonth}
+                    onChange={handleSelectChange}
+                    className="month-select"
+                    disabled={isLoading}
+                  >
+                    <option value="">
+                      Select a month to see availability...
                     </option>
-                  ))}
-                </select>
-                <button
-                  onClick={handleMonthChange}
-                  className="check-availability-btn"
-                  disabled={!selectedMonth || isLoading}
-                >
-                  {isLoading ? (
-                    <>
-                      <LoadingSpinner size="small" />
-                      <span style={{ marginLeft: "8px" }}>Loading...</span>
-                    </>
-                  ) : (
-                    "Check"
-                  )}
-                </button>
+                    {getNextMonths().map((month) => (
+                      <option key={month.value} value={month.value}>
+                        {month.label}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    onClick={handleMonthChange}
+                    className="check-availability-btn"
+                    disabled={!selectedMonth || isLoading}
+                  >
+                    {isLoading ? (
+                      <>
+                        <LoadingSpinner size="small" />
+                        <span style={{ marginLeft: "8px" }}>Loading...</span>
+                      </>
+                    ) : (
+                      "Check"
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
+
+            <div className="info-text">
+              <p>Click Reserved/NYR Dates for Availability Alerts</p>
+            </div>
           </div>
 
-          <div className="info-text">
-            <p>Click Reserved/NYR Dates for Availability Alerts</p>
-          </div>
-        </div>
-
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-start",
-            paddingLeft: "5px",
-          }}
-        >
           <div
             style={{
+              width: "100%",
+              height: "100%",
               display: "flex",
-              gap: "20px",
-              marginBottom: "10px",
-              fontSize: "14px",
-              alignItems: "center",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              paddingLeft: "5px",
             }}
           >
-            <span
-              style={{
-                backgroundColor: "#4caf50",
-                color: "white",
-                padding: "2px 8px",
-                borderRadius: "4px",
-              }}
-            >
-              A = Available
-            </span>
-            <span
-              style={{
-                backgroundColor: "#d65140",
-                color: "white",
-                padding: "2px 8px",
-                borderRadius: "4px",
-              }}
-            >
-              R = Reserved
-            </span>
-            <span
-              style={{
-                backgroundColor: "#4a90e2",
-                color: "white",
-                padding: "2px 8px",
-                borderRadius: "4px",
-              }}
-            >
-              NYR = Not Yet Released
-            </span>
-            <span
-              style={{
-                backgroundColor: "#707070",
-                color: "white",
-                padding: "2px 8px",
-                borderRadius: "4px",
-              }}
-            >
-              NR = Not Reservable/Not Available
-            </span>
             <div
               style={{
                 display: "flex",
+                gap: "20px",
+                marginBottom: "10px",
+                fontSize: "14px",
                 alignItems: "center",
-                gap: "8px",
-                marginLeft: "20px",
-                borderLeft: "1px solid #ccc",
-                paddingLeft: "20px",
               }}
             >
-              <input
-                type="checkbox"
-                id="hideNotReservable"
-                checked={hideNotReservable}
-                onChange={(e) => setHideNotReservable(e.target.checked)}
+              <span
                 style={{
-                  cursor: "pointer",
-                  width: "16px",
-                  height: "16px",
-                  appearance: "auto",
-                  WebkitAppearance: "checkbox",
-                  MozAppearance: "checkbox",
-                  border: "1px solid #ccc",
-                  borderRadius: "3px",
-                  margin: "0",
-                  verticalAlign: "middle",
+                  backgroundColor: "#4caf50",
+                  color: "white",
+                  padding: "2px 8px",
+                  borderRadius: "4px",
                 }}
+              >
+                A = Available
+              </span>
+              <span
+                style={{
+                  backgroundColor: "#d65140",
+                  color: "white",
+                  padding: "2px 8px",
+                  borderRadius: "4px",
+                }}
+              >
+                R = Reserved
+              </span>
+              <span
+                style={{
+                  backgroundColor: "#4a90e2",
+                  color: "white",
+                  padding: "2px 8px",
+                  borderRadius: "4px",
+                }}
+              >
+                NYR = Not Yet Released
+              </span>
+              <span
+                style={{
+                  backgroundColor: "#707070",
+                  color: "white",
+                  padding: "2px 8px",
+                  borderRadius: "4px",
+                }}
+              >
+                NR = Not Reservable/Not Available
+              </span>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  marginLeft: "20px",
+                  borderLeft: "1px solid #ccc",
+                  paddingLeft: "20px",
+                }}
+              >
+                <input
+                  type="checkbox"
+                  id="hideNotReservable"
+                  checked={hideNotReservable}
+                  onChange={(e) => setHideNotReservable(e.target.checked)}
+                  style={{
+                    cursor: "pointer",
+                    width: "16px",
+                    height: "16px",
+                    appearance: "auto",
+                    WebkitAppearance: "checkbox",
+                    MozAppearance: "checkbox",
+                    border: "1px solid #ccc",
+                    borderRadius: "3px",
+                    margin: "0",
+                    verticalAlign: "middle",
+                  }}
+                />
+                <label
+                  htmlFor="hideNotReservable"
+                  style={{ cursor: "pointer" }}
+                >
+                  Hide campsites that are not reservable for all dates
+                </label>
+              </div>
+            </div>
+
+            <div className="ag-theme-alpine" style={gridStyle}>
+              <AgGridReact
+                rowData={filteredRows}
+                columnDefs={columnDefs}
+                suppressHorizontalScroll={false}
+                defaultColDef={{
+                  sortable: true,
+                  resizable: true,
+                  filter: true,
+                }}
+                onGridReady={(params) => {
+                  setGridApi(params.api);
+                }}
+                headerHeight={headerHeight}
+                rowHeight={rowHeight}
+                domLayout="normal"
               />
-              <label htmlFor="hideNotReservable" style={{ cursor: "pointer" }}>
-                Hide campsites that are not reservable for all dates
-              </label>
             </div>
           </div>
 
-          <div className="ag-theme-alpine" style={gridStyle}>
-            <AgGridReact
-              rowData={filteredRows}
-              columnDefs={columnDefs}
-              suppressHorizontalScroll={false}
-              defaultColDef={{
-                sortable: true,
-                resizable: true,
-                filter: true,
-              }}
-              onGridReady={(params) => {
-                setGridApi(params.api);
-              }}
-              headerHeight={headerHeight}
-              rowHeight={rowHeight}
-              domLayout="normal"
-            />
-          </div>
+          <button className="back-button" onClick={() => navigate(-1)}>
+            <span>←</span> Back to Campsites
+          </button>
+
+          <AlertModal
+            isOpen={alertModal}
+            onClose={() => setAlertModal(false)}
+            title="Availability Alert"
+            subtitle={
+              selectedCampsite
+                ? `Campsite: ${selectedCampsite.site} - ${selectedCampsite.loop}`
+                : ""
+            }
+            alertDetails={alertDetails}
+            setAlertDetails={setAlertDetails}
+            isCreatingAlert={isCreatingAlert}
+            setIsCreatingAlert={setIsCreatingAlert}
+            selectedCampsite={selectedCampsite}
+            campsiteName={campsiteName}
+          />
         </div>
-
-        <button className="back-button" onClick={() => navigate(-1)}>
-          <span>←</span> Back to Campsites
-        </button>
-
-        <AlertModal
-          isOpen={alertModal}
-          onClose={() => setAlertModal(false)}
-          title="Availability Alert"
-          subtitle={
-            selectedCampsite
-              ? `Campsite: ${selectedCampsite.site} - ${selectedCampsite.loop}`
-              : ""
-          }
-          alertDetails={alertDetails}
-          setAlertDetails={setAlertDetails}
-          isCreatingAlert={isCreatingAlert}
-          setIsCreatingAlert={setIsCreatingAlert}
-          selectedCampsite={selectedCampsite}
-          campsiteName={campsiteName}
-        />
-      </div>
+      </>
     );
   };
 

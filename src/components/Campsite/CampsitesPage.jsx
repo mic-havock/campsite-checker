@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { useLocation, useNavigate } from "react-router-dom";
 import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
 import Campsite from "./Campsite";
@@ -77,6 +78,32 @@ const CampsitesPage = () => {
     setLoadingState((prev) => ({ ...prev, isMapLoading: false }));
   };
 
+  const generateCampsiteSchema = (campsite) => ({
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: campsite.CampsiteName,
+    description: campsite.CampsiteDescription,
+    category: "Campsite",
+    offers: {
+      "@type": "Offer",
+      availability: campsite.isAvailable
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      priceCurrency: "USD",
+      price: campsite.CampsiteFee || "0",
+    },
+  });
+
+  const listingSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: campsites.map((campsite, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      item: generateCampsiteSchema(campsite),
+    })),
+  };
+
   if (!campsites || campsites.length === 0) {
     return (
       <div className="campsites-page">
@@ -94,67 +121,74 @@ const CampsitesPage = () => {
   }
 
   return (
-    <div className="campsites-page">
-      {loadingState.isLoading && <LoadingSpinner fullPage />}
+    <>
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify(listingSchema)}
+        </script>
+      </Helmet>
+      <div className="campsites-page">
+        {loadingState.isLoading && <LoadingSpinner fullPage />}
 
-      <div className="page-header">
-        <h1>{facilityName + " - Campsites" || "Campground's Campsites"}</h1>
-      </div>
-
-      <div className="controls-wrapper">
-        <div className="controls-container">
-          <div className="filter-section">
-            <CampsiteFilter
-              campsiteData={campsiteData}
-              filteredCampsites={filteredCampsites}
-              setShowReservableOnly={setShowReservableOnly}
-              showReservableOnly={showReservableOnly}
-              selectedLoops={selectedLoops}
-              setSelectedLoops={setSelectedLoops}
-            />
-          </div>
-
-          <div className="right-controls">
-            <AvailabilityChecker
-              facilityID={facilityID}
-              facilityName={facilityName}
-              setIsLoading={(isLoading) =>
-                setLoadingState((prev) => ({ ...prev, isLoading }))
-              }
-            />
-          </div>
-
-          <button
-            onClick={navigateToMapView}
-            className="view-map-btn"
-            disabled={loadingState.isMapLoading}
-          >
-            {loadingState.isMapLoading ? (
-              <>
-                <LoadingSpinner size="small" />
-                <span style={{ marginLeft: "8px" }}>Loading...</span>
-              </>
-            ) : (
-              "View on Map"
-            )}
-          </button>
+        <div className="page-header">
+          <h1>{facilityName + " - Campsites" || "Campground's Campsites"}</h1>
         </div>
-      </div>
 
-      <div className="campsites-grid">
-        {filteredCampsites.map((campsite) => (
-          <Campsite
-            key={campsite.CampsiteID}
-            campsite={campsite}
-            facilityName={facilityName}
-          />
-        ))}
-      </div>
+        <div className="controls-wrapper">
+          <div className="controls-container">
+            <div className="filter-section">
+              <CampsiteFilter
+                campsiteData={campsiteData}
+                filteredCampsites={filteredCampsites}
+                setShowReservableOnly={setShowReservableOnly}
+                showReservableOnly={showReservableOnly}
+                selectedLoops={selectedLoops}
+                setSelectedLoops={setSelectedLoops}
+              />
+            </div>
 
-      <button onClick={() => navigate("/")} className="back-button">
-        <span className="back-arrow">←</span> Back to Campgrounds
-      </button>
-    </div>
+            <div className="right-controls">
+              <AvailabilityChecker
+                facilityID={facilityID}
+                facilityName={facilityName}
+                setIsLoading={(isLoading) =>
+                  setLoadingState((prev) => ({ ...prev, isLoading }))
+                }
+              />
+            </div>
+
+            <button
+              onClick={navigateToMapView}
+              className="view-map-btn"
+              disabled={loadingState.isMapLoading}
+            >
+              {loadingState.isMapLoading ? (
+                <>
+                  <LoadingSpinner size="small" />
+                  <span style={{ marginLeft: "8px" }}>Loading...</span>
+                </>
+              ) : (
+                "View on Map"
+              )}
+            </button>
+          </div>
+        </div>
+
+        <div className="campsites-grid">
+          {filteredCampsites.map((campsite) => (
+            <Campsite
+              key={campsite.CampsiteID}
+              campsite={campsite}
+              facilityName={facilityName}
+            />
+          ))}
+        </div>
+
+        <button onClick={() => navigate("/")} className="back-button">
+          <span className="back-arrow">←</span> Back to Campgrounds
+        </button>
+      </div>
+    </>
   );
 };
 

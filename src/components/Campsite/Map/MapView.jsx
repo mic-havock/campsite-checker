@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { useLocation, useNavigate } from "react-router-dom";
 import LoadingSpinner from "../../Common/LoadingSpinner/LoadingSpinner";
 import AvailabilityChecker from "../Filters/AvailabilityChecker";
@@ -51,6 +52,13 @@ const MapView = () => {
     return reservableMatch && loopMatch;
   });
 
+  const mapSchema = {
+    "@context": "https://schema.org",
+    "@type": "Map",
+    name: "Campground Locations Map",
+    description: "Interactive map showing available campground locations",
+  };
+
   if (isLoading) {
     return <LoadingSpinner fullPage />;
   }
@@ -70,55 +78,60 @@ const MapView = () => {
   }
 
   return (
-    <div className="map-view-page">
-      <div className="map-view-header">
-        <h1>{facilityName || "Campground"}</h1>
-      </div>
-
-      <div className="controls-wrapper">
-        <div className="controls-container">
-          <div className="filter-section">
-            {/* CampsiteFilter component */}
-            <CampsiteFilter
-              campsiteData={campsiteData}
-              filteredCampsites={filteredCampsites}
-              setShowReservableOnly={setShowReservableOnly}
-              showReservableOnly={showReservableOnly}
-              selectedLoops={selectedLoops}
-              setSelectedLoops={setSelectedLoops}
-            />
-          </div>
-
-          <div className="right-controls">
-            {/* AvailabilityChecker component */}
-            <AvailabilityChecker
-              facilityID={facilityID}
-              facilityName={facilityName}
-              setIsLoading={setIsLoading}
-            />
-          </div>
-
-          <button
-            onClick={navigateToCampsitesPage}
-            className="view-campsites-btn"
-          >
-            <span className="list-icon"></span>
-            View as List
-          </button>
+    <>
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify(mapSchema)}</script>
+      </Helmet>
+      <div className="map-view-page">
+        <div className="map-view-header">
+          <h1>{facilityName || "Campground"}</h1>
         </div>
-      </div>
 
-      <div className="map-container">
-        <CampsiteMap
-          campsites={filteredCampsites}
-          facilityName={facilityName || "Campground"}
-        />
-      </div>
+        <div className="controls-wrapper">
+          <div className="controls-container">
+            <div className="filter-section">
+              {/* CampsiteFilter component */}
+              <CampsiteFilter
+                campsiteData={campsiteData}
+                filteredCampsites={filteredCampsites}
+                setShowReservableOnly={setShowReservableOnly}
+                showReservableOnly={showReservableOnly}
+                selectedLoops={selectedLoops}
+                setSelectedLoops={setSelectedLoops}
+              />
+            </div>
 
-      <button onClick={() => navigate("/")} className="back-button">
-        <span className="back-arrow">←</span> Back to Campgrounds
-      </button>
-    </div>
+            <div className="right-controls">
+              {/* AvailabilityChecker component */}
+              <AvailabilityChecker
+                facilityID={facilityID}
+                facilityName={facilityName}
+                setIsLoading={setIsLoading}
+              />
+            </div>
+
+            <button
+              onClick={navigateToCampsitesPage}
+              className="view-campsites-btn"
+            >
+              <span className="list-icon"></span>
+              View as List
+            </button>
+          </div>
+        </div>
+
+        <div className="map-container">
+          <CampsiteMap
+            campsites={filteredCampsites}
+            facilityName={facilityName || "Campground"}
+          />
+        </div>
+
+        <button onClick={() => navigate("/")} className="back-button">
+          <span className="back-arrow">←</span> Back to Campgrounds
+        </button>
+      </div>
+    </>
   );
 };
 
