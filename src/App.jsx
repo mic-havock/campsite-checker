@@ -1,5 +1,5 @@
 import { HelmetProvider } from "react-helmet-async";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import CampgroundAvailability from "./components/CampgroundAvailability/CampgroundAvailability";
 import CampsitesPage from "./components/Campsite/CampsitesPage";
 import MapView from "./components/Campsite/Map/MapView";
@@ -24,7 +24,8 @@ const App = () => (
             path="/reservation-management"
             element={<ReservationManagement />}
           />
-          <Route path="*" element={<NotFound />} />
+          <Route path="/404" element={<NotFound />} />
+          <Route path="*" element={<Navigate to="/404" replace />} />
         </Routes>
       </Layout>
     </BrowserRouter>
