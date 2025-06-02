@@ -15,8 +15,9 @@ const AlertModal = ({
   isCreatingAlert,
   setIsCreatingAlert,
   selectedCampsite,
+  selectedCampsites,
   campsiteName,
-  forceUpdateCounter,
+  isBulkAlert,
 }) => {
   const isSubmitting = useRef(false);
 
@@ -53,29 +54,61 @@ const AlertModal = ({
     isSubmitting.current = true;
     setIsCreatingAlert(true);
 
-    const reservationData = {
-      name,
-      email_address: email,
-      campsite_id: selectedCampsite.CampsiteID || selectedCampsite.campsite_id,
-      campsite_number: selectedCampsite.site || selectedCampsite.CampsiteName,
-      campsite_name: campsiteName,
-      reservation_start_date: startDate,
-      reservation_end_date: endDate,
-      monitoring_active: true,
-      attempts_made: 0,
-      success_sent: false,
-    };
-
     try {
-      await createReservation(reservationData);
-      setIsCreatingAlert(false);
-      isSubmitting.current = false;
-      handleClose();
-      window.setTimeout(() => {
-        alert(
-          `Alert created successfully!\n\nYou will receive a confirmation email shortly.\n\nIf your selection becomes available, you will receive another email notification.`
-        );
-      }, 20);
+      if (isBulkAlert && selectedCampsites?.length > 0) {
+        // Create alerts for all selected campsites
+        const promises = selectedCampsites.map((campsite) => {
+          const reservationData = {
+            name,
+            email_address: email,
+            campsite_id: campsite.campsiteObj.CampsiteID,
+            campsite_number: campsite.campsite,
+            campsite_name: campsiteName,
+            reservation_start_date: startDate,
+            reservation_end_date: endDate,
+            monitoring_active: true,
+            attempts_made: 0,
+            success_sent: false,
+          };
+          return createReservation(reservationData);
+        });
+
+        await Promise.all(promises);
+        setIsCreatingAlert(false);
+        isSubmitting.current = false;
+        handleClose();
+        window.setTimeout(() => {
+          alert(
+            `Successfully created alerts for ${selectedCampsites.length} campsites!\n\nYou will receive a confirmation email shortly.\n\nIf any of your selections become available, you will receive email notifications.`
+          );
+        }, 20);
+      } else {
+        // Single campsite alert
+        const reservationData = {
+          name,
+          email_address: email,
+          campsite_id:
+            selectedCampsite.CampsiteID || selectedCampsite.campsite_id,
+          campsite_number:
+            selectedCampsite.site || selectedCampsite.CampsiteName,
+          campsite_name: campsiteName,
+          reservation_start_date: startDate,
+          reservation_end_date: endDate,
+          monitoring_active: true,
+          attempts_made: 0,
+          success_sent: false,
+        };
+
+        await createReservation(reservationData);
+        setIsCreatingAlert(false);
+        isSubmitting.current = false;
+        handleClose();
+        window.setTimeout(() => {
+          alert(
+            `Alert created successfully!\n\nYou will receive a confirmation email shortly.\n\nIf your selection becomes available, you will receive another email notification.`
+          );
+        }, 20);
+      }
     } catch (error) {
       setIsCreatingAlert(false);
       isSubmitting.current = false;
@@ -89,11 +122,23 @@ const AlertModal = ({
     <div
       className="modal-backdrop"
       onClick={handleBackdropClick}
-      key={`alert-modal-${isCreatingAlert}-${forceUpdateCounter}`}
+      key={`alert-modal-${isCreatingAlert}`}
     >
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <h2>{title}</h2>
         {subtitle && <h3>{subtitle}</h3>}
+        {isBulkAlert && selectedCampsites?.length > 0 && (
+          <div className="selected-campsites">
+            <p>Selected Campsites:</p>
+            <ul>
+              {selectedCampsites.map((campsite) => (
+                <li key={campsite.campsite}>
+                  {campsite.campsite} - {campsite.loop}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
         <input
           type="text"
           placeholder="Name"
@@ -183,9 +228,14 @@ AlertModal.propTypes = {
   setAlertDetails: PropTypes.func.isRequired,
   isCreatingAlert: PropTypes.bool.isRequired,
   setIsCreatingAlert: PropTypes.func.isRequired,
-  selectedCampsite: PropTypes.object.isRequired,
+  selectedCampsite: PropTypes.object,
+  selectedCampsites: PropTypes.arrayOf(PropTypes.object),
   campsiteName: PropTypes.string.isRequired,
-  forceUpdateCounter: PropTypes.number.isRequired,
+  isBulkAlert: PropTypes.bool,
+};
+
+AlertModal.defaultProps = {
+  isBulkAlert: false,
 };
 
 export default AlertModal;

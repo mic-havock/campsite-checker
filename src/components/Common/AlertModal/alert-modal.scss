@@ -39,6 +39,38 @@
     margin-bottom: 1rem;
   }
 
+  .selected-campsites {
+    background-color: $background-light;
+    border-radius: $button-border-radius;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    max-height: 200px;
+    overflow-y: auto;
+
+    p {
+      font-weight: 600;
+      color: $text-primary;
+      margin-bottom: 0.5rem;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        padding: 0.5rem;
+        border-bottom: 1px solid rgba($color-stone, 0.2);
+        font-size: 0.9rem;
+        color: $text-primary;
+
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+    }
+  }
+
   input {
     width: 90%;
     padding: 0.6rem;

@@ -3,6 +3,7 @@ import {
   ClientSideRowModelModule,
   ColumnAutoSizeModule,
   ModuleRegistry,
+  RowSelectionModule,
   TextFilterModule,
 } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
@@ -20,6 +21,7 @@ ModuleRegistry.registerModules([
   ColumnAutoSizeModule,
   CellStyleModule,
   TextFilterModule,
+  RowSelectionModule,
 ]);
 
 const getNextMonths = () => {
@@ -105,6 +107,8 @@ const CampgroundAvailability = () => {
   const isMounted = useRef(true);
   const rowHeight = 30;
   const headerHeight = 30;
+  const [selectedCampsites, setSelectedCampsites] = useState([]);
+  const [bulkAlertModal, setBulkAlertModal] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -227,6 +231,22 @@ const CampgroundAvailability = () => {
     }
   };
 
+  const handleSelectionChanged = (event) => {
+    const selectedRows = event.api.getSelectedRows();
+    setSelectedCampsites(selectedRows);
+  };
+
+  const handleBulkAlertClick = () => {
+    if (selectedCampsites.length === 0) return;
+
+    setAlertDetails((prev) => ({
+      ...prev,
+      startDate: dates[0],
+      endDate: dates[dates.length - 1],
+    }));
+    setBulkAlertModal(true);
+  };
+
   const renderCalendar = () => {
     const gridStyle = calculateGridStyle(
       rowData,
@@ -236,6 +256,21 @@ const CampgroundAvailability = () => {
     );
 
     const columnDefs = [
+      {
+        headerName: "",
+        field: "checkbox",
+        headerCheckboxSelection: true,
+        checkboxSelection: true,
+        width: 50,
+        pinned: "left",
+        lockPinned: true,
+        suppressSizeToFit: false,
+        resizable: false,
+        filter: false,
+        cellStyle: {
+          backgroundColor: "#f8f9fa",
+        },
+      },
       {
         headerName: "Campsite",
         field: "campsite",
@@ -439,7 +474,14 @@ const CampgroundAvailability = () => {
             </div>
 
             <div className="info-text">
-              <p>Click Reserved/NYR Dates for Availability Alerts</p>
+              <p>
+                <strong>How to use:</strong>
+                <br />
+                • Click on any Reserved/NYR date to set up an availability alert
+                <br />• Select multiple campsites using the checkboxes and click
+                &quot;Create Alert for Selected&quot; to monitor multiple
+                campsites at once
+              </p>
             </div>
           </div>
 
@@ -460,6 +502,7 @@ const CampgroundAvailability = () => {
                 marginBottom: "10px",
                 fontSize: "14px",
                 alignItems: "center",
+                flexWrap: "wrap",
               }}
             >
               <span
@@ -555,8 +598,34 @@ const CampgroundAvailability = () => {
                 headerHeight={headerHeight}
                 rowHeight={rowHeight}
                 domLayout="normal"
+                rowSelection="multiple"
+                onSelectionChanged={handleSelectionChanged}
               />
             </div>
+
+            {selectedCampsites.length > 0 && (
+              <button
+                onClick={handleBulkAlertClick}
+                className="bulk-alert-button"
+                style={{
+                  marginTop: "1rem",
+                  padding: "0.75rem 1.5rem",
+                  backgroundColor: "#4a90e2",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                  fontSize: "1rem",
+                  fontWeight: "600",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                }}
+              >
+                Create Alert for {selectedCampsites.length} Selected Campsite
+                {selectedCampsites.length !== 1 ? "s" : ""}
+              </button>
+            )}
           </div>
 
           <button className="back-button" onClick={() => navigate(-1)}>
@@ -578,6 +647,20 @@ const CampgroundAvailability = () => {
             setIsCreatingAlert={setIsCreatingAlert}
             selectedCampsite={selectedCampsite}
             campsiteName={campsiteName}
+          />
+
+          <AlertModal
+            isOpen={bulkAlertModal}
+            onClose={() => setBulkAlertModal(false)}
+            title="Bulk Availability Alert"
+            subtitle={`${selectedCampsites.length} Campsites Selected`}
+            alertDetails={alertDetails}
+            setAlertDetails={setAlertDetails}
+            isCreatingAlert={isCreatingAlert}
+            setIsCreatingAlert={setIsCreatingAlert}
+            selectedCampsites={selectedCampsites}
+            campsiteName={campsiteName}
+            isBulkAlert={true}
           />
         </div>
       </>
