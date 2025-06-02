@@ -477,10 +477,11 @@ const CampgroundAvailability = () => {
               <p>
                 <strong>How to use:</strong>
                 <br />
-                • Click on any Reserved/NYR date to set up an availability alert
-                <br />• Select multiple campsites using the checkboxes and click
-                &quot;Create Alert for Selected&quot; to monitor multiple
-                campsites at once
+                • Click any Reserved or NYR date to create an alert for that
+                date
+                <br />• Use checkboxes to select multiple campsites, then click
+                &quot;Create Alert for Selected&quot; to create an alert for
+                them
               </p>
             </div>
           </div>

@@ -61,7 +61,9 @@ const AlertModal = ({
           const reservationData = {
             name,
             email_address: email,
-            campsite_id: campsite.campsiteObj.CampsiteID,
+            campsite_id:
+              campsite.campsiteObj.CampsiteID ||
+              campsite.campsiteObj.campsite_id,
             campsite_number: campsite.campsite,
             campsite_name: campsiteName,
             reservation_start_date: startDate,
