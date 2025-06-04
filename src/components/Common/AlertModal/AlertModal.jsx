@@ -1,7 +1,10 @@
 import PropTypes from "prop-types";
 import { useRef } from "react";
 import { createPortal } from "react-dom";
-import { createReservation } from "../../../api/reservations";
+import {
+  createBulkReservations,
+  createReservation,
+} from "../../../api/reservations";
 import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
 import "./alert-modal.scss";
 
@@ -57,25 +60,21 @@ const AlertModal = ({
     try {
       if (isBulkAlert && selectedCampsites?.length > 0) {
         // Create alerts for all selected campsites
-        const promises = selectedCampsites.map((campsite) => {
-          const reservationData = {
-            name,
-            email_address: email,
-            campsite_id:
-              campsite.campsiteObj.CampsiteID ||
-              campsite.campsiteObj.campsite_id,
-            campsite_number: campsite.campsite,
-            campsite_name: campsiteName,
-            reservation_start_date: startDate,
-            reservation_end_date: endDate,
-            monitoring_active: true,
-            attempts_made: 0,
-            success_sent: false,
-          };
-          return createReservation(reservationData);
-        });
+        const reservations = selectedCampsites.map((campsite) => ({
+          name,
+          email_address: email,
+          campsite_id:
+            campsite.campsiteObj.CampsiteID || campsite.campsiteObj.campsite_id,
+          campsite_number: campsite.campsite,
+          campsite_name: campsiteName,
+          reservation_start_date: startDate,
+          reservation_end_date: endDate,
+          monitoring_active: true,
+          attempts_made: 0,
+          success_sent: false,
+        }));
 
-        await Promise.all(promises);
+        await createBulkReservations(reservations);
         setIsCreatingAlert(false);
         isSubmitting.current = false;
         handleClose();

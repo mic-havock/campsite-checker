@@ -10,6 +10,19 @@ export const createReservation = async (data) => {
     throw error.response?.data || error.message;
   }
 };
+
+export const createBulkReservations = async (reservations) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/reservations/bulk`, {
+      reservations,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error creating bulk reservations:", error);
+    throw error.response?.data || error.message;
+  }
+};
+
 export const getAllReservations = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/reservations`);
