@@ -601,6 +601,7 @@ const CampgroundAvailability = () => {
                 domLayout="normal"
                 rowSelection="multiple"
                 onSelectionChanged={handleSelectionChanged}
+                suppressCellSelection={true}
               />
             </div>
 
