@@ -3,6 +3,7 @@ import { useState } from "react";
 import ImageGallery from "../Common/ImageGallery/ImageGallery";
 import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
 import "./facility-details.scss";
+import FacilityMap from "./Map/FacilityMap";
 
 const transformMedia = (media = []) =>
   media.map(({ URL, Title }) => ({
@@ -122,13 +123,15 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
         }}
       />
 
-      <h2>Directions</h2>
-      <div
-        dangerouslySetInnerHTML={{
-          __html:
-            facility.FacilityDirections || "<p>No directions available</p>",
-        }}
-      />
+      <section className="directions-section">
+        <h2>Directions</h2>
+        <p>{facility.FacilityDirections}</p>
+      </section>
+
+      <section className="map-section">
+        <h2>Location</h2>
+        <FacilityMap facility={facility} />
+      </section>
 
       <div className="media-section">
         <h2>Images</h2>

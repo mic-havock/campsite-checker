@@ -33,17 +33,17 @@ export const fetchCityAndState = async (facilityId) => {
     if (addressData && addressData.length > 0) {
       const { city, state } = addressData[0];
       return {
-        city: city || "Unknown City",
-        state: state || "Unknown State",
+        city: city || "N/A",
+        state: state || "N/A",
       };
     }
 
-    return { city: "Unknown City", state: "Unknown State" };
+    return { city: "N/A", state: "N/A" };
   } catch (error) {
     console.error(
       `Error fetching city and state for Facility ID ${facilityId}:`,
       error.message || error
     );
-    return { city: "Unknown City", state: "Unknown State" };
+    return { city: "N/A", state: "N/A" };
   }
 };

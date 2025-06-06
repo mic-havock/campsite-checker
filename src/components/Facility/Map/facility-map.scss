@@ -1,0 +1,86 @@
+@import "../../../styles/variables";
+
+.facility-map-container {
+  width: 80%;
+  height: 600px;
+  margin: 1rem auto;
+  border-radius: $button-border-radius;
+  overflow: visible;
+  box-shadow: $shadow-sm;
+  padding: 1rem;
+  box-sizing: border-box;
+  background-color: $background-light;
+  border: 1px solid #e0e0e0;
+  border-radius: $button-border-radius;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  position: relative;
+
+  .map-controls {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 1000;
+    border-radius: $button-border-radius;
+    display: flex;
+    justify-content: flex-end;
+    padding: 0;
+    background: none;
+    margin: 0;
+    pointer-events: auto;
+
+    .view-toggle-button {
+      padding: 0.5rem 1rem;
+      background-color: $primary-color;
+      color: $text-light;
+      border: none;
+      border-radius: $button-border-radius;
+      cursor: pointer;
+      transition: $button-transition;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      font-size: 0.9rem;
+      white-space: nowrap;
+      z-index: 1001;
+
+      &:hover {
+        background-color: darken($primary-color, 10%);
+        transform: translateY(-1px);
+      }
+
+      &:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba($primary-color, 0.3);
+      }
+    }
+  }
+
+  .map-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    border-radius: $button-border-radius;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border: 1px solid #dcdcdc;
+
+    .leaflet-container {
+      width: 100%;
+      height: 100%;
+      border-radius: $button-border-radius;
+    }
+  }
+}
+
+.no-map-container {
+  width: 80%;
+  margin: 1rem auto;
+  padding: 2rem;
+  text-align: center;
+  background-color: $background-light;
+  border-radius: $button-border-radius;
+
+  p {
+    color: $text-primary;
+    margin: 0;
+  }
+}
