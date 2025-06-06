@@ -276,12 +276,14 @@ const CampgroundAvailability = () => {
         field: "campsite",
         pinned: "left",
         lockPinned: true,
-        width: 150,
+        width: 130,
         suppressSizeToFit: false,
         resizable: true,
         cellStyle: {
           backgroundColor: "#f8f9fa",
+          textAlign: "center",
         },
+        headerClass: "ag-header-cell-center",
       },
       {
         headerName: "Loop",
@@ -290,7 +292,8 @@ const CampgroundAvailability = () => {
         lockPinned: true,
         suppressSizeToFit: false,
         resizable: true,
-        autoSize: true,
+        width: 200,
+        headerClass: "ag-header-cell-center",
         cellStyle: {
           backgroundColor: "#f8f9fa",
         },
@@ -473,16 +476,77 @@ const CampgroundAvailability = () => {
               </div>
             </div>
 
-            <div className="info-text">
-              <p>
-                <strong>How to use:</strong>
-                <br />
-                • Click any Reserved or NYR date to create an alert for that
-                date
-                <br />• Use checkboxes to select multiple campsites, then click
-                &quot;Create Alert for Selected&quot; to create an alert for
-                them
-              </p>
+            <div
+              className="info-text"
+              style={{
+                backgroundColor: "#f8f9fa",
+                padding: "1.25rem",
+                borderRadius: "8px",
+                marginBottom: "1.25rem",
+                border: "1px solid #e9ecef",
+                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.08)",
+              }}
+            >
+              <h3
+                style={{
+                  margin: "0 0 0.75rem 0",
+                  color: "#2c3e50",
+                  fontSize: "1.1rem",
+                  fontWeight: "600",
+                }}
+              >
+                How to use:
+              </h3>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.5rem",
+                  color: "#495057",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                  }}
+                >
+                  <span
+                    style={{
+                      color: "#4a90e2",
+                      fontWeight: "500",
+                    }}
+                  >
+                    •
+                  </span>
+                  <span>
+                    Click on any Reserved or Not Yet Released date to create an
+                    alert for that date
+                  </span>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                  }}
+                >
+                  <span
+                    style={{
+                      color: "#4a90e2",
+                      fontWeight: "500",
+                    }}
+                  >
+                    •
+                  </span>
+                  <span>
+                    Use checkboxes to select multiple campsites, then click
+                    &quot;Create Alert for Selected&quot; to create an alert for
+                    them
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -512,9 +576,10 @@ const CampgroundAvailability = () => {
                   color: "white",
                   padding: "2px 8px",
                   borderRadius: "4px",
+                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                 }}
               >
-                A = Available
+                <strong>A</strong> = Available
               </span>
               <span
                 style={{
@@ -522,9 +587,10 @@ const CampgroundAvailability = () => {
                   color: "white",
                   padding: "2px 8px",
                   borderRadius: "4px",
+                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                 }}
               >
-                R = Reserved
+                <strong>R</strong> = Reserved
               </span>
               <span
                 style={{
@@ -532,9 +598,10 @@ const CampgroundAvailability = () => {
                   color: "white",
                   padding: "2px 8px",
                   borderRadius: "4px",
+                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                 }}
               >
-                NYR = Not Yet Released
+                <strong>NYR</strong> = Not Yet Released
               </span>
               <span
                 style={{
@@ -542,9 +609,10 @@ const CampgroundAvailability = () => {
                   color: "white",
                   padding: "2px 8px",
                   borderRadius: "4px",
+                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                 }}
               >
-                NR = Not Reservable/Not Available
+                <strong>NR</strong> = Not Reservable/Not Available
               </span>
               <div
                 style={{
@@ -580,6 +648,31 @@ const CampgroundAvailability = () => {
                 >
                   Hide campsites that are not reservable for all dates
                 </label>
+                {selectedCampsites.length > 0 && (
+                  <button
+                    onClick={handleBulkAlertClick}
+                    className="bulk-alert-button"
+                    style={{
+                      marginLeft: "20px",
+                      padding: "0.5rem 1rem",
+                      backgroundColor: "#27ae60",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                      fontSize: "0.9rem",
+                      fontWeight: "600",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    Create Alert for {selectedCampsites.length} Selected
+                    Campsite
+                    {selectedCampsites.length !== 1 ? "s" : ""}
+                  </button>
+                )}
               </div>
             </div>
 
@@ -602,32 +695,10 @@ const CampgroundAvailability = () => {
                 rowSelection="multiple"
                 onSelectionChanged={handleSelectionChanged}
                 suppressCellSelection={true}
+                suppressRowClickSelection={true}
+                enableCellTextSelection={true}
               />
             </div>
-
-            {selectedCampsites.length > 0 && (
-              <button
-                onClick={handleBulkAlertClick}
-                className="bulk-alert-button"
-                style={{
-                  marginTop: "1rem",
-                  padding: "0.75rem 1.5rem",
-                  backgroundColor: "#4a90e2",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                  fontSize: "1rem",
-                  fontWeight: "600",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                }}
-              >
-                Create Alert for {selectedCampsites.length} Selected Campsite
-                {selectedCampsites.length !== 1 ? "s" : ""}
-              </button>
-            )}
           </div>
 
           <button className="back-button" onClick={() => navigate(-1)}>

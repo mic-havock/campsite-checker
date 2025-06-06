@@ -5,24 +5,32 @@
   padding: 1rem;
   background-color: $background-light;
   border-radius: 8px;
+  overflow: hidden;
 
   .availability-legend {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 1rem;
     margin-bottom: 1rem;
     align-items: center;
     justify-content: flex-start;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: auto;
 
     .legend-item {
       display: flex;
       align-items: center;
       gap: 0.5rem;
       font-size: 0.875rem;
+      flex-shrink: 0;
+      white-space: nowrap;
 
       .status-dot {
         width: 12px;
         height: 12px;
+        flex-shrink: 0;
       }
     }
 
@@ -35,6 +43,8 @@
       font-size: 0.9rem;
       margin-top: 0;
       margin-bottom: 0;
+      flex-shrink: 0;
+      white-space: nowrap;
     }
   }
 
