@@ -18,7 +18,6 @@ const STORAGE_KEYS = {
 const FacilitiesFinder = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [hasSelectedOnce, setHasSelectedOnce] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [searchParams, setSearchParams] = useState({ query: "" });
   const [facilities, setFacilities] = useState([]);
@@ -107,17 +106,14 @@ const FacilitiesFinder = () => {
     setSelectedFacility(row);
     saveToStorage(STORAGE_KEYS.SELECTED_FACILITY, row);
 
-    if (!hasSelectedOnce) {
-      requestAnimationFrame(() => {
-        const gridElement = document.querySelector(".grid-col");
-        gridElement?.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-          inline: "nearest",
-        });
+    requestAnimationFrame(() => {
+      const gridElement = document.querySelector(".grid-col");
+      gridElement?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+        inline: "nearest",
       });
-      setHasSelectedOnce(true);
-    }
+    });
   };
 
   // Load saved state

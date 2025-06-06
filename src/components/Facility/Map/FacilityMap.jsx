@@ -19,7 +19,7 @@ MapUpdater.propTypes = {
 
 const FacilityMap = ({ facility }) => {
   const [mapCenter, setMapCenter] = useState([0, 0]);
-  const [zoomLevel] = useState(13);
+  const [zoomLevel] = useState(14);
   const [isSatellite, setIsSatellite] = useState(false);
 
   useEffect(() => {
