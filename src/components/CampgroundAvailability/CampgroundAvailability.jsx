@@ -285,19 +285,23 @@ const CampgroundAvailability = () => {
         },
         headerClass: "ag-header-cell-center",
       },
-      {
-        headerName: "Loop",
-        field: "loop",
-        pinned: "left",
-        lockPinned: true,
-        suppressSizeToFit: false,
-        resizable: true,
-        width: 200,
-        headerClass: "ag-header-cell-center",
-        cellStyle: {
-          backgroundColor: "#f8f9fa",
-        },
-      },
+      ...(rowData.some((row) => row.loop)
+        ? [
+            {
+              headerName: "Loop",
+              field: "loop",
+              pinned: "left",
+              lockPinned: true,
+              suppressSizeToFit: false,
+              resizable: true,
+              width: 200,
+              headerClass: "ag-header-cell-center",
+              cellStyle: {
+                backgroundColor: "#f8f9fa",
+              },
+            },
+          ]
+        : []),
       ...dates.map((date) => ({
         headerName: new Date(date).toLocaleDateString("en-US", {
           timeZone: "UTC",
