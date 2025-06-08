@@ -125,7 +125,11 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
 
       <section className="directions-section">
         <h2>Directions</h2>
-        <p>{facility.FacilityDirections}</p>
+        <div
+          dangerouslySetInnerHTML={{
+            __html: facility.FacilityDirections || "No directions available",
+          }}
+        />
       </section>
 
       <section className="map-section">
@@ -133,10 +137,11 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
         <FacilityMap facility={facility} />
       </section>
 
-      <div className="media-section">
+      <section className="media-section">
         <h2>Images</h2>
         <ImageGallery images={images} />
-      </div>
+      </section>
+
       <a
         href={`https://www.recreation.gov/camping/campgrounds/${facility.FacilityID}`}
         target="_blank"

@@ -34,7 +34,7 @@
           .image-gallery-thumbnail {
             width: 100px;
             margin: 0 5px;
-            border: none;
+            border-radius: 0;
             padding: 0;
 
             &.active {
@@ -53,11 +53,16 @@
       }
     }
 
-    .image-gallery-slide img {
-      width: 100%;
-      height: auto;
-      max-height: 500px;
-      object-fit: contain;
+    .image-gallery-slide {
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: auto;
+        min-height: 550px;
+        max-height: 550px;
+        object-fit: contain;
+      }
     }
   }
 
@@ -70,8 +75,7 @@
 
 // Image Gallery Controls
 .image-gallery-icon {
-  color: $color-sky !important;
-  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.3));
+  color: $text-light !important;
   padding: 0;
   background: transparent !important;
 
@@ -87,12 +91,12 @@
   &.image-gallery-left-nav,
   &.image-gallery-right-nav {
     padding: 0;
-    width: 30px;
-    height: 30px;
+    width: 50px;
+    height: 50px;
 
     .image-gallery-svg {
-      width: 30px;
-      height: 30px;
+      width: 50px;
+      height: 50px;
     }
   }
 }

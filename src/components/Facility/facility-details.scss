@@ -9,6 +9,11 @@
   position: relative;
   overflow-x: hidden;
 
+  .full-width-section {
+    width: 100%;
+    margin: 2rem 0;
+  }
+
   .view-campsites-wrapper {
     position: absolute;
     top: 10px;
@@ -52,6 +57,7 @@
 
   .media-section {
     margin: 2rem 0;
+    margin-bottom: 5rem;
   }
 }
 
