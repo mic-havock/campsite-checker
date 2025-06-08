@@ -480,70 +480,18 @@ const CampgroundAvailability = () => {
               </div>
             </div>
 
-            <div
-              className="info-text"
-              style={{
-                backgroundColor: "#f8f9fa",
-                padding: "1.25rem",
-                borderRadius: "8px",
-                marginBottom: "1.25rem",
-                border: "1px solid #e9ecef",
-                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.08)",
-              }}
-            >
-              <h3
-                style={{
-                  margin: "0 0 0.75rem 0",
-                  color: "#2c3e50",
-                  fontSize: "1.1rem",
-                  fontWeight: "600",
-                }}
-              >
-                How to use:
-              </h3>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "0.5rem",
-                  color: "#495057",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                  }}
-                >
-                  <span
-                    style={{
-                      color: "#4a90e2",
-                      fontWeight: "500",
-                    }}
-                  >
-                    •
-                  </span>
+            <div className="info-text">
+              <h3>How to use:</h3>
+              <div className="info-content">
+                <div className="info-item">
+                  <span className="bullet">•</span>
                   <span>
                     Click on any Reserved or Not Yet Released date to create an
                     alert for that date
                   </span>
                 </div>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                  }}
-                >
-                  <span
-                    style={{
-                      color: "#4a90e2",
-                      fontWeight: "500",
-                    }}
-                  >
-                    •
-                  </span>
+                <div className="info-item">
+                  <span className="bullet">•</span>
                   <span>
                     Use checkboxes to select multiple campsites, then click
                     &quot;Create Alert for Selected&quot; to create an alert for
@@ -554,123 +502,34 @@ const CampgroundAvailability = () => {
             </div>
           </div>
 
-          <div
-            style={{
-              width: "100%",
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-              paddingLeft: "5px",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                gap: "20px",
-                marginBottom: "10px",
-                fontSize: "14px",
-                alignItems: "center",
-                flexWrap: "wrap",
-              }}
-            >
-              <span
-                style={{
-                  backgroundColor: "#4caf50",
-                  color: "white",
-                  padding: "2px 8px",
-                  borderRadius: "4px",
-                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                }}
-              >
+          <div className="availability-container">
+            <div className="availability-legend">
+              <span className="legend-item">
                 <strong>A</strong> = Available
               </span>
-              <span
-                style={{
-                  backgroundColor: "#d65140",
-                  color: "white",
-                  padding: "2px 8px",
-                  borderRadius: "4px",
-                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                }}
-              >
+              <span className="legend-item reserved">
                 <strong>R</strong> = Reserved
               </span>
-              <span
-                style={{
-                  backgroundColor: "#4a90e2",
-                  color: "white",
-                  padding: "2px 8px",
-                  borderRadius: "4px",
-                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                }}
-              >
+              <span className="legend-item not-yet-released">
                 <strong>NYR</strong> = Not Yet Released
               </span>
-              <span
-                style={{
-                  backgroundColor: "#707070",
-                  color: "white",
-                  padding: "2px 8px",
-                  borderRadius: "4px",
-                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                }}
-              >
+              <span className="legend-item not-reservable">
                 <strong>NR</strong> = Not Reservable/Not Available
               </span>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  marginLeft: "20px",
-                  borderLeft: "1px solid #ccc",
-                  paddingLeft: "20px",
-                }}
-              >
+              <div className="legend-controls">
                 <input
                   type="checkbox"
                   id="hideNotReservable"
                   checked={hideNotReservable}
                   onChange={(e) => setHideNotReservable(e.target.checked)}
-                  style={{
-                    cursor: "pointer",
-                    width: "16px",
-                    height: "16px",
-                    appearance: "auto",
-                    WebkitAppearance: "checkbox",
-                    MozAppearance: "checkbox",
-                    border: "1px solid #ccc",
-                    borderRadius: "3px",
-                    margin: "0",
-                    verticalAlign: "middle",
-                  }}
                 />
-                <label
-                  htmlFor="hideNotReservable"
-                  style={{ cursor: "pointer" }}
-                >
+                <label htmlFor="hideNotReservable">
                   Hide campsites that are not reservable for all dates
                 </label>
                 {selectedCampsites.length > 0 && (
                   <button
                     onClick={handleBulkAlertClick}
                     className="bulk-alert-button"
-                    style={{
-                      marginLeft: "20px",
-                      padding: "0.5rem 1rem",
-                      backgroundColor: "#27ae60",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "4px",
-                      cursor: "pointer",
-                      fontSize: "0.9rem",
-                      fontWeight: "600",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.5rem",
-                      whiteSpace: "nowrap",
-                    }}
                   >
                     Create Alert for {selectedCampsites.length} Selected
                     Campsite
