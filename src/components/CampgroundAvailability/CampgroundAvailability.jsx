@@ -583,6 +583,7 @@ const CampgroundAvailability = () => {
             setIsCreatingAlert={setIsCreatingAlert}
             selectedCampsite={selectedCampsite}
             campsiteName={campsiteName}
+            facilityId={facilityID}
           />
 
           <AlertModal
@@ -597,6 +598,7 @@ const CampgroundAvailability = () => {
             selectedCampsites={selectedCampsites}
             campsiteName={campsiteName}
             isBulkAlert={true}
+            facilityId={facilityID}
           />
         </div>
       </>

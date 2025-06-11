@@ -102,17 +102,6 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
           <FacilityInfoRow
             label="Latitude, Longitude"
             value={coordinates?.display || "Not Available"}
-            secondValue={
-              coordinates && (
-                <a
-                  href={coordinates.mapUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  View on Google Maps
-                </a>
-              )
-            }
           />
         </tbody>
       </table>
@@ -135,6 +124,18 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
       <section className="map-section">
         <h2>Location</h2>
         <FacilityMap facility={facility} />
+        {coordinates && (
+          <div className="map-link-container">
+            <a
+              href={coordinates.mapUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="google-maps-link"
+            >
+              View in Google Maps
+            </a>
+          </div>
+        )}
       </section>
 
       <section className="media-section">

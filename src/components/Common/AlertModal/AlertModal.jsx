@@ -21,6 +21,7 @@ const AlertModal = ({
   selectedCampsites,
   campsiteName,
   isBulkAlert,
+  facilityId,
 }) => {
   const isSubmitting = useRef(false);
 
@@ -67,6 +68,7 @@ const AlertModal = ({
             campsite.campsiteObj.CampsiteID || campsite.campsiteObj.campsite_id,
           campsite_number: campsite.campsite,
           campsite_name: campsiteName,
+          facility_id: facilityId,
           reservation_start_date: startDate,
           reservation_end_date: endDate,
           monitoring_active: true,
@@ -93,6 +95,7 @@ const AlertModal = ({
           campsite_number:
             selectedCampsite.site || selectedCampsite.CampsiteName,
           campsite_name: campsiteName,
+          facility_id: facilityId,
           reservation_start_date: startDate,
           reservation_end_date: endDate,
           monitoring_active: true,
@@ -233,6 +236,7 @@ AlertModal.propTypes = {
   selectedCampsites: PropTypes.arrayOf(PropTypes.object),
   campsiteName: PropTypes.string.isRequired,
   isBulkAlert: PropTypes.bool,
+  facilityId: PropTypes.string,
 };
 
 AlertModal.defaultProps = {
