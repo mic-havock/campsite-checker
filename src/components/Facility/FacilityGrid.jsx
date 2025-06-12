@@ -25,6 +25,7 @@ ModuleRegistry.registerModules([
 const FacilityGrid = ({ rowData, onRowSelected, selectedState }) => {
   const [processedData, setProcessedData] = useState([]);
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const columnDefs = useMemo(
     () => [
@@ -37,6 +38,7 @@ const FacilityGrid = ({ rowData, onRowSelected, selectedState }) => {
 
   useEffect(() => {
     const updateLocations = async () => {
+      setIsLoading(true);
       try {
         const updatedData = await Promise.all(
           rowData.map(async (row) => {
@@ -48,7 +50,7 @@ const FacilityGrid = ({ rowData, onRowSelected, selectedState }) => {
                 `Failed to fetch location for facility ${row.FacilityID}:`,
                 err
               );
-              return { ...row, City: "Unknown", AddressStateCode: "Unknown" };
+              return { ...row, City: "N/A", AddressStateCode: "N/A" };
             }
           })
         );
@@ -78,6 +80,8 @@ const FacilityGrid = ({ rowData, onRowSelected, selectedState }) => {
         console.error("Failed to update locations:", err);
         setError("Failed to load facility locations");
         setProcessedData(rowData);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -112,12 +116,19 @@ const FacilityGrid = ({ rowData, onRowSelected, selectedState }) => {
   return (
     <div className="facility-grid-container">
       {error && <div className="error-message">{error}</div>}
-      <AgGridReact
-        columnDefs={columnDefs}
-        rowData={processedData}
-        {...gridConfig}
-        onSelectionChanged={onSelectionChanged}
-      />
+      <div className="grid-wrapper">
+        <AgGridReact
+          columnDefs={columnDefs}
+          rowData={processedData}
+          {...gridConfig}
+          onSelectionChanged={onSelectionChanged}
+        />
+        {isLoading && (
+          <div className="loading-overlay">
+            <div className="spinner"></div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
