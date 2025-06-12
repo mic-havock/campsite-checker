@@ -10,8 +10,6 @@ import FacilityGrid from "./FacilityGrid";
 import "./facilities-finder.scss";
 
 const STORAGE_KEYS = {
-  SEARCH_PARAMS: "searchParams",
-  FACILITIES: "facilities",
   SELECTED_FACILITY: "selectedFacility",
 };
 
@@ -27,9 +25,7 @@ const FacilitiesFinder = () => {
 
   // Storage management functions
   const clearStorage = useCallback(() => {
-    Object.values(STORAGE_KEYS).forEach((key) => {
-      sessionStorage.removeItem(key);
-    });
+    sessionStorage.removeItem(STORAGE_KEYS.SELECTED_FACILITY);
   }, []);
 
   const saveToStorage = useCallback((key, value) => {
@@ -49,24 +45,36 @@ const FacilitiesFinder = () => {
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
 
-    const updatedSearchParams = Object.fromEntries(
-      Object.entries({ ...searchParams, query: inputValue }).filter(
-        ([, value]) => value !== "" && value != null
-      )
+    // Find the state name if a state code is selected
+    const selectedState = STATES.find(
+      (state) => state.code === searchParams.state
     );
+    const stateName = selectedState ? selectedState.name : "";
+
+    // Construct the query with state name if available
+    const queryWithState = stateName
+      ? `${inputValue} ${stateName}`.trim()
+      : inputValue;
+
+    // Keep state code for filtering but only send query to API
+    const apiSearchParams = {
+      query: queryWithState,
+    };
+
+    // Keep state in local search params for filtering
+    const updatedSearchParams = {
+      ...searchParams,
+      query: queryWithState,
+    };
 
     setSearchParams(updatedSearchParams);
     setLoading(true);
     setError("");
 
     try {
-      const response = await getFacilities(updatedSearchParams);
-      const filteredFacilities = response.RECDATA.filter(
-        (facility) => facility.FacilityTypeDescription === "Campground"
-      );
-      setFacilities(filteredFacilities);
-      saveToStorage(STORAGE_KEYS.SEARCH_PARAMS, updatedSearchParams);
-      saveToStorage(STORAGE_KEYS.FACILITIES, response.RECDATA);
+      const response = await getFacilities(apiSearchParams);
+      let facilities = response.RECDATA;
+      setFacilities(facilities);
     } catch (err) {
       console.error(err);
       setError("Error fetching facilities");
@@ -77,7 +85,7 @@ const FacilitiesFinder = () => {
 
   const handleClear = () => {
     setInputValue("");
-    setSearchParams({ query: "" });
+    setSearchParams({ query: "", state: "" });
     setFacilities([]);
     setSelectedFacility(null);
     setError("");
@@ -104,7 +112,6 @@ const FacilitiesFinder = () => {
 
   const handleRowSelection = (row) => {
     setSelectedFacility(row);
-    saveToStorage(STORAGE_KEYS.SELECTED_FACILITY, row);
 
     requestAnimationFrame(() => {
       const gridElement = document.querySelector(".grid-col");
@@ -119,17 +126,9 @@ const FacilitiesFinder = () => {
   // Load saved state
   useEffect(() => {
     if (!location.state) {
-      const savedFacilities = loadFromStorage(STORAGE_KEYS.FACILITIES);
-      const savedSearchParams = loadFromStorage(STORAGE_KEYS.SEARCH_PARAMS);
       const savedSelectedFacility = loadFromStorage(
         STORAGE_KEYS.SELECTED_FACILITY
       );
-
-      if (savedFacilities) setFacilities(savedFacilities);
-      if (savedSearchParams) {
-        setSearchParams(savedSearchParams);
-        setInputValue(savedSearchParams.query || "");
-      }
       if (savedSelectedFacility) setSelectedFacility(savedSelectedFacility);
     }
   }, [location.state, loadFromStorage]);
@@ -222,7 +221,7 @@ const FacilitiesFinder = () => {
             <select
               id="state"
               name="state"
-              value={searchParams.state}
+              value={searchParams.state || ""}
               onChange={(e) =>
                 setSearchParams((prev) => ({
                   ...prev,
@@ -255,6 +254,11 @@ const FacilitiesFinder = () => {
           <FacilityGrid
             rowData={facilities}
             onRowSelected={handleRowSelection}
+            selectedState={
+              searchParams.state
+                ? STATES.find((state) => state.code === searchParams.state)
+                : null
+            }
           />
         </div>
         {selectedFacility && (

@@ -22,7 +22,7 @@ ModuleRegistry.registerModules([
   ValidationModule,
 ]);
 
-const FacilityGrid = ({ rowData, onRowSelected }) => {
+const FacilityGrid = ({ rowData, onRowSelected, selectedState }) => {
   const [processedData, setProcessedData] = useState([]);
   const [error, setError] = useState(null);
 
@@ -30,7 +30,7 @@ const FacilityGrid = ({ rowData, onRowSelected }) => {
     () => [
       { headerName: "Campground Name", field: "FacilityName" },
       { headerName: "City", field: "City" },
-      { headerName: "State", field: "State" },
+      { headerName: "State", field: "AddressStateCode" },
     ],
     []
   );
@@ -38,21 +38,60 @@ const FacilityGrid = ({ rowData, onRowSelected }) => {
   useEffect(() => {
     const updateLocations = async () => {
       try {
+        console.log("Starting location updates for facilities");
         const updatedData = await Promise.all(
           rowData.map(async (row) => {
             try {
               const { city, state } = await fetchCityAndState(row.FacilityID);
-              return { ...row, City: city, State: state };
+              return { ...row, City: city, AddressStateCode: state };
             } catch (err) {
               console.error(
                 `Failed to fetch location for facility ${row.FacilityID}:`,
                 err
               );
-              return { ...row, City: "Unknown", State: "Unknown" };
+              return { ...row, City: "Unknown", AddressStateCode: "Unknown" };
             }
           })
         );
-        setProcessedData(updatedData);
+
+        console.log("Location updates completed");
+        console.log("Selected State:", selectedState);
+        console.log("Before filtering - Total facilities:", updatedData.length);
+        console.log(
+          "Sample facility state codes:",
+          updatedData.slice(0, 3).map((f) => f.AddressStateCode)
+        );
+
+        // Always filter if we have a selected state
+        let filteredData = updatedData;
+        if (selectedState) {
+          console.log("Filtering for state:", selectedState.code);
+          filteredData = updatedData.filter((facility) => {
+            // Normalize the state code for comparison
+            const facilityState =
+              facility.AddressStateCode?.toUpperCase() || "";
+            const selectedStateCode = selectedState.code.toUpperCase();
+
+            const matches =
+              facilityState === selectedStateCode ||
+              facilityState === "UNKNOWN" ||
+              facilityState === "N/A" ||
+              !facilityState ||
+              facilityState === "";
+
+            console.log(
+              `Facility ${facility.FacilityID} - State: ${facilityState} - Selected: ${selectedStateCode} - Included: ${matches}`
+            );
+            return matches;
+          });
+
+          console.log(
+            "After filtering - Total facilities:",
+            filteredData.length
+          );
+        }
+
+        setProcessedData(filteredData);
         setError(null);
       } catch (err) {
         console.error("Failed to update locations:", err);
@@ -62,7 +101,7 @@ const FacilityGrid = ({ rowData, onRowSelected }) => {
     };
 
     updateLocations();
-  }, [rowData]);
+  }, [rowData, selectedState]);
 
   const gridConfig = useMemo(
     () => ({
@@ -105,6 +144,10 @@ const FacilityGrid = ({ rowData, onRowSelected }) => {
 FacilityGrid.propTypes = {
   rowData: PropTypes.array.isRequired,
   onRowSelected: PropTypes.func.isRequired,
+  selectedState: PropTypes.shape({
+    code: PropTypes.string,
+    name: PropTypes.string,
+  }),
 };
 
 export default FacilityGrid;
