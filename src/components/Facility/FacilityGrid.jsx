@@ -38,7 +38,6 @@ const FacilityGrid = ({ rowData, onRowSelected, selectedState }) => {
   useEffect(() => {
     const updateLocations = async () => {
       try {
-        console.log("Starting location updates for facilities");
         const updatedData = await Promise.all(
           rowData.map(async (row) => {
             try {
@@ -54,41 +53,23 @@ const FacilityGrid = ({ rowData, onRowSelected, selectedState }) => {
           })
         );
 
-        console.log("Location updates completed");
-        console.log("Selected State:", selectedState);
-        console.log("Before filtering - Total facilities:", updatedData.length);
-        console.log(
-          "Sample facility state codes:",
-          updatedData.slice(0, 3).map((f) => f.AddressStateCode)
-        );
-
         // Always filter if we have a selected state
         let filteredData = updatedData;
         if (selectedState) {
-          console.log("Filtering for state:", selectedState.code);
           filteredData = updatedData.filter((facility) => {
             // Normalize the state code for comparison
             const facilityState =
               facility.AddressStateCode?.toUpperCase() || "";
             const selectedStateCode = selectedState.code.toUpperCase();
 
-            const matches =
+            return (
               facilityState === selectedStateCode ||
               facilityState === "UNKNOWN" ||
               facilityState === "N/A" ||
               !facilityState ||
-              facilityState === "";
-
-            console.log(
-              `Facility ${facility.FacilityID} - State: ${facilityState} - Selected: ${selectedStateCode} - Included: ${matches}`
+              facilityState === ""
             );
-            return matches;
           });
-
-          console.log(
-            "After filtering - Total facilities:",
-            filteredData.length
-          );
         }
 
         setProcessedData(filteredData);
