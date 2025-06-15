@@ -56,11 +56,6 @@ const FacilitiesFinder = () => {
       ? `${inputValue} ${stateName}`.trim()
       : inputValue;
 
-    // Keep state code for filtering but only send query to API
-    const apiSearchParams = {
-      query: queryWithState,
-    };
-
     // Keep state in local search params for filtering
     const updatedSearchParams = {
       ...searchParams,
@@ -72,8 +67,26 @@ const FacilitiesFinder = () => {
     setError("");
 
     try {
-      const response = await getFacilities(apiSearchParams);
-      let facilities = response.RECDATA;
+      // First call with just the query
+      const response1 = await getFacilities({ query: queryWithState });
+      let facilities = response1.RECDATA || [];
+
+      // If state is selected, make second call with both query and state
+      if (searchParams.state) {
+        const response2 = await getFacilities({
+          query: inputValue,
+          state: searchParams.state,
+        });
+        const stateFacilities = response2.RECDATA || [];
+
+        // Combine results, removing duplicates based on FacilityID
+        const allFacilities = [...facilities, ...stateFacilities];
+        const uniqueFacilities = Array.from(
+          new Map(allFacilities.map((item) => [item.FacilityID, item])).values()
+        );
+        facilities = uniqueFacilities;
+      }
+
       setFacilities(facilities);
     } catch (err) {
       console.error(err);
@@ -123,7 +136,6 @@ const FacilitiesFinder = () => {
     });
   };
 
-  // Load saved state
   useEffect(() => {
     if (!location.state) {
       const savedSelectedFacility = loadFromStorage(
