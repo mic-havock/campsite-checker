@@ -44,10 +44,12 @@
         border: 2px solid $secondary-color;
         border-radius: $button-border-radius;
         padding: 0.8rem;
+        padding-top: 0;
+        padding-bottom: 0;
         transition: $button-transition;
         background-color: white;
         box-sizing: border-box;
-        height: 48px;
+        min-height: 48px;
         -webkit-appearance: none;
         -moz-appearance: none;
         appearance: none;
@@ -71,6 +73,8 @@
         background-position: right 0.8rem center;
         background-size: 0.65em auto;
         padding-right: 2.5rem;
+        height: auto;
+        line-height: 1.5;
       }
     }
 
