@@ -164,7 +164,7 @@ const AlertModal = ({
           }
           disabled={isCreatingAlert}
         />
-        <label>Start Date:</label>
+        <label>First Night:</label>
         <input
           type="date"
           value={alertDetails.startDate}
@@ -176,7 +176,7 @@ const AlertModal = ({
           }
           disabled={isCreatingAlert}
         />
-        <label>End Date:</label>
+        <label>Last Night:</label>
         <input
           type="date"
           value={alertDetails.endDate}
