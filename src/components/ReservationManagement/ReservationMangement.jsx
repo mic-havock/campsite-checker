@@ -11,37 +11,54 @@ import {
 import ReservationCard from "./ReservationCard/ReservationCard";
 import "./reservation-management.scss";
 
-const StatsDisplay = ({ stats }) => (
-  <div className="user-stats">
-    <h2>User Statistics</h2>
-    <div className="stats-grid">
-      <div className="stat-item">
-        <span className="stat-label">Total Reservations:</span>
-        <span className="stat-value">{stats.totalReservations}</span>
-      </div>
-      <div className="stat-item">
-        <span className="stat-label">Active Monitoring:</span>
-        <span className="stat-value">{stats.activeMonitoring}</span>
-      </div>
-      <div className="stat-item">
-        <span className="stat-label">Availability Notifications Sent:</span>
-        <span className="stat-value">{stats.successfulNotifications}</span>
-      </div>
-      <div className="stat-item">
-        <span className="stat-label">Total Availability Checks:</span>
-        <span className="stat-value">{stats.totalAttempts}</span>
+const StatsDisplay = ({ stats }) => {
+  const defaultStats = {
+    totalReservations: 0,
+    activeMonitoring: 0,
+    successfulNotifications: 0,
+    totalAttempts: 0,
+  };
+
+  const displayStats = stats || defaultStats;
+
+  return (
+    <div className="user-stats">
+      <h2>User Statistics</h2>
+      <div className="stats-grid">
+        <div className="stat-item">
+          <span className="stat-label">Total Reservations:</span>
+          <span className="stat-value">{displayStats.totalReservations}</span>
+        </div>
+        <div className="stat-item">
+          <span className="stat-label">Active Monitoring:</span>
+          <span className="stat-value">{displayStats.activeMonitoring}</span>
+        </div>
+        <div className="stat-item">
+          <span className="stat-label">Availability Notifications Sent:</span>
+          <span className="stat-value">
+            {displayStats.successfulNotifications}
+          </span>
+        </div>
+        <div className="stat-item">
+          <span className="stat-label">Total Availability Checks:</span>
+          <span className="stat-value">{displayStats.totalAttempts}</span>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 StatsDisplay.propTypes = {
   stats: PropTypes.shape({
-    totalReservations: PropTypes.number.isRequired,
-    activeMonitoring: PropTypes.number.isRequired,
-    successfulNotifications: PropTypes.number.isRequired,
-    totalAttempts: PropTypes.number.isRequired,
-  }).isRequired,
+    totalReservations: PropTypes.number,
+    activeMonitoring: PropTypes.number,
+    successfulNotifications: PropTypes.number,
+    totalAttempts: PropTypes.number,
+  }),
+};
+
+StatsDisplay.defaultProps = {
+  stats: null,
 };
 
 const MonitoringToggle = ({ active, onToggle }) => (
@@ -95,12 +112,47 @@ const ReservationManagement = () => {
         reservationsData.reservations.every((res) => res.monitoring_active)
       );
     } catch (err) {
+      console.error("Failed to fetch user stats:", err);
       setError(err.message);
       setReservations([]);
       setStats(null);
       setAllMonitoringActive(false);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleStatsUpdate = async () => {
+    if (!email) return;
+    try {
+      const response = await fetchUserStatsActive(email);
+      if (response && response.stats) {
+        setStats(response.stats);
+      } else {
+        setStats({
+          totalReservations: 0,
+          activeMonitoring: 0,
+          successfulNotifications: 0,
+          totalAttempts: 0,
+        });
+      }
+    } catch (err) {
+      console.error("Failed to fetch user stats:", err);
+      setStats({
+        totalReservations: 0,
+        activeMonitoring: 0,
+        successfulNotifications: 0,
+        totalAttempts: 0,
+      });
+    }
+  };
+
+  const handleReservationDelete = async (id) => {
+    try {
+      setReservations((prev) => prev.filter((res) => res.id !== id));
+      await handleStatsUpdate();
+    } catch (err) {
+      console.error("Failed to update after deletion:", err);
     }
   };
 
@@ -116,10 +168,9 @@ const ReservationManagement = () => {
         }))
       );
       setAllMonitoringActive(active);
-
-      const { stats: statsData } = await fetchUserStatsActive(email);
-      setStats(statsData.stats);
+      await handleStatsUpdate();
     } catch (err) {
+      console.error("Failed to update batch monitoring:", err);
       setError(err.message);
     }
   };
@@ -128,20 +179,6 @@ const ReservationManagement = () => {
     e.preventDefault();
     if (email) {
       handleSearch(email);
-    }
-  };
-
-  const handleReservationDelete = (id) => {
-    setReservations((prev) => prev.filter((res) => res.id !== id));
-  };
-
-  const handleStatsUpdate = async () => {
-    if (!email) return;
-    try {
-      const { stats: statsData } = await fetchUserStatsActive(email);
-      setStats(statsData.stats);
-    } catch (err) {
-      console.error("Failed to update stats:", err);
     }
   };
 
@@ -207,7 +244,7 @@ const ReservationManagement = () => {
         </div>
 
         {error && <div className="error-message">{error}</div>}
-        {stats && <StatsDisplay stats={stats} />}
+        <StatsDisplay stats={stats} />
 
         {reservations.length > 0 && (
           <div className="batch-monitoring">

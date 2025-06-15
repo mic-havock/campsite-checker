@@ -67,7 +67,7 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
     try {
       setIsMonitoringActive(active);
       await updateMonitoringStatus(reservation.id, active);
-      onStatsUpdate();
+      await onStatsUpdate();
     } catch (err) {
       setIsMonitoringActive(!active);
       console.error("Failed to update monitoring status:", err);
@@ -77,8 +77,7 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
   const handleDelete = async () => {
     try {
       await userDeleteReservation(reservation.id);
-      onDelete(reservation.id);
-      onStatsUpdate();
+      await onDelete(reservation.id);
     } catch (err) {
       console.error("Failed to delete reservation:", err);
     }
@@ -171,7 +170,8 @@ ReservationCard.propTypes = {
     id: PropTypes.number.isRequired,
     campsite_name: PropTypes.string,
     campsite_number: PropTypes.string,
-    campsite_id: PropTypes.number.isRequired,
+    campsite_id: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+      .isRequired,
     facility_name: PropTypes.string,
     reservation_start_date: PropTypes.string.isRequired,
     reservation_end_date: PropTypes.string.isRequired,
