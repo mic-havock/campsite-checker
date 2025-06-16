@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { fetchCampsitesByFacility } from "../../api/campsites";
 import { getFacilities } from "../../api/facilities";
 import { CONTENT } from "../../config/content";
@@ -15,9 +15,8 @@ const STORAGE_KEYS = {
 
 const FacilitiesFinder = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [inputValue, setInputValue] = useState("");
-  const [searchParams, setSearchParams] = useState({ query: "" });
+  const [selectedState, setSelectedState] = useState("");
   const [facilities, setFacilities] = useState([]);
   const [selectedFacility, setSelectedFacility] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -32,11 +31,6 @@ const FacilitiesFinder = () => {
     sessionStorage.setItem(key, JSON.stringify(value));
   }, []);
 
-  const loadFromStorage = useCallback((key) => {
-    const item = sessionStorage.getItem(key);
-    return item ? JSON.parse(item) : null;
-  }, []);
-
   // Event handlers
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
@@ -46,23 +40,14 @@ const FacilitiesFinder = () => {
     if (e) e.preventDefault();
 
     // Find the state name if a state code is selected
-    const selectedState = STATES.find(
-      (state) => state.code === searchParams.state
-    );
-    const stateName = selectedState ? selectedState.name : "";
+    const stateInfo = STATES.find((state) => state.code === selectedState);
+    const stateName = stateInfo ? stateInfo.name : "";
 
     // Construct the query with state name if available
     const queryWithState = stateName
       ? `${inputValue} ${stateName}`.trim()
       : inputValue;
 
-    // Keep state in local search params for filtering
-    const updatedSearchParams = {
-      ...searchParams,
-      query: queryWithState,
-    };
-
-    setSearchParams(updatedSearchParams);
     setLoading(true);
     setError("");
 
@@ -72,10 +57,10 @@ const FacilitiesFinder = () => {
       let facilities = response1.RECDATA || [];
 
       // If state is selected, make second call with both query and state
-      if (searchParams.state) {
+      if (selectedState) {
         const response2 = await getFacilities({
           query: inputValue,
-          state: searchParams.state,
+          state: selectedState,
         });
         const stateFacilities = response2.RECDATA || [];
 
@@ -98,7 +83,7 @@ const FacilitiesFinder = () => {
 
   const handleClear = () => {
     setInputValue("");
-    setSearchParams({ query: "", state: "" });
+    setSelectedState("");
     setFacilities([]);
     setSelectedFacility(null);
     setError("");
@@ -135,15 +120,6 @@ const FacilitiesFinder = () => {
       });
     });
   };
-
-  useEffect(() => {
-    if (!location.state) {
-      const savedSelectedFacility = loadFromStorage(
-        STORAGE_KEYS.SELECTED_FACILITY
-      );
-      if (savedSelectedFacility) setSelectedFacility(savedSelectedFacility);
-    }
-  }, [location.state, loadFromStorage]);
 
   const generateCampgroundSchema = (facility) => {
     if (!facility) return null;
@@ -233,13 +209,8 @@ const FacilitiesFinder = () => {
             <select
               id="state"
               name="state"
-              value={searchParams.state || ""}
-              onChange={(e) => {
-                setSearchParams((prev) => ({
-                  ...prev,
-                  state: e.target.value,
-                }));
-              }}
+              value={selectedState}
+              onChange={(e) => setSelectedState(e.target.value)}
             >
               <option value="">Select a state</option>
               {STATES.map((state) => (
@@ -267,8 +238,8 @@ const FacilitiesFinder = () => {
             rowData={facilities}
             onRowSelected={handleRowSelection}
             selectedState={
-              searchParams.state
-                ? STATES.find((state) => state.code === searchParams.state)
+              selectedState
+                ? STATES.find((state) => state.code === selectedState)
                 : null
             }
           />
