@@ -7,7 +7,7 @@ export const getFacilities = async (params) => {
       params: {
         query: params.query || "",
         state: params.state || "",
-        limit: params.limit || 50,
+        limit: params.limit || "",
         latitude: params.latitude || "",
         longitude: params.longitude || "",
         radius: params.radius || "",
