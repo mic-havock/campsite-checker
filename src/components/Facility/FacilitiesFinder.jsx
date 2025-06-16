@@ -234,12 +234,12 @@ const FacilitiesFinder = () => {
               id="state"
               name="state"
               value={searchParams.state || ""}
-              onChange={(e) =>
+              onChange={(e) => {
                 setSearchParams((prev) => ({
                   ...prev,
                   state: e.target.value,
-                }))
-              }
+                }));
+              }}
             >
               <option value="">Select a state</option>
               {STATES.map((state) => (
