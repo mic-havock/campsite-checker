@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import Chatbot from "../Chatbot/Chatbot";
 
 const Layout = ({ children }) => {
   const location = useLocation();
@@ -83,6 +84,7 @@ const Layout = ({ children }) => {
           Kampscout. All rights reserved.
         </p>
       </footer>
+      <Chatbot />
     </div>
   );
 };
