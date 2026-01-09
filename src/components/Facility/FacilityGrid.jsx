@@ -32,6 +32,7 @@ const FacilityGrid = ({ rowData, onRowSelected, selectedState }) => {
       { headerName: "Campground Name", field: "FacilityName" },
       { headerName: "City", field: "City" },
       { headerName: "State", field: "AddressStateCode" },
+      { headerName: "Facilty Type", field: "FacilityTypeDescription" },
     ],
     []
   );

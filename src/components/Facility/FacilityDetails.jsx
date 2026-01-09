@@ -144,7 +144,11 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
       </section>
 
       <a
-        href={`https://www.recreation.gov/camping/campgrounds/${facility.FacilityID}`}
+        href={
+          facility.FacilityTypeDescription === "Facility"
+            ? `https://www.recreation.gov/camping/poi/${facility.FacilityID}`
+            : `https://www.recreation.gov/camping/campgrounds/${facility.FacilityID}`
+        }
         target="_blank"
         rel="noopener noreferrer"
         className="recreation-link"
