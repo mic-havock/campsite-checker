@@ -202,7 +202,7 @@ const FacilitiesFinder = () => {
               type="text"
               value={inputValue}
               onChange={handleInputChange}
-              placeholder="Enter campground name"
+              placeholder="Search terms..."
             />
           </div>
           <div className="form-group">
