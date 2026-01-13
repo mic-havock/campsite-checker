@@ -3,6 +3,7 @@ export const RESERVATION_STATUS = {
   NOT_AVAILABLE: "Not Available",
   CLOSED: "Closed",
   NOT_AVAILABLE_CUTOFF: "Not Available Cutoff",
+  NOT_YET_RESERVABLE: "NYR",
 };
 
 export const isNonReservableStatus = (status) => {
@@ -13,6 +14,7 @@ export const isNonReservableStatus = (status) => {
     RESERVATION_STATUS.NOT_AVAILABLE,
     RESERVATION_STATUS.CLOSED,
     RESERVATION_STATUS.NOT_AVAILABLE_CUTOFF,
+    RESERVATION_STATUS.NOT_YET_RESERVABLE,
   ]);
 
   return nonReservableStatuses.has(status);
