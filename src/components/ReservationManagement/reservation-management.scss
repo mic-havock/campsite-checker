@@ -319,8 +319,15 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 1.5rem;
     width: 100%;
     box-sizing: border-box;
+    flex-wrap: wrap;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 1rem;
+    }
 
     .simple-toggle {
       display: flex;
@@ -362,6 +369,68 @@
           color: $color-stone;
           font-weight: 600;
         }
+      }
+    }
+
+    .delete-all-button {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background-color: $color-danger;
+      color: white;
+      border: none;
+      cursor: pointer;
+      padding: 0.75rem 1.5rem;
+      border-radius: $button-border-radius;
+      transition: all 0.2s ease;
+      font-size: 1rem;
+      font-weight: 600;
+
+      @media (max-width: 768px) {
+        width: 100%;
+        justify-content: center;
+      }
+
+      &:hover:not(:disabled) {
+        background-color: darken($color-danger, 10%);
+        box-shadow: $shadow-md;
+      }
+
+      &:disabled {
+        background-color: lighten($color-danger, 30%);
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+
+      .delete-icon {
+        font-size: 1.25rem;
+      }
+
+      .delete-text {
+        white-space: nowrap;
+
+        @media (max-width: 768px) {
+          white-space: normal;
+          text-align: center;
+        }
+      }
+
+      &.confirm {
+        background-color: darken($color-danger, 15%);
+        animation: pulse 0.5s ease-in-out;
+
+        &:hover {
+          background-color: darken($color-danger, 20%);
+        }
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
       }
     }
   }

@@ -1,12 +1,13 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { FaToggleOff, FaToggleOn } from "react-icons/fa";
+import { FaToggleOff, FaToggleOn, FaTrashAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import {
   fetchReservationsActive,
   fetchUserStatsActive,
   updateBatchMonitoringStatus,
+  batchDeleteReservations,
 } from "../../api/reservationManagement";
 import ReservationCard from "./ReservationCard/ReservationCard";
 import "./reservation-management.scss";
@@ -85,6 +86,51 @@ const MonitoringToggle = ({ active, onToggle }) => (
 MonitoringToggle.propTypes = {
   active: PropTypes.bool.isRequired,
   onToggle: PropTypes.func.isRequired,
+};
+
+/**
+ * DeleteAllButton component - Allows users to delete all their reservations
+ * @param {Object} props - Component props
+ * @param {Function} props.onDelete - Callback function when delete is clicked
+ * @param {boolean} props.disabled - Whether the button is disabled
+ * @returns {JSX.Element} Delete all button component
+ */
+const DeleteAllButton = ({ onDelete, disabled }) => {
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  const handleClick = () => {
+    if (!showConfirm) {
+      setShowConfirm(true);
+      // Reset confirmation after 5 seconds
+      setTimeout(() => setShowConfirm(false), 5000);
+    } else {
+      onDelete();
+      setShowConfirm(false);
+    }
+  };
+
+  return (
+    <button
+      className={`delete-all-button ${showConfirm ? "confirm" : ""}`}
+      onClick={handleClick}
+      disabled={disabled}
+      title={showConfirm ? "Click again to confirm deletion" : "Delete all reservations"}
+    >
+      <FaTrashAlt className="delete-icon" />
+      <span className="delete-text">
+        {showConfirm ? "Click Again to Confirm Delete All" : "Delete All Reservations"}
+      </span>
+    </button>
+  );
+};
+
+DeleteAllButton.propTypes = {
+  onDelete: PropTypes.func.isRequired,
+  disabled: PropTypes.bool,
+};
+
+DeleteAllButton.defaultProps = {
+  disabled: false,
 };
 
 const ReservationManagement = () => {
@@ -175,6 +221,31 @@ const ReservationManagement = () => {
     }
   };
 
+  /**
+   * Handles batch deletion of all reservations for the current user
+   * Sends all reservation IDs to the batchDeleteReservations API
+   */
+  const handleBatchDelete = async () => {
+    if (!email || reservations.length === 0) return;
+
+    try {
+      // Extract all reservation IDs
+      const reservationIds = reservations.map((res) => res.id);
+      
+      // Call the batch delete API
+      await batchDeleteReservations(email, reservationIds);
+      
+      // Clear reservations from state
+      setReservations([]);
+      
+      // Update stats to reflect the deletion
+      await handleStatsUpdate();
+    } catch (err) {
+      console.error("Failed to batch delete reservations:", err);
+      setError(err.message);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (email) {
@@ -251,6 +322,10 @@ const ReservationManagement = () => {
             <MonitoringToggle
               active={allMonitoringActive}
               onToggle={handleBatchMonitoringUpdate}
+            />
+            <DeleteAllButton
+              onDelete={handleBatchDelete}
+              disabled={loading}
             />
           </div>
         )}

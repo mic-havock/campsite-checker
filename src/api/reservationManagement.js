@@ -117,3 +117,25 @@ export const updateBatchMonitoringStatus = async (
     throw error.response?.data || error.message;
   }
 };
+
+/**
+ * Batch delete user reservations
+ * @param {string} emailAddress - User's email address
+ * @param {number[]} ids - Array of reservation IDs to delete
+ * @returns {Promise<Object>} Response data from the API
+ */
+export const batchDeleteReservations = async (emailAddress, ids) => {
+  try {
+    const response = await axios.patch(
+      `${BASE_URL}/user/reservations/batch/user-delete`,
+      {
+        email_address: emailAddress,
+        ids,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error batch deleting reservations:", error);
+    throw error.response?.data || error.message;
+  }
+};
