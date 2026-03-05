@@ -46,7 +46,7 @@ const getNextMonths = () => {
     const date = new Date(
       currentDate.getFullYear(),
       currentDate.getMonth() + i,
-      1
+      1,
     );
     const monthName = monthNames[date.getMonth()];
     const year = date.getFullYear();
@@ -85,7 +85,7 @@ const CampgroundAvailability = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [availabilityData, setAvailabilityData] = useState(
-    location.state?.availabilityData
+    location.state?.availabilityData,
   );
   const facilityID = location.state?.facilityID;
   const campsiteName = location.state?.campsiteName;
@@ -135,10 +135,10 @@ const CampgroundAvailability = () => {
       new Set(
         campsitesData.flatMap((campsite) =>
           Object.keys(campsite.availabilities).map(
-            (date) => new Date(date).toISOString().split("T")[0]
-          )
-        )
-      )
+            (date) => new Date(date).toISOString().split("T")[0],
+          ),
+        ),
+      ),
     ).sort();
 
     const rowDataArray = campsitesData.map((campsite) => {
@@ -207,7 +207,7 @@ const CampgroundAvailability = () => {
     setSelectedMonth(event.target.value);
     const startDate = new Date(event.target.value);
     const utcDate = new Date(
-      Date.UTC(startDate.getFullYear(), startDate.getMonth(), 1, 0, 0, 0, 0)
+      Date.UTC(startDate.getFullYear(), startDate.getMonth(), 1, 0, 0, 0, 0),
     );
     setStartDate(utcDate.toISOString());
   };
@@ -252,7 +252,7 @@ const CampgroundAvailability = () => {
       rowData,
       tableWidth,
       rowHeight,
-      headerHeight
+      headerHeight,
     );
 
     const columnDefs = [
@@ -359,7 +359,7 @@ const CampgroundAvailability = () => {
             );
           } else {
             const { base: baseColor, hover: hoverColor } = getStatusColors(
-              data.status
+              data.status,
             );
 
             return (
@@ -403,8 +403,8 @@ const CampgroundAvailability = () => {
                 {data.status === "NYR"
                   ? "NYR"
                   : data.status === "Reserved"
-                  ? "R"
-                  : "NR"}
+                    ? "R"
+                    : "NR"}
               </div>
             );
           }
@@ -565,7 +565,7 @@ const CampgroundAvailability = () => {
           </div>
 
           <button className="back-button" onClick={() => navigate(-1)}>
-            <span>←</span> Back to Campsites
+            <span>←</span> Back to Search
           </button>
 
           <AlertModal

@@ -120,7 +120,7 @@ const MapView = () => {
         </div>
 
         <button onClick={() => navigate("/")} className="back-button">
-          <span className="back-arrow">←</span> Back to Campgrounds
+          <span className="back-arrow">←</span> Back to Search
         </button>
       </div>
     </>

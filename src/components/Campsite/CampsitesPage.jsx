@@ -10,7 +10,7 @@ import CampsiteFilter from "./Filters/CampsiteFilter";
 const useFilteredCampsites = (
   campsiteData,
   showReservableOnly,
-  selectedLoops
+  selectedLoops,
 ) => {
   return useMemo(() => {
     return campsiteData.filter((campsite) => {
@@ -52,7 +52,7 @@ const CampsitesPage = () => {
   const filteredCampsites = useFilteredCampsites(
     campsiteData,
     showReservableOnly,
-    selectedLoops
+    selectedLoops,
   );
 
   const navigateToMapView = () => {
@@ -107,7 +107,7 @@ const CampsitesPage = () => {
             There are no campsites available for this facility at the moment.
           </p>
           <button onClick={() => navigate("/")} className="back-button">
-            Back to Campgrounds
+            Back to Search
           </button>
         </div>
       </div>
@@ -179,7 +179,7 @@ const CampsitesPage = () => {
         </div>
 
         <button onClick={() => navigate("/")} className="back-button">
-          <span className="back-arrow">←</span> Back to Campgrounds
+          <span className="back-arrow">←</span> Back to Search
         </button>
       </div>
     </>
