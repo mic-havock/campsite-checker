@@ -129,6 +129,9 @@ const CampsiteAvailability = ({ availabilities, facilityName, campsite }) => {
                   const dayNum = index + 1;
                   const status = days[dayNum];
                   const date = new Date(year, month, dayNum);
+                  const isClickable = status === "Reserved" || status === "NYR";
+                  const ariaLabel = `${getMonthName(month)} ${dayNum}, ${year}. Status: ${status || "Unknown"}${isClickable ? ". Click to set availability alert." : ""}`;
+
                   return (
                     <div
                       key={dayNum}
@@ -142,6 +145,15 @@ const CampsiteAvailability = ({ availabilities, facilityName, campsite }) => {
                             : "auto",
                       }}
                       onClick={() => handleDayClick(status, date)}
+                      onKeyDown={(e) => {
+                        if (isClickable && (e.key === "Enter" || e.key === " ")) {
+                          e.preventDefault();
+                          handleDayClick(status, date);
+                        }
+                      }}
+                      role={isClickable ? "button" : "cell"}
+                      tabIndex={isClickable ? 0 : undefined}
+                      aria-label={ariaLabel}
                     >
                       <span className="day-number">{dayNum}</span>
                     </div>
