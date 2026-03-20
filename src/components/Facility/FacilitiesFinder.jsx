@@ -65,11 +65,12 @@ const FacilitiesFinder = () => {
         const stateFacilities = response2.RECDATA || [];
 
         // Combine results, removing duplicates based on FacilityID
-        const allFacilities = [...facilities, ...stateFacilities];
-        const uniqueFacilities = Array.from(
-          new Map(allFacilities.map((item) => [item.FacilityID, item])).values()
+        const facilityMap = new Map();
+        facilities.forEach((item) => facilityMap.set(item.FacilityID, item));
+        stateFacilities.forEach((item) =>
+          facilityMap.set(item.FacilityID, item)
         );
-        facilities = uniqueFacilities;
+        facilities = Array.from(facilityMap.values());
       }
 
       setFacilities(facilities);
