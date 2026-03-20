@@ -2,25 +2,33 @@ import axios from "axios";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
+const locationCache = new Map();
+
 export const getFacilityAddress = async (facilityId) => {
   if (!facilityId) {
     throw new Error("Facility ID is required.");
   }
 
-  try {
-    const response = await axios.get(
-      `${BASE_URL}/facilities/${facilityId}/addresses`
-    );
-    const addressData = response.data.RECDATA.map((item) => ({
-      city: item.City,
-      state: item.AddressStateCode,
-    }));
+  // ⚡ Bolt: Cache the promise to prevent concurrent identical requests
+  if (!locationCache.has(facilityId)) {
+    const fetchPromise = axios
+      .get(`${BASE_URL}/facilities/${facilityId}/addresses`)
+      .then((response) =>
+        response.data.RECDATA.map((item) => ({
+          city: item.City,
+          state: item.AddressStateCode,
+        }))
+      )
+      .catch((error) => {
+        locationCache.delete(facilityId); // clear cache on failure
+        console.error("Error fetching facility address:", error.message || error);
+        throw error;
+      });
 
-    return addressData;
-  } catch (error) {
-    console.error("Error fetching facility address:", error.message || error);
-    throw error;
+    locationCache.set(facilityId, fetchPromise);
   }
+
+  return locationCache.get(facilityId);
 };
 
 export const fetchCityAndState = async (facilityId) => {

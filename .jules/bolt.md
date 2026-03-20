@@ -1,0 +1,3 @@
+## 2024-05-24 - N+1 Queries in Component Re-Renders
+**Learning:** Components mapping over large arrays (like rows in an Ag-Grid component) and initiating independent API fetches per row (`fetchCityAndState` for `FacilityID`) can cause severe N+1 query bottlenecks if the results aren't cached. Because React re-renders might trigger these effect loops repeatedly, identical backend requests flood the network pane.
+**Action:** When making row-by-row API calls within `Promise.all` in `useEffect`, always implement an in-memory application-level cache (like a simple ES6 `Map`) at the API module level to intercept identical requests and serve them instantly, especially for static or rarely-changing data like location details.
