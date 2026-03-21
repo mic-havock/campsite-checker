@@ -1,0 +1,3 @@
+## 2024-05-15 - [Date Parsing Overhead in Large Loops]
+**Learning:** `new Date(dateString)` and `.toISOString().split("T")[0]` are very expensive operations when run in large loops or components tracking many dates (like availability grids). The overhead is significant and blocking when checking multiple dates for hundreds of campsites.
+**Action:** Always parse known ISO format string dates directly with `substring()` instead of full date instantiations when only year, month, or day values are needed. In nested loops, use `Set.add()` during the iteration to deduplicate instead of aggregating maps/arrays to `new Set()` later.

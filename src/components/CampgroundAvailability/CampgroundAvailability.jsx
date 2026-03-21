@@ -131,15 +131,18 @@ const CampgroundAvailability = () => {
     }
 
     const campsitesData = Object.values(availabilityData.campsites);
-    const datesArray = Array.from(
-      new Set(
-        campsitesData.flatMap((campsite) =>
-          Object.keys(campsite.availabilities).map(
-            (date) => new Date(date).toISOString().split("T")[0],
-          ),
-        ),
-      ),
-    ).sort();
+
+    // Bolt: Optimized date extraction to avoid expensive new Date() allocations
+    // and intermediate array creation. Reduces processing time significantly
+    // for large availability datasets.
+    const dateSet = new Set();
+    campsitesData.forEach((campsite) => {
+      Object.keys(campsite.availabilities).forEach((date) => {
+        // The dates are already in ISO format like '2023-10-01T00:00:00Z'
+        dateSet.add(date.substring(0, 10));
+      });
+    });
+    const datesArray = Array.from(dateSet).sort();
 
     const rowDataArray = campsitesData.map((campsite) => {
       const row = {

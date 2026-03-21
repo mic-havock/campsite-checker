@@ -17,26 +17,26 @@ const CampsiteAvailability = ({ availabilities, facilityName, campsite }) => {
   const monthlyAvailabilities = useMemo(() => {
     const months = {};
 
-    Object.entries(availabilities).forEach(([dateStr, status]) => {
-      const [year, month, day] = dateStr
-        .split("-")
-        .map((num) => parseInt(num, 10));
-      const date = new Date(year, month - 1, day);
+    // Bolt: Optimized date parsing from ISO strings like '2023-10-01T00:00:00Z'
+    // avoiding String.split() and new Date() creations inside the loop.
+    for (const dateStr in availabilities) {
+      const status = availabilities[dateStr];
+      const year = parseInt(dateStr.substring(0, 4), 10);
+      const month = parseInt(dateStr.substring(5, 7), 10) - 1; // 0-indexed month
+      const dayNum = parseInt(dateStr.substring(8, 10), 10);
 
-      const monthKey = `${date.getFullYear()}-${String(
-        date.getMonth() + 1
-      ).padStart(2, "0")}`;
+      const monthKey = dateStr.substring(0, 7);
 
       if (!months[monthKey]) {
         months[monthKey] = {
-          year: date.getFullYear(),
-          month: date.getMonth(),
+          year,
+          month,
           days: {},
         };
       }
 
-      months[monthKey].days[date.getDate()] = status;
-    });
+      months[monthKey].days[dayNum] = status;
+    }
 
     return Object.values(months);
   }, [availabilities]);
