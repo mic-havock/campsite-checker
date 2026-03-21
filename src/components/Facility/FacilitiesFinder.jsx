@@ -5,7 +5,9 @@ import { fetchCampsitesByFacility } from "../../api/campsites";
 import { getFacilities } from "../../api/facilities";
 import { CONTENT } from "../../config/content";
 import { STATES } from "../../config/states";
+
 import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
+
 import FacilityDetails from "./FacilityDetails";
 import FacilityGrid from "./FacilityGrid";
 import "./facilities-finder.scss";
@@ -225,6 +227,7 @@ const FacilitiesFinder = () => {
 
           <div className="buttons-container">
             <button type="submit" className="submit" disabled={loading}>
+
               {loading ? (
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                   <LoadingSpinner size="small" />
