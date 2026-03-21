@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import {
   createBulkReservations,
@@ -25,8 +25,6 @@ const AlertModal = ({
 }) => {
   const isSubmitting = useRef(false);
 
-  if (!isOpen) return null;
-
   // Closes the modal when clicking outside the modal content
   const handleBackdropClick = (event) => {
     if (event.target === event.currentTarget) {
@@ -35,10 +33,24 @@ const AlertModal = ({
   };
 
   // Clear form data and close modal
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setAlertDetails({ name: "", email: "", startDate: "", endDate: "" });
     onClose();
-  };
+  }, [onClose, setAlertDetails]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        handleClose();
+      }
+    };
+    if (isOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, handleClose]);
+
+  if (!isOpen) return null;
 
   const handleCreateAlert = async () => {
     if (isSubmitting.current) return;
@@ -146,6 +158,7 @@ const AlertModal = ({
         <input
           type="text"
           placeholder="Name"
+          aria-label="Name"
           value={alertDetails.name}
           onChange={(e) =>
             setAlertDetails((prev) => ({ ...prev, name: e.target.value }))
@@ -155,6 +168,7 @@ const AlertModal = ({
         <input
           type="email"
           placeholder="Email"
+          aria-label="Email"
           value={alertDetails.email}
           onChange={(e) =>
             setAlertDetails((prev) => ({
@@ -164,8 +178,9 @@ const AlertModal = ({
           }
           disabled={isCreatingAlert}
         />
-        <label>First Night:</label>
+        <label htmlFor="start-date">First Night:</label>
         <input
+          id="start-date"
           type="date"
           value={alertDetails.startDate}
           onChange={(e) =>
@@ -176,8 +191,9 @@ const AlertModal = ({
           }
           disabled={isCreatingAlert}
         />
-        <label>Last Night:</label>
+        <label htmlFor="end-date">Last Night:</label>
         <input
+          id="end-date"
           type="date"
           value={alertDetails.endDate}
           onChange={(e) =>
