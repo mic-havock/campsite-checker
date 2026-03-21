@@ -1,4 +1,3 @@
-import DOMPurify from "dompurify";
 import PropTypes from "prop-types";
 import { useState } from "react";
 import ImageGallery from "../Common/ImageGallery/ImageGallery";
@@ -109,9 +108,7 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
 
       <div
         dangerouslySetInnerHTML={{
-          __html: DOMPurify.sanitize(
-            processFacilityDescription(facility.FacilityDescription)
-          ),
+          __html: processFacilityDescription(facility.FacilityDescription),
         }}
       />
 
@@ -119,9 +116,7 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
         <h2>Directions</h2>
         <div
           dangerouslySetInnerHTML={{
-            __html: DOMPurify.sanitize(
-              facility.FacilityDirections || "No directions available"
-            ),
+            __html: facility.FacilityDirections || "No directions available",
           }}
         />
       </section>
