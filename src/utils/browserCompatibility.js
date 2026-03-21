@@ -12,7 +12,9 @@ export const isTouchDevice = () => {
 };
 
 export const isMobileDevice = () => {
-  return window.innerWidth < 768;
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
 };
 
 export const isIOS = () => {
