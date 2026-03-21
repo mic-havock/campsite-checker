@@ -135,7 +135,11 @@ const CampgroundAvailability = () => {
       new Set(
         campsitesData.flatMap((campsite) =>
           Object.keys(campsite.availabilities).map(
-            (date) => new Date(date).toISOString().split("T")[0],
+            // ⚡ Bolt Performance Optimization:
+            // Replaced `new Date(date).toISOString().split("T")[0]` with `date.substring(0, 10)`
+            // Basic string extraction avoids substantial performance degradation
+            // caused by instantiating Date objects in a loop.
+            (date) => date.substring(0, 10),
           ),
         ),
       ),

@@ -44,6 +44,18 @@ const CampsiteModal = ({
   isLoadingAvailability,
   availabilityError,
 }) => {
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    if (isExpanded) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isExpanded, onClose]);
+
   if (!isExpanded) return null;
 
   const {
