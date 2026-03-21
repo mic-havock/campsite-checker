@@ -69,7 +69,19 @@ const CampsiteModal = ({
   } = campsite;
 
   return createPortal(
-    <div className="overlay" onClick={onClose}>
+    <div
+      className="overlay"
+      role="button"
+      tabIndex={0}
+      onClick={onClose}
+      onKeyDown={(e) => {
+        if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape')) {
+          e.preventDefault();
+          onClose();
+        }
+      }}
+      aria-label="Close campsite details modal"
+    >
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <ImageGallery images={images} />
 
@@ -218,16 +230,16 @@ const Campsite = ({
       <div className="campsite-card">
         <div
           className="campsite-content"
+          role="button"
+          tabIndex={0}
           onClick={() => setIsExpanded(true)}
           onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
+            if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) {
               e.preventDefault();
               setIsExpanded(true);
             }
           }}
-          tabIndex={0}
-          role="button"
-          aria-label={`View details for Campsite ${CampsiteName}`}
+          aria-label={`View details for campsite ${CampsiteName}`}
         >
           {images.length > 0 ? (
             <img
