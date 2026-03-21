@@ -67,10 +67,11 @@ const FacilitiesFinder = () => {
 
         // Combine results, removing duplicates based on FacilityID
         const allFacilities = [...facilities, ...stateFacilities];
-        const uniqueFacilities = Array.from(
-          new Map(allFacilities.map((item) => [item.FacilityID, item])).values()
-        );
-        facilities = uniqueFacilities;
+        const uniqueFacilitiesMap = new Map();
+        for (const item of allFacilities) {
+          uniqueFacilitiesMap.set(item.FacilityID, item);
+        }
+        facilities = Array.from(uniqueFacilitiesMap.values());
       }
 
       setFacilities(facilities);
