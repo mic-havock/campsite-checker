@@ -204,7 +204,19 @@ const Campsite = ({
   return (
     <>
       <div className="campsite-card">
-        <div className="campsite-content" onClick={() => setIsExpanded(true)}>
+        <div
+          className="campsite-content"
+          onClick={() => setIsExpanded(true)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              setIsExpanded(true);
+            }
+          }}
+          tabIndex={0}
+          role="button"
+          aria-label={`View details for Campsite ${CampsiteName}`}
+        >
           {images.length > 0 ? (
             <img
               src={images[0].original}
