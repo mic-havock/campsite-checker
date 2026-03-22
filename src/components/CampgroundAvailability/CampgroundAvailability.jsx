@@ -307,11 +307,10 @@ const CampgroundAvailability = () => {
           ]
         : []),
       ...dates.map((date) => ({
-        headerName: new Date(date).toLocaleDateString("en-US", {
-          timeZone: "UTC",
-          month: "numeric",
-          day: "numeric",
-        }),
+        // ⚡ Bolt Performance Optimization:
+        // Extracting date parts via string manipulation prevents the overhead of creating Date objects
+        // and using the Intl API in a .map loop, improving rendering performance for the data grid.
+        headerName: `${parseInt(date.substring(5, 7), 10)}/${parseInt(date.substring(8, 10), 10)}`,
         field: date,
         width: 90,
         headerClass: "ag-header-cell-center",
