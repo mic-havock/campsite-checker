@@ -237,7 +237,7 @@ const Campsite = ({
           tabIndex={0}
           onClick={() => setIsExpanded(true)}
           onKeyDown={(e) => {
-            if ((e.key === "Enter" || e.key === " ") && e.target === e.currentTarget) {
+            if (e.key === "Enter" || e.key === " ") {
               e.preventDefault();
               setIsExpanded(true);
             }
