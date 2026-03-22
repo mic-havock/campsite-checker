@@ -44,6 +44,18 @@ const CampsiteModal = ({
   isLoadingAvailability,
   availabilityError,
 }) => {
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    if (isExpanded) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isExpanded, onClose]);
+
   if (!isExpanded) return null;
 
   const {
@@ -67,11 +79,7 @@ const CampsiteModal = ({
           e.preventDefault();
           onClose();
         } else if ((e.key === "Enter" || e.key === " ") && e.target === e.currentTarget) {
-          e.preventDefault();
-          onClose();
-        }
-      }}
-      aria-label="Close modal"
+      aria-label="Close campsite details modal"
     >
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <ImageGallery images={images} />
@@ -214,7 +222,7 @@ const Campsite = ({
         thumbnailAlt: `Thumbnail of ${media.Title}`,
       })) || [],
     [ENTITYMEDIA]
-  );
+  ); zzz
 
   return (
     <>
@@ -225,7 +233,6 @@ const Campsite = ({
           tabIndex={0}
           onClick={() => setIsExpanded(true)}
           onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
               e.preventDefault();
               setIsExpanded(true);
             }
