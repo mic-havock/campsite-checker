@@ -5,7 +5,9 @@ import { fetchCampsitesByFacility } from "../../api/campsites";
 import { getFacilities } from "../../api/facilities";
 import { CONTENT } from "../../config/content";
 import { STATES } from "../../config/states";
+
 import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
+
 import FacilityDetails from "./FacilityDetails";
 import FacilityGrid from "./FacilityGrid";
 import "./facilities-finder.scss";
@@ -67,10 +69,11 @@ const FacilitiesFinder = () => {
 
         // Combine results, removing duplicates based on FacilityID
         const allFacilities = [...facilities, ...stateFacilities];
-        const uniqueFacilities = Array.from(
-          new Map(allFacilities.map((item) => [item.FacilityID, item])).values()
-        );
-        facilities = uniqueFacilities;
+        const uniqueFacilitiesMap = new Map();
+        for (const item of allFacilities) {
+          uniqueFacilitiesMap.set(item.FacilityID, item);
+        }
+        facilities = Array.from(uniqueFacilitiesMap.values());
       }
 
       setFacilities(facilities);
@@ -224,6 +227,7 @@ const FacilitiesFinder = () => {
 
           <div className="buttons-container">
             <button type="submit" className="submit" disabled={loading}>
+
               {loading ? (
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                   <LoadingSpinner size="small" />

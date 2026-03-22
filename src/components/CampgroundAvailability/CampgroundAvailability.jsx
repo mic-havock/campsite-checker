@@ -135,7 +135,11 @@ const CampgroundAvailability = () => {
       new Set(
         campsitesData.flatMap((campsite) =>
           Object.keys(campsite.availabilities).map(
-            (date) => new Date(date).toISOString().split("T")[0],
+            // ⚡ Bolt Performance Optimization:
+            // Replaced `new Date(date).toISOString().split("T")[0]` with `date.substring(0, 10)`
+            // Basic string extraction avoids substantial performance degradation
+            // caused by instantiating Date objects in a loop.
+            (date) => date.substring(0, 10),
           ),
         ),
       ),
@@ -303,11 +307,10 @@ const CampgroundAvailability = () => {
           ]
         : []),
       ...dates.map((date) => ({
-        headerName: new Date(date).toLocaleDateString("en-US", {
-          timeZone: "UTC",
-          month: "numeric",
-          day: "numeric",
-        }),
+        // ⚡ Bolt Performance Optimization:
+        // Extracting date parts via string manipulation prevents the overhead of creating Date objects
+        // and using the Intl API in a .map loop, improving rendering performance for the data grid.
+        headerName: `${parseInt(date.substring(5, 7), 10)}/${parseInt(date.substring(8, 10), 10)}`,
         field: date,
         width: 90,
         headerClass: "ag-header-cell-center",
