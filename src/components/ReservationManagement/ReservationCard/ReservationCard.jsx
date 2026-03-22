@@ -63,6 +63,18 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
     loadCampsiteDetails();
   }, [reservation.campsite_id]);
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setShowCampsiteModal(false);
+      }
+    };
+    if (showCampsiteModal) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [showCampsiteModal]);
+
   const handleMonitoringUpdate = async (active) => {
     try {
       setIsMonitoringActive(active);
@@ -151,6 +163,21 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
         <div
           className="modal-overlay"
           onClick={() => setShowCampsiteModal(false)}
+          role="button"
+          tabIndex={0}
+          aria-label="Close campsite details modal"
+          onKeyDown={(e) => {
+            if (e.key === "Escape") {
+              e.preventDefault();
+              setShowCampsiteModal(false);
+            } else if (
+              (e.key === "Enter" || e.key === " ") &&
+              e.target === e.currentTarget
+            ) {
+              e.preventDefault();
+              setShowCampsiteModal(false);
+            }
+          }}
         >
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <Campsite
