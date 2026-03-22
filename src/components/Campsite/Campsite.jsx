@@ -71,15 +71,14 @@ const CampsiteModal = ({
   return createPortal(
     <div
       className="overlay"
+      onClick={onClose}
       role="button"
       tabIndex={0}
-      onClick={onClose}
       onKeyDown={(e) => {
-        if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape')) {
+        if (e.key === "Escape") {
           e.preventDefault();
           onClose();
-        }
-      }}
+        } else if ((e.key === "Enter" || e.key === " ") && e.target === e.currentTarget) {
       aria-label="Close campsite details modal"
     >
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -223,7 +222,7 @@ const Campsite = ({
         thumbnailAlt: `Thumbnail of ${media.Title}`,
       })) || [],
     [ENTITYMEDIA]
-  );
+  ); zzz
 
   return (
     <>
@@ -234,12 +233,10 @@ const Campsite = ({
           tabIndex={0}
           onClick={() => setIsExpanded(true)}
           onKeyDown={(e) => {
-            if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) {
               e.preventDefault();
               setIsExpanded(true);
             }
           }}
-          aria-label={`View details for campsite ${CampsiteName}`}
         >
           {images.length > 0 ? (
             <img

@@ -1,3 +1,6 @@
+## 2026-03-20 - Keyboard Accessibility Event Bubbling
+**Learning:** When making wrapper elements (like modal overlays) keyboard accessible with `onKeyDown` handlers, events from focusable child elements (like buttons inside the modal) will bubble up and trigger the wrapper's handler.
+**Action:** Always check `e.target === e.currentTarget` for interaction keys (like 'Enter' or 'Space') on wrapper elements to ensure the interaction was intended for the wrapper and not a child element.
 ## 2024-05-18 - [Add Keyboard Accessibility to Campsite Modals]
 **Learning:** Found that custom `div` elements acting as buttons (`campsite-content` and `overlay`) lacked `role="button"`, `tabIndex`, and `onKeyDown` handlers, preventing keyboard navigation and modal interaction. Adding `e.target === e.currentTarget` to the `onKeyDown` handler is critical for modal overlays to prevent child component keypresses (like interacting with an image gallery) from accidentally closing the modal.
 **Action:** Always verify that custom interactive elements receive `role="button"`, `tabIndex={0}`, and proper `onKeyDown` handlers (checking for Enter and Space). For wrapper elements like modal overlays, ensure event handlers use the `e.target === e.currentTarget` check to prevent unintended bubbling.
