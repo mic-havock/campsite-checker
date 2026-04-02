@@ -84,17 +84,17 @@
 
 /* Fix for Leaflet popup styles */
 .leaflet-popup-content {
-  margin: 10px;
+  margin: 12px;
 
   strong {
     display: block;
-    margin-bottom: 5px;
-    font-size: 1rem;
+    margin-bottom: 8px;
+    font-size: 1.1rem;
   }
 
   p {
-    margin: 3px 0;
-    font-size: 0.9rem;
+    margin: 4px 0;
+    font-size: 1rem;
   }
 }
 
