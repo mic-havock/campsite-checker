@@ -79,8 +79,7 @@ const Layout = ({ children }) => {
           style={{ color: "#4B5563", fontStyle: "italic", textAlign: "center" }}
         >
           {" "}
-          {/* text-gray-600 equivalent */}© {new Date().getFullYear()}{" "}
-          Kampscout. All rights reserved.
+          {/* text-gray-600 equivalent */}© 2026 Kampscout. All rights reserved.
         </p>
       </footer>
     </div>
