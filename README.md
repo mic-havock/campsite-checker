@@ -19,7 +19,7 @@ Visit [kampscout.com](https://kampscout.com) to use the application.
 - React.js
 - AG Grid (for data grid functionality)
 - SCSS (for styling)
-- TypeScript
+- JavaScript
 - Vite (build tool)
 
 ## Prerequisites
@@ -27,7 +27,7 @@ Visit [kampscout.com](https://kampscout.com) to use the application.
 Before you begin, ensure you have the following installed:
 
 - Node.js (v18.0.0 or higher)
-- npm (v8.0.0 or higher)
+- pnpm (v8.0.0 or higher)
 
 ## Installation
 
@@ -46,13 +46,13 @@ cd campsite-reservation-system
 3. Install dependencies:
 
 ```bash
-npm install
+pnpm install
 ```
 
 4. Start the development server:
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 ## Key Components
@@ -83,14 +83,10 @@ The main component that handles the reservation grid display and interactions:
 
 - Uses Cursor's Integrated Powershell with Administrator rights for development
 - Chrome browser recommended for optimal development experience
-- Implements strict TypeScript notation
 - Follows specific string handling conventions (double quotes, template literals)
 
 ## Code Standards
 
-- Use TypeScript strict mode
-- Avoid 'any' type usage
-- Avoid non-null assertion operator
 - Use double quotes for strings
 - Implement proper error checking
 - Include JSDoc comments for functions

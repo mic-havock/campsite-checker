@@ -16,6 +16,14 @@ export const toTitleCase = (str) => {
           )
           .join("/");
       }
+      if (word.includes("-")) {
+        return word
+          .split("-")
+          .map(
+            (part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
+          )
+          .join("-");
+      }
       return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
     })
     .join(" ");

@@ -1,7 +1,11 @@
 import { format, parseISO } from "date-fns";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
-import { FaToggleOff, FaToggleOn } from "react-icons/fa";
+import {
+  LuMousePointerClick,
+  LuToggleLeft,
+  LuToggleRight,
+} from "react-icons/lu";
 import { fetchCampsiteDetails } from "../../../api/campsites";
 import {
   updateMonitoringStatus,
@@ -63,6 +67,18 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
 
     loadCampsiteDetails();
   }, [reservation.campsite_id]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setShowCampsiteModal(false);
+      }
+    };
+    if (showCampsiteModal) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [showCampsiteModal]);
 
   const handleMonitoringUpdate = async (active) => {
     try {
@@ -133,12 +149,12 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
               >
                 {isMonitoringActive ? (
                   <>
-                    <FaToggleOn className="toggle-icon" />
+                    <LuToggleRight className="toggle-icon" />
                     <span className="toggle-text">Monitoring Enabled</span>
                   </>
                 ) : (
                   <>
-                    <FaToggleOff className="toggle-icon" />
+                    <LuToggleLeft className="toggle-icon" />
                     <span className="toggle-text">Monitoring Disabled</span>
                   </>
                 )}
@@ -152,13 +168,50 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
         <div
           className="modal-overlay"
           onClick={() => setShowCampsiteModal(false)}
+          role="button"
+          tabIndex={0}
+          aria-label="Close campsite details modal"
+          onKeyDown={(e) => {
+            if (e.key === "Escape") {
+              e.preventDefault();
+              setShowCampsiteModal(false);
+            } else if (
+              (e.key === "Enter" || e.key === " ") &&
+              e.target === e.currentTarget
+            ) {
+              e.preventDefault();
+              setShowCampsiteModal(false);
+            }
+          }}
         >
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <Campsite
-              campsite={transformCampsiteData(campsiteDetails[0], reservation)}
-              facilityName={reservation.facility_name || "Unknown Facility"}
-              isExpanded={false}
-            />
+          <div
+            className="modal-content reservation-campsite-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              className="reservation-campsite-preview-wrap"
+              aria-describedby="reservation-campsite-modal-hint"
+            >
+              <Campsite
+                campsite={transformCampsiteData(
+                  campsiteDetails[0],
+                  reservation,
+                )}
+                facilityName={reservation.facility_name || "Unknown Facility"}
+                isExpanded={false}
+                showExpandHint={false}
+              />
+            </div>
+            <p
+              className="reservation-campsite-modal-hint"
+              id="reservation-campsite-modal-hint"
+            >
+              <LuMousePointerClick
+                className="reservation-campsite-modal-hint-icon"
+                aria-hidden
+              />
+              <span>Click the card to open full campsite view.</span>
+            </p>
           </div>
         </div>
       )}
