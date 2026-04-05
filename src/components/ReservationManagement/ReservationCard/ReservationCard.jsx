@@ -1,7 +1,7 @@
 import { format, parseISO } from "date-fns";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
-import { FaToggleOff, FaToggleOn } from "react-icons/fa";
+import { LuToggleLeft, LuToggleRight } from "react-icons/lu";
 import { fetchCampsiteDetails } from "../../../api/campsites";
 import {
   updateMonitoringStatus,
@@ -144,12 +144,12 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
               >
                 {isMonitoringActive ? (
                   <>
-                    <FaToggleOn className="toggle-icon" />
+                    <LuToggleRight className="toggle-icon" />
                     <span className="toggle-text">Monitoring Enabled</span>
                   </>
                 ) : (
                   <>
-                    <FaToggleOff className="toggle-icon" />
+                    <LuToggleLeft className="toggle-icon" />
                     <span className="toggle-text">Monitoring Disabled</span>
                   </>
                 )}
