@@ -1,7 +1,7 @@
-/* global global */
 import { test, describe, beforeEach, afterEach, mock } from 'node:test';
 import assert from 'node:assert';
 import * as browserCompat from './browserCompatibility.js';
+import { isMobileDevice } from "./browserCompatibility.js";
 
 describe('browserCompatibility', () => {
   let originalNavigator;
@@ -79,24 +79,9 @@ describe('browserCompatibility', () => {
     global.navigator.msMaxTouchPoints = 1;
     assert.strictEqual(browserCompat.isTouchDevice(), true);
     global.navigator.msMaxTouchPoints = 0;
-import { test, describe, beforeEach, afterEach } from "node:test";
-import assert from "node:assert";
-import { isMobileDevice } from "./browserCompatibility.js";
+  });
 
-describe("browserCompatibility", () => {
   describe("isMobileDevice", () => {
-    let originalNavigator;
-
-    beforeEach(() => {
-      // Save original navigator
-      originalNavigator = global.navigator;
-    });
-
-    afterEach(() => {
-      // Restore original navigator
-      global.navigator = originalNavigator;
-    });
-
     const setMockUserAgent = (userAgent) => {
       Object.defineProperty(global, 'navigator', {
         value: { userAgent },
@@ -176,15 +161,11 @@ describe("browserCompatibility", () => {
     });
 
     test("should return false if navigator is not defined", () => {
-      // In Node.js environment or specific browser environments where navigator might be undefined
-      // We simulate it by deleting the global navigator
       Object.defineProperty(global, 'navigator', {
         value: undefined,
         writable: true,
         configurable: true
       });
-
-      // We expect a type error since the code reads `navigator.userAgent` directly
       assert.throws(() => isMobileDevice(), TypeError);
     });
   });

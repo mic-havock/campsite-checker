@@ -7,10 +7,8 @@
   margin: 0;
   width: 100%;
   box-sizing: border-box;
-  position: absolute;
+  position: relative;
   overflow-x: hidden;
-  top: 0;
-  left: 0;
 
   .facilities-finder__form {
     display: flex;
