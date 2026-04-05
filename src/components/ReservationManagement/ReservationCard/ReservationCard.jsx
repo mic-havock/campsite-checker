@@ -32,6 +32,7 @@ const transformCampsiteData = (details, reservation) => ({
   CampsiteType: details.CampsiteType || "Unknown Type",
   Loop: details.Loop || "",
   CampsiteID: details.CampsiteID || reservation.campsite_id.toString(),
+  FacilityID: details.FacilityID,
   ENTITYMEDIA: details.ENTITYMEDIA || [],
   ATTRIBUTES: details.ATTRIBUTES || [],
   PERMITTEDEQUIPMENT: details.PERMITTEDEQUIPMENT || [],
@@ -179,12 +180,34 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
             }
           }}
         >
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <Campsite
-              campsite={transformCampsiteData(campsiteDetails[0], reservation)}
-              facilityName={reservation.facility_name || "Unknown Facility"}
-              isExpanded={false}
-            />
+          <div
+            className="modal-content reservation-campsite-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              className="reservation-campsite-preview-wrap"
+              aria-describedby="reservation-campsite-modal-hint"
+            >
+              <Campsite
+                campsite={transformCampsiteData(
+                  campsiteDetails[0],
+                  reservation,
+                )}
+                facilityName={reservation.facility_name || "Unknown Facility"}
+                isExpanded={false}
+                showExpandHint={false}
+              />
+            </div>
+            <p
+              className="reservation-campsite-modal-hint"
+              id="reservation-campsite-modal-hint"
+            >
+              <LuMousePointerClick
+                className="reservation-campsite-modal-hint-icon"
+                aria-hidden
+              />
+              <span>Click the card to open full campsite view.</span>
+            </p>
           </div>
         </div>
       )}
