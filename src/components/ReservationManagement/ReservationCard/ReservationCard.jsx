@@ -36,6 +36,7 @@ const transformCampsiteData = (details, reservation) => ({
   CampsiteType: details.CampsiteType || "Unknown Type",
   Loop: details.Loop || "",
   CampsiteID: details.CampsiteID || reservation.campsite_id.toString(),
+  FacilityID: details.FacilityID,
   ENTITYMEDIA: details.ENTITYMEDIA || [],
   ATTRIBUTES: details.ATTRIBUTES || [],
   PERMITTEDEQUIPMENT: details.PERMITTEDEQUIPMENT || [],
