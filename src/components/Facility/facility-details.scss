@@ -1,7 +1,7 @@
 @import "../../styles/variables";
 
 .facility-details {
-  background-color: white;
+  background-color: $card-bg;
   border: 1px solid rgba(0, 0, 0, 0.05);
   box-shadow: $shadow-md;
   border-radius: $button-border-radius;

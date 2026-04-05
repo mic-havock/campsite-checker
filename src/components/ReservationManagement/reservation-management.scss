@@ -2,7 +2,7 @@
 
 .user-management {
   min-height: 100vh;
-  background-color: $background-light;
+  background-color: $background-base;
   padding: 20px;
   margin: 0;
   width: 99vw;
@@ -65,7 +65,7 @@
   .unified-controls {
     max-width: 1200px;
     margin: 0 auto 1.5rem;
-    background-color: white;
+    background-color: $card-bg;
     border-radius: $button-border-radius;
     box-shadow: $shadow-sm;
     width: 100%;
@@ -215,7 +215,7 @@
   .user-stats {
     max-width: 1200px;
     margin: 0 auto 1.5rem;
-    background-color: white;
+    background-color: $card-bg;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
     padding-bottom: 1.5rem;
@@ -316,7 +316,7 @@
   .batch-monitoring {
     max-width: 1200px;
     margin: 0 auto 1.5rem;
-    background-color: white;
+    background-color: $card-bg;
     padding: 1rem;
     border-radius: $button-border-radius;
     box-shadow: $shadow-md;
