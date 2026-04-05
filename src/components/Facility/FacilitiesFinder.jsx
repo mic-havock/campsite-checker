@@ -10,6 +10,7 @@ import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
 
 import FacilityDetails from "./FacilityDetails";
 import FacilityGrid from "./FacilityGrid";
+import FacilitiesMap from "./Map/FacilitiesMap";
 import "./facilities-finder.scss";
 
 const STORAGE_KEYS = {
@@ -24,6 +25,7 @@ const FacilitiesFinder = () => {
   const [selectedFacility, setSelectedFacility] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [viewMode, setViewMode] = useState("grid"); // "grid" or "map"
 
   // Storage management functions
   const clearStorage = useCallback(() => {
@@ -245,17 +247,46 @@ const FacilitiesFinder = () => {
 
         {error && <p className="error">{error}</p>}
 
-        <div className="grid-col">
-          <FacilityGrid
-            rowData={facilities}
-            onRowSelected={handleRowSelection}
-            selectedState={
-              selectedState
-                ? STATES.find((state) => state.code === selectedState)
-                : null
-            }
-          />
+        {facilities && facilities.length > 0 && (
+          <div className="view-toggle-container">
+            <button
+              className={`view-toggle-btn ${viewMode === "grid" ? "active" : ""}`}
+              onClick={() => setViewMode("grid")}
+            >
+              List View
+            </button>
+            <button
+              className={`view-toggle-btn ${viewMode === "map" ? "active" : ""}`}
+              onClick={() => setViewMode("map")}
+            >
+              Map View
+            </button>
+          </div>
+        )}
+
+        <div className="results-container">
+          {viewMode === "grid" ? (
+            <div className="grid-col">
+              <FacilityGrid
+                rowData={facilities}
+                onRowSelected={handleRowSelection}
+                selectedState={
+                  selectedState
+                    ? STATES.find((state) => state.code === selectedState)
+                    : null
+                }
+              />
+            </div>
+          ) : (
+            <div className="map-col">
+              <FacilitiesMap
+                facilities={facilities}
+                onFacilitySelect={handleRowSelection}
+              />
+            </div>
+          )}
         </div>
+
         {selectedFacility && (
           <FacilityDetails
             facility={selectedFacility}
