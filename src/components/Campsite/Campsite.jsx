@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
+import { LuMousePointerClick } from "react-icons/lu";
 import { createPortal } from "react-dom";
 import { fetchCampsiteAvailability } from "../../api/campsites";
 import { toTitleCase } from "../../utils/stringUtils";
@@ -190,6 +191,7 @@ const Campsite = ({
   campsite,
   facilityName,
   isExpanded: initialIsExpanded = false,
+  showExpandHint = true,
 }) => {
   const {
     CampsiteName,
@@ -201,6 +203,7 @@ const Campsite = ({
   } = campsite;
 
   const [isExpanded, setIsExpanded] = useState(initialIsExpanded);
+  const expandHintId = useId();
   const { availabilityData, isLoadingAvailability, availabilityError } =
     useAvailabilityData(CampsiteID, isExpanded);
 
@@ -228,43 +231,65 @@ const Campsite = ({
     [ENTITYMEDIA]
   );
 
-  return (
-    <>
-      <div className="campsite-card">
-        <div
-          className="campsite-content"
-          role="button"
-          tabIndex={0}
-          onClick={() => setIsExpanded(true)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              setIsExpanded(true);
-            }
-          }}
-        >
-          {images.length > 0 ? (
-            <img
-              src={images[0].original}
-              alt={images[0].originalAlt}
-              className="campsite-thumbnail"
-            />
-          ) : (
-            <div className="no-image-container">No Image Available</div>
-          )}
+  const campsiteCard = (
+    <div className="campsite-card">
+      <div
+        className="campsite-content"
+        role="button"
+        tabIndex={0}
+        onClick={() => setIsExpanded(true)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setIsExpanded(true);
+          }
+        }}
+      >
+        {images.length > 0 ? (
+          <img
+            src={images[0].original}
+            alt={images[0].originalAlt}
+            className="campsite-thumbnail"
+          />
+        ) : (
+          <div className="no-image-container">No Image Available</div>
+        )}
 
-          <div className="campsite-info">
-            <h3>
-              {CampsiteName}
-              {Loop && Loop.trim() ? ` - ${Loop}` : ""}
-            </h3>
-            <div className="campsite-tags">
-              {toTitleCase(CampsiteType)} -{" "}
-              {CampsiteReservable ? "Reservable" : "Not Reservable"}
-            </div>
+        <div className="campsite-info">
+          <h3>
+            {CampsiteName}
+            {Loop && Loop.trim() ? ` - ${Loop}` : ""}
+          </h3>
+          <div className="campsite-tags">
+            {toTitleCase(CampsiteType)} -{" "}
+            {CampsiteReservable ? "Reservable" : "Not Reservable"}
           </div>
         </div>
       </div>
+    </div>
+  );
+
+  return (
+    <>
+      {showExpandHint ? (
+        <div className="campsite-expandable">
+          <div
+            className="campsite-expandable-preview"
+            aria-describedby={expandHintId}
+          >
+            {campsiteCard}
+          </div>
+          <p className="campsite-expandable-hint" id={expandHintId}>
+            <LuMousePointerClick
+              className="campsite-expandable-hint-icon"
+              aria-hidden
+            />
+            <span>Click the card to open full campsite view.</span>
+          </p>
+        </div>
+      ) : (
+        campsiteCard
+      )}
       <CampsiteModal
         isExpanded={isExpanded}
         onClose={() => setIsExpanded(false)}
@@ -306,6 +331,7 @@ Campsite.propTypes = {
   }).isRequired,
   facilityName: PropTypes.string.isRequired,
   isExpanded: PropTypes.bool,
+  showExpandHint: PropTypes.bool,
 };
 
 export default Campsite;

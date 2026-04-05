@@ -1,7 +1,11 @@
 import { format, parseISO } from "date-fns";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
-import { LuToggleLeft, LuToggleRight } from "react-icons/lu";
+import {
+  LuMousePointerClick,
+  LuToggleLeft,
+  LuToggleRight,
+} from "react-icons/lu";
 import { fetchCampsiteDetails } from "../../../api/campsites";
 import {
   updateMonitoringStatus,
@@ -179,12 +183,34 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
             }
           }}
         >
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <Campsite
-              campsite={transformCampsiteData(campsiteDetails[0], reservation)}
-              facilityName={reservation.facility_name || "Unknown Facility"}
-              isExpanded={false}
-            />
+          <div
+            className="modal-content reservation-campsite-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              className="reservation-campsite-preview-wrap"
+              aria-describedby="reservation-campsite-modal-hint"
+            >
+              <Campsite
+                campsite={transformCampsiteData(
+                  campsiteDetails[0],
+                  reservation,
+                )}
+                facilityName={reservation.facility_name || "Unknown Facility"}
+                isExpanded={false}
+                showExpandHint={false}
+              />
+            </div>
+            <p
+              className="reservation-campsite-modal-hint"
+              id="reservation-campsite-modal-hint"
+            >
+              <LuMousePointerClick
+                className="reservation-campsite-modal-hint-icon"
+                aria-hidden
+              />
+              <span>Click the card to open full campsite view.</span>
+            </p>
           </div>
         </div>
       )}

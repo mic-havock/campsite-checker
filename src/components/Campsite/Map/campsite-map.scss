@@ -51,18 +51,37 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.7);
     z-index: 2000;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 20px;
 
-    .campsite-card {
-      max-width: 90%;
+    > div {
+      width: 90%;
+      max-width: 450px;
       max-height: 90vh;
       overflow-y: auto;
       margin: 0;
+      box-sizing: border-box;
+      padding: 1rem;
+      background-color: $background-light;
+      border: 1px solid rgba($color-bark, 0.14);
+      border-radius: $button-border-radius;
+      box-shadow:
+        $shadow-lg,
+        0 0 0 1px rgba($color-bark, 0.08);
+    }
+
+    .campsite-card {
+      margin: 0;
+      background-color: $text-light;
+      padding: 0.35rem 0.4rem 0.45rem;
+    }
+
+    .campsite-thumbnail {
+      height: 220px;
     }
   }
 }
