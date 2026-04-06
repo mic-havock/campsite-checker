@@ -194,11 +194,7 @@ const FacilitiesFinder = () => {
           <p className="description">{CONTENT.FACILITIES_FINDER.DESCRIPTION}</p>
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="facilities-finder__form"
-          style={{ width: "100%" }}
-        >
+        <form onSubmit={handleSubmit} className="facilities-finder__form">
           <div className="form-group">
             <input
               id="campground-name"
