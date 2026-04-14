@@ -40,15 +40,32 @@ export const fetchCampsitesByFacility = async (facilityId) => {
     throw error;
   }
 };
+const campsiteDetailsCache = new Map();
+
+/**
+ * Fetches campsite details with memoization to prevent redundant API calls.
+ * Caches the promise to handle concurrent requests for the same campsiteId.
+ */
 export const fetchCampsiteDetails = async (campsiteId) => {
-  try {
-    const response = await axios.get(`${BASE_URL}/campsites/${campsiteId}`);
-    return response.data;
-  } catch (error) {
-    console.error(
-      "Error fetching campsite details:",
-      error.response?.data || error.message
-    );
-    throw error;
+  if (campsiteDetailsCache.has(campsiteId)) {
+    return campsiteDetailsCache.get(campsiteId);
   }
+
+  const fetchPromise = (async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/campsites/${campsiteId}`);
+      return response.data;
+    } catch (error) {
+      // Remove from cache on failure to allow subsequent retry attempts
+      campsiteDetailsCache.delete(campsiteId);
+      console.error(
+        "Error fetching campsite details:",
+        error.response?.data || error.message
+      );
+      throw error;
+    }
+  })();
+
+  campsiteDetailsCache.set(campsiteId, fetchPromise);
+  return fetchPromise;
 };
