@@ -59,10 +59,7 @@ const FacilitiesMap = ({ facilities, onFacilitySelect }) => {
     ) {
       const validFacilities = facilities.filter(
         (facility) =>
-          facility.FacilityLatitude &&
-          facility.FacilityLongitude &&
-          !isNaN(parseFloat(facility.FacilityLatitude)) &&
-          !isNaN(parseFloat(facility.FacilityLongitude))
+          facility.GEOJSON && facility.GEOJSON.COORDINATES && facility.GEOJSON.COORDINATES.length === 2 && !isNaN(parseFloat(facility.GEOJSON.COORDINATES[1])) && !isNaN(parseFloat(facility.GEOJSON.COORDINATES[0]))
       );
 
       previousFacilitiesLength.current = facilities.length;
@@ -71,11 +68,11 @@ const FacilitiesMap = ({ facilities, onFacilitySelect }) => {
         setHasValidCoordinates(true);
 
         const totalLat = validFacilities.reduce(
-          (sum, facility) => sum + parseFloat(facility.FacilityLatitude),
+          (sum, facility) => sum + parseFloat(facility.GEOJSON.COORDINATES[1]),
           0
         );
         const totalLng = validFacilities.reduce(
-          (sum, facility) => sum + parseFloat(facility.FacilityLongitude),
+          (sum, facility) => sum + parseFloat(facility.GEOJSON.COORDINATES[0]),
           0
         );
 
@@ -101,10 +98,7 @@ const FacilitiesMap = ({ facilities, onFacilitySelect }) => {
     if (facilities && facilities.length > 0) {
       const validFacilities = facilities.filter(
         (facility) =>
-          facility.FacilityLatitude &&
-          facility.FacilityLongitude &&
-          !isNaN(parseFloat(facility.FacilityLatitude)) &&
-          !isNaN(parseFloat(facility.FacilityLongitude))
+          facility.GEOJSON && facility.GEOJSON.COORDINATES && facility.GEOJSON.COORDINATES.length === 2 && !isNaN(parseFloat(facility.GEOJSON.COORDINATES[1])) && !isNaN(parseFloat(facility.GEOJSON.COORDINATES[0]))
       );
       setFacilitiesWithCoords(validFacilities);
     } else {
@@ -167,8 +161,8 @@ const FacilitiesMap = ({ facilities, onFacilitySelect }) => {
             <Marker
               key={facility.FacilityID}
               position={[
-                parseFloat(facility.FacilityLatitude),
-                parseFloat(facility.FacilityLongitude),
+                parseFloat(facility.GEOJSON.COORDINATES[1]),
+                parseFloat(facility.GEOJSON.COORDINATES[0]),
               ]}
               eventHandlers={{
                 click: () => {
