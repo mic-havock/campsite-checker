@@ -172,7 +172,8 @@
   }
 
   .map-col {
-    width: 100%;
+  width: 100%;
+  min-height: 400px;
     margin: 0 auto;
     max-width: 1200px;
   }
@@ -294,6 +295,7 @@
 
 .grid-col {
   width: 100%;
+  min-height: 400px;
   margin-bottom: 5rem;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
