@@ -147,7 +147,7 @@ const FacilitiesFinder = () => {
         latitude: facility.FacilityLatitude,
         longitude: facility.FacilityLongitude,
       },
-      amenityFeature: facility.FACILITYADDRESS.map((address) => ({
+      amenityFeature: (facility.FACILITYADDRESS || []).map((address) => ({
         "@type": "LocationFeatureSpecification",
         name: address.AddressType,
         value: true,
