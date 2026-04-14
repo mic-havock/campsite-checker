@@ -1,0 +1,27 @@
+{
+    "METADATA": {
+        "RESULTS": {
+            "CURRENT_COUNT": 4,
+            "TOTAL_COUNT": 4
+        },
+        "SEARCH_PARAMETERS": {
+            "LIMIT": 100,
+            "OFFSET": 0,
+            "QUERY": "loft"
+        }
+    },
+    "RECDATA": [
+        {
+            "FacilityID": "232433",
+            "FacilityName": "Loft Mountain Campground",
+            "FacilityTypeDescription": "Campground",
+            "GEOJSON": {
+                "COORDINATES": [
+                    -78.6705722,
+                    38.2487
+                ],
+                "TYPE": "Point"
+            }
+        }
+    ]
+}
