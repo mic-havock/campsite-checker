@@ -2,24 +2,26 @@
 @import "../../styles/responsive";
 
 .facilities-finder {
-  background-color: $background-light;
+  background-color: $background-base;
   padding: 10px;
   margin: 0;
   width: 100%;
   box-sizing: border-box;
-  position: absolute;
+  position: relative;
   overflow-x: hidden;
-  top: 0;
-  left: 0;
 
   .facilities-finder__form {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 1rem;
     max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 15px;
+    margin: 0 auto 2rem auto;
+    padding: 2rem;
+    background: $card-bg;
+    border-radius: 16px;
+    box-shadow: $shadow-md;
+    border: 1px solid rgba(0, 0, 0, 0.05);
 
     .form-group {
       display: flex;
@@ -41,28 +43,27 @@
       select {
         width: 100%;
         max-width: 400px;
-        border: 2px solid $secondary-color;
+        border: 1px solid rgba(0, 0, 0, 0.1);
         border-radius: $button-border-radius;
-        padding: 0.8rem;
-        padding-top: 0;
-        padding-bottom: 0;
+        padding: 1rem;
         transition: $button-transition;
-        background-color: white;
+        background-color: rgba(255, 255, 255, 0.6);
         box-sizing: border-box;
         min-height: 48px;
         -webkit-appearance: none;
         -moz-appearance: none;
         appearance: none;
+        box-shadow: $shadow-sm;
 
         @include mobile {
           width: 100%;
           max-width: 100%;
-          padding: 0.6rem;
+          padding: 0.8rem;
         }
 
         &:focus {
           border-color: $primary-color;
-          box-shadow: 0 0 5px rgba($primary-color, 0.2);
+          box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
           outline: none;
         }
       }
@@ -180,13 +181,13 @@
     position: absolute;
     top: 10px;
     right: 10px;
-    padding: 6px 12px;
+    padding: 10px 16px;
     background-color: #4a90e2;
     color: white;
     border: none;
     border-radius: $button-border-radius;
     font-size: 1rem;
-    font-weight: 400;
+    font-weight: 500;
     cursor: pointer;
     width: 160px;
     max-width: 200px;
@@ -195,10 +196,13 @@
     line-height: 1.2;
     transform: none;
     z-index: 10;
+    @include glass;
+    background: rgba(#4a90e2, 0.9);
+    box-shadow: $shadow-md;
 
     &:hover {
       background-color: #357abd;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      box-shadow: $shadow-lg;
     }
 
     @include mobile {

@@ -1,10 +1,6 @@
 import PropTypes from "prop-types";
 import ReactImageGallery from "react-image-gallery";
-
 import "react-image-gallery/styles/css/image-gallery.css";
-
-
-
 import "./image-gallery.scss";
 
 const ImageGallery = ({
