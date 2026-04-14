@@ -28,7 +28,7 @@ const MapUpdater = ({ center, zoom, shouldUpdate }) => {
       map.setView(center, zoom);
       hasUpdatedRef.current = true;
     } else if (center && zoom && shouldUpdate) {
-       map.setView(center, zoom);
+      map.setView(center, zoom);
     }
   }, [map, center, zoom, shouldUpdate]);
 
@@ -59,7 +59,11 @@ const FacilitiesMap = ({ facilities, onFacilitySelect }) => {
     ) {
       const validFacilities = facilities.filter(
         (facility) =>
-          facility.GEOJSON && facility.GEOJSON.COORDINATES && facility.GEOJSON.COORDINATES.length === 2 && !isNaN(parseFloat(facility.GEOJSON.COORDINATES[1])) && !isNaN(parseFloat(facility.GEOJSON.COORDINATES[0]))
+          facility.GEOJSON &&
+          facility.GEOJSON.COORDINATES &&
+          facility.GEOJSON.COORDINATES.length === 2 &&
+          !isNaN(parseFloat(facility.GEOJSON.COORDINATES[1])) &&
+          !isNaN(parseFloat(facility.GEOJSON.COORDINATES[0])),
       );
 
       previousFacilitiesLength.current = facilities.length;
@@ -69,11 +73,11 @@ const FacilitiesMap = ({ facilities, onFacilitySelect }) => {
 
         const totalLat = validFacilities.reduce(
           (sum, facility) => sum + parseFloat(facility.GEOJSON.COORDINATES[1]),
-          0
+          0,
         );
         const totalLng = validFacilities.reduce(
           (sum, facility) => sum + parseFloat(facility.GEOJSON.COORDINATES[0]),
-          0
+          0,
         );
 
         const avgLat = totalLat / validFacilities.length;
@@ -82,9 +86,9 @@ const FacilitiesMap = ({ facilities, onFacilitySelect }) => {
         setMapCenter([avgLat, avgLng]);
 
         if (validFacilities.length === 1) {
-            setZoom(10);
+          setZoom(10);
         } else {
-            setZoom(6);
+          setZoom(6);
         }
 
         setInitialMapSetup(true);
@@ -98,11 +102,15 @@ const FacilitiesMap = ({ facilities, onFacilitySelect }) => {
     if (facilities && facilities.length > 0) {
       const validFacilities = facilities.filter(
         (facility) =>
-          facility.GEOJSON && facility.GEOJSON.COORDINATES && facility.GEOJSON.COORDINATES.length === 2 && !isNaN(parseFloat(facility.GEOJSON.COORDINATES[1])) && !isNaN(parseFloat(facility.GEOJSON.COORDINATES[0]))
+          facility.GEOJSON &&
+          facility.GEOJSON.COORDINATES &&
+          facility.GEOJSON.COORDINATES.length === 2 &&
+          !isNaN(parseFloat(facility.GEOJSON.COORDINATES[1])) &&
+          !isNaN(parseFloat(facility.GEOJSON.COORDINATES[0])),
       );
       setFacilitiesWithCoords(validFacilities);
     } else {
-        setFacilitiesWithCoords([]);
+      setFacilitiesWithCoords([]);
     }
   }, [facilities, initialMapSetup]);
 
@@ -115,7 +123,7 @@ const FacilitiesMap = ({ facilities, onFacilitySelect }) => {
   }
 
   if (!facilities || facilities.length === 0) {
-     return null;
+    return null;
   }
 
   return (
@@ -129,8 +137,8 @@ const FacilitiesMap = ({ facilities, onFacilitySelect }) => {
           <div className="map-controls leaflet-top leaflet-right">
             <button
               onClick={(e) => {
-                  e.stopPropagation();
-                  setIsSatelliteView(!isSatelliteView);
+                e.stopPropagation();
+                setIsSatelliteView(!isSatelliteView);
               }}
               className="view-toggle-button leaflet-control"
             >
@@ -151,11 +159,7 @@ const FacilitiesMap = ({ facilities, onFacilitySelect }) => {
             }
           />
 
-          <MapUpdater
-            center={mapCenter}
-            zoom={zoom}
-            shouldUpdate={true}
-          />
+          <MapUpdater center={mapCenter} zoom={zoom} shouldUpdate={true} />
 
           {facilitiesWithCoords.map((facility) => (
             <Marker
@@ -166,9 +170,9 @@ const FacilitiesMap = ({ facilities, onFacilitySelect }) => {
               ]}
               eventHandlers={{
                 click: () => {
-                    if (onFacilitySelect) {
-                        onFacilitySelect(facility);
-                    }
+                  if (onFacilitySelect) {
+                    onFacilitySelect(facility);
+                  }
                 },
               }}
             >
