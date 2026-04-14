@@ -139,6 +139,44 @@
     font-weight: bold;
   }
 
+  .view-toggle-container {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+
+    .view-toggle-btn {
+      padding: 0.5rem 1.5rem;
+      border: 2px solid $primary-color;
+      background-color: transparent;
+      color: $primary-color;
+      border-radius: $button-border-radius;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &.active {
+        background-color: $primary-color;
+        color: white;
+      }
+
+      &:hover:not(.active) {
+        background-color: rgba($primary-color, 0.1);
+      }
+    }
+  }
+
+  .results-container {
+    width: 100%;
+    margin-bottom: 2rem;
+  }
+
+  .map-col {
+    width: 100%;
+    margin: 0 auto;
+    max-width: 1200px;
+  }
+
   .floating-reservation-button {
     position: absolute;
     top: 10px;
