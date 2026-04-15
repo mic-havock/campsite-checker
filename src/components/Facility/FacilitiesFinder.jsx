@@ -101,7 +101,7 @@ const FacilitiesFinder = () => {
 
     try {
       const response = await fetchCampsitesByFacility(
-        selectedFacility.FacilityID
+        selectedFacility.FacilityID,
       );
       const campsites = response.RECDATA || [];
       saveToStorage(STORAGE_KEYS.SELECTED_FACILITY, selectedFacility);
@@ -196,11 +196,7 @@ const FacilitiesFinder = () => {
           <p className="description">{CONTENT.FACILITIES_FINDER.DESCRIPTION}</p>
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="facilities-finder__form"
-          style={{ width: "100%" }}
-        >
+        <form onSubmit={handleSubmit} className="facilities-finder__form">
           <div className="form-group">
             <input
               id="campground-name"
@@ -229,9 +225,15 @@ const FacilitiesFinder = () => {
 
           <div className="buttons-container">
             <button type="submit" className="submit" disabled={loading}>
-
               {loading ? (
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "8px",
+                  }}
+                >
                   <LoadingSpinner size="small" />
                   <span>Loading...</span>
                 </div>

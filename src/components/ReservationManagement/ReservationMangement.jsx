@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { FaToggleOff, FaToggleOn, FaTrashAlt } from "react-icons/fa";
+import { LuToggleLeft, LuToggleRight, LuTrash2 } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
 import {
   fetchReservationsActive,
@@ -71,12 +71,12 @@ const MonitoringToggle = ({ active, onToggle }) => (
   >
     {active ? (
       <>
-        <FaToggleOn className="toggle-icon" />
+        <LuToggleRight className="toggle-icon" />
         <span className="toggle-text">All Monitoring - Enabled</span>
       </>
     ) : (
       <>
-        <FaToggleOff className="toggle-icon" />
+        <LuToggleLeft className="toggle-icon" />
         <span className="toggle-text">All Monitoring - Disabled</span>
       </>
     )}
@@ -116,7 +116,7 @@ const DeleteAllButton = ({ onDelete, disabled }) => {
       disabled={disabled}
       title={showConfirm ? "Click again to confirm deletion" : "Delete all reservations"}
     >
-      <FaTrashAlt className="delete-icon" />
+      <LuTrash2 className="delete-icon" />
       <span className="delete-text">
         {showConfirm ? "Click Again to Confirm Delete All" : "Delete All Reservations"}
       </span>
