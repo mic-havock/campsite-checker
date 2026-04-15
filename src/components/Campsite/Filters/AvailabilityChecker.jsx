@@ -27,7 +27,7 @@ const getNextMonthsFromDate = (currentDate) => {
     const date = new Date(
       currentDate.getFullYear(),
       currentDate.getMonth() + i,
-      1
+      1,
     );
 
     const monthName = MONTH_NAMES[date.getMonth()];
@@ -67,12 +67,12 @@ const AvailabilityChecker = ({ facilityID, facilityName, setIsLoading }) => {
     try {
       const startDate = new Date(selectedMonth);
       const utcDate = new Date(
-        Date.UTC(startDate.getFullYear(), startDate.getMonth(), 1, 0, 0, 0, 0)
+        Date.UTC(startDate.getFullYear(), startDate.getMonth(), 1, 0, 0, 0, 0),
       );
 
       const data = await fetchCampgroundAvailability(
         facilityID,
-        utcDate.toISOString()
+        utcDate.toISOString(),
       );
 
       navigate("/campground-availability", {
@@ -96,7 +96,7 @@ const AvailabilityChecker = ({ facilityID, facilityName, setIsLoading }) => {
   return (
     <div className="availability-card">
       <div className="availability-header">
-        <h2>Check Campground Availability</h2>
+        <h2>Monthly Campground Availability</h2>
       </div>
       <div className="availability-body">
         <div className="availability-row">

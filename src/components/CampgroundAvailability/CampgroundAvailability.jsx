@@ -445,7 +445,7 @@ const CampgroundAvailability = () => {
 
             <div className="availability-card">
               <div className="availability-header">
-                <h2>Check Campground Availability</h2>
+                <h2>Monthly Campground Availability</h2>
               </div>
               <div className="availability-body">
                 <div className="availability-row">
