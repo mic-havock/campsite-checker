@@ -27,7 +27,7 @@ Visit [kampscout.com](https://kampscout.com) to use the application.
 Before you begin, ensure you have the following installed:
 
 - Node.js (v18.0.0 or higher)
-- pnpm (v8.0.0 or higher)
+- [Corepack](https://nodejs.org/api/corepack.html) (ships with Node.js 16.13+), used to install the pnpm version declared in `package.json` (`packageManager` field)
 
 ## Installation
 
@@ -43,9 +43,11 @@ git clone https://github.com/mkovach302/campsite-reservation-system.git
 cd campsite-reservation-system
 ```
 
-3. Install dependencies:
+3. Enable Corepack and use the project’s pinned pnpm version, then install dependencies:
 
 ```bash
+corepack enable
+corepack install
 pnpm install
 ```
 

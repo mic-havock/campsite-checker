@@ -15,9 +15,11 @@
     flex-direction: column;
     align-items: center;
     gap: 1rem;
-    max-width: 1200px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: min(28rem, calc(100vw - 2rem));
     margin: 0 auto 2rem auto;
-    padding: 2rem;
+    padding: 1.5rem 1.25rem;
     background: $card-bg;
     border-radius: 16px;
     box-shadow: $shadow-md;
@@ -173,7 +175,7 @@
 
   .map-col {
   width: 100%;
-  min-height: 400px;
+  height: 600px;
     margin: 0 auto;
     max-width: 1200px;
   }
