@@ -174,6 +174,11 @@ const CampsiteAvailability = ({ availabilities, facilityName, campsite }) => {
         setIsCreatingAlert={setIsCreatingAlert}
         selectedCampsite={campsite}
         campsiteName={facilityName}
+        facilityId={
+          campsite?.FacilityID != null
+            ? String(campsite.FacilityID)
+            : undefined
+        }
       />
     </div>
   );

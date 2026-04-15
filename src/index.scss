@@ -1,3 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
 @import "./styles/variables";
 @import "./styles/responsive";
 
@@ -7,10 +13,10 @@ $accent-color: #8b4513;
 $hover-color: #a0522d;
 
 :root {
-  font-family: "Inter", sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  background-color: $background-light;
+  background-color: $background-base;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -29,7 +35,7 @@ a {
 }
 
 body {
-  background-color: $background-light;
+  background-color: $background-base;
   margin: 0;
   display: flex;
   place-items: center;
@@ -42,10 +48,15 @@ body {
   position: relative;
 }
 
+h1, h2, h3 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.5rem;
+}
+
 h1 {
   font-size: 2.5em;
-  line-height: 1;
-  font-weight: bolder;
+  line-height: 1.2;
   text-align: center;
 
   @include mobile {
@@ -75,7 +86,7 @@ html {
 @media (prefers-color-scheme: light) {
   :root {
     color: $primary-color;
-    background-color: $secondary-color;
+    background-color: $background-base;
   }
 
   a:hover {

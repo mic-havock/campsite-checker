@@ -174,6 +174,7 @@ const CampsitesPage = () => {
               key={campsite.CampsiteID}
               campsite={campsite}
               facilityName={facilityName}
+              showExpandHint={false}
             />
           ))}
         </div>
