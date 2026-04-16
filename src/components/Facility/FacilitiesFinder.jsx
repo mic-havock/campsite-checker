@@ -118,12 +118,14 @@ const FacilitiesFinder = () => {
     setSelectedFacility(row);
 
     requestAnimationFrame(() => {
-      const gridElement = document.querySelector(".grid-col");
-      gridElement?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-        inline: "nearest",
-      });
+      const detailElement = document.getElementById("facility-details-section");
+      if (detailElement) {
+        detailElement.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+          inline: "nearest",
+        });
+      }
     });
   };
 

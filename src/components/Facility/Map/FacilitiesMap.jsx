@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   MapContainer,
   Marker,
+  Popup,
   TileLayer,
   Tooltip,
   useMap,
@@ -159,17 +160,26 @@ const FacilitiesMap = ({ facilities, onFacilitySelect }) => {
                 parseFloat(facility.GEOJSON.COORDINATES[1]),
                 parseFloat(facility.GEOJSON.COORDINATES[0]),
               ]}
-              eventHandlers={{
-                click: () => {
-                    if (onFacilitySelect) {
-                        onFacilitySelect(facility);
-                    }
-                },
-              }}
             >
               <Tooltip permanent={false} direction="top">
                 {facility.FacilityName}
               </Tooltip>
+              <Popup>
+                <div className="map-popup-content">
+                  <h3>{facility.FacilityName}</h3>
+                  <p>{facility.FacilityTypeDescription}</p>
+                  <button
+                    className="view-details-btn"
+                    onClick={() => {
+                      if (onFacilitySelect) {
+                        onFacilitySelect(facility);
+                      }
+                    }}
+                  >
+                    View Details
+                  </button>
+                </div>
+              </Popup>
             </Marker>
           ))}
         </MapContainer>
