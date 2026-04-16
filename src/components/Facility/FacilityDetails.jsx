@@ -65,7 +65,7 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
   const images = transformMedia(facility.MEDIA);
 
   return (
-    <div className="facility-details">
+    <div className="facility-details" id="facility-details-section">
       {isLoading && <LoadingSpinner fullPage />}
 
       <div className="view-campsites-wrapper">
