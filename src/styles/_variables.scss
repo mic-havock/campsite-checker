@@ -26,6 +26,34 @@ $shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
 $shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
 $shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
 
+// Modular Scale & Typography
+$font-size-label: 0.7rem;
+$font-size-base: 1rem;
+$font-weight-bold: 700;
+$letter-spacing-high: 0.12em;
+
+// Tag Cloud Colors (Muted)
+$tag-utility-bg: rgba($color-sky, 0.15);
+$tag-utility-text: darken($color-sky, 30%);
+$tag-geography-bg: rgba($color-moss, 0.15);
+$tag-geography-text: darken($color-moss, 20%);
+$tag-rules-bg: rgba($color-sunset, 0.1);
+$tag-rules-text: darken($color-sunset, 15%);
+
+@mixin label-caps {
+  font-size: $font-size-label;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-high;
+  color: $color-earth;
+  margin-bottom: 0.2rem;
+}
+
+@mixin value-bold {
+  font-weight: $font-weight-bold;
+  font-size: $font-size-base;
+  color: $text-primary;
+}
+
 @mixin glass {
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);

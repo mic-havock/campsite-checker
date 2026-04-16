@@ -6,6 +6,47 @@ import Campsite from "./Campsite";
 import "./campsites-page.scss";
 import AvailabilityChecker from "./Filters/AvailabilityChecker";
 import CampsiteFilter from "./Filters/CampsiteFilter";
+import AvailabilityHeatmap from "../CampgroundAvailability/AvailabilityHeatmap";
+import { FixedSizeList as List } from "react-window";
+import PropTypes from "prop-types";
+
+const Row = ({ index, style, data }) => {
+  const { filteredCampsites, selectedCampsite, setSelectedCampsite } = data;
+  const campsite = filteredCampsites[index];
+  const isSelected = selectedCampsite?.CampsiteID === campsite.CampsiteID;
+
+  return (
+    <div style={style} className="virtual-row-wrapper">
+      <div
+        className={`campsite-summary-row ${isSelected ? "selected" : ""}`}
+        onClick={() => setSelectedCampsite(campsite)}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            setSelectedCampsite(campsite);
+          }
+        }}
+      >
+        <div className="summary-site">Site {campsite.CampsiteName}</div>
+        <div className="summary-type">{campsite.CampsiteType}</div>
+        <div className="summary-price">
+          ${campsite.CampsiteFee || "0"}/night
+        </div>
+      </div>
+    </div>
+  );
+};
+
+Row.propTypes = {
+  index: PropTypes.number.isRequired,
+  style: PropTypes.object.isRequired,
+  data: PropTypes.shape({
+    filteredCampsites: PropTypes.array.isRequired,
+    selectedCampsite: PropTypes.object,
+    setSelectedCampsite: PropTypes.func.isRequired,
+  }).isRequired,
+};
 
 const useFilteredCampsites = (
   campsiteData,
@@ -27,8 +68,9 @@ const useFilteredCampsites = (
 const CampsitesPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { campsites, facilityName } = location.state || {};
+  const { campsites, facilityName, facility } = location.state || {};
   const [campsiteData, setCampsiteData] = useState([]);
+  const [listHeight, setListHeight] = useState(600);
   const facilityID = campsites?.[0]?.FacilityID;
   const [loadingState, setLoadingState] = useState({
     isLoading: false,
@@ -36,6 +78,19 @@ const CampsitesPage = () => {
   });
   const [showReservableOnly, setShowReservableOnly] = useState(false);
   const [selectedLoops, setSelectedLoops] = useState([]);
+  const [selectedCampsite, setSelectedCampsite] = useState(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const vh = window.innerHeight;
+      const height = Math.max(400, vh - 500); // 500px for hero + heatmap + controls
+      setListHeight(height);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     if (!campsites || campsites.length === 0) {
@@ -54,6 +109,39 @@ const CampsitesPage = () => {
     showReservableOnly,
     selectedLoops,
   );
+
+  // Row renderer for react-window
+  const Row = ({ index, style }) => {
+    const campsite = filteredCampsites[index];
+    const isSelected = selectedCampsite?.CampsiteID === campsite.CampsiteID;
+
+    return (
+      <div style={style} className="virtual-row-wrapper">
+        <div
+          className={`campsite-summary-row ${isSelected ? "selected" : ""}`}
+          onClick={() => setSelectedCampsite(campsite)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              setSelectedCampsite(campsite);
+            }
+          }}
+        >
+          <div className="summary-site">Site {campsite.CampsiteName}</div>
+          <div className="summary-type">{campsite.CampsiteType}</div>
+          <div className="summary-price">
+            ${campsite.CampsiteFee || "0"}/night
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  Row.propTypes = {
+    index: PropTypes.number.isRequired,
+    style: PropTypes.object.isRequired,
+  };
 
   const navigateToMapView = () => {
     if (!campsiteData || campsiteData.length === 0) {
@@ -114,6 +202,18 @@ const CampsitesPage = () => {
     );
   }
 
+  const facilityCoordinates = facility?.GEOJSON?.COORDINATES;
+  const mapUrl = facilityCoordinates
+    ? `https://www.google.com/maps?q=${facilityCoordinates[1]},${facilityCoordinates[0]}`
+    : null;
+
+  const elevationAttr = facility?.ATTRIBUTES?.find(
+    (a) => a.AttributeName === "Elevation",
+  );
+  const cellSignalAttr = facility?.ATTRIBUTES?.find(
+    (a) => a.AttributeName === "Cell Signal",
+  );
+
   return (
     <>
       <Helmet>
@@ -124,9 +224,48 @@ const CampsitesPage = () => {
       <div className="campsites-page">
         {loadingState.isLoading && <LoadingSpinner fullPage />}
 
-        <div className="page-header">
-          <h1>{facilityName + " - Campsites" || "Campground's Campsites"}</h1>
-        </div>
+        <header className="campground-hero">
+          <div className="hero-content">
+            <div className="hero-main">
+              <h1>{facilityName || "Campground"}</h1>
+              {mapUrl && (
+                <a
+                  href={mapUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="location-link"
+                >
+                  {facility.FacilityCity}, {facility.FacilityStateCode}
+                </a>
+              )}
+            </div>
+            <div className="quick-stats">
+              <div className="stat-item">
+                <span className="stat-label">TOTAL SITES</span>
+                <span className="stat-value">{campsites.length}</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">CELL SIGNAL</span>
+                <span className="stat-value">
+                  {cellSignalAttr?.AttributeValue || "Unknown"}
+                </span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">ELEV.</span>
+                <span className="stat-value">
+                  {elevationAttr?.AttributeValue || "Unknown"}
+                </span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {facilityID && (
+          <AvailabilityHeatmap
+            facilityId={facilityID}
+            campsites={filteredCampsites}
+          />
+        )}
 
         <div className="controls-wrapper">
           <div className="controls-container">
@@ -168,15 +307,37 @@ const CampsitesPage = () => {
           </div>
         </div>
 
-        <div className="campsites-grid">
-          {filteredCampsites.map((campsite) => (
-            <Campsite
-              key={campsite.CampsiteID}
-              campsite={campsite}
-              facilityName={facilityName}
-              showExpandHint={false}
-            />
-          ))}
+        <div className="master-detail-layout">
+          <div className="list-column" style={{ height: listHeight }}>
+            <List
+              height={listHeight}
+              itemCount={filteredCampsites.length}
+              itemSize={60}
+              width="100%"
+            >
+              {Row}
+            </List>
+          </div>
+          <div className={`detail-column ${selectedCampsite ? "active" : ""}`}>
+            <div
+              className="close-sheet"
+              onClick={() => setSelectedCampsite(null)}
+            ></div>
+            {selectedCampsite ? (
+              <Campsite
+                key={selectedCampsite.CampsiteID}
+                campsite={selectedCampsite}
+                facilityName={facilityName}
+                isExpanded={true}
+                showExpandHint={false}
+                inline={true}
+              />
+            ) : (
+              <div className="no-selection-placeholder">
+                <p>Select a campsite from the list to view details</p>
+              </div>
+            )}
+          </div>
         </div>
 
         <button onClick={() => navigate("/")} className="back-button">

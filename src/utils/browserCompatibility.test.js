@@ -1,3 +1,4 @@
+/* global global */
 import { test, describe, beforeEach, afterEach, mock } from 'node:test';
 import assert from 'node:assert';
 import * as browserCompat from './browserCompatibility.js';

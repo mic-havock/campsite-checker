@@ -1,5 +1,43 @@
 @import "../../styles/variables";
 
+.priority-ctas {
+  display: flex;
+  gap: 1rem;
+  margin: 1.5rem 0;
+
+  .cta-btn {
+    @include button-base;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    font-weight: 700;
+
+    &.reserve {
+      background-color: $secondary-color;
+      color: white;
+      &:hover {
+        background-color: darken($secondary-color, 10%);
+      }
+    }
+
+    &.monitor {
+      background-color: transparent;
+      border: 2px solid $color-sunset;
+      color: $color-sunset;
+      &:hover {
+        background-color: rgba($color-sunset, 0.05);
+      }
+    }
+
+    .bell-icon {
+      font-size: 1.2rem;
+    }
+  }
+}
+
 .availability-section {
   margin-top: -1rem;
   padding: 1rem;

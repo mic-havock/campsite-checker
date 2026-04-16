@@ -1,0 +1,176 @@
+@import "../../styles/variables";
+
+.availability-heatmap-container {
+  max-width: 1200px;
+  margin: 1.5rem auto;
+  padding: 1rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: $shadow-sm;
+  overflow-x: auto;
+  position: relative;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
+  }
+}
+
+.heatmap-header {
+  display: flex;
+  margin-bottom: 0.5rem;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 0.5rem;
+
+  .campsite-col-header {
+    width: 100px;
+    flex-shrink: 0;
+    @include label-caps;
+    display: flex;
+    align-items: center;
+  }
+
+  .days-header {
+    display: flex;
+    flex-grow: 1;
+    gap: 4px;
+
+    .day-label {
+      width: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+
+      .day-name {
+        @include label-caps;
+        font-size: 0.6rem;
+        margin-bottom: 0;
+      }
+      .day-num {
+        @include value-bold;
+        font-size: 0.85rem;
+      }
+    }
+  }
+}
+
+.heatmap-body {
+  .heatmap-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+
+    .campsite-name-cell {
+      width: 100px;
+      flex-shrink: 0;
+      @include value-bold;
+      font-size: 0.8rem;
+    }
+
+    .days-row {
+      display: flex;
+      flex-grow: 1;
+      gap: 4px;
+
+      .heatmap-cell {
+        width: 40px;
+        height: 32px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: $button-transition;
+        position: relative;
+
+        &.available {
+          background-color: rgba($secondary-color, 0.3);
+          &:hover {
+            background-color: rgba($secondary-color, 0.5);
+          }
+        }
+
+        &.unavailable {
+          background-color: #f0f0f0;
+          &:hover {
+            background-color: #e0e0e0;
+          }
+        }
+
+        &.selected {
+          box-shadow: 0 0 0 2px $primary-color;
+          z-index: 10;
+        }
+
+        .cell-actions {
+          position: absolute;
+          top: 100%;
+          left: 50%;
+          transform: translateX(-50%);
+          background: white;
+          box-shadow: $shadow-md;
+          padding: 8px;
+          border-radius: 8px;
+          z-index: 20;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          min-width: 80px;
+          margin-top: 8px;
+
+          &::before {
+            content: "";
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-bottom: 6px solid white;
+          }
+
+          .action-btn {
+            @include button-base;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            width: 100%;
+
+            &.reserve {
+              background-color: $secondary-color;
+              color: white;
+            }
+            &.monitor {
+              background-color: white;
+              border: 1px solid $color-sunset;
+              color: $color-sunset;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.heatmap-loading {
+  text-align: center;
+  padding: 2rem;
+  color: $secondary-color;
+  font-style: italic;
+}
+
+.heatmap-footer {
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.8rem;
+  color: $color-earth;
+  font-style: italic;
+}

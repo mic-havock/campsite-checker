@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import { useMemo, useState } from "react";
+import { LuBell } from "react-icons/lu";
 import { isNonReservableStatus } from "../../config/reservationStatus";
 import AlertModal from "../Common/AlertModal/AlertModal";
 import "./campsite-availability.scss";
@@ -91,6 +92,13 @@ const CampsiteAvailability = ({ availabilities, facilityName, campsite }) => {
     }
   };
 
+  const handleReserveClick = () => {
+    window.open(
+      `https://www.recreation.gov/camping/campsites/${campsite.CampsiteID}`,
+      "_blank"
+    );
+  };
+
   return (
     <div className="availability-section">
       <div className="availability-legend">
@@ -113,6 +121,15 @@ const CampsiteAvailability = ({ availabilities, facilityName, campsite }) => {
         <p className="info-text">
           Click Reserved/NYR Dates for Availability Alerts{" "}
         </p>
+      </div>
+
+      <div className="priority-ctas">
+        <button className="cta-btn reserve" onClick={handleReserveClick}>
+          Reserve Site
+        </button>
+        <button className="cta-btn monitor" onClick={() => setAlertModal(true)}>
+          <LuBell className="bell-icon" /> Create Monitor
+        </button>
       </div>
       <div className="monthly-calendars">
         {monthlyAvailabilities.map(({ year, month, days }) => (

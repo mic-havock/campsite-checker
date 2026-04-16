@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
   createBulkReservations,
@@ -11,7 +11,6 @@ import "./alert-modal.scss";
 const AlertModal = ({
   isOpen,
   onClose,
-  title,
   subtitle,
   alertDetails,
   setAlertDetails,
@@ -24,6 +23,11 @@ const AlertModal = ({
   facilityId,
 }) => {
   const isSubmitting = useRef(false);
+  const [step, setStep] = useState(1);
+  const [mustHaves, setMustHaves] = useState({
+    minElectric: "",
+    minVehicleLength: "",
+  });
 
   // Closes the modal when clicking outside the modal content
   const handleBackdropClick = (event) => {
@@ -35,6 +39,7 @@ const AlertModal = ({
   // Clear form data and close modal
   const handleClose = useCallback(() => {
     setAlertDetails({ name: "", email: "", startDate: "", endDate: "" });
+    setStep(1);
     onClose();
   }, [onClose, setAlertDetails]);
 
@@ -113,6 +118,8 @@ const AlertModal = ({
           monitoring_active: true,
           attempts_made: 0,
           success_sent: false,
+          min_electric: mustHaves.minElectric,
+          min_vehicle_length: mustHaves.minVehicleLength,
         };
 
         await createReservation(reservationData);
@@ -134,99 +141,161 @@ const AlertModal = ({
     }
   };
 
+  const renderStep = () => {
+    switch (step) {
+      case 1:
+        return (
+          <>
+            <p className="step-label">STEP 1 OF 3</p>
+            <h2>Confirm Dates</h2>
+            <div className="form-group">
+              <label htmlFor="start-date">First Night:</label>
+              <input
+                id="start-date"
+                type="date"
+                value={alertDetails.startDate}
+                onChange={(e) =>
+                  setAlertDetails((prev) => ({
+                    ...prev,
+                    startDate: e.target.value,
+                  }))
+                }
+                disabled={isCreatingAlert}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="end-date">Last Night:</label>
+              <input
+                id="end-date"
+                type="date"
+                value={alertDetails.endDate}
+                onChange={(e) =>
+                  setAlertDetails((prev) => ({
+                    ...prev,
+                    endDate: e.target.value,
+                  }))
+                }
+                disabled={isCreatingAlert}
+              />
+            </div>
+            <div className="modal-buttons">
+              <button className="next-btn" onClick={() => setStep(2)}>
+                Next: Must-Haves →
+              </button>
+              <button onClick={handleClose} className="cancel-btn">
+                Cancel
+              </button>
+            </div>
+          </>
+        );
+      case 2:
+        return (
+          <>
+            <p className="step-label">STEP 2 OF 3</p>
+            <h2>Select Must-Haves</h2>
+            <div className="form-group">
+              <label>Minimum Electric:</label>
+              <select
+                value={mustHaves.minElectric}
+                onChange={(e) =>
+                  setMustHaves((prev) => ({
+                    ...prev,
+                    minElectric: e.target.value,
+                  }))
+                }
+              >
+                <option value="">Any</option>
+                <option value="30">30 Amp</option>
+                <option value="50">50 Amp</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Minimum Vehicle Length (ft):</label>
+              <input
+                type="number"
+                placeholder="e.g. 30"
+                value={mustHaves.minVehicleLength}
+                onChange={(e) =>
+                  setMustHaves((prev) => ({
+                    ...prev,
+                    minVehicleLength: e.target.value,
+                  }))
+                }
+              />
+            </div>
+            <div className="modal-buttons">
+              <button className="next-btn" onClick={() => setStep(3)}>
+                Next: Contact Info →
+              </button>
+              <button onClick={() => setStep(1)} className="back-btn">
+                ← Back
+              </button>
+            </div>
+          </>
+        );
+      case 3:
+        return (
+          <>
+            <p className="step-label">STEP 3 OF 3</p>
+            <h2>Contact Info</h2>
+            <div className="form-group">
+              <input
+                type="text"
+                placeholder="Name"
+                value={alertDetails.name}
+                onChange={(e) =>
+                  setAlertDetails((prev) => ({ ...prev, name: e.target.value }))
+                }
+              />
+            </div>
+            <div className="form-group">
+              <input
+                type="email"
+                placeholder="Email"
+                value={alertDetails.email}
+                onChange={(e) =>
+                  setAlertDetails((prev) => ({
+                    ...prev,
+                    email: e.target.value,
+                  }))
+                }
+              />
+            </div>
+            <div className="modal-buttons">
+              <button
+                onClick={handleCreateAlert}
+                disabled={isCreatingAlert}
+                className="create-alert-btn"
+              >
+                {isCreatingAlert ? (
+                  <>
+                    <LoadingSpinner size="small" />
+                    <span>Creating...</span>
+                  </>
+                ) : (
+                  "Create Monitor"
+                )}
+              </button>
+              <button onClick={() => setStep(2)} className="back-btn">
+                ← Back
+              </button>
+            </div>
+          </>
+        );
+      default:
+        return null;
+    }
+  };
+
   const modalContent = (
     <div
       className="modal-backdrop"
       onClick={handleBackdropClick}
-      key={`alert-modal-${isCreatingAlert}`}
+      key={`alert-modal-${step}`}
     >
       <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <h2>{title}</h2>
-        {subtitle && <h3>{subtitle}</h3>}
-        {isBulkAlert && selectedCampsites?.length > 0 && (
-          <div className="selected-campsites">
-            <p>Selected Campsites:</p>
-            <ul>
-              {selectedCampsites.map((campsite) => (
-                <li key={campsite.campsite}>
-                  {campsite.campsite} - {campsite.loop}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-        <input
-          type="text"
-          placeholder="Name"
-          aria-label="Name"
-          value={alertDetails.name}
-          onChange={(e) =>
-            setAlertDetails((prev) => ({ ...prev, name: e.target.value }))
-          }
-          disabled={isCreatingAlert}
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          aria-label="Email"
-          value={alertDetails.email}
-          onChange={(e) =>
-            setAlertDetails((prev) => ({
-              ...prev,
-              email: e.target.value,
-            }))
-          }
-          disabled={isCreatingAlert}
-        />
-        <label htmlFor="start-date">First Night:</label>
-        <input
-          id="start-date"
-          type="date"
-          value={alertDetails.startDate}
-          onChange={(e) =>
-            setAlertDetails((prev) => ({
-              ...prev,
-              startDate: e.target.value,
-            }))
-          }
-          disabled={isCreatingAlert}
-        />
-        <label htmlFor="end-date">Last Night:</label>
-        <input
-          id="end-date"
-          type="date"
-          value={alertDetails.endDate}
-          onChange={(e) =>
-            setAlertDetails((prev) => ({
-              ...prev,
-              endDate: e.target.value,
-            }))
-          }
-          disabled={isCreatingAlert}
-        />
-        <div className="modal-buttons">
-          <button
-            onClick={handleCreateAlert}
-            disabled={isCreatingAlert}
-            className="create-alert-btn"
-          >
-            {isCreatingAlert ? (
-              <>
-                <LoadingSpinner size="small" />
-                <span style={{ marginLeft: "8px" }}>Creating...</span>
-              </>
-            ) : (
-              "Create"
-            )}
-          </button>
-          <button
-            onClick={handleClose}
-            disabled={isCreatingAlert}
-            className="cancel-btn"
-          >
-            Cancel
-          </button>
-        </div>
+        {subtitle && <h3 className="modal-subtitle">{subtitle}</h3>}
+        {renderStep()}
       </div>
     </div>
   );
@@ -237,7 +306,6 @@ const AlertModal = ({
 AlertModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  title: PropTypes.string.isRequired,
   subtitle: PropTypes.string,
   alertDetails: PropTypes.shape({
     name: PropTypes.string.isRequired,
