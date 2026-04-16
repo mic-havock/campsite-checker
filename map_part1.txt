@@ -1,0 +1,100 @@
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+import PropTypes from "prop-types";
+import { useEffect, useRef, useState } from "react";
+import {
+  MapContainer,
+  Marker,
+  TileLayer,
+  Tooltip,
+  useMap,
+} from "react-leaflet";
+import "./facilities-map.scss";
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl:
+    "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
+  iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
+});
+
+const MapUpdater = ({ center, zoom, shouldUpdate }) => {
+  const map = useMap();
+  const hasUpdatedRef = useRef(false);
+
+  useEffect(() => {
+    if (center && zoom && shouldUpdate && !hasUpdatedRef.current) {
+      map.setView(center, zoom);
+      hasUpdatedRef.current = true;
+    } else if (center && zoom && shouldUpdate) {
+       map.setView(center, zoom);
+    }
+  }, [map, center, zoom, shouldUpdate]);
+
+  return null;
+};
+
+MapUpdater.propTypes = {
+  center: PropTypes.array.isRequired,
+  zoom: PropTypes.number.isRequired,
+  shouldUpdate: PropTypes.bool.isRequired,
+};
+
+const FacilitiesMap = ({ facilities, onFacilitySelect }) => {
+  const [mapCenter, setMapCenter] = useState([39.8283, -98.5795]); // Default center of US
+  const [zoom, setZoom] = useState(4);
+  const [hasValidCoordinates, setHasValidCoordinates] = useState(false);
+  const [facilitiesWithCoords, setFacilitiesWithCoords] = useState([]);
+  const [initialMapSetup, setInitialMapSetup] = useState(false);
+  const [isSatelliteView, setIsSatelliteView] = useState(false);
+  const previousFacilitiesLength = useRef(0);
+
+  useEffect(() => {
+    if (!facilities || facilities.length === 0) {
+      setHasValidCoordinates(false);
+      setFacilitiesWithCoords([]);
+      return;
+    }
+
+    const validFacilities = facilities.filter(
+      (facility) =>
+        facility.GEOJSON &&
+        facility.GEOJSON.COORDINATES &&
+        facility.GEOJSON.COORDINATES.length === 2 &&
+        !isNaN(parseFloat(facility.GEOJSON.COORDINATES[1])) &&
+        !isNaN(parseFloat(facility.GEOJSON.COORDINATES[0]))
+    );
+
+    setFacilitiesWithCoords(validFacilities);
+
+    if (validFacilities.length > 0) {
+      setHasValidCoordinates(true);
+
+      if (!initialMapSetup || Math.abs(facilities.length - previousFacilitiesLength.current) > 0) {
+        const totalLat = validFacilities.reduce(
+          (sum, facility) => sum + parseFloat(facility.GEOJSON.COORDINATES[1]),
+          0
+        );
+        const totalLng = validFacilities.reduce(
+          (sum, facility) => sum + parseFloat(facility.GEOJSON.COORDINATES[0]),
+          0
+        );
+
+        const avgLat = totalLat / validFacilities.length;
+        const avgLng = totalLng / validFacilities.length;
+
+        setMapCenter([avgLat, avgLng]);
+
+        if (validFacilities.length === 1) {
+            setZoom(10);
+        } else {
+            setZoom(6);
+        }
+
+        setInitialMapSetup(true);
+        previousFacilitiesLength.current = facilities.length;
+      }
+    } else {
+      setHasValidCoordinates(false);
+    }
