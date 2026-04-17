@@ -1,6 +1,49 @@
 @import "../../../styles/variables";
 
 // Modal backdrop styling
+  .step-label {
+    @include label-caps;
+    margin-bottom: 0.5rem;
+    color: $secondary-color;
+  }
+
+  .modal-subtitle {
+    font-size: 0.9rem;
+    color: $color-earth;
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+
+    label {
+      @include label-caps;
+      margin-bottom: 0.25rem;
+    }
+
+    input,
+    select {
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+  }
+
+  .next-btn {
+    @include button-primary;
+  }
+
+  .back-btn {
+    @include button-base;
+    background: transparent;
+    color: $color-earth;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 .modal-backdrop {
   position: fixed;
   top: 0;

@@ -192,6 +192,7 @@ const Campsite = ({
   facilityName,
   isExpanded: initialIsExpanded = false,
   showExpandHint = true,
+  inline = false,
 }) => {
   const {
     CampsiteName,
@@ -269,6 +270,85 @@ const Campsite = ({
     </div>
   );
 
+  if (inline) {
+    return (
+      <div className="campsite-inline-details">
+        <ImageGallery images={images} />
+        <div className="modal-details">
+          <div className="campsite-header">
+            <h2>
+              Campsite: {CampsiteName}
+              {Loop && Loop.trim() ? ` - ${Loop}` : ""}{" "}
+            </h2>
+          </div>
+
+          <div className="attributes-section">
+            <h3 className="section-label">CAMPSITE DETAILS</h3>
+            <div className="tag-cloud">
+              <span className="tag tag-utility">
+                <span className="label">TYPE</span>
+                <span className="value">{toTitleCase(CampsiteType)}</span>
+              </span>
+              <span className="tag tag-rules">
+                <span className="label">RESERVABLE</span>
+                <span className="value">
+                  {CampsiteReservable ? "Yes" : "No"}
+                </span>
+              </span>
+              {campsite.ATTRIBUTES?.filter((a) =>
+                ["Electric Hookup", "Water Hookup", "Sewer Hookup"].includes(
+                  a.AttributeName
+                )
+              ).map((attr, i) => (
+                <span key={i} className="tag tag-utility">
+                  <span className="label">
+                    {attr.AttributeName.toUpperCase()}
+                  </span>
+                  <span className="value">
+                    {toTitleCase(attr.AttributeValue)}
+                  </span>
+                </span>
+              ))}
+              {campsite.ATTRIBUTES?.filter((a) =>
+                ["Max Vehicle Length", "Driveway Grade", "Shade"].includes(
+                  a.AttributeName
+                )
+              ).map((attr, i) => (
+                <span key={i} className="tag tag-geography">
+                  <span className="label">
+                    {attr.AttributeName.toUpperCase()}
+                  </span>
+                  <span className="value">
+                    {toTitleCase(attr.AttributeValue)}
+                  </span>
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="attributes-section">
+            <h3>Availability</h3>
+            {isLoadingAvailability ? (
+              <div className="availability-loading">
+                Loading availability...
+              </div>
+            ) : availabilityError ? (
+              <div className="availability-error">{availabilityError}</div>
+            ) : availabilityData ? (
+              <CampsiteAvailability
+                availabilities={availabilityData}
+                facilityName={facilityName}
+                campsiteNumber={CampsiteName}
+                campsiteId={CampsiteID}
+                campsite={campsite}
+              />
+            ) : null}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       {showExpandHint ? (
@@ -332,6 +412,7 @@ Campsite.propTypes = {
   facilityName: PropTypes.string.isRequired,
   isExpanded: PropTypes.bool,
   showExpandHint: PropTypes.bool,
+  inline: PropTypes.bool,
 };
 
 export default Campsite;
