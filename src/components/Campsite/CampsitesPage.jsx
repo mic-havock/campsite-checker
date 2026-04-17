@@ -7,11 +7,10 @@ import "./campsites-page.scss";
 import AvailabilityChecker from "./Filters/AvailabilityChecker";
 import CampsiteFilter from "./Filters/CampsiteFilter";
 import AvailabilityHeatmap from "../CampgroundAvailability/AvailabilityHeatmap";
-import { FixedSizeList as List } from "react-window";
+import { List } from "react-window";
 import PropTypes from "prop-types";
 
-const Row = ({ index, style, data }) => {
-  const { filteredCampsites, selectedCampsite, setSelectedCampsite } = data;
+const Row = ({ index, style, filteredCampsites, selectedCampsite, setSelectedCampsite }) => {
   const campsite = filteredCampsites[index];
   const isSelected = selectedCampsite?.CampsiteID === campsite.CampsiteID;
 
@@ -41,11 +40,9 @@ const Row = ({ index, style, data }) => {
 Row.propTypes = {
   index: PropTypes.number.isRequired,
   style: PropTypes.object.isRequired,
-  data: PropTypes.shape({
-    filteredCampsites: PropTypes.array.isRequired,
-    selectedCampsite: PropTypes.object,
-    setSelectedCampsite: PropTypes.func.isRequired,
-  }).isRequired,
+  filteredCampsites: PropTypes.array.isRequired,
+  selectedCampsite: PropTypes.object,
+  setSelectedCampsite: PropTypes.func.isRequired,
 };
 
 const useFilteredCampsites = (
@@ -109,39 +106,6 @@ const CampsitesPage = () => {
     showReservableOnly,
     selectedLoops,
   );
-
-  // Row renderer for react-window
-  const Row = ({ index, style }) => {
-    const campsite = filteredCampsites[index];
-    const isSelected = selectedCampsite?.CampsiteID === campsite.CampsiteID;
-
-    return (
-      <div style={style} className="virtual-row-wrapper">
-        <div
-          className={`campsite-summary-row ${isSelected ? "selected" : ""}`}
-          onClick={() => setSelectedCampsite(campsite)}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              setSelectedCampsite(campsite);
-            }
-          }}
-        >
-          <div className="summary-site">Site {campsite.CampsiteName}</div>
-          <div className="summary-type">{campsite.CampsiteType}</div>
-          <div className="summary-price">
-            ${campsite.CampsiteFee || "0"}/night
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  Row.propTypes = {
-    index: PropTypes.number.isRequired,
-    style: PropTypes.object.isRequired,
-  };
 
   const navigateToMapView = () => {
     if (!campsiteData || campsiteData.length === 0) {
@@ -264,6 +228,7 @@ const CampsitesPage = () => {
           <AvailabilityHeatmap
             facilityId={facilityID}
             campsites={filteredCampsites}
+            facilityName={facilityName || "Campground"}
           />
         )}
 
@@ -311,12 +276,16 @@ const CampsitesPage = () => {
           <div className="list-column" style={{ height: listHeight }}>
             <List
               height={listHeight}
-              itemCount={filteredCampsites.length}
-              itemSize={60}
+              rowCount={filteredCampsites.length}
+              rowHeight={60}
               width="100%"
-            >
-              {Row}
-            </List>
+              rowProps={{
+                filteredCampsites,
+                selectedCampsite,
+                setSelectedCampsite,
+              }}
+              rowComponent={Row}
+            />
           </div>
           <div className={`detail-column ${selectedCampsite ? "active" : ""}`}>
             <div
