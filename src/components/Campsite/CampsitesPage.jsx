@@ -6,10 +6,12 @@ import Campsite from "./Campsite";
 import "./campsites-page.scss";
 import AvailabilityChecker from "./Filters/AvailabilityChecker";
 import CampsiteFilter from "./Filters/CampsiteFilter";
+import AvailabilityHeatmap from "../CampgroundAvailability/AvailabilityHeatmap";
 import { List } from "react-window";
 import PropTypes from "prop-types";
 
-const Row = ({ index, style, filteredCampsites, selectedCampsite, setSelectedCampsite }) => {
+const Row = ({ index, style, data }) => {
+  const { filteredCampsites, selectedCampsite, setSelectedCampsite } = data;
   const campsite = filteredCampsites[index];
   const isSelected = selectedCampsite?.CampsiteID === campsite.CampsiteID;
 
@@ -36,9 +38,11 @@ const Row = ({ index, style, filteredCampsites, selectedCampsite, setSelectedCam
 Row.propTypes = {
   index: PropTypes.number.isRequired,
   style: PropTypes.object.isRequired,
-  filteredCampsites: PropTypes.array.isRequired,
-  selectedCampsite: PropTypes.object,
-  setSelectedCampsite: PropTypes.func.isRequired,
+  data: PropTypes.shape({
+    filteredCampsites: PropTypes.array.isRequired,
+    selectedCampsite: PropTypes.object,
+    setSelectedCampsite: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
 const useFilteredCampsites = (
@@ -61,7 +65,7 @@ const useFilteredCampsites = (
 const CampsitesPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { campsites, facilityName } = location.state || {};
+  const { campsites, facilityName, facility } = location.state || {};
   const [campsiteData, setCampsiteData] = useState([]);
   const [listHeight, setListHeight] = useState(600);
   const facilityID = campsites?.[0]?.FacilityID;
@@ -178,9 +182,43 @@ const CampsitesPage = () => {
           <div className="hero-content">
             <div className="hero-main">
               <h1>{facilityName || "Campground"}</h1>
+              {facility?.GEOJSON?.COORDINATES && (
+                <a
+                  href={`https://www.google.com/maps?q=${facility.GEOJSON.COORDINATES[1]},${facility.GEOJSON.COORDINATES[0]}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="location-link"
+                >
+                  View on Maps
+                </a>
+              )}
+            </div>
+            <div className="quick-stats">
+              <div className="stat-item">
+                <span className="stat-label">TOTAL SITES</span>
+                <span className="stat-value">{campsiteData.length}</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">CELL SIGNAL</span>
+                <span className="stat-value">Excellent</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">ELEV.</span>
+                <span className="stat-value">1,500ft</span>
+              </div>
+              {facility?.FacilityPhone && (
+                <div className="stat-item">
+                  <span className="stat-label">PHONE</span>
+                  <span className="stat-value">{facility.FacilityPhone}</span>
+                </div>
+              )}
             </div>
           </div>
         </header>
+
+        <div className="heatmap-section">
+          <AvailabilityHeatmap facilityId={facilityID} campsites={campsiteData} />
+        </div>
 
         <div className="controls-wrapper">
           <div className="controls-container">
@@ -226,16 +264,17 @@ const CampsitesPage = () => {
           <div className="list-column" style={{ height: listHeight }}>
             <List
               height={listHeight}
-              rowCount={filteredCampsites.length}
-              rowHeight={60}
+              itemCount={filteredCampsites.length}
+              itemSize={60}
               width="100%"
-              rowProps={{
+              itemData={{
                 filteredCampsites,
                 selectedCampsite,
                 setSelectedCampsite,
               }}
-              rowComponent={Row}
-            />
+            >
+              {Row}
+            </List>
           </div>
           <div className={`detail-column ${selectedCampsite ? "active" : ""}`}>
             <div

@@ -285,17 +285,11 @@ const Campsite = ({
           </div>
 
           <div className="attributes-section">
-            <h3 className="section-label">CAMPSITE DETAILS</h3>
+            <h3 className="section-label">UTILITIES</h3>
             <div className="tag-cloud">
               <span className="tag tag-utility">
                 <span className="label">TYPE</span>
                 <span className="value">{toTitleCase(CampsiteType)}</span>
-              </span>
-              <span className="tag tag-rules">
-                <span className="label">RESERVABLE</span>
-                <span className="value">
-                  {CampsiteReservable ? "Yes" : "No"}
-                </span>
               </span>
               {campsite.ATTRIBUTES?.filter((a) =>
                 ["Electric Hookup", "Water Hookup", "Sewer Hookup"].includes(
@@ -311,12 +305,44 @@ const Campsite = ({
                   </span>
                 </span>
               ))}
+            </div>
+          </div>
+
+          <div className="attributes-section">
+            <h3 className="section-label">GEOGRAPHY</h3>
+            <div className="tag-cloud">
               {campsite.ATTRIBUTES?.filter((a) =>
-                ["Max Vehicle Length", "Driveway Grade", "Shade"].includes(
+                ["Max Vehicle Length", "Driveway Grade", "Shade", "Pad Length"].includes(
                   a.AttributeName
                 )
               ).map((attr, i) => (
                 <span key={i} className="tag tag-geography">
+                  <span className="label">
+                    {attr.AttributeName.toUpperCase()}
+                  </span>
+                  <span className="value">
+                    {toTitleCase(attr.AttributeValue)}
+                  </span>
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="attributes-section">
+            <h3 className="section-label">RULES</h3>
+            <div className="tag-cloud">
+              <span className="tag tag-rules">
+                <span className="label">RESERVABLE</span>
+                <span className="value">
+                  {CampsiteReservable ? "Yes" : "No"}
+                </span>
+              </span>
+              {campsite.ATTRIBUTES?.filter((a) =>
+                ["Pets Allowed", "Checkin Time", "Checkout Time"].includes(
+                  a.AttributeName
+                )
+              ).map((attr, i) => (
+                <span key={i} className="tag tag-rules">
                   <span className="label">
                     {attr.AttributeName.toUpperCase()}
                   </span>

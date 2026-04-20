@@ -17,8 +17,7 @@ $transition: all 0.2s ease;
 }
 
 .campground-hero {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 100;
   background: $color-forest-green;
   color: white;
@@ -85,6 +84,16 @@ $transition: all 0.2s ease;
       }
     }
   }
+}
+
+.heatmap-section {
+  max-width: 1200px;
+  margin: 0 auto 2rem;
+  padding: 0 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 90;
+  background: $background-base;
 }
 
 .controls-wrapper {
