@@ -6,7 +6,6 @@ import Campsite from "./Campsite";
 import "./campsites-page.scss";
 import AvailabilityChecker from "./Filters/AvailabilityChecker";
 import CampsiteFilter from "./Filters/CampsiteFilter";
-import AvailabilityHeatmap from "../CampgroundAvailability/AvailabilityHeatmap";
 import { List } from "react-window";
 import PropTypes from "prop-types";
 
@@ -28,7 +27,7 @@ const Row = ({ index, style, filteredCampsites, selectedCampsite, setSelectedCam
         }}
       >
         <div className="summary-site">Site {campsite.CampsiteName}</div>
-        <div className="summary-type">{campsite.CampsiteType}</div>
+        <div className="summary-location">{campsite.Loop}</div>
       </div>
     </div>
   );
@@ -220,14 +219,6 @@ const CampsitesPage = () => {
             </div>
           </div>
         </header>
-
-        {facilityID && (
-          <AvailabilityHeatmap
-            facilityId={facilityID}
-            campsites={filteredCampsites}
-            facilityName={facilityName || "Campground"}
-          />
-        )}
 
         <div className="controls-wrapper">
           <div className="controls-container">
