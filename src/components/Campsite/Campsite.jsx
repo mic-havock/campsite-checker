@@ -209,6 +209,8 @@ const Campsite = ({
     useAvailabilityData(CampsiteID, isExpanded);
 
   useEffect(() => {
+    if (inline) return;
+
     if (isExpanded) {
       document.body.style.overflow = "hidden";
     } else {
@@ -218,7 +220,7 @@ const Campsite = ({
     return () => {
       document.body.style.overflow = "";
     };
-  }, [isExpanded]);
+  }, [isExpanded, inline]);
 
   const images = useMemo(
     () =>

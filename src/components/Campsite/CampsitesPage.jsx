@@ -29,9 +29,6 @@ const Row = ({ index, style, filteredCampsites, selectedCampsite, setSelectedCam
       >
         <div className="summary-site">Site {campsite.CampsiteName}</div>
         <div className="summary-type">{campsite.CampsiteType}</div>
-        <div className="summary-price">
-          ${campsite.CampsiteFee || "0"}/night
-        </div>
       </div>
     </div>
   );
