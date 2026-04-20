@@ -61,7 +61,7 @@ const useFilteredCampsites = (
 const CampsitesPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { campsites, facilityName, facility } = location.state || {};
+  const { campsites, facilityName } = location.state || {};
   const [campsiteData, setCampsiteData] = useState([]);
   const [listHeight, setListHeight] = useState(600);
   const facilityID = campsites?.[0]?.FacilityID;
@@ -162,10 +162,6 @@ const CampsitesPage = () => {
     );
   }
 
-  const facilityCoordinates = facility?.GEOJSON?.COORDINATES;
-  const mapUrl = facilityCoordinates
-    ? `https://www.google.com/maps?q=${facilityCoordinates[1]},${facilityCoordinates[0]}`
-    : null;
 
 
   return (
@@ -182,16 +178,6 @@ const CampsitesPage = () => {
           <div className="hero-content">
             <div className="hero-main">
               <h1>{facilityName || "Campground"}</h1>
-              {mapUrl && (
-                <a
-                  href={mapUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="location-link"
-                >
-                  {facility.FacilityCity}, {facility.FacilityStateCode}
-                </a>
-              )}
             </div>
           </div>
         </header>
