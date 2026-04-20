@@ -167,12 +167,6 @@ const CampsitesPage = () => {
     ? `https://www.google.com/maps?q=${facilityCoordinates[1]},${facilityCoordinates[0]}`
     : null;
 
-  const elevationAttr = facility?.ATTRIBUTES?.find(
-    (a) => a.AttributeName === "Elevation",
-  );
-  const cellSignalAttr = facility?.ATTRIBUTES?.find(
-    (a) => a.AttributeName === "Cell Signal",
-  );
 
   return (
     <>
@@ -198,24 +192,6 @@ const CampsitesPage = () => {
                   {facility.FacilityCity}, {facility.FacilityStateCode}
                 </a>
               )}
-            </div>
-            <div className="quick-stats">
-              <div className="stat-item">
-                <span className="stat-label">TOTAL SITES</span>
-                <span className="stat-value">{campsites.length}</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-label">CELL SIGNAL</span>
-                <span className="stat-value">
-                  {cellSignalAttr?.AttributeValue || "Unknown"}
-                </span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-label">ELEV.</span>
-                <span className="stat-value">
-                  {elevationAttr?.AttributeValue || "Unknown"}
-                </span>
-              </div>
             </div>
           </div>
         </header>
