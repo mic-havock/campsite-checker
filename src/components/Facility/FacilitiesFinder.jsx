@@ -8,6 +8,7 @@ import { STATES } from "../../config/states";
 
 import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
 
+import FacilityCard from "./FacilityCard";
 import FacilityDetails from "./FacilityDetails";
 import FacilityGrid from "./FacilityGrid";
 import FacilitiesMap from "./Map/FacilitiesMap";
@@ -25,7 +26,7 @@ const FacilitiesFinder = () => {
   const [selectedFacility, setSelectedFacility] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [viewMode, setViewMode] = useState("grid"); // "grid" or "map"
+  const [viewMode, setViewMode] = useState("cards"); // "cards", "grid", or "map"
 
   // Storage management functions
   const clearStorage = useCallback(() => {
@@ -182,20 +183,22 @@ const FacilitiesFinder = () => {
         )}
       </Helmet>
       <div className="facilities-finder">
-        <button
-          className="floating-reservation-button"
-          onClick={() => navigate("/reservation-management")}
-          aria-label="Go to reservation management"
-        >
-          Manage
-          <br />
-          Reservation Alerts
-        </button>
-        <div className="header">
-          <div className="brand">
-            <img src="/kampscout.svg" alt="Kamp Scout Logo" className="logo" />
+        <div className="hero-section">
+          <div className="hero-content">
+            <div className="brand">
+              <img src="/kampscout.svg" alt="Kamp Scout Logo" className="logo" />
+            </div>
+            <p className="description">{CONTENT.FACILITIES_FINDER.DESCRIPTION}</p>
+            <div className="hero-actions">
+              <button
+                className="alert-management-btn"
+                onClick={() => navigate("/reservation-management")}
+                aria-label="Go to reservation management"
+              >
+                Manage Reservation Alerts
+              </button>
+            </div>
           </div>
-          <p className="description">{CONTENT.FACILITIES_FINDER.DESCRIPTION}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="facilities-finder__form">
@@ -254,10 +257,16 @@ const FacilitiesFinder = () => {
         {facilities && facilities.length > 0 && (
           <div className="view-toggle-container">
             <button
+              className={`view-toggle-btn ${viewMode === "cards" ? "active" : ""}`}
+              onClick={() => setViewMode("cards")}
+            >
+              Cards View
+            </button>
+            <button
               className={`view-toggle-btn ${viewMode === "grid" ? "active" : ""}`}
               onClick={() => setViewMode("grid")}
             >
-              List View
+              Table View
             </button>
             <button
               className={`view-toggle-btn ${viewMode === "map" ? "active" : ""}`}
@@ -269,7 +278,18 @@ const FacilitiesFinder = () => {
         )}
 
         <div className="results-container">
-          {viewMode === "grid" ? (
+          {viewMode === "cards" && (
+            <div className="cards-grid">
+              {facilities?.map((facility) => (
+                <FacilityCard
+                  key={facility.FacilityID}
+                  facility={facility}
+                  onClick={() => handleRowSelection(facility)}
+                />
+              ))}
+            </div>
+          )}
+          {viewMode === "grid" && (
             <div className="grid-col">
               <FacilityGrid
                 rowData={facilities}
@@ -281,7 +301,8 @@ const FacilitiesFinder = () => {
                 }
               />
             </div>
-          ) : (
+          )}
+          {viewMode === "map" && (
             <div className="map-col">
               <FacilitiesMap
                 facilities={facilities}
