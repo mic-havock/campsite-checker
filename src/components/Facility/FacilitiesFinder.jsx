@@ -8,7 +8,6 @@ import { STATES } from "../../config/states";
 
 import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
 
-import FacilityCard from "./FacilityCard";
 import FacilityDetails from "./FacilityDetails";
 import FacilityGrid from "./FacilityGrid";
 import FacilitiesMap from "./Map/FacilitiesMap";
@@ -26,7 +25,7 @@ const FacilitiesFinder = () => {
   const [selectedFacility, setSelectedFacility] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [viewMode, setViewMode] = useState("cards"); // "cards", "grid", or "map"
+  const [viewMode, setViewMode] = useState("grid"); // "grid" or "map"
 
   // Storage management functions
   const clearStorage = useCallback(() => {
@@ -257,12 +256,6 @@ const FacilitiesFinder = () => {
         {facilities && facilities.length > 0 && (
           <div className="view-toggle-container">
             <button
-              className={`view-toggle-btn ${viewMode === "cards" ? "active" : ""}`}
-              onClick={() => setViewMode("cards")}
-            >
-              Cards View
-            </button>
-            <button
               className={`view-toggle-btn ${viewMode === "grid" ? "active" : ""}`}
               onClick={() => setViewMode("grid")}
             >
@@ -278,17 +271,6 @@ const FacilitiesFinder = () => {
         )}
 
         <div className="results-container">
-          {viewMode === "cards" && (
-            <div className="cards-grid">
-              {facilities?.map((facility) => (
-                <FacilityCard
-                  key={facility.FacilityID}
-                  facility={facility}
-                  onClick={() => handleRowSelection(facility)}
-                />
-              ))}
-            </div>
-          )}
           {viewMode === "grid" && (
             <div className="grid-col">
               <FacilityGrid
