@@ -184,20 +184,20 @@ const FacilitiesFinder = () => {
       </Helmet>
       <div className="facilities-finder">
         <div className="hero-section">
+          <div className="hero-top-bar">
+            <button
+              className="alert-management-btn"
+              onClick={() => navigate("/reservation-management")}
+              aria-label="Go to reservation management"
+            >
+              Manage Reservation Alerts
+            </button>
+          </div>
           <div className="hero-content">
             <div className="brand">
               <img src="/kampscout.svg" alt="Kamp Scout Logo" className="logo" />
             </div>
             <p className="description">{CONTENT.FACILITIES_FINDER.DESCRIPTION}</p>
-            <div className="hero-actions">
-              <button
-                className="alert-management-btn"
-                onClick={() => navigate("/reservation-management")}
-                aria-label="Go to reservation management"
-              >
-                Manage Reservation Alerts
-              </button>
-            </div>
           </div>
         </div>
 
