@@ -256,6 +256,23 @@
     margin-left: auto;
     margin-right: auto;
   }
+
+  .no-results {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    color: $text-primary;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    max-width: 600px;
+    margin: 0 auto 4rem;
+    box-shadow: $shadow-sm;
+
+    p {
+      font-size: 1.1rem;
+      opacity: 0.8;
+    }
+  }
 }
 
 // Fix scrolling in modals

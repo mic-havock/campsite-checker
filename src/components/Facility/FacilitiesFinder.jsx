@@ -23,6 +23,7 @@ const FacilitiesFinder = () => {
   const [selectedState, setSelectedState] = useState("");
   const [facilities, setFacilities] = useState([]);
   const [selectedFacility, setSelectedFacility] = useState(null);
+  const [hasSearched, setHasSearched] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [viewMode, setViewMode] = useState("grid"); // "grid" or "map"
@@ -79,6 +80,7 @@ const FacilitiesFinder = () => {
       }
 
       setFacilities(facilities);
+      setHasSearched(true);
     } catch (err) {
       console.error(err);
       setError("Error fetching facilities");
@@ -92,6 +94,7 @@ const FacilitiesFinder = () => {
     setSelectedState("");
     setFacilities([]);
     setSelectedFacility(null);
+    setHasSearched(false);
     setError("");
     clearStorage();
   };
@@ -253,46 +256,58 @@ const FacilitiesFinder = () => {
 
         {error && <p className="error">{error}</p>}
 
-        {facilities && facilities.length > 0 && (
-          <div className="view-toggle-container">
-            <button
-              className={`view-toggle-btn ${viewMode === "grid" ? "active" : ""}`}
-              onClick={() => setViewMode("grid")}
-            >
-              Table View
-            </button>
-            <button
-              className={`view-toggle-btn ${viewMode === "map" ? "active" : ""}`}
-              onClick={() => setViewMode("map")}
-            >
-              Map View
-            </button>
-          </div>
-        )}
+        {hasSearched && (
+          <>
+            {facilities && facilities.length > 0 ? (
+              <>
+                <div className="view-toggle-container">
+                  <button
+                    className={`view-toggle-btn ${viewMode === "grid" ? "active" : ""}`}
+                    onClick={() => setViewMode("grid")}
+                  >
+                    Table View
+                  </button>
+                  <button
+                    className={`view-toggle-btn ${viewMode === "map" ? "active" : ""}`}
+                    onClick={() => setViewMode("map")}
+                  >
+                    Map View
+                  </button>
+                </div>
 
-        <div className="results-container">
-          {viewMode === "grid" && (
-            <div className="grid-col">
-              <FacilityGrid
-                rowData={facilities}
-                onRowSelected={handleRowSelection}
-                selectedState={
-                  selectedState
-                    ? STATES.find((state) => state.code === selectedState)
-                    : null
-                }
-              />
-            </div>
-          )}
-          {viewMode === "map" && (
-            <div className="map-col">
-              <FacilitiesMap
-                facilities={facilities}
-                onFacilitySelect={handleRowSelection}
-              />
-            </div>
-          )}
-        </div>
+                <div className="results-container">
+                  {viewMode === "grid" && (
+                    <div className="grid-col">
+                      <FacilityGrid
+                        rowData={facilities}
+                        onRowSelected={handleRowSelection}
+                        selectedState={
+                          selectedState
+                            ? STATES.find((state) => state.code === selectedState)
+                            : null
+                        }
+                      />
+                    </div>
+                  )}
+                  {viewMode === "map" && (
+                    <div className="map-col">
+                      <FacilitiesMap
+                        facilities={facilities}
+                        onFacilitySelect={handleRowSelection}
+                      />
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              !loading && (
+                <div className="no-results">
+                  <p>No campgrounds found for your search. Try different terms or another state.</p>
+                </div>
+              )
+            )}
+          </>
+        )}
 
         {selectedFacility && (
           <FacilityDetails
