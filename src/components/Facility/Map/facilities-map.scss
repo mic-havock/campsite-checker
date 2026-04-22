@@ -7,15 +7,19 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: relative;
   width: 100%;
+  height: 100%;
   box-sizing: border-box;
   margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
 
   .map-wrapper {
     border-radius: 8px;
     overflow: hidden;
     border: 1px solid #ddd;
     width: 100%;
-    height: 600px;
+    flex: 1;
+    min-height: 0;
   }
 
   .map-controls {
