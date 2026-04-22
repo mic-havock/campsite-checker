@@ -124,8 +124,20 @@ const CampsitesPage = () => {
       <div className="campsites-page">
         {loadingState.isLoading && <LoadingSpinner fullPage />}
 
-        <div className="page-header">
-          <h1>{facilityName + " - Campsites" || "Campground's Campsites"}</h1>
+        <div className="hero-section">
+          <div className="hero-top-bar">
+            <button
+              className="back-to-search-btn"
+              onClick={() => navigate("/")}
+              aria-label="Back to search"
+            >
+              ← Back to Search
+            </button>
+          </div>
+          <div className="hero-content">
+            <h1>{facilityName || "Campground"}</h1>
+            <p className="description">Explore available campsites and check real-time availability</p>
+          </div>
         </div>
 
         <div className="controls-wrapper">
@@ -178,10 +190,6 @@ const CampsitesPage = () => {
             />
           ))}
         </div>
-
-        <button onClick={() => navigate("/")} className="back-button">
-          <span className="back-arrow">←</span> Back to Search
-        </button>
       </div>
     </>
   );

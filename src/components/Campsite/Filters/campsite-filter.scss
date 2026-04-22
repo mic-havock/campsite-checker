@@ -6,7 +6,8 @@
   overflow: visible;
   background-color: white;
   border-radius: $button-border-radius;
-  box-shadow: $shadow-sm;
+  box-shadow: $shadow-md;
+  border: 1px solid rgba(0, 0, 0, 0.05);
 
   .controls-header {
     background-color: $color-forest-green;
@@ -19,46 +20,45 @@
 
     h2 {
       margin: 0;
-      font-size: 1.2rem;
-      font-weight: 600;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
       text-align: center;
     }
 
     @media (max-width: 768px) {
-      padding: 1rem 1.5rem;
+      padding: 0.75rem 1.5rem;
     }
   }
 
   .controls-body {
     padding: 1.25rem;
     display: flex;
-    align-items: center;
-    text-align: center;
-    gap: 1.5rem;
+    flex-direction: column;
+    align-items: stretch;
+    text-align: left;
+    gap: 1rem;
     overflow: visible;
 
     @media (max-width: 768px) {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 1rem;
+      padding: 1rem;
     }
 
     .filter-options {
+      display: flex;
       flex-direction: column;
-      align-items: flex-start;
       gap: 1rem;
       flex: 1;
       overflow: visible;
 
       .filtered-count {
-        margin: 0 0 0.5rem 0;
-        font-size: 0.9rem;
-        color: $secondary-color;
-        font-weight: 500;
-        width: 100%;
-      }
-
-      @media (max-width: 768px) {
+        margin: 0;
+        font-size: 0.8rem;
+        color: $color-stone;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
         width: 100%;
       }
     }
@@ -67,14 +67,14 @@
 
 .loop-filter {
   position: relative;
-  min-width: 200px;
+  width: 100%;
   z-index: 100;
 
   .loop-filter-toggle {
     width: 100%;
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
     background-color: white;
     font-size: 0.95rem;
     text-align: left;
@@ -85,29 +85,25 @@
     transition: all 0.2s ease;
 
     &:hover {
-      border-color: $accent-color;
-      background-color: #f9f9f9;
+      border-color: $primary-color;
+      background-color: rgba($primary-color, 0.02);
     }
 
     &:focus {
       outline: none;
-      border-color: $accent-color;
-      box-shadow: 0 0 0 2px rgba($accent-color, 0.2);
+      border-color: $primary-color;
+      box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
     }
 
     .filter-button-text {
       color: $text-primary;
-      font-weight: normal;
-
-      &::first-letter {
-        text-transform: uppercase;
-      }
+      font-weight: 500;
     }
 
     .toggle-icon {
       margin-left: 8px;
       font-size: 0.8rem;
-      color: $color-forest-green;
+      color: $primary-color;
     }
   }
 
@@ -118,43 +114,44 @@
     max-height: 300px;
     overflow-y: auto;
     background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-shadow: $shadow-md;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: $shadow-lg;
     z-index: 110;
 
     @media (max-width: 768px) {
-      max-width: 90vw;
+      max-width: calc(100vw - 2rem);
     }
 
     .loop-filter-header {
       position: sticky;
       top: 0;
-      border-bottom: 1px solid #eee;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
       background-color: white;
       z-index: 2;
-      padding: 8px;
+      padding: 0.75rem;
 
       .loop-filter-info {
-        font-size: 0.85rem;
-        color: $secondary-color;
+        font-size: 0.8rem;
+        color: $color-stone;
         text-align: center;
-        font-style: italic;
+        font-weight: 600;
         margin: 0 0 8px 0;
       }
 
       .loop-actions {
         display: flex;
-        justify-content: flex-end;
-        padding: 0 0 4px 0;
+        justify-content: center;
 
         .clear-all-btn {
           background: none;
           border: none;
           color: $accent-color;
           cursor: pointer;
-          font-size: 0.85rem;
-          padding: 4px 8px;
+          font-size: 0.8rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
 
           &:hover {
             text-decoration: underline;
@@ -164,23 +161,22 @@
     }
 
     .loop-checkbox-list {
-      padding: 8px;
+      padding: 0.5rem;
       background-color: white;
 
       .loop-checkbox-item {
         display: flex;
         align-items: center;
         gap: 8px;
-        padding: 6px 8px;
+        padding: 0.6rem 0.75rem;
         cursor: pointer;
         font-size: 0.9rem;
         transition: background-color 0.15s ease;
-        border-radius: 4px;
+        border-radius: 6px;
         color: $text-primary;
 
         &:hover {
-          background-color: #f5f5f5;
-          color: $text-primary;
+          background-color: rgba($primary-color, 0.05);
         }
 
         input[type="checkbox"] {
@@ -188,14 +184,14 @@
           cursor: pointer;
           width: 16px;
           height: 16px;
-          accent-color: $accent-color;
+          accent-color: $primary-color;
         }
       }
 
       .no-loops-message {
-        padding: 10px;
+        padding: 1rem;
         text-align: center;
-        color: $color-earth;
+        color: $color-stone;
         font-style: italic;
         font-size: 0.9rem;
         margin: 0;
@@ -206,20 +202,20 @@
 
 .reservable-checkbox {
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 8px;
-  font-size: 0.95rem;
+  gap: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
   color: $text-primary;
   cursor: pointer;
   white-space: nowrap;
-  margin-top: 0.25rem;
+  padding: 0.25rem 0;
 
   input[type="checkbox"] {
     margin: 0;
     cursor: pointer;
-    width: 16px;
-    height: 16px;
-    accent-color: $accent-color;
+    width: 18px;
+    height: 18px;
+    accent-color: $primary-color;
   }
 }
