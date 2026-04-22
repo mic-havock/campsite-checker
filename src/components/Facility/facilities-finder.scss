@@ -12,19 +12,28 @@
 
   .hero-section {
     background: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($secondary-color, 0.05) 100%);
-    padding: 0.5rem 1.5rem 3rem;
+    padding: 2.5rem 1.5rem 3rem; // Top padding roughly button height
     text-align: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     position: relative;
 
     @include mobile {
-      padding: 0.5rem 1rem 2rem;
+      padding: 3.5rem 1rem 2rem; // More padding on mobile because button is wider/taller
     }
 
     .hero-top-bar {
+      position: absolute;
+      top: 0.75rem;
+      right: 1.5rem;
+      left: 1.5rem;
       display: flex;
       justify-content: flex-end;
-      margin-bottom: 0.25rem;
+      margin-bottom: 0;
+
+      @include mobile {
+        right: 1rem;
+        left: 1rem;
+      }
 
       .alert-management-btn {
         background-color: transparent;
@@ -57,11 +66,9 @@
     .brand {
       margin-bottom: 1rem;
       .logo {
-        height: 250px;
-        width: auto;
-        @include mobile {
-          height: 140px;
-        }
+        width: 100%;
+        max-width: 800px;
+        height: auto;
       }
     }
 
