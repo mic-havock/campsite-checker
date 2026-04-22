@@ -140,16 +140,6 @@ const CampsitesPage = () => {
     },
   });
 
-  const listingSchema = {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    itemListElement: campsites.map((campsite, index) => ({
-      "@type": "ListItem",
-      position: index + 1,
-      item: generateCampsiteSchema(campsite),
-    })),
-  };
-
   if (!campsites || campsites.length === 0) {
     return (
       <div className="campsites-page">
@@ -167,6 +157,16 @@ const CampsitesPage = () => {
   }
 
 
+
+  const listingSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: campsites.map((campsite, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      item: generateCampsiteSchema(campsite),
+    })),
+  };
 
   return (
     <>
