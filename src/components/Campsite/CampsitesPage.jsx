@@ -27,7 +27,7 @@ const useFilteredCampsites = (
 const CampsitesPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { campsites, facilityName } = location.state || {};
+  const { campsites, facilityName, facilityState } = location.state || {};
   const [campsiteData, setCampsiteData] = useState([]);
   const facilityID = campsites?.[0]?.FacilityID;
   const [loadingState, setLoadingState] = useState({
@@ -135,7 +135,10 @@ const CampsitesPage = () => {
             </button>
           </div>
           <div className="hero-content">
-            <h1>{facilityName || "Campground"}</h1>
+            <h1>
+              {facilityName || "Campground"}
+              {facilityState && <span className="state-indicator"> ({facilityState})</span>}
+            </h1>
             <p className="description">Explore available campsites and check real-time availability</p>
           </div>
         </div>
@@ -163,20 +166,22 @@ const CampsitesPage = () => {
               />
             </div>
 
-            <button
-              onClick={navigateToMapView}
-              className="view-map-btn"
-              disabled={loadingState.isMapLoading}
-            >
-              {loadingState.isMapLoading ? (
-                <>
-                  <LoadingSpinner size="small" />
-                  <span style={{ marginLeft: "8px" }}>Loading...</span>
-                </>
-              ) : (
-                "View on Map"
-              )}
-            </button>
+            <div className="map-control-card">
+              <button
+                onClick={navigateToMapView}
+                className="view-map-btn"
+                disabled={loadingState.isMapLoading}
+              >
+                {loadingState.isMapLoading ? (
+                  <>
+                    <LoadingSpinner size="small" />
+                    <span style={{ marginLeft: "8px" }}>Loading...</span>
+                  </>
+                ) : (
+                  "View on Map"
+                )}
+              </button>
+            </div>
           </div>
         </div>
 

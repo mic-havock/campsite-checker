@@ -109,7 +109,11 @@ const FacilitiesFinder = () => {
       const campsites = response.RECDATA || [];
       saveToStorage(STORAGE_KEYS.SELECTED_FACILITY, selectedFacility);
       navigate("/campsites", {
-        state: { campsites, facilityName: selectedFacility.FacilityName },
+        state: {
+          campsites,
+          facilityName: selectedFacility.FacilityName,
+          facilityState: selectedFacility.FacilityStateCode,
+        },
       });
     } catch (err) {
       console.error(err);
