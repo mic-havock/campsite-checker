@@ -3,65 +3,138 @@
 
 .facilities-finder {
   background-color: $background-base;
-  padding: 10px;
+  padding: 0;
   margin: 0;
   width: 100%;
   box-sizing: border-box;
   position: relative;
   overflow-x: hidden;
 
+  .hero-section {
+    background: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($secondary-color, 0.05) 100%);
+    padding: 2.5rem 1.5rem 3rem; // Top padding roughly button height
+    text-align: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    position: relative;
+
+    @include mobile {
+      padding: 3.5rem 1rem 2rem; // More padding on mobile because button is wider/taller
+    }
+
+    .hero-top-bar {
+      position: absolute;
+      top: 0.75rem;
+      right: 1.5rem;
+      left: 1.5rem;
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 0;
+
+      @include mobile {
+        right: 1rem;
+        left: 1rem;
+      }
+
+      .alert-management-btn {
+        background-color: transparent;
+        color: $primary-color;
+        border: 1px solid rgba($primary-color, 0.3);
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background-color: rgba($primary-color, 0.05);
+          border-color: $primary-color;
+        }
+
+        @include mobile {
+          width: 100%;
+          font-size: 0.8rem;
+        }
+      }
+    }
+
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .brand {
+      margin-bottom: 1rem;
+      .logo {
+        width: 100%;
+        max-width: 800px;
+        height: auto;
+      }
+    }
+
+    .description {
+      font-size: 1.1rem;
+      color: $text-primary;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      opacity: 0.8;
+
+      @include mobile {
+        font-size: 0.95rem;
+      }
+    }
+  }
+
   .facilities-finder__form {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: center;
     gap: 1rem;
     box-sizing: border-box;
-    width: 100%;
-    max-width: min(28rem, calc(100vw - 2rem));
-    margin: 0 auto 2rem auto;
-    padding: 1.5rem 1.25rem;
+    width: calc(100% - 2rem);
+    max-width: 1000px;
+    margin: -2rem auto 2rem;
+    padding: 1.5rem;
     background: $card-bg;
-    border-radius: 16px;
-    box-shadow: $shadow-md;
+    border-radius: 12px;
+    box-shadow: $shadow-lg;
     border: 1px solid rgba(0, 0, 0, 0.05);
+    z-index: 5;
+    position: relative;
+
+    @include mobile {
+      flex-direction: column;
+      align-items: stretch;
+      margin-top: 1rem;
+    }
 
     .form-group {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      width: 100%;
-      max-width: 400px;
-
-      @include mobile {
-        max-width: 100%;
-      }
+      align-items: flex-start;
+      flex: 1;
 
       label {
         margin-bottom: 0.5rem;
-        font-weight: 600;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: $color-stone;
       }
 
       input,
       select {
         width: 100%;
-        max-width: 400px;
         border: 1px solid rgba(0, 0, 0, 0.1);
-        border-radius: $button-border-radius;
-        padding: 1rem;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
         transition: $button-transition;
-        background-color: rgba(255, 255, 255, 0.6);
+        background-color: white;
         box-sizing: border-box;
-        min-height: 48px;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        box-shadow: $shadow-sm;
-
-        @include mobile {
-          width: 100%;
-          max-width: 100%;
-          padding: 0.8rem;
-        }
+        min-height: 44px;
+        font-size: 0.95rem;
 
         &:focus {
           border-color: $primary-color;
@@ -76,259 +149,133 @@
         background-position: right 0.8rem center;
         background-size: 0.65em auto;
         padding-right: 2.5rem;
-        height: auto;
-        line-height: 1.5;
+        appearance: none;
       }
     }
 
     .buttons-container {
       display: flex;
-      justify-content: center;
-      margin-bottom: 10px;
-      gap: 10px;
-      width: 100%;
-      max-width: 400px;
+      gap: 0.75rem;
 
       @include mobile {
-        flex-direction: column;
-        max-width: 100%;
+        margin-top: 0.5rem;
       }
 
       button {
-        min-width: 150px;
-        padding: 0.8rem 1.5rem;
-        border-radius: $button-border-radius;
-        border: none;
-        font-weight: 600;
-        cursor: pointer;
-        transition: $button-transition;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 700;
+        min-width: 100px;
 
         @include mobile {
-          width: 100%;
-          margin-bottom: 5px;
-        }
-
-        &:disabled {
-          opacity: 0.7;
-          cursor: not-allowed;
+          flex: 1;
         }
       }
 
       .submit {
-        background-color: $primary-color;
-        color: white;
-
-        &:hover:not(:disabled) {
-          background-color: darken($primary-color, 10%);
-        }
+        @include button-primary;
       }
 
       .clear {
-        background-color: $secondary-color;
-        color: white;
+        background-color: transparent;
+        color: $text-primary;
+        border: 1px solid rgba(0,0,0,0.1);
 
-        &:hover:not(:disabled) {
-          background-color: darken($secondary-color, 10%);
+        &:hover {
+          background-color: rgba(0,0,0,0.05);
         }
       }
     }
-  }
-
-  .error {
-    color: $color-danger;
-    text-align: center;
-    margin-top: 15px;
-    font-weight: bold;
   }
 
   .view-toggle-container {
     display: flex;
     justify-content: center;
-    gap: 1rem;
-    margin: 1.5rem 0;
+    background: white;
+    padding: 0.4rem;
+    border-radius: 10px;
+    box-shadow: $shadow-sm;
+    width: fit-content;
+    margin: 0 auto 2rem;
+    border: 1px solid rgba(0,0,0,0.05);
 
     .view-toggle-btn {
-      padding: 0.5rem 1.5rem;
-      border: 2px solid $primary-color;
+      padding: 0.5rem 1.25rem;
+      border: none;
       background-color: transparent;
-      color: $primary-color;
-      border-radius: $button-border-radius;
-      font-weight: bold;
+      color: $color-stone;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.85rem;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
 
       &.active {
-        background-color: $primary-color;
-        color: white;
+        background-color: rgba($primary-color, 0.1);
+        color: $primary-color;
       }
 
       &:hover:not(.active) {
-        background-color: rgba($primary-color, 0.1);
+        color: $text-primary;
       }
     }
   }
 
   .results-container {
-    width: 100%;
-    margin-bottom: 2rem;
+    width: calc(100% - 2rem);
+    max-width: 1200px;
+    margin: 0 auto 4rem;
+  }
+
+  .grid-col {
+    background: white;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: $shadow-md;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    overflow: hidden;
   }
 
   .map-col {
-    width: 100%;
-    min-height: 600px;
-    height: auto;
-    margin: 0 auto;
-    max-width: 1200px;
-  }
-
-  .floating-reservation-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    padding: 10px 16px;
-    background-color: #4a90e2;
-    color: white;
-    border: none;
-    border-radius: $button-border-radius;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    width: 160px;
-    max-width: 200px;
-    white-space: normal;
-    text-align: center;
-    line-height: 1.2;
-    transform: none;
-    z-index: 10;
-    @include glass;
-    background: rgba(#4a90e2, 0.9);
+    height: 600px;
+    border-radius: 12px;
+    overflow: hidden;
     box-shadow: $shadow-md;
-
-    &:hover {
-      background-color: #357abd;
-      box-shadow: $shadow-lg;
-    }
-
-    @include mobile {
-      max-width: 130px;
-      font-size: 0.8rem;
-      padding: 6px 8px;
-      top: 15px;
-      right: 15px;
-    }
-  }
-}
-
-.header {
-  text-align: center;
-  margin-bottom: 2rem;
-
-  .brand {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 1rem;
-
-    .logo {
-      width: 100%;
-      max-width: 1000px;
-      height: auto;
-      margin-top: -4rem;
-      margin-bottom: 0.5rem;
-
-      @include mobile {
-        margin-top: -2rem;
-        max-width: 100%;
-      }
-    }
-
-    h1 {
-      font-size: 3.5rem;
-      color: #2e7d32;
-      margin-top: -3rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-      background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      position: relative;
-      padding-bottom: 0.5rem;
-
-      &::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 110%;
-        height: 4px;
-        background: linear-gradient(90deg, transparent, #2e7d32, transparent);
-        border-radius: 2px;
-      }
-
-      @include mobile {
-        font-size: 2rem;
-        margin-top: -1.5rem;
-
-        &::after {
-          height: 3px;
-        }
-      }
-    }
+    border: 1px solid rgba(0, 0, 0, 0.05);
   }
 
-  .description {
-    max-width: 1000px;
-    margin: 0 auto;
-    font-size: 1.1rem;
-    color: #546e7a;
-    line-height: 1.5;
-    text-align: justify;
-    text-justify: inter-word;
-    padding: 0 15px;
+  .error {
+    color: $color-danger;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-weight: 600;
+    background: rgba($color-danger, 0.1);
+    padding: 1rem;
+    border-radius: 8px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 
-    @include mobile {
-      font-size: 0.9rem;
-      text-align: left;
+  .no-results {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    color: $text-primary;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    max-width: 600px;
+    margin: 0 auto 4rem;
+    box-shadow: $shadow-sm;
+
+    p {
+      font-size: 1.1rem;
+      opacity: 0.8;
     }
-  }
-}
-
-.grid-col {
-  width: 100%;
-  min-height: 400px;
-  margin-bottom: 5rem;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-
-  &:has(+ .facility-details) {
-    margin-bottom: 0;
-  }
-
-  @include mobile {
-    margin-bottom: 3rem;
-  }
-}
-
-// Ensure tables are responsive
-.ag-root-wrapper {
-  width: 100%;
-
-  @include mobile {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
   }
 }
 
 // Fix scrolling in modals
 .ReactModal__Body--open {
-  overflow: hidden;
-}
-
-// Ensure images scale properly
-img {
-  max-width: 100%;
-  height: auto;
+  overflow: hidden !important;
 }
