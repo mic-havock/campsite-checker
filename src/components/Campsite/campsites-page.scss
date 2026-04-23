@@ -13,7 +13,7 @@
 
   .hero-section {
     background: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($secondary-color, 0.05) 100%);
-    padding: 2.5rem 1.5rem 5rem;
+    padding: 2.5rem 1.5rem 6rem;
     text-align: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     position: relative;
@@ -63,10 +63,10 @@
       margin: 0 auto;
 
       h1 {
-        font-size: 2.2rem;
+        font-size: 2rem;
         color: $text-primary;
         margin-bottom: 0.5rem;
-        letter-spacing: 0.02em;
+        letter-spacing: 0.05em;
         text-transform: uppercase;
 
         .state-indicator {
@@ -76,19 +76,19 @@
         }
 
         @include mobile {
-          font-size: 1.6rem;
+          font-size: 1.5rem;
         }
       }
 
       .description {
-        font-size: 1rem;
+        font-size: 0.95rem;
         color: $text-primary;
         line-height: 1.6;
-        opacity: 0.7;
-        letter-spacing: 0.01em;
+        opacity: 0.6;
+        letter-spacing: 0.02em;
 
         @include mobile {
-          font-size: 0.9rem;
+          font-size: 0.85rem;
         }
       }
     }
@@ -96,7 +96,7 @@
 
   .controls-wrapper {
     max-width: 1200px;
-    margin: -3.5rem auto 2rem;
+    margin: -4rem auto 2.5rem;
     padding: 0 1.5rem;
     position: relative;
     z-index: 10;
@@ -104,6 +104,17 @@
     @include mobile {
       margin-top: 1rem;
       padding: 0 1rem;
+    }
+
+    .status-indicator {
+      margin-top: 1rem;
+      text-align: center;
+      font-size: 0.75rem;
+      color: $color-stone;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      opacity: 0.8;
     }
   }
 
@@ -117,13 +128,13 @@
     }
 
     .filter-section, .right-controls {
-      flex: 1.2;
+      flex: 1;
       display: flex;
       flex-direction: column;
     }
 
     .map-control-card {
-      flex: 0.8;
+      flex: 0.7;
       background-color: $primary-color;
       border-radius: $button-border-radius;
       box-shadow: $shadow-md;
@@ -131,8 +142,9 @@
       align-items: center;
       justify-content: center;
       padding: 1.5rem;
-      border: 1px solid rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(0, 0, 0, 0.1);
       transition: all 0.2s ease;
+      box-sizing: border-box;
 
       &:hover {
         transform: translateY(-2px);
@@ -147,12 +159,14 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 0.75rem;
-        font-size: 1.1rem;
+        gap: 1rem;
+        font-size: 1rem;
         font-weight: 700;
         width: 100%;
         height: 100%;
         padding: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
 
         &:hover {
           background-color: transparent;
@@ -162,8 +176,8 @@
         &::before {
           content: "";
           display: block;
-          width: 2rem;
-          height: 2rem;
+          width: 2.5rem;
+          height: 2.5rem;
           background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath fill='white' d='M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0zM192 272c44.183 0 80-35.817 80-80s-35.817-80-80-80-80 35.817-80 80 35.817 80 80 80z'/%3E%3C/svg%3E");
           background-repeat: no-repeat;
           background-position: center;
@@ -173,7 +187,7 @@
       }
 
       @include mobile {
-        padding: 2rem 1rem;
+        padding: 3rem 1rem;
       }
     }
   }

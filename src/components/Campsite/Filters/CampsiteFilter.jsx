@@ -178,9 +178,6 @@ const CampsiteFilter = ({
             Show Only Reservable Sites
           </label>
         </div>
-        <p className="filtered-count">
-          Showing {filteredCampsites.length} of {campsiteData.length} sites
-        </p>
       </div>
     </div>
   );
