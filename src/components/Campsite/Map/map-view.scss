@@ -13,13 +13,13 @@
 
   .hero-section {
     background: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($secondary-color, 0.05) 100%);
-    padding: 2.5rem 1.5rem 6rem;
+    padding: 2rem 1.5rem 4.5rem;
     text-align: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     position: relative;
 
     @include mobile {
-      padding: 3.5rem 1rem 4rem;
+      padding: 3rem 1rem 3.5rem;
     }
 
     .hero-top-bar {
@@ -39,8 +39,8 @@
         background-color: transparent;
         color: $primary-color;
         border: 1px solid rgba($primary-color, 0.3);
-        padding: 0.5rem 1rem;
-        font-size: 0.85rem;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
         font-weight: 600;
         border-radius: 8px;
         cursor: pointer;
@@ -50,11 +50,6 @@
           background-color: rgba($primary-color, 0.05);
           border-color: $primary-color;
         }
-
-        @include mobile {
-          width: auto;
-          font-size: 0.8rem;
-        }
       }
     }
 
@@ -63,9 +58,9 @@
       margin: 0 auto;
 
       h1 {
-        font-size: 2rem;
+        font-size: 1.8rem;
         color: $text-primary;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.25rem;
         letter-spacing: 0.05em;
         text-transform: uppercase;
 
@@ -76,19 +71,20 @@
         }
 
         @include mobile {
-          font-size: 1.5rem;
+          font-size: 1.4rem;
         }
       }
 
       .description {
-        font-size: 0.95rem;
+        font-size: 0.9rem;
         color: $text-primary;
-        line-height: 1.6;
+        line-height: 1.5;
         opacity: 0.6;
         letter-spacing: 0.02em;
+        margin-bottom: 0;
 
         @include mobile {
-          font-size: 0.85rem;
+          font-size: 0.8rem;
         }
       }
     }
@@ -96,60 +92,60 @@
 
   .controls-wrapper {
     max-width: 1200px;
-    margin: -4rem auto 2.5rem;
+    margin: -3.5rem auto 1.5rem;
     padding: 0 1.5rem;
     position: relative;
     z-index: 10;
 
     @include mobile {
-      margin-top: 1rem;
+      margin-top: 0.5rem;
       padding: 0 1rem;
     }
+  }
 
-    .view-toggle-container {
-      display: flex;
-      justify-content: center;
-      background: white;
-      padding: 0.4rem;
+  .view-toggle-container {
+    display: flex;
+    justify-content: center;
+    background: white;
+    padding: 0.35rem;
+    border-radius: 100px;
+    box-shadow: $shadow-md;
+    width: fit-content;
+    margin: 1rem auto 0.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+
+    .view-toggle-btn {
+      padding: 0.5rem 1.5rem;
+      border: none;
+      background-color: transparent;
+      color: $color-stone;
       border-radius: 100px;
-      box-shadow: $shadow-md;
-      width: fit-content;
-      margin: 2rem auto 1.5rem;
-      border: 1px solid rgba(0, 0, 0, 0.05);
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
 
-      .view-toggle-btn {
-        padding: 0.6rem 1.75rem;
-        border: none;
-        background-color: transparent;
-        color: $color-stone;
-        border-radius: 100px;
-        font-weight: 600;
-        font-size: 0.9rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
+      &.active {
+        background-color: rgba($primary-color, 0.1);
+        color: $primary-color;
+        font-weight: 700;
+      }
 
-        &.active {
-          background-color: rgba($primary-color, 0.1);
-          color: $primary-color;
-          font-weight: 700;
-        }
-
-        &:hover:not(.active) {
-          color: $text-primary;
-        }
+      &:hover:not(.active) {
+        color: $text-primary;
       }
     }
+  }
 
-    .status-indicator {
-      margin-top: 1rem;
-      text-align: center;
-      font-size: 0.75rem;
-      color: $color-stone;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      opacity: 0.8;
-    }
+  .status-indicator {
+    margin-top: 0.5rem;
+    text-align: center;
+    font-size: 0.7rem;
+    color: $color-stone;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.8;
   }
 
   .controls-container {
@@ -157,7 +153,7 @@
     gap: 1rem;
     align-items: stretch;
     justify-content: center;
-    max-width: 1200px;
+    max-width: 1000px;
     margin: 0 auto;
 
     @include mobile {
@@ -205,7 +201,7 @@
 
   .error-container {
     text-align: center;
-    padding: 4rem 1.5rem;
+    padding: 3rem 1.5rem;
     background: white;
     border-radius: 12px;
     box-shadow: $shadow-md;

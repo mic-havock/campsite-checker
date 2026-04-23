@@ -134,9 +134,10 @@ const MapView = () => {
             </button>
           </div>
 
-          <div className="status-indicator">
-            Showing {filteredCampsites.length} of {campsiteData.length} sites
-          </div>
+        </div>
+
+        <div className="status-indicator">
+          Showing {filteredCampsites.length} of {campsiteData.length} sites
         </div>
 
         <div className="map-container">

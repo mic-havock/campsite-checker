@@ -15,12 +15,12 @@
   .controls-header {
     background-color: $color-forest-green;
     color: white;
-    padding: 0.8rem 1.5rem;
+    padding: 0.6rem 1.5rem;
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: $button-border-radius $button-border-radius 0 0;
-    min-height: 40px;
+    min-height: 36px;
     box-sizing: border-box;
 
     h2 {
@@ -28,13 +28,13 @@
       font-size: 0.7rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.1em;
       text-align: center;
     }
   }
 
   .controls-body {
-    padding: 1.25rem 1.5rem;
+    padding: 0.85rem 1.25rem;
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -47,13 +47,13 @@
       display: flex;
       flex-direction: row;
       align-items: center;
-      gap: 1.5rem;
+      gap: 1.25rem;
       overflow: visible;
 
       @media (max-width: 768px) {
         flex-direction: column;
         align-items: stretch;
-        gap: 1rem;
+        gap: 0.75rem;
       }
     }
   }
@@ -66,18 +66,18 @@
 
   .loop-filter-toggle {
     width: 100%;
-    padding: 0.6rem 1rem;
+    padding: 0.5rem 1rem;
     border: 1px solid rgba(0, 0, 0, 0.12);
     border-radius: 8px;
     background-color: white;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     text-align: left;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
     transition: all 0.2s ease;
-    min-height: 44px;
+    min-height: 40px;
 
     &:hover {
       border-color: $primary-color;
@@ -108,7 +108,7 @@
 
     .toggle-icon {
       margin-left: 8px;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: $color-stone;
     }
   }
@@ -210,13 +210,13 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: $text-primary;
   cursor: pointer;
   white-space: nowrap;
   padding: 0;
-  height: 44px;
+  height: 40px;
 
   input[type="checkbox"] {
     margin: 0;
