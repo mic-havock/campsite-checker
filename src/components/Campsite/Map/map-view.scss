@@ -1,195 +1,284 @@
 @import "../../../styles/variables";
-
-$success-color: #28a745;
-$light-bg: #f8f9fa;
-$border-radius: 12px;
-$box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-$transition: all 0.2s ease;
+@import "../../../styles/responsive";
 
 .map-view-page {
   min-height: 100vh;
-  background-color: $background-light;
-  padding: 20px;
+  background-color: $background-base;
+  padding: 0;
   margin: 0;
-  width: 99vw;
+  width: 100%;
   box-sizing: border-box;
   overflow-x: hidden;
-
-  @media (max-width: 768px) {
-    padding: 0;
-  }
-}
-
-.map-view-header {
-  text-align: center;
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 1rem;
-
-  h1 {
-    margin-bottom: 0;
-  }
-}
-// Controls Wrapper
-.controls-wrapper {
-  background: none;
-  max-width: 1200px;
-  width: 100%;
-  margin: 0 auto 1.5rem;
-  padding: 0;
-  overflow: visible;
   position: relative;
-}
 
-// Controls Container
-.controls-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: stretch;
-  width: 100%;
-  overflow: hidden;
-  background: none;
-  flex-wrap: wrap;
-  gap: 1rem;
-
-  @media (max-width: 992px) {
-    flex-direction: column;
-  }
-
-  // Filter Section
-  .filter-section {
-    flex: 1;
+  .hero-section {
+    background: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($secondary-color, 0.05) 100%);
+    padding: 2.5rem 1.5rem 6rem;
+    text-align: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     position: relative;
-    overflow: visible;
-    order: 1;
-    background: none;
-    border-right: none;
 
-    @media (max-width: 992px) {
-      border-bottom: none;
-    }
-  }
-
-  .right-controls {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    background: none;
-    order: 2;
-    height: 100%;
-  }
-
-  .view-campsites-btn {
-    background-color: $color-earth;
-    color: white;
-    border: none;
-    padding: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: $transition;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    white-space: nowrap;
-    font-size: 1.1rem;
-    margin: 0;
-    border-radius: $button-border-radius;
-    width: 100%;
-    order: 3;
-    margin-top: 1rem;
-
-    &::before {
-      content: "";
-      display: inline-block;
-      width: 1.2rem;
-      height: 1.2rem;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='white' d='M64 144c26.5 0 48-21.5 48-48s-21.5-48-48-48S16 69.5 16 96s21.5 48 48 48zm0 64c-26.5 0-48 21.5-48 48s21.5 48 48 48 48-21.5 48-48-21.5-48-48-48zm0 128c-26.5 0-48 21.5-48 48s21.5 48 48 48 48-21.5 48-48-21.5-48-48-48zm448-16H176c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h336c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16zm0-128H176c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h336c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16zm0-128H176c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h336c8.8 0 16-7.2 16-16V80c0-8.8-7.2-16-16-16z'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: contain;
-      margin-right: 0.5rem;
+    @include mobile {
+      padding: 3.5rem 1rem 4rem;
     }
 
-    &:hover {
-      background-color: darken($color-earth, 10%);
-      box-shadow: $shadow-md;
-      transform: translateY(-2px);
+    .hero-top-bar {
+      position: absolute;
+      top: 0.75rem;
+      right: 1.5rem;
+      left: 1.5rem;
+      display: flex;
+      justify-content: flex-start;
+
+      @include mobile {
+        right: 1rem;
+        left: 1rem;
+      }
+
+      .back-to-search-btn {
+        background-color: transparent;
+        color: $primary-color;
+        border: 1px solid rgba($primary-color, 0.3);
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background-color: rgba($primary-color, 0.05);
+          border-color: $primary-color;
+        }
+
+        @include mobile {
+          width: auto;
+          font-size: 0.8rem;
+        }
+      }
     }
 
-    &:focus {
-      outline: none;
-      box-shadow: 0 0 0 3px rgba($color-earth, 0.3);
-    }
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
 
-    &:disabled {
-      background-color: lighten($color-earth, 20%);
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
+      h1 {
+        font-size: 2rem;
+        color: $text-primary;
+        margin-bottom: 0.5rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
 
-      &::before {
-        content: "";
+        .state-indicator {
+          color: $color-stone;
+          font-weight: 500;
+          font-size: 0.9em;
+        }
+
+        @include mobile {
+          font-size: 1.5rem;
+        }
+      }
+
+      .description {
+        font-size: 0.95rem;
+        color: $text-primary;
+        line-height: 1.6;
+        opacity: 0.6;
+        letter-spacing: 0.02em;
+
+        @include mobile {
+          font-size: 0.85rem;
+        }
       }
     }
   }
-}
 
-.map-container {
-  flex: 1;
-  margin: 0 0 auto;
-  margin-left: 0.5rem;
-  width: 100%;
-  padding: 0;
+  .controls-wrapper {
+    max-width: 1200px;
+    margin: -4rem auto 2.5rem;
+    padding: 0 1.5rem;
+    position: relative;
+    z-index: 10;
 
-  .campsite-map-container {
-    margin: 0;
-    height: calc(100vh - 250px);
-
-    .map-wrapper {
-      height: 100%;
-      width: 100%;
+    @include mobile {
+      margin-top: 1rem;
+      padding: 0 1rem;
     }
 
-    h2 {
-      display: none;
+    .view-toggle-container {
+      display: flex;
+      justify-content: center;
+      background: white;
+      padding: 0.4rem;
+      border-radius: 100px;
+      box-shadow: $shadow-md;
+      width: fit-content;
+      margin: 2rem auto 1.5rem;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+
+      .view-toggle-btn {
+        padding: 0.6rem 1.75rem;
+        border: none;
+        background-color: transparent;
+        color: $color-stone;
+        border-radius: 100px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &.active {
+          background-color: rgba($primary-color, 0.1);
+          color: $primary-color;
+          font-weight: 700;
+        }
+
+        &:hover:not(.active) {
+          color: $text-primary;
+        }
+      }
+    }
+
+    .status-indicator {
+      margin-top: 1rem;
+      text-align: center;
+      font-size: 0.75rem;
+      color: $color-stone;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      opacity: 0.8;
     }
   }
-}
 
-.error-container {
-  text-align: center;
-  padding: 2rem;
-  background: white;
-  border-radius: $button-border-radius;
-  box-shadow: $shadow-md;
-  max-width: 600px;
-  margin: 2rem auto;
+  .controls-container {
+    display: flex;
+    gap: 1rem;
+    align-items: stretch;
 
-  h1 {
-    color: $color-danger;
-    margin-bottom: 1rem;
-    font-size: clamp(1.5rem, 4vw, 2rem);
+    @include mobile {
+      flex-direction: column;
+    }
+
+    .filter-section, .right-controls {
+      flex: 1.1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .map-control-card {
+      flex: 0.8;
+      background-color: $color-earth;
+      border-radius: $button-border-radius;
+      box-shadow: $shadow-md;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      transition: all 0.2s ease;
+      box-sizing: border-box;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: $shadow-lg;
+      }
+
+      .view-map-btn {
+        background-color: transparent;
+        color: white;
+        border: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        font-size: 1rem;
+        font-weight: 700;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+
+        &:hover {
+          background-color: transparent;
+          transform: none;
+        }
+
+        &::before {
+          content: "";
+          display: block;
+          width: 2.5rem;
+          height: 2.5rem;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='white' d='M64 144c26.5 0 48-21.5 48-48s-21.5-48-48-48S16 69.5 16 96s21.5 48 48 48zm0 64c-26.5 0-48 21.5-48 48s21.5 48 48 48 48-21.5 48-48-21.5-48-48-48zm0 128c-26.5 0-48 21.5-48 48s21.5 48 48 48 48-21.5 48-48-21.5-48-48-48zm448-16H176c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h336c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16zm0-128H176c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h336c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16zm0-128H176c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h336c8.8 0 16-7.2 16-16V80c0-8.8-7.2-16-16-16z'/%3E%3C/svg%3E");
+          background-repeat: no-repeat;
+          background-position: center;
+          background-size: contain;
+          margin: 0;
+        }
+      }
+
+      @include mobile {
+        padding: 3rem 1rem;
+      }
+    }
   }
 
-  p {
-    margin-bottom: 2rem;
-    color: $text-primary;
-    font-size: 1rem;
-    line-height: 1.5;
-  }
-}
+  .map-container {
+    max-width: 1200px;
+    margin: 0 auto 3rem;
+    padding: 0 1.5rem;
+    width: 100%;
+    box-sizing: border-box;
 
-.back-button {
-  @include button-primary;
-  position: fixed;
-  bottom: 1rem;
-  left: 1rem;
-  z-index: 100;
-  box-shadow: $shadow-md;
+    @include mobile {
+      padding: 0 1rem;
+    }
+
+    .campsite-map-container {
+      border-radius: $button-border-radius;
+      overflow: hidden;
+      box-shadow: $shadow-lg;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      height: 600px;
+
+      @include mobile {
+        height: 450px;
+      }
+
+      .map-wrapper {
+        height: 100%;
+        width: 100%;
+      }
+    }
+  }
+
+  .error-container {
+    text-align: center;
+    padding: 4rem 1.5rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: $shadow-md;
+    max-width: 600px;
+    margin: 4rem auto;
+
+    h1 {
+      color: $color-danger;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      color: $text-primary;
+      opacity: 0.8;
+      margin-bottom: 2rem;
+    }
+
+    .back-button {
+      @include button-primary;
+    }
+  }
 }
 
 .leaflet-container {

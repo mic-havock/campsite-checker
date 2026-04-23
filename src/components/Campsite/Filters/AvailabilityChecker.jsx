@@ -111,13 +111,13 @@ const AvailabilityChecker = ({ facilityID, facilityName, setIsLoading }) => {
               disabled={localLoading}
               aria-label="Select a month"
             >
-            <option value="">Select a month...</option>
-                {availableMonths.map((month) => (
-                  <option key={month.value} value={month.value}>
-                    {month.label}
-                  </option>
-                ))}
-              </select>
+              <option value="">Select a month...</option>
+              {availableMonths.map((month) => (
+                <option key={month.value} value={month.value}>
+                  {month.label}
+                </option>
+              ))}
+            </select>
             </div>
           <button
             onClick={fetchAvailability}

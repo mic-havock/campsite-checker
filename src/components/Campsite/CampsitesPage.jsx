@@ -65,8 +65,9 @@ const CampsitesPage = () => {
 
     navigate("/map-view", {
       state: {
-        campsites: filteredCampsites,
+        campsites: campsiteData,
         facilityName: facilityName || "Campground",
+        facilityState: facilityState,
       },
     });
     setLoadingState((prev) => ({ ...prev, isMapLoading: false }));
@@ -145,6 +146,23 @@ const CampsitesPage = () => {
 
         <div className="controls-wrapper">
           <div className="controls-container">
+            <div className="map-control-card">
+              <button
+                onClick={navigateToMapView}
+                className="view-map-btn"
+                disabled={loadingState.isMapLoading}
+              >
+                {loadingState.isMapLoading ? (
+                  <>
+                    <LoadingSpinner size="small" />
+                    <span style={{ marginLeft: "8px" }}>Loading...</span>
+                  </>
+                ) : (
+                  "View on Map"
+                )}
+              </button>
+            </div>
+
             <div className="filter-section">
               <CampsiteFilter
                 campsiteData={campsiteData}
@@ -165,24 +183,22 @@ const CampsitesPage = () => {
                 }
               />
             </div>
-
-            <div className="map-control-card">
-              <button
-                onClick={navigateToMapView}
-                className="view-map-btn"
-                disabled={loadingState.isMapLoading}
-              >
-                {loadingState.isMapLoading ? (
-                  <>
-                    <LoadingSpinner size="small" />
-                    <span style={{ marginLeft: "8px" }}>Loading...</span>
-                  </>
-                ) : (
-                  "View on Map"
-                )}
-              </button>
-            </div>
           </div>
+          <div className="view-toggle-container">
+            <button
+              className="view-toggle-btn active"
+              onClick={() => {}}
+            >
+              List View
+            </button>
+            <button
+              className="view-toggle-btn"
+              onClick={navigateToMapView}
+            >
+              Map View
+            </button>
+          </div>
+
           <div className="status-indicator">
             Showing {filteredCampsites.length} of {campsiteData.length} sites
           </div>

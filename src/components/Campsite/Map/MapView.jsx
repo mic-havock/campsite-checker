@@ -10,7 +10,7 @@ import "./map-view.scss";
 const MapView = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { campsites, facilityName } = location.state || {};
+  const { campsites, facilityName, facilityState } = location.state || {};
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showReservableOnly, setShowReservableOnly] = useState(false);
@@ -34,6 +34,7 @@ const MapView = () => {
       state: {
         campsites: campsiteData,
         facilityName: facilityName || "Campground",
+        facilityState: facilityState,
       },
     });
   };
@@ -77,12 +78,36 @@ const MapView = () => {
         <script type="application/ld+json">{JSON.stringify(mapSchema)}</script>
       </Helmet>
       <div className="map-view-page">
-        <div className="map-view-header">
-          <h1>{facilityName || "Campground"}</h1>
+        <div className="hero-section">
+          <div className="hero-top-bar">
+            <button
+              className="back-to-search-btn"
+              onClick={() => navigate("/")}
+              aria-label="Back to search"
+            >
+              ← Back to Search
+            </button>
+          </div>
+          <div className="hero-content">
+            <h1>
+              {facilityName || "Campground"}
+              {facilityState && <span className="state-indicator"> ({facilityState})</span>}
+            </h1>
+            <p className="description">Explore available campsites and check real-time availability</p>
+          </div>
         </div>
 
         <div className="controls-wrapper">
           <div className="controls-container">
+            <div className="map-control-card list-mode">
+              <button
+                onClick={navigateToCampsitesPage}
+                className="view-map-btn"
+              >
+                View as List
+              </button>
+            </div>
+
             <div className="filter-section">
               <CampsiteFilter
                 campsiteData={campsiteData}
@@ -101,14 +126,25 @@ const MapView = () => {
                 setIsLoading={setIsLoading}
               />
             </div>
+          </div>
 
+          <div className="view-toggle-container">
             <button
+              className="view-toggle-btn"
               onClick={navigateToCampsitesPage}
-              className="view-campsites-btn"
             >
-              <span className="list-icon"></span>
-              View as List
+              List View
             </button>
+            <button
+              className="view-toggle-btn active"
+              onClick={() => {}}
+            >
+              Map View
+            </button>
+          </div>
+
+          <div className="status-indicator">
+            Showing {filteredCampsites.length} of {campsiteData.length} sites
           </div>
         </div>
 
@@ -119,9 +155,6 @@ const MapView = () => {
           />
         </div>
 
-        <button onClick={() => navigate("/")} className="back-button">
-          <span className="back-arrow">←</span> Back to Search
-        </button>
       </div>
     </>
   );
