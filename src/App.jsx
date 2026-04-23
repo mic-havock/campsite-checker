@@ -1,8 +1,7 @@
 import { HelmetProvider } from "react-helmet-async";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import CampgroundAvailability from "./components/CampgroundAvailability/CampgroundAvailability";
-import CampsitesPage from "./components/Campsite/CampsitesPage";
-import MapView from "./components/Campsite/Map/MapView";
+import CampsiteExplorer from "./components/Campsite/CampsiteExplorer";
 import FacilitiesFinder from "./components/Facility/FacilitiesFinder";
 import Layout from "./components/Layout/Layout";
 import NotFound from "./components/NotFound/NotFound";
@@ -14,8 +13,7 @@ const App = () => (
       <Layout>
         <Routes>
           <Route path="/" element={<FacilitiesFinder />} />
-          <Route path="/campsites" element={<CampsitesPage />} />
-          <Route path="/map-view" element={<MapView />} />
+          <Route path="/campsites" element={<CampsiteExplorer />} />
           <Route
             path="/campground-availability"
             element={<CampgroundAvailability />}

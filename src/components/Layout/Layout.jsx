@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import "./layout.scss";
 
 const Layout = ({ children }) => {
   const location = useLocation();
@@ -46,54 +47,20 @@ const Layout = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col full-height">
       {!isMainPage && (
-        <header
-          style={{
-            position: "sticky",
-            top: 0,
-            zIndex: 1000,
-            backgroundColor: "#ebede3",
-            padding: "0.5rem 1rem",
-            boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
-          }}
-        >
-          <div
-            style={{
-              maxWidth: "1200px",
-              margin: "0 auto",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              position: "relative",
-            }}
-          >
+        <header className="global-header">
+          <div className="header-content">
             <button
               onClick={() => navigate("/")}
-              style={{
-                position: "absolute",
-                left: 0,
-                backgroundColor: "transparent",
-                color: "#2b4c1c",
-                border: "1px solid rgba(43, 76, 28, 0.3)",
-                padding: "0.4rem 0.8rem",
-                fontSize: "0.8rem",
-                fontWeight: 600,
-                borderRadius: "8px",
-                cursor: "pointer",
-              }}
+              className="back-to-search-btn"
               aria-label="Back to search"
             >
               ← Back to Search
             </button>
-            <Link to="/" style={{ display: "block" }}>
+            <Link to="/" className="logo-link">
               <img
                 src="kampscout.svg"
                 alt="Kampscout Logo"
-                style={{
-                  height: isMobile ? "60px" : "100px",
-                  display: "block",
-                  margin: "0 auto",
-                  maxWidth: "100%",
-                }}
+                className="logo-img"
               />
             </Link>
           </div>

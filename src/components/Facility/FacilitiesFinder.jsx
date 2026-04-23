@@ -15,6 +15,8 @@ import "./facilities-finder.scss";
 
 const STORAGE_KEYS = {
   SELECTED_FACILITY: "selectedFacility",
+  SEARCH_RESULTS: "searchResults",
+  SEARCH_PARAMS: "searchParams",
 };
 
 const FacilitiesFinder = () => {
@@ -31,10 +33,26 @@ const FacilitiesFinder = () => {
   // Storage management functions
   const clearStorage = useCallback(() => {
     sessionStorage.removeItem(STORAGE_KEYS.SELECTED_FACILITY);
+    sessionStorage.removeItem(STORAGE_KEYS.SEARCH_RESULTS);
+    sessionStorage.removeItem(STORAGE_KEYS.SEARCH_PARAMS);
   }, []);
 
   const saveToStorage = useCallback((key, value) => {
     sessionStorage.setItem(key, JSON.stringify(value));
+  }, []);
+
+  // Load from storage on mount
+  useEffect(() => {
+    const savedResults = sessionStorage.getItem(STORAGE_KEYS.SEARCH_RESULTS);
+    const savedParams = sessionStorage.getItem(STORAGE_KEYS.SEARCH_PARAMS);
+
+    if (savedResults && savedParams) {
+      setFacilities(JSON.parse(savedResults));
+      const params = JSON.parse(savedParams);
+      setInputValue(params.query || "");
+      setSelectedState(params.state || "");
+      setHasSearched(true);
+    }
   }, []);
 
   // Event handlers
@@ -81,6 +99,8 @@ const FacilitiesFinder = () => {
 
       setFacilities(facilities);
       setHasSearched(true);
+      saveToStorage(STORAGE_KEYS.SEARCH_RESULTS, facilities);
+      saveToStorage(STORAGE_KEYS.SEARCH_PARAMS, { query: inputValue, state: selectedState });
     } catch (err) {
       console.error(err);
       setError("Error fetching facilities");

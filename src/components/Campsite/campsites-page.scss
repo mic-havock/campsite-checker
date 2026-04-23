@@ -2,7 +2,7 @@
 @import "../../styles/responsive";
 
 .campsites-page {
-  min-height: 100vh;
+  min-height: calc(100vh - 120px);
   background-color: $background-base;
   padding: 0;
   margin: 0;
@@ -11,46 +11,19 @@
   overflow-x: hidden;
   position: relative;
 
+  @include mobile {
+    min-height: calc(100vh - 100px);
+  }
+
   .hero-section {
     background: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($secondary-color, 0.05) 100%);
-    padding: 2rem 1.5rem 4.5rem;
+    padding: 1.5rem 1.5rem 3.5rem;
     text-align: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     position: relative;
 
     @include mobile {
-      padding: 3rem 1rem 3.5rem;
-    }
-
-    .hero-top-bar {
-      position: absolute;
-      top: 0.75rem;
-      right: 1.5rem;
-      left: 1.5rem;
-      display: flex;
-      justify-content: flex-start;
-
-      @include mobile {
-        right: 1rem;
-        left: 1rem;
-      }
-
-      .back-to-search-btn {
-        background-color: transparent;
-        color: $primary-color;
-        border: 1px solid rgba($primary-color, 0.3);
-        padding: 0.4rem 0.8rem;
-        font-size: 0.8rem;
-        font-weight: 600;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-
-        &:hover {
-          background-color: rgba($primary-color, 0.05);
-          border-color: $primary-color;
-        }
-      }
+      padding: 2rem 1rem 3rem;
     }
 
     .hero-content {
@@ -60,7 +33,7 @@
       h1 {
         font-size: 1.8rem;
         color: $text-primary;
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.15rem;
         letter-spacing: 0.05em;
         text-transform: uppercase;
 
@@ -76,15 +49,15 @@
       }
 
       .description {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         color: $text-primary;
-        line-height: 1.5;
+        line-height: 1.4;
         opacity: 0.6;
         letter-spacing: 0.02em;
         margin-bottom: 0;
 
         @include mobile {
-          font-size: 0.8rem;
+          font-size: 0.75rem;
         }
       }
     }
@@ -92,7 +65,7 @@
 
   .controls-wrapper {
     max-width: 1200px;
-    margin: -3.5rem auto 1.5rem;
+    margin: -2.5rem auto 1rem;
     padding: 0 1.5rem;
     position: relative;
     z-index: 10;
@@ -103,19 +76,26 @@
     }
   }
 
+  .view-toggle-fixed-height {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0.5rem auto 0;
+  }
+
   .view-toggle-container {
     display: flex;
     justify-content: center;
     background: white;
-    padding: 0.35rem;
+    padding: 0.3rem;
     border-radius: 100px;
     box-shadow: $shadow-md;
     width: fit-content;
-    margin: 1rem auto 0.5rem;
     border: 1px solid rgba(0, 0, 0, 0.05);
 
     .view-toggle-btn {
-      padding: 0.5rem 1.5rem;
+      padding: 0.4rem 1.5rem;
       border: none;
       background-color: transparent;
       color: $color-stone;
@@ -138,7 +118,7 @@
   }
 
   .status-indicator {
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
     text-align: center;
     font-size: 0.7rem;
     color: $color-stone;
@@ -170,9 +150,13 @@
     }
   }
 
-  .campsites-grid {
+  .view-content-area {
+    width: 100%;
     max-width: 1200px;
-    margin: 1rem auto 3rem;
+    margin: 0.5rem auto 3rem;
+  }
+
+  .campsites-grid {
     padding: 0 1.5rem;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -182,6 +166,21 @@
       grid-template-columns: 1fr;
       padding: 0 1rem;
       gap: 1.25rem;
+    }
+  }
+
+  .map-view-container {
+    padding: 0 1.5rem;
+    height: 700px;
+
+    @include mobile {
+      padding: 0 1rem;
+      height: 500px;
+    }
+
+    .campsite-map-container {
+      height: 100%;
+      width: 100%;
     }
   }
 
