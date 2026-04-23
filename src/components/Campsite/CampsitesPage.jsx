@@ -126,15 +126,6 @@ const CampsitesPage = () => {
         {loadingState.isLoading && <LoadingSpinner fullPage />}
 
         <div className="hero-section">
-          <div className="hero-top-bar">
-            <button
-              className="back-to-search-btn"
-              onClick={() => navigate("/")}
-              aria-label="Back to search"
-            >
-              ← Back to Search
-            </button>
-          </div>
           <div className="hero-content">
             <h1>
               {facilityName || "Campground"}
