@@ -146,23 +146,6 @@ const CampsitesPage = () => {
 
         <div className="controls-wrapper">
           <div className="controls-container">
-            <div className="map-control-card">
-              <button
-                onClick={navigateToMapView}
-                className="view-map-btn"
-                disabled={loadingState.isMapLoading}
-              >
-                {loadingState.isMapLoading ? (
-                  <>
-                    <LoadingSpinner size="small" />
-                    <span style={{ marginLeft: "8px" }}>Loading...</span>
-                  </>
-                ) : (
-                  "View on Map"
-                )}
-              </button>
-            </div>
-
             <div className="filter-section">
               <CampsiteFilter
                 campsiteData={campsiteData}

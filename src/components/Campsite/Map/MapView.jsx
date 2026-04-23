@@ -99,15 +99,6 @@ const MapView = () => {
 
         <div className="controls-wrapper">
           <div className="controls-container">
-            <div className="map-control-card list-mode">
-              <button
-                onClick={navigateToCampsitesPage}
-                className="view-map-btn"
-              >
-                View as List
-              </button>
-            </div>
-
             <div className="filter-section">
               <CampsiteFilter
                 campsiteData={campsiteData}
