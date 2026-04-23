@@ -4,7 +4,6 @@
   background-color: #fafaf9;
   overflow: hidden;
   width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
   border-radius: $button-border-radius;
@@ -15,33 +14,33 @@
   .availability-header {
     background-color: $accent-color;
     color: white;
-    padding: 1rem 1.5rem;
+    padding: 0.8rem 1.5rem;
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: $button-border-radius $button-border-radius 0 0;
-    min-height: 44px;
+    min-height: 40px;
     box-sizing: border-box;
 
     h2 {
       margin: 0;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.12em;
       text-align: center;
       width: 100%;
     }
   }
 
   .availability-body {
-    padding: 1.5rem;
-    flex-grow: 1;
+    padding: 1.25rem 1.5rem;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     background-color: transparent;
     box-sizing: border-box;
+    border-radius: 0 0 $button-border-radius $button-border-radius;
 
     .availability-row {
       display: flex;
@@ -67,7 +66,7 @@
 
         .month-select {
           width: 100%;
-          padding: 0.75rem 1rem 0.75rem 2.75rem;
+          padding: 0.6rem 1rem 0.6rem 2.75rem;
           font-size: 0.9rem;
           border: 1px solid rgba(0, 0, 0, 0.12);
           border-radius: 8px;
@@ -96,10 +95,10 @@
       }
 
       .check-availability-btn {
-        background-color: $accent-color;
+        background-color: $color-forest-green;
         color: white;
         border: none;
-        padding: 0.75rem 1.5rem;
+        padding: 0.6rem 1.5rem;
         border-radius: 8px;
         font-weight: 700;
         cursor: pointer;
@@ -109,11 +108,11 @@
         justify-content: center;
         white-space: nowrap;
         min-height: 44px;
-        box-shadow: 0 2px 4px rgba($accent-color, 0.2);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
         &:hover:not(:disabled) {
-          background-color: darken($accent-color, 10%);
-          box-shadow: 0 4px 8px rgba($accent-color, 0.3);
+          background-color: darken($color-forest-green, 10%);
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
           transform: translateY(-1px);
         }
 
@@ -123,11 +122,11 @@
 
         &:focus {
           outline: none;
-          box-shadow: 0 0 0 3px rgba($accent-color, 0.3);
+          box-shadow: 0 0 0 3px rgba($color-forest-green, 0.3);
         }
 
         &:disabled {
-          background-color: lighten($accent-color, 20%);
+          background-color: lighten($color-stone, 20%);
           cursor: not-allowed;
           opacity: 0.7;
           box-shadow: none;
@@ -145,7 +144,7 @@
     }
 
     .error-message {
-      margin-top: 1rem;
+      margin-top: 0.75rem;
       padding: 0.5rem;
       font-size: 0.8rem;
       color: $color-danger;

@@ -157,7 +157,7 @@ const CampsiteFilter = ({
       </div>
 
       <div className="controls-body">
-        <div className="filter-options">
+        <div className="filter-row">
           <LoopFilter
             uniqueLoops={uniqueLoops}
             selectedLoops={selectedLoops}
@@ -175,7 +175,7 @@ const CampsiteFilter = ({
               checked={showReservableOnly}
               onChange={(e) => setShowReservableOnly(e.target.checked)}
             />
-            Show Only Reservable Sites
+            <span>Show Reservable Only</span>
           </label>
         </div>
       </div>
