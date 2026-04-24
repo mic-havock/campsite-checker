@@ -14,6 +14,9 @@ const Layout = ({ children }) => {
   // Scroll to top when actual page navigation occurs (not internal state changes)
   useEffect(() => {
     if (prevPathname.current !== location.pathname) {
+      if (mainRef.current) {
+        mainRef.current.scrollTo(0, 0);
+      }
       window.scrollTo(0, 0);
       prevPathname.current = location.pathname;
     }

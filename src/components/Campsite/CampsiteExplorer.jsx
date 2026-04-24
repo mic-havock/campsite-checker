@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLocation, useNavigate } from "react-router-dom";
 import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
@@ -57,6 +57,13 @@ const CampsiteExplorer = () => {
   );
 
   const facilityID = campsiteData?.[0]?.FacilityID;
+
+  // Force scroll to top when data is hydrated to prevent async race conditions
+  useLayoutEffect(() => {
+    if (campsiteData.length > 0) {
+      window.scrollTo(0, 0);
+    }
+  }, [campsiteData]);
 
   if (!initialCampsites || initialCampsites.length === 0) {
     return (
