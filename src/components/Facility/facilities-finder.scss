@@ -11,7 +11,11 @@
   overflow-x: hidden;
 
   .hero-section {
-    background: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($secondary-color, 0.05) 100%);
+    background: linear-gradient(
+      135deg,
+      rgba($primary-color, 0.05) 0%,
+      rgba($secondary-color, 0.05) 100%
+    );
     padding: 2.5rem 1.5rem 3rem; // Top padding roughly button height
     text-align: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
@@ -179,10 +183,10 @@
       .clear {
         background-color: transparent;
         color: $text-primary;
-        border: 1px solid rgba(0,0,0,0.1);
+        border: 1px solid rgba(0, 0, 0, 0.1);
 
         &:hover {
-          background-color: rgba(0,0,0,0.05);
+          background-color: rgba(0, 0, 0, 0.05);
         }
       }
     }
@@ -197,7 +201,7 @@
     box-shadow: $shadow-sm;
     width: fit-content;
     margin: 0 auto 2rem;
-    border: 1px solid rgba(0,0,0,0.05);
+    border: 1px solid rgba(0, 0, 0, 0.05);
 
     .view-toggle-btn {
       padding: 0.5rem 1.25rem;
@@ -228,8 +232,8 @@
   }
 
   .grid-col {
-    background: white;
-    padding: 1rem;
+    background: transparent;
+    padding: 0;
     border-radius: 12px;
     box-shadow: $shadow-md;
     border: 1px solid rgba(0, 0, 0, 0.05);
