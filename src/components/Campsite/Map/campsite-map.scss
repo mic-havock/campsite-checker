@@ -1,46 +1,51 @@
 @import "../../../styles/variables";
 
 .campsite-map-container {
-  padding: 15px;
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 0;
+  background-color: transparent;
+  border-radius: $button-border-radius;
+  overflow: hidden;
   position: relative;
-
-  h2 {
-    margin-top: 0;
-    margin-bottom: 15px;
-    font-size: 1.5rem;
-  }
+  height: 100%;
+  width: 100%;
 
   .map-wrapper {
-    border-radius: 8px;
+    height: 85%;
+    width: 100%;
+    border-radius: $button-border-radius;
     overflow: hidden;
-    border: 1px solid #ddd;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .map-controls {
     z-index: 1000;
-    margin: 10px;
+    margin: 1.5rem;
     pointer-events: none;
 
     .view-toggle-button {
       pointer-events: auto;
-      padding: 0.5rem 1rem;
-      background-color: $secondary-color;
-      border: 1px solid rgba(0, 0, 0, 0.2);
-      border-radius: $button-border-radius;
+      padding: 0.6rem 1.25rem;
+      background-color: white;
+      color: $primary-color;
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      border-radius: 8px;
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
       transition: all 0.2s ease;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 
       &:hover {
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+        background-color: #f8f9fa;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
       }
 
       &:active {
-        transform: translateY(1px);
+        transform: translateY(0);
       }
     }
   }
@@ -101,28 +106,21 @@
   }
 }
 
-/* Fix for Leaflet popup styles */
-.leaflet-popup-content {
-  margin: 12px;
-
-  strong {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 1.1rem;
-  }
-
-  p {
-    margin: 4px 0;
-    font-size: 1rem;
-  }
+/* Fix for Leaflet control spacing */
+.leaflet-right .leaflet-control {
+  margin-right: 1.5rem;
 }
 
-.leaflet-right .leaflet-control {
-  margin-right: 10px;
+.leaflet-left .leaflet-control {
+  margin-left: 1.5rem;
 }
 
 .leaflet-top .leaflet-control {
-  margin-top: 10px;
+  margin-top: 1.5rem;
+}
+
+.leaflet-bottom .leaflet-control {
+  margin-bottom: 1.5rem;
 }
 
 .leaflet-container {
@@ -132,16 +130,17 @@
 }
 
 .leaflet-tooltip {
-  background-color: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
-  padding: 4px 8px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  background-color: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   white-space: nowrap;
+  color: $text-primary;
 }
 
 .leaflet-tooltip-top:before {
-  border-top-color: rgba(255, 255, 255, 0.9);
+  border-top-color: rgba(255, 255, 255, 0.95);
 }

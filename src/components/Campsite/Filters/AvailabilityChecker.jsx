@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
+import { LuCalendar } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
 import { fetchCampgroundAvailability } from "../../../api/campsites";
 import LoadingSpinner from "../../Common/LoadingSpinner/LoadingSpinner";
@@ -100,21 +101,24 @@ const AvailabilityChecker = ({ facilityID, facilityName, setIsLoading }) => {
       </div>
       <div className="availability-body">
         <div className="availability-row">
-          <select
-            id="month-select"
-            value={selectedMonth}
-            onChange={handleMonthChange}
-            className="month-select"
-            disabled={localLoading}
-            aria-label="Select a month"
-          >
-            <option value="">Select a month...</option>
-            {availableMonths.map((month) => (
-              <option key={month.value} value={month.value}>
-                {month.label}
-              </option>
-            ))}
-          </select>
+          <div className="select-container">
+            <LuCalendar className="input-icon" />
+            <select
+              id="month-select"
+              value={selectedMonth}
+              onChange={handleMonthChange}
+              className="month-select"
+              disabled={localLoading}
+              aria-label="Select a month"
+            >
+              <option value="">Select a month...</option>
+              {availableMonths.map((month) => (
+                <option key={month.value} value={month.value}>
+                  {month.label}
+                </option>
+              ))}
+            </select>
+            </div>
           <button
             onClick={fetchAvailability}
             className="check-availability-btn"

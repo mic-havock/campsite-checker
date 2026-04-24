@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { LuFilter } from "react-icons/lu";
 import "./campsite-filter.scss";
 
 const LoopFilter = ({
@@ -50,7 +51,10 @@ const LoopFilter = ({
   return (
     <div className="loop-filter" ref={loopFilterRef}>
       <button className="loop-filter-toggle" onClick={handleToggleLoopFilter}>
-        <span className="filter-button-text">{getLoopFilterButtonText()}</span>
+        <div className="toggle-label-group">
+          <LuFilter className="input-icon" />
+          <span className="filter-button-text">{getLoopFilterButtonText()}</span>
+        </div>
         <span className="toggle-icon">{showLoopFilter ? "▲" : "▼"}</span>
       </button>
 
@@ -153,7 +157,7 @@ const CampsiteFilter = ({
       </div>
 
       <div className="controls-body">
-        <div className="filter-options">
+        <div className="filter-row">
           <LoopFilter
             uniqueLoops={uniqueLoops}
             selectedLoops={selectedLoops}
@@ -171,12 +175,9 @@ const CampsiteFilter = ({
               checked={showReservableOnly}
               onChange={(e) => setShowReservableOnly(e.target.checked)}
             />
-            Show Only Reservable Sites
+            <span>Show Reservable Only</span>
           </label>
         </div>
-        <p className="filtered-count">
-          Showing {filteredCampsites.length} of {campsiteData.length} sites
-        </p>
       </div>
     </div>
   );

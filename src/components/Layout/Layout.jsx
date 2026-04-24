@@ -1,17 +1,27 @@
 import PropTypes from "prop-types";
 import { useEffect, useRef, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import "./layout.scss";
 
 const Layout = ({ children }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const isMainPage = location.pathname === "/";
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const mainRef = useRef(null);
+  const prevPathname = useRef(location.pathname);
 
-  // Scroll to top when location changes
+  // Scroll to top when actual page navigation occurs (not internal state changes)
   useEffect(() => {
-    if (mainRef.current) {
-      mainRef.current.scrollIntoView({ behavior: "instant" });
+    if (prevPathname.current !== location.pathname) {
+      // Use a timeout to ensure scroll reset happens after browser's default restoration
+      setTimeout(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+        if (mainRef.current) {
+          mainRef.current.scrollTo({ top: 0, left: 0, behavior: "instant" });
+        }
+      }, 0);
+      prevPathname.current = location.pathname;
     }
   }, [location.pathname]);
 
@@ -39,22 +49,22 @@ const Layout = ({ children }) => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col full-height">
+    <div className="min-h-screen flex flex-col">
       {!isMainPage && (
-        <header>
-          <div>
-            <Link to="/">
+        <header className="global-header">
+          <div className="header-content">
+            <button
+              onClick={() => navigate("/")}
+              className="back-to-search-btn"
+              aria-label="Back to search"
+            >
+              ← Back to Search
+            </button>
+            <Link to="/" className="logo-link">
               <img
                 src="kampscout.svg"
                 alt="Kampscout Logo"
-                className="h-[150px] mx-auto block"
-                style={{
-                  height: isMobile ? "100px" : "150px",
-                  display: "block",
-                  marginLeft: "auto",
-                  marginRight: "auto",
-                  maxWidth: "100%",
-                }}
+                className="logo-img"
               />
             </Link>
           </div>

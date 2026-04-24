@@ -116,12 +116,11 @@ const CampsiteMap = ({ campsites, facilityName }) => {
 
   return (
     <div className="campsite-map-container">
-      <h2>{facilityName} Map</h2>
       <div className="map-wrapper">
         <MapContainer
           center={mapCenter}
           zoom={zoom}
-          style={{ height: "600px", width: "100%" }}
+          style={{ height: "100%", width: "100%" }}
         >
           <div className="map-controls leaflet-top leaflet-right">
             <button

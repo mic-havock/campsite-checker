@@ -1,188 +1,211 @@
 @import "../../styles/variables";
-
-$success-color: #28a745;
-$light-bg: #f8f9fa;
-$border-radius: 12px;
-$box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-$transition: all 0.2s ease;
+@import "../../styles/responsive";
 
 .campsites-page {
-  min-height: 100vh;
+  min-height: calc(100vh - 120px);
   background-color: $background-base;
-  padding: 20px;
+  padding: 0;
   margin: 0;
-  width: 99vw;
+  width: 100%;
   box-sizing: border-box;
   overflow-x: hidden;
-
-  @media (max-width: 768px) {
-    padding: 1rem;
-  }
-}
-
-.page-header {
-  text-align: center;
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 1rem;
-
-  h1 {
-    margin-bottom: 0;
-  }
-}
-
-.controls-wrapper {
-  background: none;
-  max-width: 1200px;
-  margin: 0 auto 1.5rem;
-  padding: 0;
-  overflow: visible;
   position: relative;
-}
 
-.controls-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: stretch;
-  width: 100%;
-  overflow: hidden;
-  background: none;
-  flex-wrap: wrap;
-  gap: 1rem;
-
-  @media (max-width: 992px) {
-    flex-direction: column;
+  @include mobile {
+    min-height: calc(100vh - 100px);
   }
 
-  .filter-section {
-    flex: 1;
+  .hero-section {
+    background: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($secondary-color, 0.05) 100%);
+    padding: 1.5rem 1.5rem 3.5rem;
+    text-align: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     position: relative;
-    overflow: visible;
-    order: 1;
-    background: none;
-    border-right: none;
 
-    @media (max-width: 992px) {
-      border-bottom: none;
-    }
-  }
-
-  .right-controls {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    background: none;
-    order: 2;
-    height: 100%;
-  }
-
-  .view-map-btn {
-    background-color: $color-earth;
-    color: white;
-    border: none;
-    padding: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: $transition;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    white-space: nowrap;
-    font-size: 1.1rem;
-    margin: 0;
-    border-radius: $button-border-radius;
-    width: 100%;
-    order: 3;
-    margin-top: 1rem;
-
-    &::before {
-      content: "";
-      display: inline-block;
-      width: 1.2rem;
-      height: 1.2rem;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath fill='white' d='M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0zM192 272c44.183 0 80-35.817 80-80s-35.817-80-80-80-80 35.817-80 80 35.817 80 80 80z'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: contain;
-      margin-right: 0.5rem;
+    @include mobile {
+      padding: 2rem 1rem 3rem;
     }
 
-    &:hover {
-      background-color: darken($color-earth, 10%);
-      box-shadow: $shadow-md;
-      transform: translateY(-2px);
-    }
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
 
-    &:focus {
-      outline: none;
-      box-shadow: 0 0 0 3px rgba($color-earth, 0.3);
-    }
+      h1 {
+        font-size: 1.8rem;
+        color: $text-primary;
+        margin-bottom: 0.15rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
 
-    &:disabled {
-      background-color: lighten($color-earth, 20%);
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
+        .state-indicator {
+          color: $color-stone;
+          font-weight: 500;
+          font-size: 0.9em;
+        }
 
-      &::before {
-        content: "";
+        @include mobile {
+          font-size: 1.4rem;
+        }
+      }
+
+      .description {
+        font-size: 0.85rem;
+        color: $text-primary;
+        line-height: 1.4;
+        opacity: 0.6;
+        letter-spacing: 0.02em;
+        margin-bottom: 0;
+
+        @include mobile {
+          font-size: 0.75rem;
+        }
       }
     }
   }
-}
 
-.campsites-grid {
-  overflow-x: hidden;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, 330px);
-  justify-content: center;
-  gap: 2rem;
-  margin: 2rem auto;
-  width: 100%;
-  padding: 0 1rem;
+  .controls-wrapper {
+    max-width: 1200px;
+    margin: -2.5rem auto 1rem;
+    padding: 0 1.5rem;
+    position: relative;
+    z-index: 10;
 
-  @media (max-width: 768px) {
+    @include mobile {
+      margin-top: 0.5rem;
+      padding: 0 1rem;
+    }
+  }
+
+  .view-toggle-fixed-height {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0.5rem auto 0;
+  }
+
+  .view-toggle-container {
+    display: flex;
+    justify-content: center;
+    background: white;
+    padding: 0.3rem;
+    border-radius: 100px;
+    box-shadow: $shadow-md;
+    width: fit-content;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+
+    .view-toggle-btn {
+      padding: 0.4rem 1.5rem;
+      border: none;
+      background-color: transparent;
+      color: $color-stone;
+      border-radius: 100px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &.active {
+        background-color: rgba($primary-color, 0.1);
+        color: $primary-color;
+        font-weight: 700;
+      }
+
+      &:hover:not(.active) {
+        color: $text-primary;
+      }
+    }
+  }
+
+  .status-indicator {
+    margin-top: 0.25rem;
+    text-align: center;
+    font-size: 0.7rem;
+    color: $color-stone;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.8;
+  }
+
+  .controls-container {
+    display: flex;
     gap: 1rem;
-    padding: 0;
+    align-items: stretch;
+    justify-content: center;
+    max-width: 1000px;
+    margin: 0 auto;
+
+    @include mobile {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .filter-section, .right-controls {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      max-width: 600px;
+    }
   }
-}
 
-.error-container {
-  text-align: center;
-  padding: 2rem 2rem;
-  background: $card-bg;
-  border-radius: $border-radius;
-  box-shadow: $box-shadow;
-  max-width: 600px;
-  margin: 2rem auto;
-
-  h1 {
-    color: #dc3545;
-    margin-bottom: 1rem;
-    font-size: clamp(1.5rem, 4vw, 2rem);
+  .view-content-area {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0.5rem auto 3rem;
   }
 
-  p {
-    color: $secondary-color;
-    margin-bottom: 2rem;
-    font-size: clamp(0.9rem, 2vw, 1rem);
+  .campsites-grid {
+    padding: 0 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+
+    @include mobile {
+      grid-template-columns: 1fr;
+      padding: 0 1rem;
+      gap: 1.25rem;
+    }
   }
-}
 
-.back-button {
-  @include button-primary;
-  position: fixed;
-  bottom: 1rem;
-  left: 1rem;
-  z-index: 100;
-  box-shadow: $shadow-md;
-}
+  .map-view-container {
+    padding: 0 1.5rem;
+    height: 700px;
 
-.leaflet-container {
-  font-family: inherit;
-  z-index: 1;
+    @include mobile {
+      padding: 0 1rem;
+      height: 500px;
+    }
+
+    .campsite-map-container {
+      height: 100%;
+      width: 100%;
+    }
+  }
+
+  .error-container {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: $shadow-md;
+    max-width: 600px;
+    margin: 4rem auto;
+
+    h1 {
+      color: $color-danger;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      color: $text-primary;
+      opacity: 0.8;
+      margin-bottom: 2rem;
+    }
+
+    .back-button {
+      @include button-primary;
+    }
+  }
 }
