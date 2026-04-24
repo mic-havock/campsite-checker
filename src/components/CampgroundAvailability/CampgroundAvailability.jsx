@@ -15,6 +15,8 @@ import { fetchCampgroundAvailability } from "../../api/campsites";
 import { isNonReservableStatus } from "../../config/reservationStatus";
 import AlertModal from "../Common/AlertModal/AlertModal";
 import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-alpine.css";
 import "./campground-availability.scss";
 
 ModuleRegistry.registerModules([
@@ -573,9 +575,10 @@ const CampgroundAvailability = () => {
               </div>
             </div>
 
-            <div className="ag-theme-alpine" style={gridStyle}>
-              <AgGridReact
-                rowData={filteredRows}
+            <div className="availability-grid-centered-wrapper">
+              <div className="ag-theme-alpine" style={gridStyle}>
+                <AgGridReact
+                  rowData={filteredRows}
                 columnDefs={columnDefs}
                 suppressHorizontalScroll={false}
                 defaultColDef={{
@@ -591,10 +594,11 @@ const CampgroundAvailability = () => {
                 domLayout="normal"
                 rowSelection="multiple"
                 onSelectionChanged={handleSelectionChanged}
-                suppressCellSelection={true}
-                suppressRowClickSelection={true}
-                enableCellTextSelection={true}
-              />
+                  suppressCellSelection={true}
+                  suppressRowClickSelection={true}
+                  enableCellTextSelection={true}
+                />
+              </div>
             </div>
           </div>
 

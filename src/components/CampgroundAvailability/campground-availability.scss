@@ -288,20 +288,16 @@
 
   .availability-grid-container {
     width: 100%;
-    max-width: 1200px;
     margin: 0.5rem auto 3rem;
-    padding: 0 1.5rem;
+    padding: 0;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     box-sizing: border-box;
-
-    @include mobile {
-      padding: 0 1rem;
-    }
 
     .availability-legend {
       width: 100%;
+      max-width: 1200px;
       margin-bottom: 1.5rem;
       padding: 0.75rem 1rem;
       background-color: white;
@@ -314,6 +310,15 @@
       flex-wrap: wrap;
       border: 1px solid rgba(0, 0, 0, 0.05);
       box-sizing: border-box;
+      margin-left: 1.5rem;
+      margin-right: 1.5rem;
+      width: calc(100% - 3rem);
+
+      @include mobile {
+        margin-left: 1rem;
+        margin-right: 1rem;
+        width: calc(100% - 2rem);
+      }
 
       .legend-item {
         display: flex;
@@ -392,6 +397,16 @@
           }
         }
       }
+    }
+
+    .availability-grid-centered-wrapper {
+        margin: 0 auto;
+        width: fit-content;
+        max-width: calc(100vw - 3rem);
+
+        @include mobile {
+            max-width: calc(100vw - 2rem);
+        }
     }
   }
 }
