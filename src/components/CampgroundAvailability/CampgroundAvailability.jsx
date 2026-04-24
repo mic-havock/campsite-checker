@@ -333,12 +333,12 @@ const CampgroundAvailability = () => {
           "status-available": (params) => params.value.available,
           "status-reserved": (params) => !params.value.available && params.value.status === "Reserved",
           "status-nyr": (params) => !params.value.available && params.value.status === "NYR",
-          "status-not-reservable": (params) => !params.value.available && isNonReservableStatus(params.value.status),
-          "clickable-cell": (params) => !params.value.available && !isNonReservableStatus(params.value.status),
+          "status-not-reservable": (params) => !params.value.available && isNonReservableStatus(params.value.status) && params.value.status !== "NYR",
+          "clickable-cell": (params) => !params.value.available && (!isNonReservableStatus(params.value.status) || params.value.status === "NYR"),
         },
         onCellClicked: (params) => {
           const data = params.value;
-          if (!data.available && !isNonReservableStatus(data.status)) {
+          if (!data.available && (!isNonReservableStatus(data.status) || data.status === "NYR")) {
             handleUnavailableClick(params.data.campsiteObj, date);
           }
         },
