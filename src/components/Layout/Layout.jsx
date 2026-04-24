@@ -14,10 +14,13 @@ const Layout = ({ children }) => {
   // Scroll to top when actual page navigation occurs (not internal state changes)
   useEffect(() => {
     if (prevPathname.current !== location.pathname) {
-      if (mainRef.current) {
-        mainRef.current.scrollTo(0, 0);
-      }
-      window.scrollTo(0, 0);
+      // Use a timeout to ensure scroll reset happens after browser's default restoration
+      setTimeout(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+        if (mainRef.current) {
+          mainRef.current.scrollTo({ top: 0, left: 0, behavior: "instant" });
+        }
+      }, 0);
       prevPathname.current = location.pathname;
     }
   }, [location.pathname]);
@@ -46,7 +49,7 @@ const Layout = ({ children }) => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col full-height">
+    <div className="min-h-screen flex flex-col">
       {!isMainPage && (
         <header className="global-header">
           <div className="header-content">

@@ -16,13 +16,8 @@
   }
 
   .hero-section {
-    background: linear-gradient(
-      135deg,
-      rgba($primary-color, 0.05) 0%,
-      rgba($secondary-color, 0.05) 100%
-    );
-    margin-top: -1rem;
-    padding: 0.5rem 1.5rem 3.5rem;
+    background: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($secondary-color, 0.05) 100%);
+    padding: 1.5rem 1.5rem 3.5rem;
     text-align: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     position: relative;
@@ -56,11 +51,10 @@
       .description {
         font-size: 0.85rem;
         color: $text-primary;
-        line-height: 0.5;
-        margin-top: 0.3rem;
+        line-height: 1.4;
         opacity: 0.6;
         letter-spacing: 0.02em;
-        margin-bottom: 0.3rem;
+        margin-bottom: 0;
 
         @include mobile {
           font-size: 0.75rem;
@@ -147,8 +141,7 @@
       align-items: stretch;
     }
 
-    .filter-section,
-    .right-controls {
+    .filter-section, .right-controls {
       flex: 1;
       display: flex;
       flex-direction: column;
