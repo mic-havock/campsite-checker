@@ -355,7 +355,10 @@ const CampgroundAvailability = () => {
             text = "R";
           } else if (data.status === "NYR") {
             statusClass = "nyr";
-            text = "NYR";
+            text = "N";
+          } else {
+            statusClass = "not-reservable";
+            text = "X";
           }
 
           return (
@@ -488,10 +491,10 @@ const CampgroundAvailability = () => {
                 <strong>R</strong> = Reserved
               </span>
               <span className="legend-item not-yet-released">
-                <strong>NYR</strong> = Not Yet Released
+                <strong>N</strong> = Not Yet Released
               </span>
               <span className="legend-item not-reservable">
-                <strong>NR</strong> = Not Reservable/Not Available
+                <strong>X</strong> = Not Reservable/Not Available
               </span>
               <div className="legend-controls">
                 <input

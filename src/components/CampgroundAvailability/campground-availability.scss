@@ -469,12 +469,13 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        height: 24px;
-        width: calc(100% - 12px);
-        max-width: 60px;
-        border-radius: 4px;
+        height: 32px;
+        width: 32px;
+        margin: auto;
+        border-radius: 8px;
         font-weight: 600;
-        font-size: 0.7rem;
+        font-size: 0.8rem;
+        line-height: 1;
         transition: all 0.2s ease;
         white-space: nowrap;
 
