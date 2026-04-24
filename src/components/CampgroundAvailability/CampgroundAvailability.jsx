@@ -325,111 +325,39 @@ const CampgroundAvailability = () => {
           ]
         : []),
       ...dates.map((date) => ({
-        // ⚡ Bolt Performance Optimization:
-        // Extracting date parts via string manipulation prevents the overhead of creating Date objects
-        // and using the Intl API in a .map loop, improving rendering performance for the data grid.
         headerName: `${parseInt(date.substring(5, 7), 10)}/${parseInt(date.substring(8, 10), 10)}`,
         field: date,
-        width: 90,
+        width: 80,
         headerClass: "ag-header-cell-center",
-        valueFormatter: (params) => {
-          return params.value.available ? "A" : "X";
+        cellClassRules: {
+          "status-available": (params) => params.value.available,
+          "status-reserved": (params) => !params.value.available && params.value.status === "Reserved",
+          "status-nyr": (params) => !params.value.available && params.value.status === "NYR",
+          "status-not-reservable": (params) => !params.value.available && isNonReservableStatus(params.value.status),
+          "clickable-cell": (params) => !params.value.available && !isNonReservableStatus(params.value.status),
         },
-        cellStyle: {
-          padding: "0",
-          textAlign: "center",
-          border: "none",
-          borderRight: "1px solid #e0e0e0",
-        },
-        cellRenderer: (params) => {
+        onCellClicked: (params) => {
           const data = params.value;
-          if (data.available) {
-            return (
-              <div
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: "not-allowed",
-                  backgroundColor: "#4caf50",
-                  transition: "all 0.2s ease",
-                  position: "relative",
-                  boxShadow: "none",
-                  transform: "scale(1)",
-                  opacity: "1",
-                  color: "#f8f9fa",
-                  fontSize: "16px",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "#90ff88";
-                  e.currentTarget.style.boxShadow = "0 2px 4px rgba(0,0,0,0.1)";
-                  e.currentTarget.style.transform = "scale(1.02)";
-                  e.currentTarget.style.opacity = "0.95";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "#4caf50";
-                  e.currentTarget.style.boxShadow = "none";
-                  e.currentTarget.style.transform = "scale(1)";
-                  e.currentTarget.style.opacity = "1";
-                }}
-              >
-                A
-              </div>
-            );
-          } else {
-            const { base: baseColor, hover: hoverColor } = getStatusColors(
-              data.status,
-            );
-
-            return (
-              <div
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: isNonReservableStatus(data.status)
-                    ? "not-allowed"
-                    : "pointer",
-                  backgroundColor: baseColor,
-                  transition: "all 0.2s ease",
-                  position: "relative",
-                  boxShadow: "none",
-                  transform: "scale(1)",
-                  opacity: "1",
-                  color: "#f8f9fa",
-                  fontSize: "16px",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = hoverColor;
-                  e.currentTarget.style.boxShadow = "0 2px 4px rgba(0,0,0,0.1)";
-                  e.currentTarget.style.transform = "scale(1.02)";
-                  e.currentTarget.style.opacity = "0.95";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = baseColor;
-                  e.currentTarget.style.boxShadow = "none";
-                  e.currentTarget.style.transform = "scale(1)";
-                  e.currentTarget.style.opacity = "1";
-                }}
-                onClick={() =>
-                  !isNonReservableStatus(data.status) &&
-                  handleUnavailableClick(params.data.campsiteObj, date)
-                }
-                title={data.status}
-              >
-                {data.status === "NYR"
-                  ? "NYR"
-                  : data.status === "Reserved"
-                    ? "R"
-                    : "NR"}
-              </div>
-            );
+          if (!data.available && !isNonReservableStatus(data.status)) {
+            handleUnavailableClick(params.data.campsiteObj, date);
           }
         },
+        valueFormatter: (params) => {
+          const data = params.value;
+          if (data.available) return "A";
+          if (data.status === "NYR") return "NYR";
+          if (data.status === "Reserved") return "R";
+          return "NR";
+        },
+        cellStyle: {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontWeight: "700",
+            fontSize: "0.75rem",
+            padding: "0",
+            color: "white",
+        }
       })),
     ];
 
