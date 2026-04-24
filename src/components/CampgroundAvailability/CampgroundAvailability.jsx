@@ -342,21 +342,34 @@ const CampgroundAvailability = () => {
             handleUnavailableClick(params.data.campsiteObj, date);
           }
         },
-        valueFormatter: (params) => {
+        cellRenderer: (params) => {
           const data = params.value;
-          if (data.available) return "A";
-          if (data.status === "NYR") return "NYR";
-          if (data.status === "Reserved") return "R";
-          return "NR";
+          let statusClass = "not-reservable";
+          let text = "NR";
+
+          if (data.available) {
+            statusClass = "available";
+            text = "A";
+          } else if (data.status === "Reserved") {
+            statusClass = "reserved";
+            text = "R";
+          } else if (data.status === "NYR") {
+            statusClass = "nyr";
+            text = "NYR";
+          }
+
+          return (
+            <span className={`status-pill ${statusClass}`}>
+              {text}
+            </span>
+          );
         },
         cellStyle: {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            fontWeight: "700",
             fontSize: "0.75rem",
             padding: "0",
-            color: "white",
         }
       })),
     ];

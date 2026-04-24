@@ -316,30 +316,38 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        font-weight: 700;
+        font-weight: 500;
         color: $text-primary;
         text-transform: uppercase;
         letter-spacing: 0.05em;
 
-        &::before {
-          content: "";
-          display: inline-block;
-          width: 12px;
-          height: 12px;
-          border-radius: 2px;
-          background-color: #4caf50;
+        strong {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 24px;
+          height: 24px;
+          padding: 0 6px;
+          border-radius: 4px;
+          font-size: 0.7rem;
+          font-weight: 600;
+          background-color: rgba(76, 175, 80, 0.12);
+          color: #2e7d32;
         }
 
-        &.reserved::before {
-          background-color: #d65140;
+        &.reserved strong {
+          background-color: rgba(214, 81, 64, 0.12);
+          color: #b71c1c;
         }
 
-        &.not-yet-released::before {
-          background-color: #4a90e2;
+        &.not-yet-released strong {
+          background-color: rgba(74, 144, 226, 0.12);
+          color: #1565c0;
         }
 
-        &.not-reservable::before {
-          background-color: #707070;
+        &.not-reservable strong {
+          background-color: rgba(112, 112, 112, 0.12);
+          color: #424242;
         }
       }
 
@@ -457,22 +465,42 @@
       border-right: none !important;
     }
 
-    &.status-available {
-        background-color: #4caf50 !important;
+    .status-pill {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 24px;
+        width: calc(100% - 12px);
+        max-width: 60px;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 0.7rem;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+
+        &.available {
+            background-color: rgba(76, 175, 80, 0.12);
+            color: #2e7d32;
+        }
+        &.reserved {
+            background-color: rgba(214, 81, 64, 0.12);
+            color: #b71c1c;
+        }
+        &.nyr {
+            background-color: rgba(74, 144, 226, 0.12);
+            color: #1565c0;
+        }
+        &.not-reservable {
+            background-color: rgba(112, 112, 112, 0.12);
+            color: #424242;
+        }
     }
-    &.status-reserved {
-        background-color: #d65140 !important;
-    }
-    &.status-nyr {
-        background-color: #4a90e2 !important;
-    }
-    &.status-not-reservable {
-        background-color: #707070 !important;
-    }
+
     &.clickable-cell {
         cursor: pointer !important;
-        &:hover {
-            opacity: 0.9;
+        .status-pill:hover {
+            filter: brightness(0.95);
+            transform: scale(1.02);
         }
     }
   }
