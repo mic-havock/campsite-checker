@@ -1,21 +1,9 @@
 import "leaflet/dist/leaflet.css";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
-import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
+import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+import MapUpdater from "../../Common/MapUpdater/MapUpdater";
 import "./facility-map.scss";
-
-const MapUpdater = ({ center, zoom }) => {
-  const map = useMap();
-  useEffect(() => {
-    map.setView(center, zoom);
-  }, [center, zoom, map]);
-  return null;
-};
-
-MapUpdater.propTypes = {
-  center: PropTypes.arrayOf(PropTypes.number).isRequired,
-  zoom: PropTypes.number.isRequired,
-};
 
 const FacilityMap = ({ facility }) => {
   const [mapCenter, setMapCenter] = useState([0, 0]);

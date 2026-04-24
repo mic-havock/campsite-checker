@@ -7,9 +7,9 @@ import {
   Marker,
   TileLayer,
   Tooltip,
-  useMap,
 } from "react-leaflet";
 import Campsite from "../Campsite";
+import MapUpdater from "../../Common/MapUpdater/MapUpdater";
 import "./campsite-map.scss";
 
 delete L.Icon.Default.prototype._getIconUrl;
@@ -19,26 +19,6 @@ L.Icon.Default.mergeOptions({
   iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
   shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
 });
-
-const MapUpdater = ({ center, zoom, shouldUpdate }) => {
-  const map = useMap();
-  const hasUpdatedRef = useRef(false);
-
-  useEffect(() => {
-    if (center && zoom && shouldUpdate && !hasUpdatedRef.current) {
-      map.setView(center, zoom);
-      hasUpdatedRef.current = true;
-    }
-  }, [map, center, zoom, shouldUpdate]);
-
-  return null;
-};
-
-MapUpdater.propTypes = {
-  center: PropTypes.array.isRequired,
-  zoom: PropTypes.number.isRequired,
-  shouldUpdate: PropTypes.bool.isRequired,
-};
 
 const CampsiteMap = ({ campsites, facilityName }) => {
   const [mapCenter, setMapCenter] = useState([39.8283, -98.5795]); // Default center of US
