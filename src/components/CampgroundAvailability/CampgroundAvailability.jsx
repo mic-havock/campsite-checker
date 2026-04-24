@@ -9,6 +9,7 @@ import {
 import { AgGridReact } from "ag-grid-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
+import { LuCalendar } from "react-icons/lu";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchCampgroundAvailability } from "../../api/campsites";
 import { isNonReservableStatus } from "../../config/reservationStatus";
@@ -88,7 +89,8 @@ const CampgroundAvailability = () => {
     location.state?.availabilityData,
   );
   const facilityID = location.state?.facilityID;
-  const campsiteName = location.state?.campsiteName;
+  const facilityName = location.state?.facilityName || location.state?.campsiteName;
+  const facilityState = location.state?.facilityState;
   const [alertModal, setAlertModal] = useState(false);
   const [selectedCampsite, setSelectedCampsite] = useState(null);
   const [tableWidth, setTableWidth] = useState(window.innerWidth);
@@ -189,10 +191,24 @@ const CampgroundAvailability = () => {
 
   if (!availabilityData || !availabilityData.campsites) {
     return (
-      <div>
-        <h1>Campground Availability For Details</h1>
-        <p>No availability data found. Please go back and try again.</p>
-        <button onClick={() => navigate(-1)}>Back to Campsites</button>
+      <div className="campground-availability-container explorer-mode">
+        <div className="hero-section persistent-stack">
+          <div className="hero-content">
+            <h1>Campground Availability</h1>
+            <p className="description">
+              No availability data found. Please go back and try again.
+            </p>
+          </div>
+        </div>
+        <div className="view-content-area" style={{ textAlign: "center", marginTop: "4rem" }}>
+          <button
+            onClick={() => navigate(-1)}
+            className="check-availability-btn"
+            style={{ display: "inline-flex", margin: "0 auto" }}
+          >
+            ← Back to Campsites
+          </button>
+        </div>
       </div>
     );
   }
@@ -433,73 +449,88 @@ const CampgroundAvailability = () => {
     return (
       <>
         <Helmet>
+          <title>{facilityName ? `${facilityName} - Availability | Kamp Scout` : "Campground Availability | Kamp Scout"}</title>
           <script type="application/ld+json">
             {JSON.stringify(availabilitySchema)}
           </script>
         </Helmet>
-        <div className="campground-availability-container">
+        <div className="campground-availability-container explorer-mode">
           {isLoading && <LoadingSpinner fullPage />}
 
-          <div className="campground-availability-header">
-            <h1>Campground Availability</h1>
-
-            <div className="availability-card">
-              <div className="availability-header">
-                <h2>Monthly Campground Availability</h2>
-              </div>
-              <div className="availability-body">
-                <div className="availability-row">
-                  <select
-                    id="month-select"
-                    value={selectedMonth}
-                    onChange={handleSelectChange}
-                    className="month-select"
-                    disabled={isLoading}
-                  >
-                    <option value="">
-                      Select a month to see availability...
-                    </option>
-                    {getNextMonths().map((month) => (
-                      <option key={month.value} value={month.value}>
-                        {month.label}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    onClick={handleMonthChange}
-                    className="check-availability-btn"
-                    disabled={!selectedMonth || isLoading}
-                  >
-                    {isLoading ? (
-                      <>
-                        <LoadingSpinner size="small" />
-                        <span style={{ marginLeft: "8px" }}>Loading...</span>
-                      </>
-                    ) : (
-                      "Check"
-                    )}
-                  </button>
-                </div>
-              </div>
+          <div className="hero-section persistent-stack">
+            <div className="hero-content">
+              <h1>
+                {facilityName || "Campground Availability"}
+                {facilityState && <span className="state-indicator"> ({facilityState})</span>}
+              </h1>
+              <p className="description">Explore real-time availability and set reservation alerts</p>
             </div>
+          </div>
 
-            <div className="info-text">
-              <h3>How to use:</h3>
-              <div className="info-content">
-                <div className="info-item">
-                  <span className="bullet">•</span>
-                  <span>
-                    Click on any Reserved or Not Yet Released date to create an
-                    alert for that date
-                  </span>
+          <div className="controls-wrapper persistent-stack">
+            <div className="controls-container">
+              <div className="availability-card">
+                <div className="availability-header">
+                  <h2>Monthly Campground Availability</h2>
                 </div>
-                <div className="info-item">
-                  <span className="bullet">•</span>
-                  <span>
-                    Use checkboxes to select multiple campsites, then click
-                    &quot;Create Alert for Selected&quot; to create an alert for
-                    them
-                  </span>
+                <div className="availability-body">
+                  <div className="availability-row">
+                    <div className="select-container">
+                      <LuCalendar className="input-icon" />
+                      <select
+                        id="month-select"
+                        value={selectedMonth}
+                        onChange={handleSelectChange}
+                        className="month-select"
+                        disabled={isLoading}
+                        aria-label="Select a month"
+                      >
+                        <option value="">
+                          Select a month...
+                        </option>
+                        {getNextMonths().map((month) => (
+                          <option key={month.value} value={month.value}>
+                            {month.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <button
+                      onClick={handleMonthChange}
+                      className="check-availability-btn"
+                      disabled={!selectedMonth || isLoading}
+                    >
+                      {isLoading ? (
+                        <>
+                          <LoadingSpinner size="small" />
+                          <span style={{ marginLeft: "8px" }}>Loading...</span>
+                        </>
+                      ) : (
+                        "Check"
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="info-text">
+                <h3>How to use:</h3>
+                <div className="info-content">
+                  <div className="info-item">
+                    <span className="bullet">•</span>
+                    <span>
+                      Click on any Reserved or Not Yet Released date to create an
+                      alert for that date
+                    </span>
+                  </div>
+                  <div className="info-item">
+                    <span className="bullet">•</span>
+                    <span>
+                      Use checkboxes to select multiple campsites, then click
+                      &quot;Create Alert for Selected&quot; to create an alert for
+                      them
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -567,10 +598,6 @@ const CampgroundAvailability = () => {
             </div>
           </div>
 
-          <button className="back-button" onClick={() => navigate(-1)}>
-            <span>←</span> Back to Search
-          </button>
-
           <AlertModal
             isOpen={alertModal}
             onClose={() => setAlertModal(false)}
@@ -585,7 +612,7 @@ const CampgroundAvailability = () => {
             isCreatingAlert={isCreatingAlert}
             setIsCreatingAlert={setIsCreatingAlert}
             selectedCampsite={selectedCampsite}
-            campsiteName={campsiteName}
+            campsiteName={facilityName}
             facilityId={facilityID}
           />
 
@@ -599,7 +626,7 @@ const CampgroundAvailability = () => {
             isCreatingAlert={isCreatingAlert}
             setIsCreatingAlert={setIsCreatingAlert}
             selectedCampsites={selectedCampsites}
-            campsiteName={campsiteName}
+            campsiteName={facilityName}
             isBulkAlert={true}
             facilityId={facilityID}
           />
