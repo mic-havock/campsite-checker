@@ -193,18 +193,18 @@ const CampgroundAvailability = () => {
     return (
       <div className="campground-availability-container explorer-mode">
         <div className="hero-section persistent-stack">
-          <div className="hero-content">
+          <div className="hero-container">
             <h1>Campground Availability</h1>
             <p className="description">
               No availability data found. Please go back and try again.
             </p>
           </div>
         </div>
-        <div className="view-content-area" style={{ textAlign: "center", marginTop: "4rem" }}>
+        <div className="view-content-area" style={{ padding: "0 1.5rem", maxWidth: "1200px", margin: "4rem auto" }}>
           <button
             onClick={() => navigate(-1)}
             className="check-availability-btn"
-            style={{ display: "inline-flex", margin: "0 auto" }}
+            style={{ display: "inline-flex" }}
           >
             ← Back to Campsites
           </button>
@@ -458,7 +458,7 @@ const CampgroundAvailability = () => {
           {isLoading && <LoadingSpinner fullPage />}
 
           <div className="hero-section persistent-stack">
-            <div className="hero-content">
+            <div className="hero-container">
               <h1>
                 {facilityName || "Campground Availability"}
                 {facilityState && <span className="state-indicator"> ({facilityState})</span>}
@@ -536,7 +536,7 @@ const CampgroundAvailability = () => {
             </div>
           </div>
 
-          <div className="availability-container">
+          <div className="availability-grid-container">
             <div className="availability-legend">
               <span className="legend-item">
                 <strong>A</strong> = Available
