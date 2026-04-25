@@ -419,8 +419,8 @@
   }
 }
 
-.ag-theme-alpine.availability-calendar-grid {
-  width: 100%;
+#availability-calendar-view.ag-theme-alpine {
+  width: 100% !important;
   --ag-header-background-color: #ffffff;
   --ag-header-foreground-color: #{$color-forest-green};
   --ag-border-color: transparent;

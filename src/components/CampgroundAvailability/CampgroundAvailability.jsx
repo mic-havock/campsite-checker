@@ -80,7 +80,6 @@ const calculateGridStyle = (rowData, tableWidth, rowHeight, headerHeight) => {
 
   return {
     height: `${gridHeight}px`,
-    width: `${tableWidth * 0.96}px`,
   };
 };
 
@@ -299,6 +298,7 @@ const CampgroundAvailability = () => {
         pinned: "left",
         lockPinned: true,
         width: 130,
+        flex: 0,
         suppressSizeToFit: false,
         resizable: true,
         cellStyle: {
@@ -317,6 +317,7 @@ const CampgroundAvailability = () => {
               suppressSizeToFit: false,
               resizable: true,
               width: 200,
+              flex: 0,
               headerClass: "ag-header-cell-center",
               cellStyle: {
                 backgroundColor: "#f8f9fa",
@@ -520,7 +521,7 @@ const CampgroundAvailability = () => {
             </div>
 
             <div className="availability-grid-centered-wrapper">
-              <div className="ag-theme-alpine availability-calendar-grid" style={gridStyle}>
+              <div id="availability-calendar-view" className="ag-theme-alpine" style={gridStyle}>
                 <AgGridReact
                   rowData={filteredRows}
                 columnDefs={columnDefs}
@@ -529,6 +530,8 @@ const CampgroundAvailability = () => {
                   sortable: true,
                   resizable: true,
                   filter: true,
+                  flex: 1,
+                  minWidth: 60,
                 }}
                 onGridReady={(params) => {
                   setGridApi(params.api);
