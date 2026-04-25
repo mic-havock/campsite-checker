@@ -22,6 +22,7 @@ const STORAGE_KEYS = {
 const FacilitiesFinder = () => {
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState("");
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [selectedState, setSelectedState] = useState("");
   const [facilities, setFacilities] = useState([]);
   const [selectedFacility, setSelectedFacility] = useState(null);
@@ -39,6 +40,16 @@ const FacilitiesFinder = () => {
 
   const saveToStorage = useCallback((key, value) => {
     sessionStorage.setItem(key, JSON.stringify(value));
+  }, []);
+
+  // Handle viewport resize for responsive layout (mobile vs desktop)
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   // Load from storage on mount
@@ -210,7 +221,21 @@ const FacilitiesFinder = () => {
       </Helmet>
       <div className="facilities-finder">
         <div className="hero-section">
+          <div className="hero-top-bar">
+            <button
+              onClick={() => navigate("/reservation-management")}
+              className="alert-management-btn"
+              aria-label="Manage Reservation Alerts"
+            >
+              {isMobile ? "Alerts" : "Manage Reservation Alerts"}
+            </button>
+          </div>
           <div className="hero-content">
+            <img
+              src="/kampscout.svg"
+              alt="Kampscout Logo"
+              className="hero-logo"
+            />
             <p className="description">{CONTENT.FACILITIES_FINDER.DESCRIPTION}</p>
           </div>
         </div>
