@@ -11,6 +11,8 @@ import { AgGridReact } from "ag-grid-react";
 import PropTypes from "prop-types";
 import { useEffect, useMemo, useState } from "react";
 import { fetchCityAndState } from "../../api/location";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-alpine.css";
 import "./facility-grid.scss";
 
 ModuleRegistry.registerModules([
@@ -32,7 +34,13 @@ const FacilityGrid = ({ rowData, onRowSelected, selectedState }) => {
       { headerName: "Campground Name", field: "FacilityName" },
       { headerName: "City", field: "City" },
       { headerName: "State", field: "AddressStateCode" },
-      { headerName: "Facilty Type", field: "FacilityTypeDescription" },
+      {
+        headerName: "Facility Type",
+        field: "FacilityTypeDescription",
+        cellRenderer: (params) => (
+          <span className="status-pill facility-type-pill">{params.value}</span>
+        ),
+      },
     ],
     []
   );
@@ -102,7 +110,8 @@ const FacilityGrid = ({ rowData, onRowSelected, selectedState }) => {
       },
       pagination: true,
       paginationPageSize: 20,
-      headerHeight: 30,
+      headerHeight: 48,
+      rowHeight: 48,
     }),
     []
   );
@@ -117,7 +126,7 @@ const FacilityGrid = ({ rowData, onRowSelected, selectedState }) => {
   return (
     <div className="facility-grid-container">
       {error && <div className="error-message">{error}</div>}
-      <div className="grid-wrapper">
+      <div id="facility-grid-view" className="grid-wrapper ag-theme-alpine">
         <AgGridReact
           columnDefs={columnDefs}
           rowData={processedData}
