@@ -33,6 +33,12 @@
       }
     }
 
+    .main-content-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
     .controls-wrapper {
       margin-top: -4rem;
       padding: 0 1.5rem;
@@ -40,8 +46,7 @@
       position: relative;
 
       .controls-container {
-        max-width: 1200px;
-        margin: 0 auto;
+        // No auto margin here, it's inside main-content-wrapper
         display: flex;
         gap: 1.5rem;
         align-items: stretch;
@@ -173,8 +178,7 @@
     }
 
     .availability-container {
-      max-width: 1200px;
-      margin: 2.5rem auto 5rem;
+      margin: 2.5rem 0 5rem; // Removed auto margin
       padding: 0 1.5rem;
 
       .availability-legend {

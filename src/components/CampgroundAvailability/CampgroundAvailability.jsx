@@ -80,7 +80,6 @@ const calculateGridStyle = (rowData, tableWidth, rowHeight, headerHeight) => {
 
   return {
     height: `${gridHeight}px`,
-    width: `${tableWidth * 0.96}px`,
   };
 };
 
@@ -91,7 +90,8 @@ const CampgroundAvailability = () => {
     location.state?.availabilityData,
   );
   const facilityID = location.state?.facilityID;
-  const campsiteName = location.state?.campsiteName;
+  const campsiteName = location.state?.facilityName || location.state?.campsiteName;
+  const facilityState = location.state?.facilityState;
   const [alertModal, setAlertModal] = useState(false);
   const [selectedCampsite, setSelectedCampsite] = useState(null);
   const [tableWidth, setTableWidth] = useState(window.innerWidth);
@@ -275,6 +275,7 @@ const CampgroundAvailability = () => {
         headerCheckboxSelection: true,
         checkboxSelection: true,
         width: 50,
+        flex: 0,
         pinned: "left",
         lockPinned: true,
         suppressSizeToFit: false,
@@ -290,6 +291,7 @@ const CampgroundAvailability = () => {
         pinned: "left",
         lockPinned: true,
         width: 130,
+        flex: 0,
         suppressSizeToFit: false,
         resizable: true,
         cellStyle: {
@@ -308,6 +310,7 @@ const CampgroundAvailability = () => {
               suppressSizeToFit: false,
               resizable: true,
               width: 200,
+              flex: 0,
               headerClass: "ag-header-cell-center",
               cellStyle: {
                 backgroundColor: "#f8f9fa",
@@ -379,7 +382,7 @@ const CampgroundAvailability = () => {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  cursor: isNonReservableStatus(data.status)
+                  cursor: (isNonReservableStatus(data.status) && data.status !== "NYR")
                     ? "not-allowed"
                     : "pointer",
                   backgroundColor: baseColor,
@@ -404,7 +407,7 @@ const CampgroundAvailability = () => {
                   e.currentTarget.style.opacity = "1";
                 }}
                 onClick={() =>
-                  !isNonReservableStatus(data.status) &&
+                  (!isNonReservableStatus(data.status) || data.status === "NYR") &&
                   handleUnavailableClick(params.data.campsiteObj, date)
                 }
                 title={data.status}
@@ -451,139 +454,143 @@ const CampgroundAvailability = () => {
             <div className="hero-container">
               <h1>
                 {campsiteName || "Campground Availability"}
+                {facilityState && <span className="state-indicator"> ({facilityState})</span>}
               </h1>
               <p className="description">Explore real-time availability and set reservation alerts</p>
             </div>
           </div>
 
-          <div className="controls-wrapper persistent-stack">
-            <div className="controls-container">
-              <div className="availability-card">
-                <div className="availability-header">
-                  <h2>Monthly Campground Availability</h2>
-                </div>
-                <div className="availability-body">
-                  <div className="availability-row">
-                    <div className="select-container">
-                      <LuCalendar className="input-icon" />
-                      <select
-                        id="month-select"
-                        value={selectedMonth}
-                        onChange={handleSelectChange}
-                        className="month-select"
-                        disabled={isLoading}
-                        aria-label="Select a month"
-                      >
-                        <option value="">
-                          Select a month...
-                        </option>
-                        {getNextMonths().map((month) => (
-                          <option key={month.value} value={month.value}>
-                            {month.label}
+          <div className="main-content-wrapper">
+            <div className="controls-wrapper persistent-stack">
+              <div className="controls-container">
+                <div className="availability-card">
+                  <div className="availability-header">
+                    <h2>Monthly Campground Availability</h2>
+                  </div>
+                  <div className="availability-body">
+                    <div className="availability-row">
+                      <div className="select-container">
+                        <LuCalendar className="input-icon" />
+                        <select
+                          id="month-select"
+                          value={selectedMonth}
+                          onChange={handleSelectChange}
+                          className="month-select"
+                          disabled={isLoading}
+                          aria-label="Select a month"
+                        >
+                          <option value="">
+                            Select a month...
                           </option>
-                        ))}
-                      </select>
+                          {getNextMonths().map((month) => (
+                            <option key={month.value} value={month.value}>
+                              {month.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <button
+                        onClick={handleMonthChange}
+                        className="check-availability-btn"
+                        disabled={!selectedMonth || isLoading}
+                      >
+                        {isLoading ? (
+                          <>
+                            <LoadingSpinner size="small" />
+                            <span style={{ marginLeft: "8px" }}>Loading...</span>
+                          </>
+                        ) : (
+                          "Check"
+                        )}
+                      </button>
                     </div>
+                  </div>
+                </div>
+
+                <div className="info-text">
+                  <h3>How to use:</h3>
+                  <div className="info-content">
+                    <div className="info-item">
+                      <span className="bullet">•</span>
+                      <span>
+                        Click on any Reserved or Not Yet Released date to create an
+                        alert for that date
+                      </span>
+                    </div>
+                    <div className="info-item">
+                      <span className="bullet">•</span>
+                      <span>
+                        Use checkboxes to select multiple campsites, then click
+                        &quot;Create Alert for Selected&quot; to create an alert for
+                        them
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="availability-container">
+              <div className="availability-legend">
+                <span className="legend-item">
+                  <strong>A</strong> = Available
+                </span>
+                <span className="legend-item reserved">
+                  <strong>R</strong> = Reserved
+                </span>
+                <span className="legend-item not-yet-released">
+                  <strong>NYR</strong> = Not Yet Released
+                </span>
+                <span className="legend-item not-reservable">
+                  <strong>NR</strong> = Not Reservable/Not Available
+                </span>
+                <div className="legend-controls">
+                  <input
+                    type="checkbox"
+                    id="hideNotReservable"
+                    checked={hideNotReservable}
+                    onChange={(e) => setHideNotReservable(e.target.checked)}
+                  />
+                  <label htmlFor="hideNotReservable">
+                    Hide campsites that are not reservable for all dates
+                  </label>
+                  {selectedCampsites.length > 0 && (
                     <button
-                      onClick={handleMonthChange}
-                      className="check-availability-btn"
-                      disabled={!selectedMonth || isLoading}
+                      onClick={handleBulkAlertClick}
+                      className="bulk-alert-button"
                     >
-                      {isLoading ? (
-                        <>
-                          <LoadingSpinner size="small" />
-                          <span style={{ marginLeft: "8px" }}>Loading...</span>
-                        </>
-                      ) : (
-                        "Check"
-                      )}
+                      Create Alert for {selectedCampsites.length} Selected
+                      Campsite
+                      {selectedCampsites.length !== 1 ? "s" : ""}
                     </button>
-                  </div>
+                  )}
                 </div>
               </div>
 
-              <div className="info-text">
-                <h3>How to use:</h3>
-                <div className="info-content">
-                  <div className="info-item">
-                    <span className="bullet">•</span>
-                    <span>
-                      Click on any Reserved or Not Yet Released date to create an
-                      alert for that date
-                    </span>
-                  </div>
-                  <div className="info-item">
-                    <span className="bullet">•</span>
-                    <span>
-                      Use checkboxes to select multiple campsites, then click
-                      &quot;Create Alert for Selected&quot; to create an alert for
-                      them
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="availability-container">
-            <div className="availability-legend">
-              <span className="legend-item">
-                <strong>A</strong> = Available
-              </span>
-              <span className="legend-item reserved">
-                <strong>R</strong> = Reserved
-              </span>
-              <span className="legend-item not-yet-released">
-                <strong>NYR</strong> = Not Yet Released
-              </span>
-              <span className="legend-item not-reservable">
-                <strong>NR</strong> = Not Reservable/Not Available
-              </span>
-              <div className="legend-controls">
-                <input
-                  type="checkbox"
-                  id="hideNotReservable"
-                  checked={hideNotReservable}
-                  onChange={(e) => setHideNotReservable(e.target.checked)}
+              <div className="ag-theme-alpine" style={gridStyle}>
+                <AgGridReact
+                  rowData={filteredRows}
+                  columnDefs={columnDefs}
+                  suppressHorizontalScroll={false}
+                  defaultColDef={{
+                    sortable: true,
+                    resizable: true,
+                    filter: true,
+                    flex: 1,
+                  }}
+                  onGridReady={(params) => {
+                    setGridApi(params.api);
+                  }}
+                  headerHeight={headerHeight}
+                  rowHeight={rowHeight}
+                  domLayout="normal"
+                  rowSelection="multiple"
+                  onSelectionChanged={handleSelectionChanged}
+                  suppressCellSelection={true}
+                  suppressRowClickSelection={true}
+                  enableCellTextSelection={true}
                 />
-                <label htmlFor="hideNotReservable">
-                  Hide campsites that are not reservable for all dates
-                </label>
-                {selectedCampsites.length > 0 && (
-                  <button
-                    onClick={handleBulkAlertClick}
-                    className="bulk-alert-button"
-                  >
-                    Create Alert for {selectedCampsites.length} Selected
-                    Campsite
-                    {selectedCampsites.length !== 1 ? "s" : ""}
-                  </button>
-                )}
               </div>
-            </div>
-
-            <div className="ag-theme-alpine" style={gridStyle}>
-              <AgGridReact
-                rowData={filteredRows}
-                columnDefs={columnDefs}
-                suppressHorizontalScroll={false}
-                defaultColDef={{
-                  sortable: true,
-                  resizable: true,
-                  filter: true,
-                }}
-                onGridReady={(params) => {
-                  setGridApi(params.api);
-                }}
-                headerHeight={headerHeight}
-                rowHeight={rowHeight}
-                domLayout="normal"
-                rowSelection="multiple"
-                onSelectionChanged={handleSelectionChanged}
-                suppressCellSelection={true}
-                suppressRowClickSelection={true}
-                enableCellTextSelection={true}
-              />
             </div>
           </div>
 
