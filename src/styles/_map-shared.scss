@@ -1,0 +1,148 @@
+@import "variables";
+
+@mixin map-container {
+  padding: 0;
+  background-color: #ffffff;
+  border-radius: $button-border-radius;
+  box-shadow: $shadow-md;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+@mixin map-wrapper {
+  border-radius: $button-border-radius;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
+@mixin map-controls {
+  z-index: 1000;
+  margin: 1.5rem;
+  pointer-events: none;
+
+  .view-toggle-button {
+    pointer-events: auto;
+    padding: 0.6rem 1.25rem;
+    background-color: white;
+    color: $primary-color;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+    &:hover {
+      background-color: #f8f9fa;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+@mixin no-map-container {
+  margin: 20px 0;
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  text-align: center;
+  color: #666;
+  border: 1px dashed #ccc;
+
+  p {
+    margin: 0;
+    font-size: 1rem;
+  }
+}
+
+@mixin map-popup-content {
+  padding: 5px;
+  min-width: 150px;
+
+  h3 {
+    margin: 0 0 5px 0;
+    font-size: 1.1rem;
+    color: $primary-color;
+  }
+
+  p {
+    margin: 0 0 10px 0;
+    font-size: 0.9rem;
+    color: #666;
+  }
+
+  .view-details-btn {
+    width: 100%;
+    padding: 8px 12px;
+    background-color: $secondary-color;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: darken($secondary-color, 10%);
+    }
+  }
+}
+
+@mixin leaflet-overrides {
+  .leaflet-right .leaflet-control {
+    margin-right: 1.5rem;
+  }
+
+  .leaflet-left .leaflet-control {
+    margin-left: 1.5rem;
+  }
+
+  .leaflet-top .leaflet-control {
+    margin-top: 1.5rem;
+  }
+
+  .leaflet-bottom .leaflet-control {
+    margin-bottom: 1.5rem;
+  }
+
+  .leaflet-container {
+    height: 100% !important;
+    width: 100% !important;
+    z-index: 1;
+  }
+
+  .leaflet-tooltip {
+    background-color: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    white-space: nowrap;
+    color: $text-primary;
+  }
+
+  .leaflet-tooltip-top:before {
+    border-top-color: rgba(255, 255, 255, 0.95);
+  }
+
+  .leaflet-popup-content-wrapper {
+    border-radius: 8px;
+  }
+}
