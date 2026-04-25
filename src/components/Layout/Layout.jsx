@@ -73,13 +73,15 @@ const Layout = ({ children }) => {
             </Link>
           </div>
           <div className="header-right">
-            <button
-              onClick={() => navigate("/reservation-management")}
-              className="alert-management-btn"
-              aria-label="Manage Reservation Alerts"
-            >
-              {isMobile ? "Alerts" : "Manage Reservation Alerts"}
-            </button>
+            {location.pathname !== "/reservation-management" && (
+              <button
+                onClick={() => navigate("/reservation-management")}
+                className="alert-management-btn"
+                aria-label="Manage Reservation Alerts"
+              >
+                {isMobile ? "Alerts" : "Manage Reservation Alerts"}
+              </button>
+            )}
           </div>
         </div>
       </header>

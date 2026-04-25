@@ -1,4 +1,5 @@
 @import "../../../styles/variables";
+@import "../../../styles/responsive";
 
 .reservation-card {
   background-color: white;
@@ -8,10 +9,10 @@
   transition: $button-transition;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  height: auto;
-  min-height: 0;
-  text-align: center;
+  gap: 1.25rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
 
   &:hover {
     box-shadow: $shadow-lg;
@@ -19,264 +20,196 @@
   }
 
   .reservation-header {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    gap: 0.25rem;
-    margin-bottom: -0.5rem;
+    text-align: left;
 
-    h4 {
+    .campsite-name {
       margin: 0;
-      color: $primary-color;
+      color: $text-primary;
       font-size: 1.1rem;
+      font-weight: 700;
       line-height: 1.3;
-      font-weight: 600;
+      display: block;
     }
 
-    .reservation-actions {
-      display: flex;
-      gap: 0.5rem;
-      flex-shrink: 0;
-      justify-content: center;
+    .campsite-number {
+      margin: 0.25rem 0 0;
+      color: $color-stone;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
   }
 
   .campground-availability {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    align-items: center;
-
-    .reservation-actions {
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      gap: 0.5rem;
-      width: 100%;
-
-      button {
-        padding: 0.25rem 0.75rem;
-        font-size: 0.9rem;
-        line-height: 1.2;
-      }
-    }
+    gap: 1rem;
 
     .detail-row {
       display: flex;
       align-items: center;
-      justify-content: center;
-      margin: 0.4rem;
       font-size: 0.9rem;
-      padding: 0.25rem 0;
-      border-bottom: 1px solid rgba($color-stone, 0.2);
-
-      &:last-child {
-        border-bottom: none;
-      }
+      color: $text-primary;
 
       .detail-value {
-        color: $text-primary;
-        word-break: break-word;
-        margin-bottom: 0.25rem;
         font-weight: 600;
+        background-color: rgba($primary-color, 0.05);
+        padding: 0.4rem 0.75rem;
+        border-radius: 6px;
+        border: 1px solid rgba($primary-color, 0.1);
+      }
+    }
+
+    .reservation-actions {
+      display: flex;
+      gap: 0.75rem;
+      width: 100%;
+
+      button {
+        flex: 1;
+        padding: 0.6rem 0.75rem;
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &.edit-button {
+          @include button-primary;
+        }
+
+        &.delete-button {
+          @include button-danger;
+        }
       }
     }
 
     .monitoring-row {
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
+      padding-top: 1rem;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-top: 0.25rem;
-      margin-top: -0.5rem;
-
-      .monitoring-control {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
+      justify-content: center;
 
       .simple-toggle {
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        background: none;
+        background: transparent;
         border: none;
         cursor: pointer;
-        padding: 0.5rem;
-        border-radius: 4px;
+        padding: 0.5rem 1rem;
+        border-radius: 100px;
         transition: all 0.2s ease;
-        font-size: 1rem;
-
-        &:hover {
-          background-color: rgba($color-stone, 0.1);
-        }
+        width: 100%;
+        justify-content: center;
 
         .toggle-icon {
-          font-size: 1.75rem;
+          font-size: 1.5rem;
+        }
+
+        .toggle-text {
+          font-size: 0.75rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
         }
 
         &.active {
+          background-color: rgba($primary-color, 0.1);
+          color: $primary-color;
+
           .toggle-icon {
             color: $primary-color;
-          }
-
-          .toggle-text {
-            color: $primary-color;
-            font-weight: 600;
           }
         }
 
         &.inactive {
+          background-color: rgba($color-stone, 0.1);
+          color: $color-stone;
+
           .toggle-icon {
             color: $color-stone;
           }
+        }
 
-          .toggle-text {
-            color: $color-stone;
-            font-weight: 600;
-          }
+        &:hover {
+          filter: brightness(0.95);
         }
       }
     }
   }
 }
 
-button {
-  &.edit-button {
-    background-color: $primary-color;
-    color: $text-light;
-    margin-right: 0.5rem;
-
-    &:hover {
-      background-color: darken($secondary-color, 10%);
-      transform: translateY(-1px);
-    }
-  }
-
-  &.delete-button {
-    background-color: $color-danger;
-    color: $text-light;
-
-    &:hover {
-      background-color: darken($color-danger, 10%);
-      transform: translateY(-1px);
-    }
-  }
-}
-
+// Modal styles
 .modal-overlay {
-  $reservation-campsite-card-border: 1px solid rgba($primary-color, 0.35);
-
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
 
-  .modal-content {
-    border-radius: $button-border-radius;
-    width: 90%;
-    max-width: 450px;
-    box-shadow:
-      $shadow-lg,
-      0 0 0 1px rgba($color-bark, 0.08);
-    box-sizing: border-box;
-  }
-
   .modal-content.reservation-campsite-modal {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    padding: 1rem;
-    background-color: $background-light;
-    border: 1px solid rgba($color-bark, 0.14);
-  }
+    background-color: $background-base;
+    border-radius: 16px;
+    width: 95%;
+    max-width: 450px;
+    padding: 1.5rem;
+    box-shadow: $shadow-lg;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 
-  .reservation-campsite-modal-hint {
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 0.5rem;
-    margin: 0.75rem 0 0;
-    padding: 0.65rem 0.75rem;
-    text-align: left;
-    font-size: 0.9rem;
-    line-height: 1.35;
-    font-weight: 600;
-    color: $primary-color;
-    background-color: rgba($primary-color, 0.08);
-    border-radius: $button-border-radius;
-    border: $reservation-campsite-card-border;
+    .reservation-campsite-preview-wrap {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: $shadow-md;
+      background-color: white;
+      margin-bottom: 1rem;
 
-    .reservation-campsite-modal-hint-icon {
-      flex-shrink: 0;
-      width: 1.15rem;
-      height: 1.15rem;
-      margin-top: 0.1rem;
-    }
-  }
-
-  .reservation-campsite-preview-wrap {
-    width: 100%;
-    box-sizing: border-box;
-    border-radius: $button-border-radius;
-    padding: 0.5rem;
-    background-color: rgba($primary-color, 0.1);
-    border: 1px solid rgba($primary-color, 0.38);
-    box-shadow: inset 0 1px 2px rgba($color-bark, 0.06);
-    transition:
-      border-color 0.2s ease,
-      background-color 0.2s ease,
-      box-shadow 0.2s ease;
-
-    &:hover {
-      border-color: rgba($primary-color, 0.55);
-      background-color: rgba($primary-color, 0.14);
-      box-shadow:
-        inset 0 1px 2px rgba($color-bark, 0.08),
-        0 3px 12px rgba($color-bark, 0.1);
-    }
-
-    .campsite-card {
-      background-color: $text-light;
-      border: $reservation-campsite-card-border;
-      border-radius: $button-border-radius;
-      padding: 0.35rem 0.4rem 0.45rem;
-      box-shadow:
-        0 2px 6px rgba($color-bark, 0.12),
-        0 1px 0 rgba($color-bark, 0.06);
-
-      &:hover {
-        box-shadow:
-          0 6px 16px rgba($color-bark, 0.18),
-          0 1px 0 rgba($color-bark, 0.08);
+      .campsite-card {
+        box-shadow: none;
+        border: none;
+        &:hover {
+          transform: none;
+        }
       }
     }
 
-    .campsite-thumbnail {
-      height: 220px;
+    .reservation-campsite-modal-hint {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background-color: rgba($primary-color, 0.1);
+      color: $primary-color;
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin: 0;
+
+      .reservation-campsite-modal-hint-icon {
+        font-size: 1.1rem;
+      }
     }
   }
 }
 
-// Responsive adjustments
-@media (max-width: 768px) {
+@include mobile {
   .reservation-card {
-    .reservation-header {
-      flex-direction: column;
-      gap: 0.75rem;
-      align-items: center;
+    padding: 1.25rem;
 
+    .campground-availability {
       .reservation-actions {
-        width: 100%;
-        justify-content: center;
+        flex-direction: row;
       }
     }
   }

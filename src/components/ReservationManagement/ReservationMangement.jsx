@@ -2,7 +2,6 @@ import PropTypes from "prop-types";
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { LuToggleLeft, LuToggleRight, LuTrash2 } from "react-icons/lu";
-import { useNavigate } from "react-router-dom";
 import {
   fetchReservationsActive,
   fetchUserStatsActive,
@@ -134,7 +133,6 @@ DeleteAllButton.defaultProps = {
 };
 
 const ReservationManagement = () => {
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [reservations, setReservations] = useState([]);
   const [stats, setStats] = useState(null);
@@ -272,79 +270,78 @@ const ReservationManagement = () => {
         </script>
       </Helmet>
       <div className="user-management">
-        <button
-          className="floating-button"
-          onClick={() => navigate("/")}
-          aria-label="Back to homepage"
-        >
-          Back to
-          <br />
-          Homepage
-        </button>
-        <div className="page-header">
-          <h1>Reservation Management</h1>
+        <div className="hero-section">
+          <div className="hero-content">
+            <h1>Reservation Management</h1>
+            <p className="description">
+              Manage and track your campsite reservation alerts
+            </p>
+          </div>
         </div>
 
-        <div className="unified-controls">
-          <div className="controls-header">
-            <h2>Search For Reservation Alerts</h2>
-          </div>
-          <div className="controls-body">
-            <form onSubmit={handleSubmit} className="filter-options">
-              <div className="form-group">
-                <div className="input-button-group">
-                  <input
-                    type="email"
-                    id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    placeholder="Enter email address"
-                  />
-                  <button
-                    type="submit"
-                    className="search-button"
-                    disabled={loading}
-                  >
-                    {loading ? "Searching..." : "Search"}
-                  </button>
+        <div className="dashboard-content">
+          <div className="unified-controls">
+            <div className="controls-header">
+              <h2>Search For Reservation Alerts</h2>
+            </div>
+            <div className="controls-body">
+              <form onSubmit={handleSubmit} className="filter-options">
+                <div className="form-group">
+                  <div className="input-button-group">
+                    <input
+                      type="email"
+                      id="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      placeholder="Enter email address"
+                    />
+                    <button
+                      type="submit"
+                      className="search-button"
+                      disabled={loading}
+                    >
+                      {loading ? "Searching..." : "Search"}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </form>
-          </div>
-        </div>
-
-        {error && <div className="error-message">{error}</div>}
-        <StatsDisplay stats={stats} />
-
-        {reservations.length > 0 && (
-          <div className="batch-monitoring">
-            <MonitoringToggle
-              active={allMonitoringActive}
-              onToggle={handleBatchMonitoringUpdate}
-            />
-            <DeleteAllButton
-              onDelete={handleBatchDelete}
-              disabled={loading}
-            />
-          </div>
-        )}
-
-        {reservations.length > 0 && (
-          <div className="reservations-list">
-            <h2>Reservations</h2>
-            <div className="reservations-grid">
-              {reservations.map((reservation) => (
-                <ReservationCard
-                  key={reservation.id}
-                  reservation={reservation}
-                  onDelete={handleReservationDelete}
-                  onStatsUpdate={handleStatsUpdate}
-                />
-              ))}
+              </form>
             </div>
           </div>
-        )}
+
+          {error && <div className="error-message">{error}</div>}
+
+          {stats && <StatsDisplay stats={stats} />}
+
+          {reservations.length > 0 && (
+            <div className="batch-monitoring">
+              <MonitoringToggle
+                active={allMonitoringActive}
+                onToggle={handleBatchMonitoringUpdate}
+              />
+              <DeleteAllButton
+                onDelete={handleBatchDelete}
+                disabled={loading}
+              />
+            </div>
+          )}
+
+          {reservations.length > 0 && (
+            <div className="reservations-list">
+              <h2>Reservations</h2>
+              <div className="reservations-grid">
+                {reservations.map((reservation) => (
+                  <ReservationCard
+                    key={reservation.id}
+                    reservation={reservation}
+                    onDelete={handleReservationDelete}
+                    onStatsUpdate={handleStatsUpdate}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </>
   );
