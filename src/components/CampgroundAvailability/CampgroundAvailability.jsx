@@ -520,7 +520,7 @@ const CampgroundAvailability = () => {
             </div>
 
             <div className="availability-grid-centered-wrapper">
-              <div className="ag-theme-alpine availability-calendar-grid" style={gridStyle}>
+              <div className="ag-theme-alpine" style={gridStyle}>
                 <AgGridReact
                   rowData={filteredRows}
                 columnDefs={columnDefs}
