@@ -80,7 +80,7 @@
     display: flex;
     flex-direction: column;
     gap: 2rem;
-    align-items: flex-start;
+    align-items: center;
 
     @include mobile {
       margin-top: 0.5rem;
@@ -95,8 +95,7 @@
     border-radius: $button-border-radius;
     box-shadow: $shadow-lg;
     width: 100%;
-    max-width: 1000px;
-    margin: 0;
+    margin: 0 auto;
     overflow: hidden;
     border: 1px solid rgba(0, 0, 0, 0.05);
 
@@ -193,8 +192,7 @@
     border-radius: $button-border-radius;
     box-shadow: $shadow-md;
     width: 100%;
-    max-width: 1000px;
-    margin: 0;
+    margin: 0 auto;
     border: 1px solid rgba(0, 0, 0, 0.05);
 
     h2 {
@@ -255,8 +253,7 @@
   }
 
   .batch-monitoring {
-    max-width: 1000px;
-    margin: 0;
+    margin: 0 auto;
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -273,18 +270,12 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      background: white;
       border: 1px solid rgba(0, 0, 0, 0.05);
       cursor: pointer;
       padding: 0.6rem 1.25rem;
       border-radius: 100px;
       transition: all 0.2s ease;
       box-shadow: $shadow-sm;
-
-      &:hover {
-        background-color: rgba($primary-color, 0.05);
-        border-color: rgba($primary-color, 0.2);
-      }
 
       .toggle-icon {
         font-size: 1.5rem;
@@ -298,20 +289,30 @@
       }
 
       &.active {
-        .toggle-icon {
+        background-color: rgba($primary-color, 0.12);
+        color: $primary-color;
+        border-color: rgba($primary-color, 0.2);
+
+        .toggle-icon, .toggle-text {
           color: $primary-color;
         }
-        .toggle-text {
-          color: $primary-color;
+
+        &:hover {
+          background-color: rgba($primary-color, 0.18);
         }
       }
 
       &.inactive {
-        .toggle-icon {
+        background-color: rgba($color-stone, 0.12);
+        color: $color-stone;
+        border-color: rgba($color-stone, 0.2);
+
+        .toggle-icon, .toggle-text {
           color: $color-stone;
         }
-        .toggle-text {
-          color: $color-stone;
+
+        &:hover {
+          background-color: rgba($color-stone, 0.18);
         }
       }
     }
@@ -359,10 +360,10 @@
 
     .reservations-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
       gap: 1.5rem;
       width: 100%;
-      justify-content: flex-start;
+      justify-content: center;
 
       @include mobile {
         grid-template-columns: 1fr;

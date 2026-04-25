@@ -1,7 +1,7 @@
 import { format, parseISO } from "date-fns";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
-import { LuToggleLeft, LuToggleRight, LuMousePointerClick } from "react-icons/lu";
+import { LuToggleLeft, LuToggleRight } from "react-icons/lu";
 import { fetchCampsiteDetails } from "../../../api/campsites";
 import {
   updateMonitoringStatus,

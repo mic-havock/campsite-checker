@@ -57,9 +57,9 @@ const Layout = ({ children }) => {
               <button
                 onClick={() => navigate("/")}
                 className="back-to-search-btn"
-                aria-label="Back to search"
+                aria-label="Back"
               >
-                ← Back to Search
+                ← Back
               </button>
             )}
           </div>
