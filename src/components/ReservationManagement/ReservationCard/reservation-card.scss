@@ -13,6 +13,7 @@
   border: 1px solid rgba(0, 0, 0, 0.05);
   position: relative;
   overflow: hidden;
+  text-align: center;
 
   &:hover {
     box-shadow: $shadow-lg;
@@ -20,7 +21,7 @@
   }
 
   .reservation-header {
-    text-align: left;
+    text-align: center;
 
     .campsite-name {
       margin: 0;
@@ -45,12 +46,15 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    align-items: center;
 
     .detail-row {
       display: flex;
       align-items: center;
+      justify-content: center;
       font-size: 0.9rem;
       color: $text-primary;
+      width: 100%;
 
       .detail-value {
         font-weight: 600;
@@ -65,17 +69,22 @@
       display: flex;
       gap: 0.75rem;
       width: 100%;
+      justify-content: center;
 
       button {
         flex: 1;
-        padding: 0.6rem 0.75rem;
-        font-size: 0.85rem;
-        font-weight: 700;
+        padding: 0.6rem 0.15rem;
+        font-size: 0.72rem;
+        font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 0.03em;
         border-radius: 8px;
         cursor: pointer;
         transition: all 0.2s ease;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
 
         &.edit-button {
           @include button-primary;
@@ -92,10 +101,18 @@
       padding-top: 1rem;
       display: flex;
       justify-content: center;
+      width: 100%;
+
+      .monitoring-control {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+      }
 
       .simple-toggle {
         display: flex;
         align-items: center;
+        justify-content: center;
         gap: 0.5rem;
         background: transparent;
         border: none;
@@ -103,8 +120,7 @@
         padding: 0.5rem 1rem;
         border-radius: 100px;
         transition: all 0.2s ease;
-        width: 100%;
-        justify-content: center;
+        width: auto;
 
         .toggle-icon {
           font-size: 1.5rem;

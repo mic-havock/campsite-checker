@@ -22,7 +22,7 @@
       rgba($secondary-color, 0.05) 100%
     );
     padding: 1.5rem 1.5rem 3.5rem;
-    text-align: left;
+    text-align: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     position: relative;
 
@@ -35,9 +35,11 @@
       margin: 0 auto;
       padding: 0 1.5rem;
       box-sizing: border-box;
+      text-align: left;
 
       @include mobile {
         padding: 0 1rem;
+        text-align: center;
       }
 
       h1 {
@@ -46,7 +48,7 @@
         margin-bottom: 0.15rem;
         letter-spacing: 0.05em;
         text-transform: uppercase;
-        text-align: left;
+        text-align: inherit;
 
         @include mobile {
           font-size: 1.4rem;
@@ -60,7 +62,7 @@
         opacity: 0.6;
         letter-spacing: 0.02em;
         margin-bottom: 0;
-        text-align: left;
+        text-align: inherit;
 
         @include mobile {
           font-size: 0.75rem;
@@ -84,6 +86,7 @@
       margin-top: 0.5rem;
       padding: 0 1rem;
       gap: 1.5rem;
+      align-items: center;
     }
   }
 
@@ -110,6 +113,10 @@
         letter-spacing: 0.12em;
         color: $color-stone;
         text-align: left;
+
+        @include mobile {
+          text-align: center;
+        }
       }
     }
 
@@ -173,7 +180,7 @@
     color: $color-danger;
     border: 1px solid rgba($color-danger, 0.2);
     border-radius: 8px;
-    text-align: left;
+    text-align: center;
     font-weight: 600;
     width: 100%;
     max-width: 1000px;
@@ -198,6 +205,10 @@
       letter-spacing: 0.12em;
       color: $color-stone;
       text-align: left;
+
+      @include mobile {
+        text-align: center;
+      }
     }
 
     .stats-grid {
@@ -220,7 +231,7 @@
         border-radius: 12px;
         display: flex;
         flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
         border: 1px solid rgba($primary-color, 0.05);
 
         .stat-label {
@@ -230,14 +241,14 @@
           text-transform: uppercase;
           letter-spacing: 0.05em;
           margin-bottom: 0.5rem;
-          text-align: left;
+          text-align: center;
         }
 
         .stat-value {
           font-size: 1.75rem;
           font-weight: 800;
           color: $primary-color;
-          text-align: left;
+          text-align: center;
         }
       }
     }
@@ -340,13 +351,18 @@
       letter-spacing: 0.12em;
       color: $color-stone;
       text-align: left;
+
+      @include mobile {
+        text-align: center;
+      }
     }
 
     .reservations-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       gap: 1.5rem;
       width: 100%;
+      justify-content: flex-start;
 
       @include mobile {
         grid-template-columns: 1fr;
