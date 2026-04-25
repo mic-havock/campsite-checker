@@ -3,8 +3,8 @@
 .facilities-map-container {
   padding: 0;
   background-color: #ffffff;
-  border-radius: $button-border-radius;
-  box-shadow: $shadow-lg;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: relative;
   width: 100%;
   height: 100%;
@@ -14,14 +14,12 @@
   flex-direction: column;
 
   .map-wrapper {
-    border-radius: $button-border-radius;
+    border-radius: 8px;
     overflow: hidden;
-    border: 1x solid rgba(0, 0, 0, 0.25);
-    box-shadow: $shadow-lg;
+    border: 1px solid #ddd;
     width: 100%;
     flex: 1;
     min-height: 0;
-    box-sizing: border-box;
   }
 
   .map-controls {

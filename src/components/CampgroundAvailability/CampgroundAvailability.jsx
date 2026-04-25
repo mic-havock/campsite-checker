@@ -80,6 +80,7 @@ const calculateGridStyle = (rowData, tableWidth, rowHeight, headerHeight) => {
 
   return {
     height: `${gridHeight}px`,
+    width: `${tableWidth * 0.96}px`,
   };
 };
 
@@ -90,8 +91,7 @@ const CampgroundAvailability = () => {
     location.state?.availabilityData,
   );
   const facilityID = location.state?.facilityID;
-  const facilityName = location.state?.facilityName || location.state?.campsiteName;
-  const facilityState = location.state?.facilityState;
+  const campsiteName = location.state?.campsiteName;
   const [alertModal, setAlertModal] = useState(false);
   const [selectedCampsite, setSelectedCampsite] = useState(null);
   const [tableWidth, setTableWidth] = useState(window.innerWidth);
@@ -138,10 +138,6 @@ const CampgroundAvailability = () => {
       new Set(
         campsitesData.flatMap((campsite) =>
           Object.keys(campsite.availabilities).map(
-            // ⚡ Bolt Performance Optimization:
-            // Replaced `new Date(date).toISOString().split("T")[0]` with `date.substring(0, 10)`
-            // Basic string extraction avoids substantial performance degradation
-            // caused by instantiating Date objects in a loop.
             (date) => date.substring(0, 10),
           ),
         ),
@@ -201,12 +197,8 @@ const CampgroundAvailability = () => {
             </p>
           </div>
         </div>
-        <div className="view-content-area" style={{ padding: "0 1.5rem", maxWidth: "1200px", margin: "4rem auto" }}>
-          <button
-            onClick={() => navigate(-1)}
-            className="check-availability-btn"
-            style={{ display: "inline-flex" }}
-          >
+        <div className="view-content-area">
+          <button onClick={() => navigate(-1)} className="check-availability-btn">
             ← Back to Campsites
           </button>
         </div>
@@ -298,7 +290,6 @@ const CampgroundAvailability = () => {
         pinned: "left",
         lockPinned: true,
         width: 130,
-        flex: 0,
         suppressSizeToFit: false,
         resizable: true,
         cellStyle: {
@@ -317,7 +308,6 @@ const CampgroundAvailability = () => {
               suppressSizeToFit: false,
               resizable: true,
               width: 200,
-              flex: 0,
               headerClass: "ag-header-cell-center",
               cellStyle: {
                 backgroundColor: "#f8f9fa",
@@ -328,53 +318,106 @@ const CampgroundAvailability = () => {
       ...dates.map((date) => ({
         headerName: `${parseInt(date.substring(5, 7), 10)}/${parseInt(date.substring(8, 10), 10)}`,
         field: date,
-        width: 80,
+        width: 90,
         headerClass: "ag-header-cell-center",
-        cellClassRules: {
-          "status-available": (params) => params.value.available,
-          "status-reserved": (params) => !params.value.available && params.value.status === "Reserved",
-          "status-nyr": (params) => !params.value.available && params.value.status === "NYR",
-          "status-not-reservable": (params) => !params.value.available && isNonReservableStatus(params.value.status) && params.value.status !== "NYR",
-          "clickable-cell": (params) => !params.value.available && (!isNonReservableStatus(params.value.status) || params.value.status === "NYR"),
+        valueFormatter: (params) => {
+          return params.value.available ? "A" : "X";
         },
-        onCellClicked: (params) => {
-          const data = params.value;
-          if (!data.available && (!isNonReservableStatus(data.status) || data.status === "NYR")) {
-            handleUnavailableClick(params.data.campsiteObj, date);
-          }
+        cellStyle: {
+          padding: "0",
+          textAlign: "center",
+          border: "none",
+          borderRight: "1px solid #e0e0e0",
         },
         cellRenderer: (params) => {
           const data = params.value;
-          let statusClass = "not-reservable";
-          let text = "NR";
-
           if (data.available) {
-            statusClass = "available";
-            text = "A";
-          } else if (data.status === "Reserved") {
-            statusClass = "reserved";
-            text = "R";
-          } else if (data.status === "NYR") {
-            statusClass = "nyr";
-            text = "N";
+            return (
+              <div
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "not-allowed",
+                  backgroundColor: "#4caf50",
+                  transition: "all 0.2s ease",
+                  position: "relative",
+                  boxShadow: "none",
+                  transform: "scale(1)",
+                  opacity: "1",
+                  color: "#f8f9fa",
+                  fontSize: "16px",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "#90ff88";
+                  e.currentTarget.style.boxShadow = "0 2px 4px rgba(0,0,0,0.1)";
+                  e.currentTarget.style.transform = "scale(1.02)";
+                  e.currentTarget.style.opacity = "0.95";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "#4caf50";
+                  e.currentTarget.style.boxShadow = "none";
+                  e.currentTarget.style.transform = "scale(1)";
+                  e.currentTarget.style.opacity = "1";
+                }}
+              >
+                A
+              </div>
+            );
           } else {
-            statusClass = "not-reservable";
-            text = "X";
-          }
+            const { base: baseColor, hover: hoverColor } = getStatusColors(
+              data.status,
+            );
 
-          return (
-            <span className={`status-pill ${statusClass}`}>
-              {text}
-            </span>
-          );
+            return (
+              <div
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: isNonReservableStatus(data.status)
+                    ? "not-allowed"
+                    : "pointer",
+                  backgroundColor: baseColor,
+                  transition: "all 0.2s ease",
+                  position: "relative",
+                  boxShadow: "none",
+                  transform: "scale(1)",
+                  opacity: "1",
+                  color: "#f8f9fa",
+                  fontSize: "16px",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = hoverColor;
+                  e.currentTarget.style.boxShadow = "0 2px 4px rgba(0,0,0,0.1)";
+                  e.currentTarget.style.transform = "scale(1.02)";
+                  e.currentTarget.style.opacity = "0.95";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = baseColor;
+                  e.currentTarget.style.boxShadow = "none";
+                  e.currentTarget.style.transform = "scale(1)";
+                  e.currentTarget.style.opacity = "1";
+                }}
+                onClick={() =>
+                  !isNonReservableStatus(data.status) &&
+                  handleUnavailableClick(params.data.campsiteObj, date)
+                }
+                title={data.status}
+              >
+                {data.status === "NYR"
+                  ? "NYR"
+                  : data.status === "Reserved"
+                    ? "R"
+                    : "NR"}
+              </div>
+            );
+          }
         },
-        cellStyle: {
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "0.75rem",
-            padding: "0",
-        }
       })),
     ];
 
@@ -396,7 +439,7 @@ const CampgroundAvailability = () => {
     return (
       <>
         <Helmet>
-          <title>{facilityName ? `${facilityName} - Availability | Kamp Scout` : "Campground Availability | Kamp Scout"}</title>
+          <title>{campsiteName ? `${campsiteName} - Availability | Kamp Scout` : "Campground Availability | Kamp Scout"}</title>
           <script type="application/ld+json">
             {JSON.stringify(availabilitySchema)}
           </script>
@@ -407,8 +450,7 @@ const CampgroundAvailability = () => {
           <div className="hero-section persistent-stack">
             <div className="hero-container">
               <h1>
-                {facilityName || "Campground Availability"}
-                {facilityState && <span className="state-indicator"> ({facilityState})</span>}
+                {campsiteName || "Campground Availability"}
               </h1>
               <p className="description">Explore real-time availability and set reservation alerts</p>
             </div>
@@ -483,7 +525,7 @@ const CampgroundAvailability = () => {
             </div>
           </div>
 
-          <div className="availability-grid-container">
+          <div className="availability-container">
             <div className="availability-legend">
               <span className="legend-item">
                 <strong>A</strong> = Available
@@ -492,10 +534,10 @@ const CampgroundAvailability = () => {
                 <strong>R</strong> = Reserved
               </span>
               <span className="legend-item not-yet-released">
-                <strong>N</strong> = Not Yet Released
+                <strong>NYR</strong> = Not Yet Released
               </span>
               <span className="legend-item not-reservable">
-                <strong>X</strong> = Not Reservable/Not Available
+                <strong>NR</strong> = Not Reservable/Not Available
               </span>
               <div className="legend-controls">
                 <input
@@ -520,18 +562,15 @@ const CampgroundAvailability = () => {
               </div>
             </div>
 
-            <div className="availability-grid-centered-wrapper">
-              <div id="availability-calendar-view" className="ag-theme-alpine" style={gridStyle}>
-                <AgGridReact
-                  rowData={filteredRows}
+            <div className="ag-theme-alpine" style={gridStyle}>
+              <AgGridReact
+                rowData={filteredRows}
                 columnDefs={columnDefs}
                 suppressHorizontalScroll={false}
                 defaultColDef={{
                   sortable: true,
                   resizable: true,
                   filter: true,
-                  flex: 1,
-                  minWidth: 60,
                 }}
                 onGridReady={(params) => {
                   setGridApi(params.api);
@@ -541,11 +580,10 @@ const CampgroundAvailability = () => {
                 domLayout="normal"
                 rowSelection="multiple"
                 onSelectionChanged={handleSelectionChanged}
-                  suppressCellSelection={true}
-                  suppressRowClickSelection={true}
-                  enableCellTextSelection={true}
-                />
-              </div>
+                suppressCellSelection={true}
+                suppressRowClickSelection={true}
+                enableCellTextSelection={true}
+              />
             </div>
           </div>
 
@@ -563,7 +601,7 @@ const CampgroundAvailability = () => {
             isCreatingAlert={isCreatingAlert}
             setIsCreatingAlert={setIsCreatingAlert}
             selectedCampsite={selectedCampsite}
-            campsiteName={facilityName}
+            campsiteName={campsiteName}
             facilityId={facilityID}
           />
 
@@ -577,7 +615,7 @@ const CampgroundAvailability = () => {
             isCreatingAlert={isCreatingAlert}
             setIsCreatingAlert={setIsCreatingAlert}
             selectedCampsites={selectedCampsites}
-            campsiteName={facilityName}
+            campsiteName={campsiteName}
             isBulkAlert={true}
             facilityId={facilityID}
           />
