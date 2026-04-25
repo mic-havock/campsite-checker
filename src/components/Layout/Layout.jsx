@@ -50,10 +50,10 @@ const Layout = ({ children }) => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="global-header">
-        <div className="header-content">
-          <div className="header-left">
-            {!isMainPage && (
+      {!isMainPage && (
+        <header className="global-header">
+          <div className="header-content">
+            <div className="header-left">
               <button
                 onClick={() => navigate("/")}
                 className="back-to-search-btn"
@@ -61,28 +61,28 @@ const Layout = ({ children }) => {
               >
                 ← Back to Search
               </button>
-            )}
+            </div>
+            <div className="header-center">
+              <Link to="/" className="logo-link">
+                <img
+                  src="/kampscout.svg"
+                  alt="Kampscout Logo"
+                  className="logo-img"
+                />
+              </Link>
+            </div>
+            <div className="header-right">
+              <button
+                onClick={() => navigate("/reservation-management")}
+                className="alert-management-btn"
+                aria-label="Manage Reservation Alerts"
+              >
+                {isMobile ? "Alerts" : "Manage Reservation Alerts"}
+              </button>
+            </div>
           </div>
-          <div className="header-center">
-            <Link to="/" className="logo-link">
-              <img
-                src="/kampscout.svg"
-                alt="Kampscout Logo"
-                className="logo-img"
-              />
-            </Link>
-          </div>
-          <div className="header-right">
-            <button
-              onClick={() => navigate("/reservation-management")}
-              className="alert-management-btn"
-              aria-label="Manage Reservation Alerts"
-            >
-              {isMobile ? "Alerts" : "Manage Reservation Alerts"}
-            </button>
-          </div>
-        </div>
-      </header>
+        </header>
+      )}
       <main ref={mainRef} className="flex-grow">
         {children}
       </main>

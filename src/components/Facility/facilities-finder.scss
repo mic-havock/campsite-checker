@@ -16,23 +16,21 @@
       rgba($primary-color, 0.05) 0%,
       rgba($secondary-color, 0.05) 100%
     );
-    padding: 2.5rem 1.5rem 3rem; // Top padding roughly button height
+    padding: 4rem 1.5rem 5rem;
     text-align: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     position: relative;
 
     @include mobile {
-      padding: 3.5rem 1rem 2rem; // More padding on mobile because button is wider/taller
+      padding: 3rem 1rem 4rem;
     }
 
     .hero-top-bar {
       position: absolute;
-      top: 0.75rem;
+      top: 1rem;
       right: 1.5rem;
-      left: 1.5rem;
       display: flex;
       justify-content: flex-end;
-      margin-bottom: 0;
 
       @include mobile {
         right: 1rem;
@@ -43,6 +41,20 @@
     .hero-content {
       max-width: 800px;
       margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .hero-logo {
+      height: 140px;
+      width: auto;
+      display: block;
+
+      @include mobile {
+        height: 100px;
+      }
     }
 
     .description {
