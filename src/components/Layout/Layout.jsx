@@ -50,26 +50,39 @@ const Layout = ({ children }) => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {!isMainPage && (
-        <header className="global-header">
-          <div className="header-content">
-            <button
-              onClick={() => navigate("/")}
-              className="back-to-search-btn"
-              aria-label="Back to search"
-            >
-              ← Back to Search
-            </button>
+      <header className="global-header">
+        <div className="header-content">
+          <div className="header-left">
+            {!isMainPage && (
+              <button
+                onClick={() => navigate("/")}
+                className="back-to-search-btn"
+                aria-label="Back to search"
+              >
+                ← Back to Search
+              </button>
+            )}
+          </div>
+          <div className="header-center">
             <Link to="/" className="logo-link">
               <img
-                src="kampscout.svg"
+                src="/kampscout.svg"
                 alt="Kampscout Logo"
                 className="logo-img"
               />
             </Link>
           </div>
-        </header>
-      )}
+          <div className="header-right">
+            <button
+              onClick={() => navigate("/reservation-management")}
+              className="alert-management-btn"
+              aria-label="Manage Reservation Alerts"
+            >
+              {isMobile ? "Alerts" : "Manage Reservation Alerts"}
+            </button>
+          </div>
+        </div>
+      </header>
       <main ref={mainRef} className="flex-grow">
         {children}
       </main>

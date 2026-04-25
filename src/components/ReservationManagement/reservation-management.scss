@@ -10,6 +10,7 @@
   overflow-x: hidden;
 
   .floating-button {
+    display: none; // Redundant as it overlaps the new header back button
     position: absolute;
     top: 10px;
     right: 10px;
