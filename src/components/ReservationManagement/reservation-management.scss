@@ -35,11 +35,10 @@
       margin: 0 auto;
       padding: 0 1.5rem;
       box-sizing: border-box;
-      text-align: left;
+      text-align: center;
 
       @include mobile {
         padding: 0 1rem;
-        text-align: center;
       }
 
       h1 {
@@ -111,11 +110,7 @@
         text-transform: uppercase;
         letter-spacing: 0.12em;
         color: $color-stone;
-        text-align: left;
-
-        @include mobile {
-          text-align: center;
-        }
+        text-align: center;
       }
     }
 
@@ -202,11 +197,7 @@
       text-transform: uppercase;
       letter-spacing: 0.12em;
       color: $color-stone;
-      text-align: left;
-
-      @include mobile {
-        text-align: center;
-      }
+      text-align: center;
     }
 
     .stats-grid {
@@ -255,7 +246,7 @@
   .batch-monitoring {
     margin: 0 auto;
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
     gap: 1.5rem;
     width: 100%;
@@ -351,11 +342,7 @@
       text-transform: uppercase;
       letter-spacing: 0.12em;
       color: $color-stone;
-      text-align: left;
-
-      @include mobile {
-        text-align: center;
-      }
+      text-align: center;
     }
 
     .reservations-grid {
