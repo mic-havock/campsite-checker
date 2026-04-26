@@ -94,6 +94,7 @@
     border-radius: $button-border-radius;
     box-shadow: $shadow-lg;
     width: 100%;
+    max-width: 600px;
     margin: 0 auto;
     overflow: hidden;
     border: 1px solid rgba(0, 0, 0, 0.05);
@@ -187,6 +188,7 @@
     border-radius: $button-border-radius;
     box-shadow: $shadow-md;
     width: 100%;
+    max-width: 850px;
     margin: 0 auto;
     border: 1px solid rgba(0, 0, 0, 0.05);
 
@@ -238,6 +240,7 @@
           font-weight: 800;
           color: $primary-color;
           text-align: center;
+          margin-top: auto;
         }
       }
     }
@@ -284,7 +287,8 @@
         color: $primary-color;
         border-color: rgba($primary-color, 0.2);
 
-        .toggle-icon, .toggle-text {
+        .toggle-icon,
+        .toggle-text {
           color: $primary-color;
         }
 
@@ -298,7 +302,8 @@
         color: $color-stone;
         border-color: rgba($color-stone, 0.2);
 
-        .toggle-icon, .toggle-text {
+        .toggle-icon,
+        .toggle-text {
           color: $color-stone;
         }
 
@@ -360,7 +365,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
