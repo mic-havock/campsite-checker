@@ -253,7 +253,7 @@ const FacilitiesFinder = () => {
               type="text"
               value={inputValue}
               onChange={handleInputChange}
-              placeholder="Search terms..."
+              placeholder="e.g., Cougar Rock, Mount Rainier..."
             />
           </div>
           <div className="form-group">
