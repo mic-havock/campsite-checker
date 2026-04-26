@@ -1,164 +1,138 @@
 @import "../../styles/variables";
+@import "../../styles/responsive";
 
 .user-management {
-  min-height: 100vh;
+  min-height: calc(100vh - 120px);
   background-color: $background-base;
-  padding: 20px;
+  padding: 0;
   margin: 0;
-  width: 99vw;
+  width: 100%;
   box-sizing: border-box;
   overflow-x: hidden;
+  position: relative;
 
-  .floating-button {
-    display: none; // Redundant as it overlaps the new header back button
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 1000;
-    padding: 10px 16px;
-    background-color: #4a90e2;
-    color: white;
-    border: none;
-    border-radius: $button-border-radius;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    width: 160px;
-    max-width: 200px;
-    white-space: normal;
+  @include mobile {
+    min-height: calc(100vh - 100px);
+  }
+
+  .hero-section {
+    background: linear-gradient(
+      135deg,
+      rgba($primary-color, 0.05) 0%,
+      rgba($secondary-color, 0.05) 100%
+    );
+    padding: 1.5rem 1.5rem 3.5rem;
     text-align: center;
-    line-height: 1.2;
-    transform: none;
-    @include glass;
-    background: rgba(#4a90e2, 0.9);
-    box-shadow: $shadow-md;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    position: relative;
 
-    &:hover {
-      background-color: #357abd;
-      box-shadow: $shadow-lg;
+    @include mobile {
+      padding: 2rem 1rem 3rem;
     }
 
-    @media (max-width: 768px) {
-      max-width: 150px;
-      font-size: 0.8rem;
-      padding: 6px 12px;
-      top: 15px;
-      right: 15px;
+    .hero-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      box-sizing: border-box;
+      text-align: center;
+
+      @include mobile {
+        padding: 0 1rem;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+        color: $text-primary;
+        margin-bottom: 0.15rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        text-align: inherit;
+
+        @include mobile {
+          font-size: 1.4rem;
+        }
+      }
+
+      .description {
+        font-size: 0.85rem;
+        color: $text-primary;
+        line-height: 1.4;
+        opacity: 0.6;
+        letter-spacing: 0.02em;
+        margin-bottom: 0;
+        text-align: inherit;
+
+        @include mobile {
+          font-size: 0.75rem;
+        }
+      }
     }
   }
 
-  @media (max-width: 768px) {
-    padding: 1rem;
-  }
-
-  .page-header {
-    text-align: center;
+  .dashboard-content {
     max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 1rem;
+    margin: -2.5rem auto 3rem;
+    padding: 0 1.5rem;
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
 
-    h1 {
-      margin-bottom: 0;
+    @include mobile {
+      margin-top: 0.5rem;
+      padding: 0 1rem;
+      gap: 1.5rem;
+      align-items: center;
     }
   }
 
   .unified-controls {
-    max-width: 1200px;
-    margin: 0 auto 1.5rem;
     background-color: $card-bg;
     border-radius: $button-border-radius;
-    box-shadow: $shadow-sm;
+    box-shadow: $shadow-lg;
     width: 100%;
-    overflow: visible;
-    position: relative;
+    margin: 0 auto;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.05);
 
     .controls-header {
-      background-color: $color-forest-green;
-      color: white;
-      padding: 0.75rem 1.5rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: $button-border-radius $button-border-radius 0 0;
+      background-color: transparent;
+      padding: 1.25rem 1.5rem 0.5rem;
+      border-bottom: none;
 
       h2 {
         margin: 0;
-        font-size: 1.2rem;
-        font-weight: 600;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: $color-stone;
         text-align: center;
-      }
-
-      @media (max-width: 768px) {
-        padding: 1rem 1.5rem;
       }
     }
 
     .controls-body {
-      padding: 1.25rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 1.5rem;
-      overflow: visible;
-
-      @media (max-width: 768px) {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 1rem;
-      }
+      padding: 0.5rem 1.5rem 1.5rem;
 
       .filter-options {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 1rem;
-        flex: 1;
-        overflow: visible;
         width: 100%;
-        max-width: 600px;
-        margin: 0 auto;
-
-        @media (max-width: 768px) {
-          flex-direction: column;
-          width: 100%;
-          align-items: center;
-        }
 
         .form-group {
-          flex: 1;
-          max-width: none;
-          width: 100%;
-          text-align: center;
-
-          @media (max-width: 768px) {
-            width: 100%;
-            max-width: 600px;
-          }
-
-          label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: $text-primary;
-            font-weight: 600;
-            text-align: center;
-          }
-
           .input-button-group {
             display: flex;
-            width: 100%;
-            align-items: center;
+            gap: 1rem;
 
             input {
               flex: 1;
-              padding: 1rem;
+              padding: 0.75rem 1rem;
               border: 1px solid rgba(0, 0, 0, 0.1);
-              border-radius: $button-border-radius;
-              font-size: 1rem;
+              border-radius: 8px;
+              font-size: 0.95rem;
               transition: $button-transition;
-              height: 100%;
-              box-shadow: $shadow-sm;
+              background-color: white;
 
               &:focus {
                 outline: none;
@@ -171,28 +145,21 @@
               @include button-primary;
               min-width: 120px;
               padding: 0.75rem 1.5rem;
-              height: 100%;
-              border-radius: $button-border-radius;
-              margin-left: 1rem;
+              border-radius: 8px;
+              font-weight: 700;
+
               &:disabled {
-                background-color: lighten($primary-color, 20%);
+                opacity: 0.6;
                 cursor: not-allowed;
               }
             }
 
-            @media (max-width: 768px) {
+            @include mobile {
               flex-direction: column;
-
-              input {
-                width: 100%;
-                border-radius: $button-border-radius;
-              }
+              gap: 0.75rem;
 
               .search-button {
                 width: 100%;
-                margin-left: 0;
-                margin-top: 0.5rem;
-                border-radius: $button-border-radius;
               }
             }
           }
@@ -202,241 +169,201 @@
   }
 
   .error-message {
-    max-width: 1200px;
-    margin: 0 auto 1.5rem;
     padding: 1rem;
     background-color: rgba($color-danger, 0.1);
     color: $color-danger;
-    border: 1px solid $color-danger;
-    border-radius: $button-border-radius;
+    border: 1px solid rgba($color-danger, 0.2);
+    border-radius: 8px;
     text-align: center;
+    font-weight: 600;
     width: 100%;
+    max-width: 1000px;
+    box-sizing: border-box;
   }
 
   .user-stats {
-    max-width: 1200px;
-    margin: 0 auto 1.5rem;
     background-color: $card-bg;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-    padding-bottom: 1.5rem;
+    padding: 1.5rem;
     border-radius: $button-border-radius;
     box-shadow: $shadow-md;
     width: 100%;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
+    margin: 0 auto;
+    border: 1px solid rgba(0, 0, 0, 0.05);
 
     h2 {
-      color: $text-primary;
+      margin: 0 0 1.25rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: $color-stone;
       text-align: center;
     }
 
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
-      width: 100%;
-      box-sizing: border-box;
+      gap: 1.5rem;
 
-      @media (max-width: 1200px) {
-        grid-template-columns: repeat(3, 1fr);
-      }
-
-      @media (max-width: 900px) {
+      @media (max-width: 1000px) {
         grid-template-columns: repeat(2, 1fr);
       }
 
-      @media (max-width: 600px) {
+      @include mobile {
         grid-template-columns: 1fr;
+        gap: 1rem;
       }
 
       .stat-item {
-        background-color: $background-light;
-        padding: 1rem;
-        border-radius: $button-border-radius;
+        background-color: rgba($primary-color, 0.03);
+        padding: 1.25rem;
+        border-radius: 12px;
         display: flex;
         flex-direction: column;
         align-items: center;
-        text-align: center;
-        box-shadow: $shadow-sm;
+        border: 1px solid rgba($primary-color, 0.05);
 
         .stat-label {
-          display: flex;
-          justify-content: center;
+          font-size: 0.7rem;
+          font-weight: 700;
+          color: $color-stone;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
           margin-bottom: 0.5rem;
-          width: 100%;
-          font-weight: 600;
-          color: $text-primary;
-          word-wrap: break-word;
-          word-break: break-word;
-          hyphens: auto;
-          max-width: 100%;
+          text-align: center;
         }
 
         .stat-value {
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: $accent-color;
+          font-size: 1.75rem;
+          font-weight: 800;
+          color: $primary-color;
+          text-align: center;
         }
-      }
-    }
-  }
-
-  .reservations-list {
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
-
-    h2 {
-      margin-bottom: 1rem;
-      color: $text-primary;
-      text-align: center;
-    }
-
-    .reservations-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1.5rem;
-      width: 100%;
-
-      @media (max-width: 1200px) {
-        grid-template-columns: repeat(3, 1fr);
-      }
-
-      @media (max-width: 900px) {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      @media (max-width: 600px) {
-        grid-template-columns: 1fr;
       }
     }
   }
 
   .batch-monitoring {
-    max-width: 1200px;
-    margin: 0 auto 1.5rem;
-    background-color: $card-bg;
-    padding: 1rem;
-    border-radius: $button-border-radius;
-    box-shadow: $shadow-md;
+    margin: 0 auto;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 1.5rem;
     width: 100%;
-    box-sizing: border-box;
-    flex-wrap: wrap;
 
-    @media (max-width: 768px) {
+    @include mobile {
       flex-direction: column;
+      align-items: stretch;
       gap: 1rem;
     }
 
     .simple-toggle {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      background: none;
-      border: none;
+      gap: 0.5rem;
+      border: 1px solid rgba(0, 0, 0, 0.05);
       cursor: pointer;
-      padding: 0.75rem 1rem;
-      border-radius: 4px;
+      padding: 0.6rem 1.25rem;
+      border-radius: 100px;
       transition: all 0.2s ease;
-      font-size: 1rem;
-
-      &:hover {
-        background-color: rgba($color-stone, 0.1);
-      }
+      box-shadow: $shadow-sm;
 
       .toggle-icon {
-        font-size: 1.75rem;
+        font-size: 1.5rem;
+      }
+
+      .toggle-text {
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
       }
 
       &.active {
-        .toggle-icon {
+        background-color: rgba($primary-color, 0.12);
+        color: $primary-color;
+        border-color: rgba($primary-color, 0.2);
+
+        .toggle-icon, .toggle-text {
           color: $primary-color;
         }
 
-        .toggle-text {
-          color: $primary-color;
-          font-weight: 600;
+        &:hover {
+          background-color: rgba($primary-color, 0.18);
         }
       }
 
       &.inactive {
-        .toggle-icon {
+        background-color: rgba($color-stone, 0.12);
+        color: $color-stone;
+        border-color: rgba($color-stone, 0.2);
+
+        .toggle-icon, .toggle-text {
           color: $color-stone;
         }
 
-        .toggle-text {
-          color: $color-stone;
-          font-weight: 600;
+        &:hover {
+          background-color: rgba($color-stone, 0.18);
         }
       }
     }
 
     .delete-all-button {
+      @include button-danger;
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      background-color: $color-danger;
-      color: white;
-      border: none;
-      cursor: pointer;
-      padding: 0.75rem 1.5rem;
-      border-radius: $button-border-radius;
-      transition: all 0.2s ease;
-      font-size: 1rem;
-      font-weight: 600;
-
-      @media (max-width: 768px) {
-        width: 100%;
-        justify-content: center;
-      }
-
-      &:hover:not(:disabled) {
-        background-color: darken($color-danger, 10%);
-        box-shadow: $shadow-md;
-      }
-
-      &:disabled {
-        background-color: lighten($color-danger, 30%);
-        cursor: not-allowed;
-        opacity: 0.6;
-      }
+      gap: 0.5rem;
+      padding: 0.6rem 1.25rem;
+      border-radius: 100px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      box-shadow: $shadow-sm;
 
       .delete-icon {
-        font-size: 1.25rem;
-      }
-
-      .delete-text {
-        white-space: nowrap;
-
-        @media (max-width: 768px) {
-          white-space: normal;
-          text-align: center;
-        }
+        font-size: 1.1rem;
       }
 
       &.confirm {
         background-color: darken($color-danger, 15%);
         animation: pulse 0.5s ease-in-out;
-
-        &:hover {
-          background-color: darken($color-danger, 20%);
-        }
       }
     }
+  }
 
-    @keyframes pulse {
-      0%, 100% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.05);
+  .reservations-list {
+    width: 100%;
+
+    h2 {
+      margin: 0 0 1.5rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: $color-stone;
+      text-align: center;
+    }
+
+    .reservations-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1.5rem;
+      width: 100%;
+      justify-content: center;
+
+      @include mobile {
+        grid-template-columns: 1fr;
       }
     }
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
   }
 }

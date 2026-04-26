@@ -7,7 +7,7 @@
   z-index: 1000;
   background-color: mix($primary-color, $background-light, 5%);
   box-shadow: $shadow-sm;
-  padding: 0.4rem 1.5rem;
+  padding: 0.3rem 1.5rem;
   display: flex;
   align-items: center;
 
@@ -125,7 +125,7 @@
       }
 
       @include desktop {
-        max-height: 70px;
+        max-height: 88px;
       }
     }
   }

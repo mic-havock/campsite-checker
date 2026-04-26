@@ -57,21 +57,23 @@ const Layout = ({ children }) => {
               <button
                 onClick={() => navigate("/")}
                 className="back-to-search-btn"
-                aria-label="Back to search"
+                aria-label="Back"
               >
-                ← Back to Search
+                ← Back
               </button>
-            </div>
-            <div className="header-center">
-              <Link to="/" className="logo-link">
-                <img
-                  src="/kampscout.svg"
-                  alt="Kampscout Logo"
-                  className="logo-img"
-                />
-              </Link>
-            </div>
-            <div className="header-right">
+            )}
+          </div>
+          <div className="header-center">
+            <Link to="/" className="logo-link">
+              <img
+                src="/kampscout.svg"
+                alt="Kampscout Logo"
+                className="logo-img"
+              />
+            </Link>
+          </div>
+          <div className="header-right">
+            {location.pathname !== "/reservation-management" && (
               <button
                 onClick={() => navigate("/reservation-management")}
                 className="alert-management-btn"
@@ -79,7 +81,7 @@ const Layout = ({ children }) => {
               >
                 {isMobile ? "Alerts" : "Manage Reservation Alerts"}
               </button>
-            </div>
+            )}
           </div>
         </header>
       )}
