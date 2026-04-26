@@ -111,7 +111,10 @@ const FacilitiesFinder = () => {
       setFacilities(facilities);
       setHasSearched(true);
       saveToStorage(STORAGE_KEYS.SEARCH_RESULTS, facilities);
-      saveToStorage(STORAGE_KEYS.SEARCH_PARAMS, { query: inputValue, state: selectedState });
+      saveToStorage(STORAGE_KEYS.SEARCH_PARAMS, {
+        query: inputValue,
+        state: selectedState,
+      });
     } catch (err) {
       console.error(err);
       setError("Error fetching facilities");
@@ -236,7 +239,9 @@ const FacilitiesFinder = () => {
               alt="Kampscout Logo"
               className="hero-logo"
             />
-            <p className="description">{CONTENT.FACILITIES_FINDER.DESCRIPTION}</p>
+            <p className="description">
+              {CONTENT.FACILITIES_FINDER.DESCRIPTION}
+            </p>
           </div>
         </div>
 
@@ -320,7 +325,9 @@ const FacilitiesFinder = () => {
                         onRowSelected={handleRowSelection}
                         selectedState={
                           selectedState
-                            ? STATES.find((state) => state.code === selectedState)
+                            ? STATES.find(
+                                (state) => state.code === selectedState,
+                              )
                             : null
                         }
                       />
@@ -339,7 +346,10 @@ const FacilitiesFinder = () => {
             ) : (
               !loading && (
                 <div className="no-results">
-                  <p>No campgrounds found for your search. Try different terms or another state.</p>
+                  <p>
+                    No campgrounds found for your search. Try different terms or
+                    another state.
+                  </p>
                 </div>
               )
             )}

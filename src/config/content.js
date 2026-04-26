@@ -1,6 +1,6 @@
 export const CONTENT = {
   FACILITIES_FINDER: {
     DESCRIPTION:
-      "Tired of refreshing Recreation.gov trying to get that perfect campsite? Kamp Scout makes finding your dream outdoor spot fun and stress-free! Search campgrounds across the United States, and when that ideal site is booked solid, let us do the hard work. Set up alerts and we'll monitor 24/7, instantly notifying you when an opening becomes available. Your perfect outdoor adventure is just a notification away!",
+      "Tired of endlessly refreshing Recreation.gov trying to get a campsite? Kamp Scout does the hard work for you. Search campgrounds across the US, and if your ideal site is booked solid, set an alert. We monitor availability 24/7 and instantly notify you the second a spot opens up. Your next trip is just a notification away.",
   },
 };
