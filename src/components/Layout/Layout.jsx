@@ -50,10 +50,10 @@ const Layout = ({ children }) => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="global-header">
-        <div className="header-content">
-          <div className="header-left">
-            {!isMainPage && (
+      {!isMainPage && (
+        <header className="global-header">
+          <div className="header-content">
+            <div className="header-left">
               <button
                 onClick={() => navigate("/")}
                 className="back-to-search-btn"
@@ -83,8 +83,8 @@ const Layout = ({ children }) => {
               </button>
             )}
           </div>
-        </div>
-      </header>
+        </header>
+      )}
       <main ref={mainRef} className="flex-grow">
         {children}
       </main>

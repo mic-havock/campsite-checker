@@ -1,135 +1,531 @@
 @import "../../styles/variables";
+@import "../../styles/responsive";
 
 .campground-availability-container {
-  max-width: 100%;
-  min-height: 100vh;
-  background-color: $background-light;
-  border-radius: $button-border-radius;
-  padding: 1rem;
-  margin: 0.25rem;
+  min-height: calc(100vh - 120px);
+  background-color: $background-base;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  position: relative;
 
-  .campground-availability-header {
-    margin: 0 auto 2rem;
-    max-width: 1200px;
+  @include mobile {
+    min-height: calc(100vh - 100px);
+  }
 
-    .info-text {
-      text-align: left;
-      margin: 1rem 0;
-      background-color: rgba($accent-color, 0.1);
-      border-radius: $button-border-radius;
-      margin-bottom: -0.5rem;
-      padding: 1rem 1.5rem;
+  .hero-section {
+    background: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($secondary-color, 0.05) 100%);
+    padding: 1.5rem 0 3.5rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    position: relative;
 
-      p {
-        margin: 0;
-        line-height: 1.6;
-        font-size: 0.95rem;
+    @include mobile {
+      padding: 2rem 0 3rem;
+    }
 
-        strong {
-          color: $accent-color;
-          display: block;
-          margin-bottom: -1rem;
+    .hero-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      width: 100%;
+      box-sizing: border-box;
+
+      @include mobile {
+        padding: 0 1rem;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+        color: $text-primary;
+        margin-bottom: 0.15rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+
+        .state-indicator {
+          color: $color-stone;
+          font-weight: 500;
+          font-size: 0.9em;
+        }
+
+        @include mobile {
+          font-size: 1.4rem;
+        }
+      }
+
+      .description {
+        font-size: 0.85rem;
+        color: $text-primary;
+        line-height: 1.4;
+        opacity: 0.6;
+        letter-spacing: 0.02em;
+        margin-bottom: 0;
+
+        @include mobile {
+          font-size: 0.75rem;
         }
       }
     }
   }
 
-  .availability-card {
+  .controls-wrapper {
+    max-width: 1200px;
+    margin: -2.5rem auto 1rem;
+    padding: 0 1.5rem;
+    position: relative;
+    z-index: 10;
     width: 100%;
-    max-width: 600px;
-    background-color: white;
-    border-radius: $button-border-radius;
-    box-shadow: $shadow-md;
-    overflow: hidden;
-    margin: 1.5rem auto;
+    box-sizing: border-box;
 
-    .availability-header {
-      background-color: $accent-color;
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border-radius: $button-border-radius $button-border-radius 0 0;
-
-      h2 {
-        margin: 0;
-        font-size: 1.2rem;
-        font-weight: 600;
-        text-align: center;
-      }
+    @include mobile {
+      margin-top: 0.5rem;
+      padding: 0 1rem;
     }
 
-    .availability-body {
-      padding: 1.25rem;
+    .controls-container {
+      display: flex;
+      gap: 1rem;
+      align-items: stretch;
+      justify-content: flex-start;
+      width: 100%;
+      box-sizing: border-box;
 
-      .availability-row {
+      @include mobile {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .availability-card {
+        flex: 1;
         display: flex;
-        gap: 0.5rem;
-        align-items: center;
+        flex-direction: column;
+        min-width: 0;
+        max-width: 600px;
+        background-color: #fafaf9;
+        border-radius: $button-border-radius;
+        box-shadow: $shadow-md;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        overflow: hidden;
 
-        .month-select {
-          flex: 1;
-          padding: 0.75rem;
-          font-size: 0.95rem;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          background-color: white;
-          appearance: none;
-          cursor: pointer;
-          transition: all 0.2s ease;
-
-          &:hover,
-          &:focus {
-            border-color: $accent-color;
-            box-shadow: 0 0 0 2px rgba($accent-color, 0.1);
-          }
-        }
-
-        .check-availability-btn {
+        .availability-header {
           background-color: $accent-color;
           color: white;
-          border: none;
-          padding: 0.75rem 1rem;
-          border-radius: $button-border-radius;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.2s ease;
+          padding: 0.6rem 1.5rem;
           display: flex;
-          align-items: center;
           justify-content: center;
-          white-space: nowrap;
-          min-width: 80px;
+          align-items: center;
+          min-height: 36px;
+          box-sizing: border-box;
 
-          &:hover:not(:disabled) {
-            background-color: darken($accent-color, 10%);
-            box-shadow: $shadow-md;
+          h2 {
+            margin: 0;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            text-align: center;
+            width: 100%;
           }
+        }
 
-          &:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba($accent-color, 0.3);
+        .availability-body {
+          padding: 0.85rem 1.25rem;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
+          background-color: transparent;
+          box-sizing: border-box;
+
+          .availability-row {
+            display: flex;
+            flex-direction: row;
+            gap: 0.75rem;
+            align-items: center;
+            width: 100%;
+
+            .select-container {
+              position: relative;
+              flex: 1;
+              display: flex;
+              align-items: center;
+
+              .input-icon {
+                position: absolute;
+                left: 1rem;
+                color: $color-stone;
+                font-size: 1.1rem;
+                pointer-events: none;
+                z-index: 1;
+              }
+
+              .month-select {
+                width: 100%;
+                padding: 0.5rem 1rem 0.5rem 2.75rem;
+                font-size: 0.85rem;
+                border: 1px solid rgba(0, 0, 0, 0.12);
+                border-radius: 8px;
+                background-color: white;
+                appearance: none;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                min-height: 40px;
+                color: $text-primary;
+
+                background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23a69f98%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+                background-repeat: no-repeat;
+                background-position: right 0.8rem center;
+                background-size: 0.65em auto;
+
+                &:hover {
+                  border-color: $accent-color;
+                }
+
+                &:focus {
+                  outline: none;
+                  border-color: $accent-color;
+                  box-shadow: 0 0 0 3px rgba($accent-color, 0.1);
+                }
+              }
+            }
+
+            .check-availability-btn {
+              background-color: $color-forest-green;
+              color: white;
+              border: none;
+              padding: 0.5rem 1.25rem;
+              border-radius: 8px;
+              font-weight: 700;
+              cursor: pointer;
+              transition: all 0.2s ease;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              white-space: nowrap;
+              min-height: 40px;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+              &:hover:not(:disabled) {
+                background-color: darken($color-forest-green, 5%);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+                transform: translateY(-1px);
+              }
+
+              &:active:not(:disabled) {
+                transform: translateY(0);
+              }
+
+              &:focus {
+                outline: none;
+                box-shadow: 0 0 0 3px rgba($color-forest-green, 0.3);
+              }
+
+              &:disabled {
+                background-color: lighten($color-stone, 20%);
+                cursor: not-allowed;
+                opacity: 0.7;
+                box-shadow: none;
+              }
+            }
+
+            @media (max-width: 768px) {
+              flex-direction: column;
+              width: 100%;
+
+              .check-availability-btn {
+                width: 100%;
+              }
+            }
           }
+        }
+      }
 
-          &:disabled {
-            background-color: lighten($accent-color, 20%);
-            cursor: not-allowed;
+      .info-text {
+        flex: 1;
+        max-width: 600px;
+        background-color: #fafaf9;
+        padding: 0.85rem 1.25rem;
+        border-radius: $button-border-radius;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: $shadow-md;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        h3 {
+          margin: 0 0 0.5rem 0;
+          color: $text-primary;
+          font-size: 0.7rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          opacity: 0.8;
+        }
+
+        .info-content {
+          display: flex;
+          flex-direction: column;
+          gap: 0.35rem;
+          color: $text-primary;
+
+          .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            line-height: 1.3;
+
+            .bullet {
+              color: $accent-color;
+              font-weight: 700;
+            }
           }
         }
       }
     }
   }
 
-  .calendar-container {
-    max-height: 700px;
-    overflow: auto;
-    border-radius: $button-border-radius;
-    box-shadow: $shadow-md;
+  .availability-grid-container {
+    width: 100%;
+    margin: 0.5rem auto 3rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+
+    .availability-legend {
+      width: 100%;
+      max-width: 1200px;
+      margin-bottom: 1rem;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.75rem;
+      align-items: center;
+      flex-wrap: wrap;
+      box-sizing: border-box;
+      align-self: center;
+
+      @include mobile {
+        padding: 0.75rem 1rem;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 500;
+        color: $text-primary;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+
+        strong {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 24px;
+          height: 24px;
+          padding: 0 6px;
+          border-radius: 4px;
+          font-size: 0.7rem;
+          font-weight: 600;
+          background-color: rgba(76, 175, 80, 0.12);
+          color: #2e7d32;
+        }
+
+        &.reserved strong {
+          background-color: rgba(214, 81, 64, 0.12);
+          color: #b71c1c;
+        }
+
+        &.not-yet-released strong {
+          background-color: rgba(74, 144, 226, 0.12);
+          color: #1565c0;
+        }
+
+        &.not-reservable strong {
+          background-color: rgba(112, 112, 112, 0.12);
+          color: #424242;
+        }
+      }
+
+      .legend-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-left: auto;
+        border-left: 1px solid rgba(0, 0, 0, 0.1);
+        padding-left: 1.5rem;
+
+        @include mobile {
+          margin-left: 0;
+          border-left: none;
+          padding-left: 0;
+          width: 100%;
+          padding-top: 0.75rem;
+          border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="checkbox"] {
+          cursor: pointer;
+          width: 16px;
+          height: 16px;
+          accent-color: $primary-color;
+        }
+
+        label {
+          cursor: pointer;
+          font-weight: 600;
+          color: $text-primary;
+        }
+
+        .bulk-alert-button {
+          margin-left: 1rem;
+          padding: 0.4rem 1rem;
+          background-color: $color-forest-green;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          font-size: 0.8rem;
+          font-weight: 700;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          white-space: nowrap;
+          box-shadow: $shadow-sm;
+          transition: all 0.2s ease;
+
+          &:hover {
+            background-color: darken($color-forest-green, 5%);
+            transform: translateY(-1px);
+            box-shadow: $shadow-md;
+          }
+        }
+      }
+    }
+
+    .availability-grid-centered-wrapper {
+        margin: 0 auto;
+        width: fit-content;
+        max-width: calc(100vw - 3rem);
+
+        @include mobile {
+            max-width: calc(100vw - 2rem);
+        }
+    }
+  }
+}
+
+.ag-theme-alpine {
+  width: 100%;
+  --ag-header-background-color: #ffffff;
+  --ag-header-foreground-color: #{$color-forest-green};
+  --ag-border-color: transparent;
+  --ag-row-border-color: transparent;
+  --ag-header-column-separator-display: none;
+  --ag-row-height: 48px;
+  --ag-header-height: 48px;
+  --ag-font-family: inherit;
+  --ag-borders: none;
+  --ag-cell-focus-border-color: transparent;
+
+  background-color: white;
+  border-radius: $button-border-radius;
+  box-shadow: $shadow-md;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+
+  .ag-header {
+    border-bottom: 1px solid #E5E7EB;
   }
 
-  .back-button {
-    @include button-primary;
-    display: inline-flex;
+  .ag-cell-focus {
+    outline: none !important;
+    border: none !important;
+  }
+
+  .ag-header-cell-text {
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: $color-forest-green !important;
+  }
+
+  .ag-header-cell-center {
+    .ag-header-cell-label {
+      justify-content: center;
+    }
+  }
+
+  .ag-cell {
+    display: flex;
     align-items: center;
-    gap: 0.5rem;
-    margin-top: 2rem;
+    justify-content: center;
+    padding: 0 !important;
+    border-right: 1px solid #FFFFFF !important;
+    border-bottom: 1px solid #FFFFFF !important;
+    box-sizing: border-box;
+
+    &:last-child {
+      border-right: 1px solid #FFFFFF !important;
+    }
+
+    .status-pill {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        border-radius: 0;
+        font-weight: 600;
+        font-size: 0.8rem;
+        line-height: 1;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+
+        &.available {
+            background-color: rgba(76, 175, 80, 0.12);
+            color: #2e7d32;
+        }
+        &.reserved {
+            background-color: rgba(214, 81, 64, 0.12);
+            color: #b71c1c;
+        }
+        &.nyr {
+            background-color: rgba(74, 144, 226, 0.12);
+            color: #1565c0;
+        }
+        &.not-reservable {
+            background-color: rgba(112, 112, 112, 0.12);
+            color: #424242;
+        }
+    }
+
+    &.clickable-cell {
+        cursor: pointer !important;
+        .status-pill:hover {
+            filter: brightness(0.92);
+            z-index: 2;
+            box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.4);
+        }
+    }
+  }
+
+  .ag-row {
+    border-bottom: none !important;
+  }
+
+  .ag-root-wrapper {
+    border: none !important;
+  }
+
+  .ag-pinned-left-header, .ag-pinned-left-cols-container {
+    border-right: 1px solid #FFFFFF !important;
   }
 }
 
@@ -140,229 +536,4 @@
   100% {
     transform: rotate(360deg);
   }
-}
-
-@media (max-width: 768px) {
-  .campground-availability-container {
-    padding: 1rem;
-
-    .campground-availability-header h1 {
-      font-size: 2rem;
-    }
-
-    .calendar-container {
-      padding: 1rem;
-    }
-
-    .modal {
-      width: 90%;
-      padding: 1.5rem;
-    }
-  }
-}
-
-.ag-header-cell {
-  background-color: $primary-color;
-  color: $text-light;
-  border-right: 1px solid $text-light;
-}
-
-.ag-header-cell:hover {
-  background-color: $secondary-color;
-  transition: background-color 0.3s ease-in-out;
-}
-
-.ag-header-cell-text {
-  font-family: "Helvetica", sans-serif;
-  font-size: 14px;
-  font-weight: bold;
-}
-
-.ag-header-cell-center {
-  .ag-header-cell-label {
-    justify-content: center;
-  }
-}
-
-.availability-legend {
-  margin-top: 3rem;
-  margin-bottom: 1.5rem;
-  padding: 0.75rem;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  display: flex;
-  gap: 20px;
-  font-size: 14px;
-  align-items: center;
-  flex-wrap: wrap;
-
-  .legend-section {
-    margin-bottom: 1rem;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-
-    h3 {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: #495057;
-      margin-bottom: 0.75rem;
-    }
-  }
-
-  .legend-items {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.875rem;
-    color: #495057;
-    background-color: #4caf50;
-    color: white;
-    padding: 2px 8px;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-    &.reserved {
-      background-color: #d65140;
-    }
-
-    &.not-yet-released {
-      background-color: #4a90e2;
-    }
-
-    &.not-reservable {
-      background-color: #707070;
-    }
-
-    &.checkbox {
-      input[type="checkbox"] {
-        width: 16px;
-        height: 16px;
-        cursor: pointer;
-        border: 1px solid #ced4da;
-        border-radius: 3px;
-        margin: 0;
-      }
-
-      label {
-        cursor: pointer;
-      }
-    }
-  }
-
-  .legend-color {
-    width: 24px;
-    height: 24px;
-    border-radius: 4px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-
-    &.available {
-      background-color: #4caf50;
-    }
-
-    &.reserved {
-      background-color: #d65140;
-    }
-
-    &.not-released {
-      background-color: #4a90e2;
-    }
-
-    &.not-available {
-      background-color: #707070;
-    }
-  }
-
-  .legend-controls {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-left: 20px;
-    border-left: 1px solid #ccc;
-    padding-left: 20px;
-
-    input[type="checkbox"] {
-      cursor: pointer;
-      width: 16px;
-      height: 16px;
-      appearance: auto;
-      -webkit-appearance: checkbox;
-      -moz-appearance: checkbox;
-      border: 1px solid #ccc;
-      border-radius: 3px;
-      margin: 0;
-      vertical-align: middle;
-    }
-
-    label {
-      cursor: pointer;
-    }
-
-    .bulk-alert-button {
-      margin-left: 10px;
-      padding: 0.5rem 1rem;
-      background-color: $primary-color;
-      color: white;
-      border: none;
-      border-radius: $button-border-radius;
-      cursor: pointer;
-      font-size: 0.9rem;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      white-space: nowrap;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    }
-  }
-}
-
-.info-text {
-  background-color: #f8f9fa;
-  padding: 1.25rem;
-  border-radius: 8px;
-  margin-bottom: 1.25rem;
-  border: 1px solid #e9ecef;
-
-  h3 {
-    margin: 0 0 0.75rem 0;
-    color: #2c3e50;
-    font-size: 1.1rem;
-    font-weight: 600;
-  }
-
-  .info-content {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    color: #495057;
-
-    .info-item {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-
-      .bullet {
-        color: #4a90e2;
-        font-weight: 500;
-      }
-    }
-  }
-}
-
-.availability-container {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding-left: 5px;
 }
