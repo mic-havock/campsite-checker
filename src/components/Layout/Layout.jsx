@@ -54,34 +54,36 @@ const Layout = ({ children }) => {
         <header className="global-header">
           <div className="header-content">
             <div className="header-left">
-              <button
-                onClick={() => navigate("/")}
-                className="back-to-search-btn"
-                aria-label="Back"
-              >
-                ← Back
-              </button>
-            )}
-          </div>
-          <div className="header-center">
-            <Link to="/" className="logo-link">
-              <img
-                src="/kampscout.svg"
-                alt="Kampscout Logo"
-                className="logo-img"
-              />
-            </Link>
-          </div>
-          <div className="header-right">
-            {location.pathname !== "/reservation-management" && (
-              <button
-                onClick={() => navigate("/reservation-management")}
-                className="alert-management-btn"
-                aria-label="Manage Reservation Alerts"
-              >
-                {isMobile ? "Alerts" : "Manage Reservation Alerts"}
-              </button>
-            )}
+              {!isMainPage && (
+                <button
+                  onClick={() => navigate("/")}
+                  className="back-to-search-btn"
+                  aria-label="Back"
+                >
+                  ← Back
+                </button>
+              )}
+            </div>
+            <div className="header-center">
+              <Link to="/" className="logo-link">
+                <img
+                  src="/kampscout.svg"
+                  alt="Kampscout Logo"
+                  className="logo-img"
+                />
+              </Link>
+            </div>
+            <div className="header-right">
+              {location.pathname !== "/reservation-management" && (
+                <button
+                  onClick={() => navigate("/reservation-management")}
+                  className="alert-management-btn"
+                  aria-label="Manage Reservation Alerts"
+                >
+                  {isMobile ? "Alerts" : "Manage Reservation Alerts"}
+                </button>
+              )}
+            </div>
           </div>
         </header>
       )}
