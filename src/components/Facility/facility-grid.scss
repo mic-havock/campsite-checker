@@ -11,25 +11,22 @@
   .grid-wrapper {
     position: relative;
     width: 100%;
-    height: 600px; // Increased height for better view
+    height: 600px;
   }
 
   #facility-grid-view {
-    // Standard White Container with subtle shadow
     background-color: white;
     border-radius: $button-border-radius;
     box-shadow: $shadow-md;
     border: 1px solid rgba(0, 0, 0, 0.1);
     overflow: hidden;
 
-    // Strip AG Grid native borders
     --ag-borders: none;
     --ag-header-column-separator-display: none;
     --ag-border-color: transparent;
     --ag-row-border-color: transparent;
     --ag-cell-focus-border-color: transparent;
 
-    // Typography & Colors
     --ag-header-background-color: #ffffff;
     --ag-header-foreground-color: #{$color-forest-green};
     --ag-font-family: inherit;
@@ -42,10 +39,23 @@
 
     .ag-header-cell-text {
       font-size: 0.75rem !important;
-      font-weight: 600 !important; // Medium weight
+      font-weight: 600 !important;
       text-transform: uppercase;
       letter-spacing: 0.05em;
       color: $color-forest-green !important;
+    }
+
+    // Alignment Helpers
+    .ag-header-center {
+      .ag-header-cell-label {
+        justify-content: center;
+      }
+    }
+
+    .ag-header-left {
+      .ag-header-cell-label {
+        justify-content: flex-start;
+      }
     }
 
     .ag-cell {
@@ -54,9 +64,17 @@
       padding: 0 1.5rem !important;
       font-size: 0.85rem;
       color: $text-primary;
-
-      // Soft, faint gray internal row dividers (using border-bottom on cells)
       border-bottom: 1px solid #f0f0f0 !important;
+
+      &.ag-cell-center {
+        justify-content: center;
+        text-align: center;
+      }
+
+      &.ag-cell-left {
+        justify-content: flex-start;
+        text-align: left;
+      }
     }
 
     .ag-row {
@@ -77,26 +95,25 @@
       background-color: white;
     }
 
-    // Pastel Pill Styling for Status Indicators
+    // Refined Pastel Pill Styling
     .status-pill {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px; // Rounded edges
+      width: fit-content; // Don't stretch
+      padding: 4px 12px; // Hug the text
+      border-radius: 9999px;
       font-weight: 600;
       font-size: 0.75rem;
       line-height: 1;
       text-align: center;
-      margin: 0 auto;
 
       &.facility-type-pill {
-        background-color: rgba($color-forest-green, 0.1); // Soft low-opacity forest green
-        color: $color-forest-green; // Darker text
+        background-color: rgba($color-forest-green, 0.1);
+        color: $color-forest-green;
       }
     }
 
-    // Ensure pagination looks clean
     .ag-paging-panel {
       border-top: 1px solid #E5E7EB;
       font-size: 0.8rem;
