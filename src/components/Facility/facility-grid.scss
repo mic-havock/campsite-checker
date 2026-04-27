@@ -60,15 +60,9 @@
     }
 
     // Alignment Helpers
-    .ag-header-center {
+    .center-aligned-header {
       .ag-header-cell-label {
         justify-content: center;
-      }
-    }
-
-    .ag-header-left {
-      .ag-header-cell-label {
-        justify-content: flex-start;
       }
     }
 
@@ -80,14 +74,26 @@
       color: $text-primary;
       border-bottom: 1px solid #f0f0f0 !important;
 
-      &.ag-cell-center {
+      &.center-aligned-cell {
         justify-content: center;
         text-align: center;
       }
+    }
 
-      &.ag-cell-left {
-        justify-content: flex-start;
-        text-align: left;
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      line-height: 1;
+
+      &.facility-type-pill {
+        background-color: rgba($color-forest-green, 0.08);
+        color: $color-forest-green;
+        border: 1px solid rgba($color-forest-green, 0.1);
       }
     }
 

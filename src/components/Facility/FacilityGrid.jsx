@@ -31,29 +31,22 @@ const FacilityGrid = ({ rowData, onRowSelected, selectedState }) => {
 
   const columnDefs = useMemo(
     () => [
-      {
-        headerName: "Campground Name",
-        field: "FacilityName",
-        cellClass: "ag-cell-left",
-        headerClass: "ag-header-left",
-      },
-      {
-        headerName: "City",
-        field: "City",
-        cellClass: "ag-cell-left",
-        headerClass: "ag-header-left",
-      },
+      { headerName: "Campground Name", field: "FacilityName" },
+      { headerName: "City", field: "City" },
       {
         headerName: "State",
         field: "AddressStateCode",
-        cellClass: "ag-cell-center",
-        headerClass: "ag-header-center",
+        cellClass: "center-aligned-cell",
+        headerClass: "center-aligned-header",
       },
       {
         headerName: "Facility Type",
         field: "FacilityTypeDescription",
-        cellClass: "ag-cell-center",
-        headerClass: "ag-header-center",
+        cellClass: "center-aligned-cell",
+        headerClass: "center-aligned-header",
+        cellRenderer: (params) => (
+          <span className="status-pill facility-type-pill">{params.value}</span>
+        ),
       },
     ],
     []
