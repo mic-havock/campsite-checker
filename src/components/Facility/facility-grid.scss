@@ -14,35 +14,49 @@
     height: 600px;
   }
 
-  #facility-grid-view {
+  #facility-grid-view.ag-theme-alpine {
     background-color: white;
     border-radius: $button-border-radius;
     box-shadow: $shadow-md;
     border: 1px solid rgba(0, 0, 0, 0.1);
     overflow: hidden;
 
-    --ag-borders: none;
-    --ag-header-column-separator-display: none;
-    --ag-border-color: transparent;
-    --ag-row-border-color: transparent;
-    --ag-cell-focus-border-color: transparent;
+    --ag-borders: none !important;
+    --ag-header-column-separator-display: none !important;
+    --ag-border-color: transparent !important;
+    --ag-row-border-color: transparent !important;
+    --ag-cell-focus-border-color: transparent !important;
 
-    --ag-header-background-color: #ffffff;
-    --ag-header-foreground-color: #{$color-forest-green};
+    --ag-header-background-color: #2b4c1c !important;
+    --ag-header-foreground-color: #ffffff !important;
     --ag-font-family: inherit;
     --ag-row-height: 48px;
     --ag-header-height: 48px;
 
     .ag-header {
-      border-bottom: 1px solid #E5E7EB;
+      background-color: #2b4c1c !important;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .ag-header-row {
+      background-color: #2b4c1c !important;
+      color: #ffffff !important;
+    }
+
+    .ag-header-cell {
+      background-color: #2b4c1c !important;
+    }
+
+    .ag-header-cell-label * {
+      color: #ffffff !important;
     }
 
     .ag-header-cell-text {
       font-size: 0.75rem !important;
-      font-weight: 600 !important;
+      font-weight: 500 !important;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: $color-forest-green !important;
+      color: #ffffff !important;
     }
 
     // Alignment Helpers
@@ -95,24 +109,6 @@
       background-color: white;
     }
 
-    // Refined Pastel Pill Styling
-    .status-pill {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: fit-content; // Don't stretch
-      padding: 4px 12px; // Hug the text
-      border-radius: 9999px;
-      font-weight: 600;
-      font-size: 0.75rem;
-      line-height: 1;
-      text-align: center;
-
-      &.facility-type-pill {
-        background-color: rgba($color-forest-green, 0.1);
-        color: $color-forest-green;
-      }
-    }
 
     .ag-paging-panel {
       border-top: 1px solid #E5E7EB;

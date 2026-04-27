@@ -54,9 +54,6 @@ const FacilityGrid = ({ rowData, onRowSelected, selectedState }) => {
         field: "FacilityTypeDescription",
         cellClass: "ag-cell-center",
         headerClass: "ag-header-center",
-        cellRenderer: (params) => (
-          <span className="status-pill facility-type-pill">{params.value}</span>
-        ),
       },
     ],
     []
