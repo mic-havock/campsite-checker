@@ -7,6 +7,8 @@ import {
   RowSelectionModule,
   ValidationModule,
 } from "ag-grid-community";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-alpine.css";
 import { AgGridReact } from "ag-grid-react";
 import PropTypes from "prop-types";
 import { useEffect, useMemo, useState } from "react";
@@ -29,12 +31,32 @@ const FacilityGrid = ({ rowData, onRowSelected, selectedState }) => {
 
   const columnDefs = useMemo(
     () => [
-      { headerName: "Campground Name", field: "FacilityName" },
-      { headerName: "City", field: "City" },
-      { headerName: "State", field: "AddressStateCode" },
-      { headerName: "Facilty Type", field: "FacilityTypeDescription" },
+      {
+        headerName: "Campground Name",
+        field: "FacilityName",
+        cellClass: "left-cell uppercase-text",
+        headerClass: "left-header",
+      },
+      {
+        headerName: "City",
+        field: "City",
+        cellClass: "left-cell uppercase-text",
+        headerClass: "left-header",
+      },
+      {
+        headerName: "State",
+        field: "AddressStateCode",
+        cellClass: "center-cell uppercase-text",
+        headerClass: "center-header",
+      },
+      {
+        headerName: "Facility Type",
+        field: "FacilityTypeDescription",
+        cellClass: "center-cell uppercase-text",
+        headerClass: "center-header",
+      },
     ],
-    []
+    [],
   );
 
   useEffect(() => {
@@ -49,11 +71,11 @@ const FacilityGrid = ({ rowData, onRowSelected, selectedState }) => {
             } catch (err) {
               console.error(
                 `Failed to fetch location for facility ${row.FacilityID}:`,
-                err
+                err,
               );
               return { ...row, City: "N/A", AddressStateCode: "N/A" };
             }
-          })
+          }),
         );
 
         // Always filter if we have a selected state
@@ -103,8 +125,9 @@ const FacilityGrid = ({ rowData, onRowSelected, selectedState }) => {
       pagination: true,
       paginationPageSize: 20,
       headerHeight: 30,
+      rowHeight: 30,
     }),
-    []
+    [],
   );
 
   const onSelectionChanged = (event) => {
@@ -117,7 +140,7 @@ const FacilityGrid = ({ rowData, onRowSelected, selectedState }) => {
   return (
     <div className="facility-grid-container">
       {error && <div className="error-message">{error}</div>}
-      <div className="grid-wrapper">
+      <div className="grid-wrapper ag-theme-alpine">
         <AgGridReact
           columnDefs={columnDefs}
           rowData={processedData}
