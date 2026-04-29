@@ -34,26 +34,26 @@ const FacilityGrid = ({ rowData, onRowSelected, selectedState }) => {
       {
         headerName: "Campground Name",
         field: "FacilityName",
-        cellClass: "left-cell uppercase-text",
+        cellClass: "left-cell name-cell",
         headerClass: "left-header",
       },
       {
         headerName: "City",
         field: "City",
-        cellClass: "left-cell uppercase-text",
+        cellClass: "left-cell",
         headerClass: "left-header",
       },
       {
         headerName: "State",
         field: "AddressStateCode",
-        cellClass: "center-cell uppercase-text",
-        headerClass: "center-header",
+        cellClass: "center-aligned-cell uppercase-text",
+        headerClass: "center-aligned-header",
       },
       {
         headerName: "Facility Type",
         field: "FacilityTypeDescription",
-        cellClass: "center-cell uppercase-text",
-        headerClass: "center-header",
+        cellClass: "center-aligned-cell uppercase-text",
+        headerClass: "center-aligned-header",
       },
     ],
     [],
@@ -140,7 +140,7 @@ const FacilityGrid = ({ rowData, onRowSelected, selectedState }) => {
   return (
     <div className="facility-grid-container">
       {error && <div className="error-message">{error}</div>}
-      <div className="grid-wrapper ag-theme-alpine">
+      <div className="grid-wrapper facility-grid-wrapper ag-theme-alpine">
         <AgGridReact
           columnDefs={columnDefs}
           rowData={processedData}
