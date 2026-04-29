@@ -6,8 +6,8 @@
   position: relative;
   background-color: white;
   border-radius: $button-border-radius;
-  box-shadow: $shadow-md;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: $shadow-lg;
+  border: 1px solid rgba(0, 0, 0, 0.05);
   overflow: hidden;
 
   // AG Grid specific styles
@@ -25,14 +25,23 @@
     // Kamp Scout AG Grid Theme
     --ag-borders: none;
     --ag-header-column-separator-display: none;
-    --ag-header-background-color: #{$color-forest-green};
-    --ag-header-foreground-color: #ffffff;
+    --ag-header-background-color: #2b4c1c !important;
+    --ag-header-foreground-color: #ffffff !important;
     --ag-row-border-color: #f0f0f0;
     --ag-font-family: inherit;
     --ag-cell-focus-border-color: transparent;
+    --ag-header-height: 30px;
+    --ag-row-height: 30px;
+    --ag-font-size: 13px;
+
+    .ag-header-row {
+      background-color: #2b4c1c !important;
+    }
 
     .ag-header-cell {
       padding: 0 1.5rem !important;
+      border-right: 1px solid rgba(255, 255, 255, 0.2) !important;
+      background-color: #2b4c1c !important;
 
       .ag-header-cell-text {
         font-size: 0.75rem !important;
@@ -49,6 +58,7 @@
       padding: 0 1.5rem !important;
       font-size: 0.85rem;
       color: $text-primary;
+      border-right: 1px solid #f0f0f0 !important;
     }
 
     // Alignment helpers
@@ -91,6 +101,26 @@
     .name-cell {
       font-weight: 600;
       color: $color-forest-green;
+    }
+
+    .ag-paging-panel {
+      border-top: 1px solid #f0f0f0 !important;
+      height: 38px !important;
+      font-size: 0.75rem !important;
+      color: $color-stone !important;
+
+      .ag-paging-button {
+        color: $color-forest-green !important;
+        opacity: 0.8;
+        &:hover {
+          opacity: 1;
+        }
+      }
+
+      .ag-paging-row-summary-panel {
+        font-weight: 600;
+        color: $text-primary;
+      }
     }
   }
 

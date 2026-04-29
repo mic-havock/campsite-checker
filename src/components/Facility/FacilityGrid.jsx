@@ -124,8 +124,8 @@ const FacilityGrid = ({ rowData, onRowSelected, selectedState }) => {
       },
       pagination: true,
       paginationPageSize: 20,
-      headerHeight: 48,
-      rowHeight: 48,
+      headerHeight: 30,
+      rowHeight: 30,
     }),
     [],
   );
