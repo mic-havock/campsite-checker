@@ -1,64 +1,65 @@
 @import "../../styles/variables";
 
 .facility-grid-container {
-  box-shadow: $shadow-sm;
-  height: 400px;
+  height: 450px;
   width: 100%;
   position: relative;
+  background-color: white;
+  border-radius: $button-border-radius;
+  box-shadow: $shadow-md;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 
   // AG Grid specific styles
   .ag-root-wrapper {
     border-radius: $button-border-radius;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    box-shadow: $shadow-md;
-    background-color: $card-bg;
+    border: none !important;
+    background-color: white;
   }
 
-  // Header column separator styles
-  .ag-header-cell {
-    &:last-child {
-      border-right: none; // Remove border from last column
-    }
-  }
-
-  .grid-wrapper {
+  .grid-wrapper.facility-grid-wrapper {
     position: relative;
     width: 100%;
     height: 100%;
 
-    // THE FIX: Strip out the default corporate theme
+    // Kamp Scout AG Grid Theme
     --ag-borders: none;
     --ag-header-column-separator-display: none;
-    --ag-header-background-color: #ffffff;
-    --ag-header-foreground-color: #{$color-forest-green};
-    --ag-row-border-color: rgba(0, 0, 0, 0.05);
+    --ag-header-background-color: #{$color-forest-green};
+    --ag-header-foreground-color: #ffffff;
+    --ag-row-border-color: #f0f0f0;
     --ag-font-family: inherit;
+    --ag-cell-focus-border-color: transparent;
 
-    .ag-header-cell-text {
-      font-weight: 700 !important;
-      letter-spacing: 0.05em;
+    .ag-header-cell {
+      padding: 0 1.5rem !important;
+
+      .ag-header-cell-text {
+        font-size: 0.75rem !important;
+        font-weight: 700 !important;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #ffffff !important;
+      }
     }
 
-    // Handles header centering
-    .center-header .ag-header-cell-label {
-      justify-content: center !important;
-    }
-
-    // Vertically centers the text inside the rows
     .ag-cell {
       display: flex;
       align-items: center;
+      padding: 0 1.5rem !important;
+      font-size: 0.85rem;
+      color: $text-primary;
     }
 
-    // Makes the rows look clickable
-    .ag-row {
-      cursor: pointer;
-      transition: background-color 0.2s ease;
-
-      &:hover {
-        background-color: rgba(0, 0, 0, 0.02) !important;
-      }
+    // Alignment helpers
+    .center-aligned-header .ag-header-cell-label {
+      justify-content: center !important;
     }
+
+    .center-aligned-cell {
+      justify-content: center !important;
+    }
+
     .left-cell {
       justify-content: flex-start !important;
     }
@@ -67,9 +68,29 @@
       justify-content: flex-start !important;
     }
 
+    // Row styling
+    .ag-row {
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      border-bottom: 1px solid #f0f0f0 !important;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.02) !important;
+      }
+
+      &.ag-row-selected {
+        background-color: rgba($primary-color, 0.05) !important;
+      }
+    }
+
     .uppercase-text {
       text-transform: uppercase;
       letter-spacing: 0.02em;
+    }
+
+    .name-cell {
+      font-weight: 600;
+      color: $color-forest-green;
     }
   }
 
@@ -79,37 +100,29 @@
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 1000;
+    background: rgba(255, 255, 255, 0.8);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     .spinner {
-      width: 24px;
-      height: 24px;
-      border: 3px solid #f3f3f3;
-      border-top: 3px solid #3498db;
+      width: 32px;
+      height: 32px;
+      border: 3px solid rgba($primary-color, 0.1);
+      border-top: 3px solid $primary-color;
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
   }
 
   .error-message {
-    color: #dc3545;
+    color: $color-danger;
     padding: 1rem;
     text-align: center;
-  }
-
-  .center-cell {
-    justify-content: center !important;
-  }
-
-  .center-header .ag-header-cell-label {
-    justify-content: center !important;
-  }
-
-  .ag-row {
-    cursor: pointer;
-
-    &:hover {
-      background-color: rgba(0, 0, 0, 0.01) !important;
-    }
+    font-weight: 600;
+    background-color: rgba($color-danger, 0.05);
   }
 }
 
