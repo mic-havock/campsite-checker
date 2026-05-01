@@ -10,9 +10,11 @@
   border: 1px solid rgba(0, 0, 0, 0.05);
   overflow: hidden;
 
-  // AG Grid specific styles
+  // AG Grid specific styles — clip internals to rounded card (avoids rectangular
+  // wrapper/body layering at the corners).
   .ag-root-wrapper {
     border-radius: $button-border-radius;
+    overflow: hidden !important;
     border: none !important;
     background-color: white;
   }
@@ -21,9 +23,13 @@
     position: relative;
     width: 100%;
     height: 100%;
+    border-radius: $button-border-radius;
+    overflow: hidden;
+    isolation: isolate;
 
     // Kamp Scout AG Grid Theme
     --ag-borders: none;
+    --ag-background-color: #ffffff;
     --ag-header-column-separator-display: none;
     --ag-header-background-color: #2b4c1c !important;
     --ag-header-foreground-color: #ffffff !important;
@@ -44,7 +50,7 @@
       background-color: #2b4c1c !important;
 
       .ag-header-cell-text {
-        font-size: 0.75rem !important;
+        font-size: 0.9rem !important;
         font-weight: 700 !important;
         text-transform: uppercase;
         letter-spacing: 0.05em;
@@ -99,11 +105,12 @@
     }
 
     .name-cell {
-      font-weight: 600;
+      font-weight: 400;
       color: $color-forest-green;
     }
 
     .ag-paging-panel {
+      background-color: #ffffff !important;
       border-top: 1px solid #f0f0f0 !important;
       height: 38px !important;
       font-size: 0.75rem !important;

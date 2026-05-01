@@ -317,31 +317,27 @@ const FacilitiesFinder = () => {
                   </button>
                 </div>
 
-                <div className="results-container">
-                  {viewMode === "grid" && (
-                    <div className="grid-col">
-                      <FacilityGrid
-                        rowData={facilities}
-                        onRowSelected={handleRowSelection}
-                        selectedState={
-                          selectedState
-                            ? STATES.find(
-                                (state) => state.code === selectedState,
-                              )
-                            : null
-                        }
-                      />
-                    </div>
-                  )}
-                  {viewMode === "map" && (
-                    <div className="map-col">
-                      <FacilitiesMap
-                        facilities={facilities}
-                        onFacilitySelect={handleRowSelection}
-                      />
-                    </div>
-                  )}
-                </div>
+                {viewMode === "grid" && (
+                  <FacilityGrid
+                    rowData={facilities}
+                    onRowSelected={handleRowSelection}
+                    selectedState={
+                      selectedState
+                        ? STATES.find(
+                            (state) => state.code === selectedState,
+                          )
+                        : null
+                    }
+                  />
+                )}
+                {viewMode === "map" && (
+                  <div className="map-col">
+                    <FacilitiesMap
+                      facilities={facilities}
+                      onFacilitySelect={handleRowSelection}
+                    />
+                  </div>
+                )}
               </>
             ) : (
               !loading && (

@@ -34,24 +34,28 @@ const FacilityGrid = ({ rowData, onRowSelected, selectedState }) => {
       {
         headerName: "Campground Name",
         field: "FacilityName",
+        flex: 3,
         cellClass: "left-cell name-cell",
         headerClass: "left-header",
       },
       {
         headerName: "City",
         field: "City",
+        flex: 2,
         cellClass: "left-cell",
         headerClass: "left-header",
       },
       {
         headerName: "State",
         field: "AddressStateCode",
+        flex: 2,
         cellClass: "center-aligned-cell uppercase-text",
         headerClass: "center-aligned-header",
       },
       {
         headerName: "Facility Type",
         field: "FacilityTypeDescription",
+        flex: 2,
         cellClass: "center-aligned-cell uppercase-text",
         headerClass: "center-aligned-header",
       },
@@ -67,13 +71,13 @@ const FacilityGrid = ({ rowData, onRowSelected, selectedState }) => {
           rowData.map(async (row) => {
             try {
               const { city, state } = await fetchCityAndState(row.FacilityID);
-              return { ...row, City: city, AddressStateCode: state };
+              return { ...row, FacilityName: row.FacilityName?.toUpperCase(), City: city, AddressStateCode: state };
             } catch (err) {
               console.error(
                 `Failed to fetch location for facility ${row.FacilityID}:`,
                 err,
               );
-              return { ...row, City: "N/A", AddressStateCode: "N/A" };
+              return { ...row, FacilityName: row.FacilityName?.toUpperCase(), City: "N/A", AddressStateCode: "N/A" };
             }
           }),
         );
@@ -114,7 +118,6 @@ const FacilityGrid = ({ rowData, onRowSelected, selectedState }) => {
   const gridConfig = useMemo(
     () => ({
       defaultColDef: {
-        flex: 1,
         minWidth: 100,
       },
       rowSelection: {

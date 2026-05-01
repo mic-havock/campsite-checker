@@ -209,25 +209,31 @@
     }
   }
 
-  .results-container {
-    width: calc(100% - 2rem);
+  .map-col {
     max-width: 1200px;
     margin: 0 auto 2rem;
-  }
-
-  .grid-col {
-    background: transparent;
-    padding: 0;
-    border-radius: 12px;
-    overflow: hidden;
-  }
-
-  .map-col {
+    box-sizing: border-box;
+    width: calc(100% - 2rem);
     height: 600px;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: $shadow-md;
     border: 1px solid rgba(0, 0, 0, 0.05);
+
+    @include mobile {
+      width: calc(100% - 1rem);
+    }
+  }
+
+  .facility-grid-container {
+    max-width: 1200px;
+    margin: 0 auto 2rem;
+    box-sizing: border-box;
+    width: calc(100% - 2rem);
+
+    @include mobile {
+      width: calc(100% - 1rem);
+    }
   }
 
   .error {
