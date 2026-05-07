@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import { fetchCampsitesByFacility } from "../../api/campsites";
@@ -21,6 +21,7 @@ const STORAGE_KEYS = {
 
 const FacilitiesFinder = () => {
   const navigate = useNavigate();
+  const formRef = useRef(null);
   const [inputValue, setInputValue] = useState("");
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [selectedState, setSelectedState] = useState("");
@@ -110,6 +111,13 @@ const FacilitiesFinder = () => {
 
       setFacilities(facilities);
       setHasSearched(true);
+
+      requestAnimationFrame(() => {
+        if (formRef.current) {
+          formRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      });
+
       saveToStorage(STORAGE_KEYS.SEARCH_RESULTS, facilities);
       saveToStorage(STORAGE_KEYS.SEARCH_PARAMS, {
         query: inputValue,
@@ -245,7 +253,11 @@ const FacilitiesFinder = () => {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="facilities-finder__form">
+        <form
+          ref={formRef}
+          onSubmit={handleSubmit}
+          className="facilities-finder__form"
+        >
           <div className="form-group">
             <input
               id="campground-name"
