@@ -34,6 +34,7 @@
     --ag-header-background-color: #2b4c1c !important;
     --ag-header-foreground-color: #ffffff !important;
     --ag-row-border-color: #f0f0f0;
+    --ag-selected-row-background-color: #{rgba($primary-color, 0.05)};
     --ag-font-family: inherit;
     --ag-cell-focus-border-color: transparent;
     --ag-header-height: 30px;
@@ -90,11 +91,28 @@
       transition: background-color 0.2s ease;
       border-bottom: 1px solid #f0f0f0 !important;
 
-      &:hover {
+      &:hover:not(.ag-row-selected) {
         background-color: rgba(0, 0, 0, 0.02) !important;
       }
 
+      // Entire row + cells: guarantees the highlight shows (stacking/order can hide `::before` alone).
       &.ag-row-selected {
+        background-color: rgba($primary-color, 0.05) !important;
+      }
+
+      &.ag-row-selected::before {
+        background-color: rgba($primary-color, 0.05) !important;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      // Alpine uses a gradient here; flatten so hover + selected matches the same tint.
+      &.ag-row-hover.ag-row-selected::before {
+        background-color: rgba($primary-color, 0.05) !important;
+        background-image: none !important;
+      }
+
+      &.ag-row-selected .ag-cell {
         background-color: rgba($primary-color, 0.05) !important;
       }
     }

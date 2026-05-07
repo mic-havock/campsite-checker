@@ -42,7 +42,7 @@ const FacilityGrid = ({ rowData, onRowSelected, selectedState }) => {
         headerName: "City",
         field: "City",
         flex: 2,
-        cellClass: "left-cell",
+        cellClass: "left-cell uppercase-text",
         headerClass: "left-header",
       },
       {
@@ -71,13 +71,23 @@ const FacilityGrid = ({ rowData, onRowSelected, selectedState }) => {
           rowData.map(async (row) => {
             try {
               const { city, state } = await fetchCityAndState(row.FacilityID);
-              return { ...row, FacilityName: row.FacilityName?.toUpperCase(), City: city, AddressStateCode: state };
+              return {
+                ...row,
+                FacilityName: row.FacilityName?.toUpperCase(),
+                City: city,
+                AddressStateCode: state,
+              };
             } catch (err) {
               console.error(
                 `Failed to fetch location for facility ${row.FacilityID}:`,
                 err,
               );
-              return { ...row, FacilityName: row.FacilityName?.toUpperCase(), City: "N/A", AddressStateCode: "N/A" };
+              return {
+                ...row,
+                FacilityName: row.FacilityName?.toUpperCase(),
+                City: "N/A",
+                AddressStateCode: "N/A",
+              };
             }
           }),
         );
