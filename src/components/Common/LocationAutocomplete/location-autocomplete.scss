@@ -1,0 +1,54 @@
+@import "../../../styles/variables";
+
+.location-autocomplete {
+  position: relative;
+  width: 100%;
+
+  input {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .autocomplete-loader {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.8rem;
+    color: $color-stone;
+  }
+
+  .suggestions-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    margin-top: 4px;
+    padding: 0;
+    list-style: none;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: $shadow-md;
+
+    .suggestion-item {
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background-color 0.2s ease;
+      color: $text-primary;
+      text-align: left;
+
+      &:hover {
+        background-color: rgba($primary-color, 0.05);
+      }
+
+      &:not(:last-child) {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      }
+    }
+  }
+}

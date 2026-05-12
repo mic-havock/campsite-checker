@@ -7,6 +7,7 @@ import { CONTENT } from "../../config/content";
 import { STATES } from "../../config/states";
 
 import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
+import LocationAutocomplete from "../Common/LocationAutocomplete/LocationAutocomplete";
 
 import FacilityDetails from "./FacilityDetails";
 import FacilityGrid from "./FacilityGrid";
@@ -25,6 +26,8 @@ const FacilitiesFinder = () => {
   const [inputValue, setInputValue] = useState("");
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [selectedState, setSelectedState] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [radius, setRadius] = useState(30);
   const [facilities, setFacilities] = useState([]);
   const [selectedFacility, setSelectedFacility] = useState(null);
   const [hasSearched, setHasSearched] = useState(false);
@@ -63,6 +66,8 @@ const FacilitiesFinder = () => {
       const params = JSON.parse(savedParams);
       setInputValue(params.query || "");
       setSelectedState(params.state || "");
+      setSelectedLocation(params.selectedLocation || null);
+      setRadius(params.radius || 30);
       setHasSearched(true);
     }
   }, []);
@@ -88,13 +93,22 @@ const FacilitiesFinder = () => {
     setError("");
 
     try {
-      // First call with just the query
-      const response1 = await getFacilities({ query: queryWithState });
+      // Build search params
+      const searchParams = {
+        query: queryWithState,
+        latitude: selectedLocation?.lat || "",
+        longitude: selectedLocation?.lon || "",
+        radius: selectedLocation ? radius : "",
+      };
+
+      // First call with the primary search params
+      const response1 = await getFacilities(searchParams);
       let facilities = response1.RECDATA || [];
 
       // If state is selected, make second call with both query and state
       if (selectedState) {
         const response2 = await getFacilities({
+          ...searchParams,
           query: inputValue,
           state: selectedState,
         });
@@ -122,6 +136,8 @@ const FacilitiesFinder = () => {
       saveToStorage(STORAGE_KEYS.SEARCH_PARAMS, {
         query: inputValue,
         state: selectedState,
+        selectedLocation,
+        radius,
       });
     } catch (err) {
       console.error(err);
@@ -134,6 +150,8 @@ const FacilitiesFinder = () => {
   const handleClear = () => {
     setInputValue("");
     setSelectedState("");
+    setSelectedLocation(null);
+    setRadius(30);
     setFacilities([]);
     setSelectedFacility(null);
     setHasSearched(false);
@@ -259,6 +277,7 @@ const FacilitiesFinder = () => {
           className="facilities-finder__form"
         >
           <div className="form-group">
+            <label htmlFor="campground-name">Campground</label>
             <input
               id="campground-name"
               name="query"
@@ -269,6 +288,16 @@ const FacilitiesFinder = () => {
             />
           </div>
           <div className="form-group">
+            <label htmlFor="location-search">Location</label>
+            <LocationAutocomplete
+              id="location-search"
+              onLocationSelect={setSelectedLocation}
+              initialValue={selectedLocation?.display_name || ""}
+              placeholder="City or Zip Code"
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="state">State</label>
             <select
               id="state"
               name="state"
@@ -281,6 +310,21 @@ const FacilitiesFinder = () => {
                   {state.name}
                 </option>
               ))}
+            </select>
+          </div>
+
+          <div className="form-group radius-group">
+            <label htmlFor="radius">Radius (miles)</label>
+            <select
+              id="radius"
+              name="radius"
+              value={radius}
+              onChange={(e) => setRadius(Number(e.target.value))}
+            >
+              <option value="10">10 miles</option>
+              <option value="30">30 miles</option>
+              <option value="50">50 miles</option>
+              <option value="100">100 miles</option>
             </select>
           </div>
 
