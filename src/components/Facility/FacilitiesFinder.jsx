@@ -27,7 +27,7 @@ const FacilitiesFinder = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [selectedState, setSelectedState] = useState("");
   const [selectedLocation, setSelectedLocation] = useState(null);
-  const [radius, setRadius] = useState(30);
+  const [radius, setRadius] = useState(25);
   const [facilities, setFacilities] = useState([]);
   const [selectedFacility, setSelectedFacility] = useState(null);
   const [hasSearched, setHasSearched] = useState(false);
@@ -67,7 +67,7 @@ const FacilitiesFinder = () => {
       setInputValue(params.query || "");
       setSelectedState(params.state || "");
       setSelectedLocation(params.selectedLocation || null);
-      setRadius(params.radius || 30);
+      setRadius(params.radius || 25);
       setHasSearched(true);
     }
   }, []);
@@ -96,9 +96,9 @@ const FacilitiesFinder = () => {
       // Build search params
       const searchParams = {
         query: queryWithState,
-        latitude: selectedLocation?.lat || "",
-        longitude: selectedLocation?.lon || "",
-        radius: selectedLocation ? radius : "",
+        latitude: selectedLocation ? parseFloat(selectedLocation.lat) : "",
+        longitude: selectedLocation ? parseFloat(selectedLocation.lon) : "",
+        radius: selectedLocation ? parseFloat(radius) : "",
       };
 
       // First call with the primary search params
@@ -151,7 +151,7 @@ const FacilitiesFinder = () => {
     setInputValue("");
     setSelectedState("");
     setSelectedLocation(null);
-    setRadius(30);
+    setRadius(25);
     setFacilities([]);
     setSelectedFacility(null);
     setHasSearched(false);
@@ -321,10 +321,9 @@ const FacilitiesFinder = () => {
               value={radius}
               onChange={(e) => setRadius(Number(e.target.value))}
             >
+              <option value="5">5 miles</option>
               <option value="10">10 miles</option>
-              <option value="30">30 miles</option>
-              <option value="50">50 miles</option>
-              <option value="100">100 miles</option>
+              <option value="25">25 miles</option>
             </select>
           </div>
 
