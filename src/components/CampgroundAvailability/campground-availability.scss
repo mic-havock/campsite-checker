@@ -16,7 +16,11 @@
   }
 
   .hero-section {
-    background: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($secondary-color, 0.05) 100%);
+    background: linear-gradient(
+      135deg,
+      rgba($primary-color, 0.05) 0%,
+      rgba($secondary-color, 0.05) 100%
+    );
     padding: 1.5rem 0 3.5rem;
     text-align: left;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
@@ -312,6 +316,33 @@
         padding: 0.75rem 1rem;
       }
 
+      .season-dates-info-notification {
+        flex: 1 1 100%;
+        width: 100%;
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.35rem;
+        background-color: rgba(74, 144, 226, 0.08);
+        border: 1px solid rgba(74, 144, 226, 0.22);
+        border-radius: $button-border-radius;
+        box-sizing: border-box;
+
+        .season-dates-info-notification__title {
+          margin: 0 0 0.35rem 0;
+          font-size: 0.7rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          color: #1565c0;
+        }
+
+        .season-dates-info-notification__body {
+          margin: 0;
+          font-size: 0.8rem;
+          line-height: 1.45;
+          color: $text-primary;
+        }
+      }
+
       .legend-item {
         display: flex;
         align-items: center;
@@ -408,13 +439,13 @@
     }
 
     .availability-grid-centered-wrapper {
-        margin: 0 auto;
-        width: fit-content;
-        max-width: calc(100vw - 3rem);
+      margin: 0 auto;
+      width: fit-content;
+      max-width: calc(100vw - 3rem);
 
-        @include mobile {
-            max-width: calc(100vw - 2rem);
-        }
+      @include mobile {
+        max-width: calc(100vw - 2rem);
+      }
     }
   }
 }
@@ -439,7 +470,7 @@
   overflow: hidden;
 
   .ag-header {
-    border-bottom: 1px solid #E5E7EB;
+    border-bottom: 1px solid #e5e7eb;
   }
 
   .ag-cell-focus {
@@ -466,53 +497,64 @@
     align-items: center;
     justify-content: center;
     padding: 0 !important;
-    border-right: 1px solid #FFFFFF !important;
-    border-bottom: 1px solid #FFFFFF !important;
+    border-right: 1px solid #ffffff !important;
+    border-bottom: 1px solid #ffffff !important;
     box-sizing: border-box;
 
     &:last-child {
-      border-right: 1px solid #FFFFFF !important;
+      border-right: 1px solid #ffffff !important;
+    }
+
+    &.season-empty-placeholder {
+      background-color: #f3f4f6 !important;
+      cursor: default;
     }
 
     .status-pill {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-        width: 100%;
-        margin: 0;
-        border-radius: 0;
-        font-weight: 600;
-        font-size: 0.8rem;
-        line-height: 1;
-        transition: all 0.2s ease;
-        white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      border-radius: 0;
+      font-weight: 600;
+      font-size: 0.8rem;
+      line-height: 1;
+      transition: all 0.2s ease;
+      white-space: nowrap;
 
-        &.available {
-            background-color: rgba(76, 175, 80, 0.12);
-            color: #2e7d32;
-        }
-        &.reserved {
-            background-color: rgba(214, 81, 64, 0.12);
-            color: #b71c1c;
-        }
-        &.nyr {
-            background-color: rgba(74, 144, 226, 0.12);
-            color: #1565c0;
-        }
-        &.not-reservable {
-            background-color: rgba(112, 112, 112, 0.12);
-            color: #424242;
-        }
+      &.available {
+        background-color: rgba(76, 175, 80, 0.12);
+        color: #2e7d32;
+      }
+      &.reserved {
+        background-color: rgba(214, 81, 64, 0.12);
+        color: #b71c1c;
+      }
+      &.nyr {
+        background-color: rgba(74, 144, 226, 0.12);
+        color: #1565c0;
+      }
+      &.not-reservable {
+        background-color: rgba(112, 112, 112, 0.12);
+        color: #424242;
+      }
+
+      &.season-empty {
+        background-color: transparent !important;
+        color: transparent;
+        min-height: 4px;
+      }
     }
 
     &.clickable-cell {
-        cursor: pointer !important;
-        .status-pill:hover {
-            filter: brightness(0.92);
-            z-index: 2;
-            box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.4);
-        }
+      cursor: pointer !important;
+      .status-pill:hover {
+        filter: brightness(0.92);
+        z-index: 2;
+        box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.4);
+      }
     }
   }
 
@@ -524,8 +566,9 @@
     border: none !important;
   }
 
-  .ag-pinned-left-header, .ag-pinned-left-cols-container {
-    border-right: 1px solid #FFFFFF !important;
+  .ag-pinned-left-header,
+  .ag-pinned-left-cols-container {
+    border-right: 1px solid #ffffff !important;
   }
 }
 
