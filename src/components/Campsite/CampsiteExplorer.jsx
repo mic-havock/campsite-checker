@@ -76,6 +76,7 @@ const CampsiteExplorer = () => {
     <>
       <Helmet>
         <title>{facilityName ? `${facilityName} | Kamp Scout` : 'Campsite Explorer | Kamp Scout'}</title>
+        <meta name="theme-color" content="#2b4c1c" />
       </Helmet>
 
       <div className="campsites-page explorer-mode">

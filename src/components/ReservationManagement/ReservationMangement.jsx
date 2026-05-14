@@ -265,6 +265,8 @@ const ReservationManagement = () => {
   return (
     <>
       <Helmet>
+        <title>Manage Reservation Alerts | Kamp Scout</title>
+        <meta name="theme-color" content="#2b4c1c" />
         <script type="application/ld+json">
           {JSON.stringify(reservationSchema)}
         </script>

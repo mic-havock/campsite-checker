@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import { useEffect, useRef, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./layout.scss";
 
@@ -50,6 +51,9 @@ const Layout = ({ children }) => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <meta name="theme-color" content="#2b4c1c" />
+      </Helmet>
       {!isMainPage && (
         <header className="global-header">
           <div className="header-content">
