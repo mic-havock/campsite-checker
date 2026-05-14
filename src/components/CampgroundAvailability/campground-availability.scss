@@ -487,7 +487,9 @@
 
     &::after,
     &::before {
-      display: none !important;
+      // Don't use display: none here as it hides the checkmark
+      box-shadow: none !important;
+      outline: none !important;
     }
 
     input {
