@@ -254,6 +254,8 @@ const FacilitiesFinder = () => {
   return (
     <>
       <Helmet>
+        <title>Kamp Scout - Campsite Finder & Availability Alerts</title>
+        <meta name="theme-color" content="#2b4c1c" />
         <script type="application/ld+json">
           {JSON.stringify(websiteSchema)}
         </script>

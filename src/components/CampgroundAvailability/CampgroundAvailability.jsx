@@ -460,6 +460,7 @@ const CampgroundAvailability = () => {
               ? `${facilityName} - Availability | Kamp Scout`
               : "Campground Availability | Kamp Scout"}
           </title>
+          <meta name="theme-color" content="#2b4c1c" />
           <script type="application/ld+json">
             {JSON.stringify(availabilitySchema)}
           </script>
