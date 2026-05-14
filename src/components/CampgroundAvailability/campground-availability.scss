@@ -462,6 +462,8 @@
   --ag-font-family: inherit;
   --ag-borders: none;
   --ag-cell-focus-border-color: transparent;
+  --ag-checkbox-focus-box-shadow: none !important;
+  --ag-checkbox-unchecked-color: #d1d5db;
 
   background-color: white;
   border-radius: $button-border-radius;

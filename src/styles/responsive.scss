@@ -93,7 +93,9 @@ button {
   font-size: 16px !important;
 
   @include touch-device {
-    -webkit-appearance: none;
+    &:not([type="checkbox"]) {
+      -webkit-appearance: none;
+    }
     border-radius: 0;
     &:focus {
       outline: none;
