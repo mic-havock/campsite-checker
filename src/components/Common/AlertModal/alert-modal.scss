@@ -16,9 +16,12 @@
 
 // Alert modal styling
 .modal {
+  $alert-modal-field-width: 90%;
+
   position: relative;
-  width: 400px;
-  border: 2px solid $primary-color;
+  width: min(100% - 2rem, 440px);
+  max-width: 440px;
+  border: 1px solid rgba($primary-color, 0.35);
   background-color: $text-light;
   box-shadow: $shadow-lg;
   border-radius: $button-border-radius;
@@ -71,8 +74,253 @@
     }
   }
 
+  .alert-modal-date-range {
+    width: 100%;
+    margin-bottom: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .alert-modal-date-range--disabled {
+    opacity: 0.65;
+    pointer-events: none;
+  }
+
+  .alert-modal-range-hint {
+    width: $alert-modal-field-width;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 0.75rem;
+    padding: 0.65rem 0.85rem;
+    border-radius: $button-border-radius;
+    background-color: mix($color-sky, #ffffff, 35%);
+    color: $text-primary;
+    font-size: 0.95rem;
+    text-align: center;
+
+    strong {
+      color: mix($primary-color, $text-primary, 45%);
+      font-weight: 600;
+    }
+  }
+
+  .alert-modal-range-summary {
+    width: $alert-modal-field-width;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 0.65rem;
+    font-size: 0.9rem;
+    color: mix($text-primary, $color-stone, 70%);
+    font-weight: 500;
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.15rem 0.35rem;
+  }
+
+  .alert-modal-range-summary-nights {
+    color: mix($text-primary, $color-stone, 58%);
+    font-size: 0.92em;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  // Scoped to the picker only — do not use `.modal button` globals: DayPicker
+  // renders one button per day cell, so :first/:last-of-type would restyle every day.
+  .alert-modal-day-picker {
+    $range-end: mix($primary-color, #ffffff, 58%);
+    $range-mid: mix($color-moss, #ffffff, 14%);
+    $range-mid-text: mix($text-primary, $primary-color, 78%);
+    $chrome: mix($color-earth, $color-stone, 55%);
+
+    --rdp-accent-color: #{$chrome};
+    --rdp-accent-background-color: #{mix($range-mid, #ffffff, 35%)};
+    --rdp-range_middle-background-color: #{$range-mid};
+    --rdp-range_middle-color: #{$range-mid-text};
+    --rdp-range_start-date-background-color: #{$range-end};
+    --rdp-range_end-date-background-color: #{$range-end};
+    --rdp-range_start-color: #ffffff;
+    --rdp-range_end-color: #ffffff;
+    --rdp-selected-border: 1px solid rgba($primary-color, 0.35);
+    --rdp-today-color: #{$chrome};
+    --rdp-weekday-opacity: 0.55;
+    --rdp-outside-opacity: 0.45;
+    --rdp-disabled-opacity: 0.38;
+    --rdp-day_button-border-radius: 12px;
+    --rdp-day-width: 48px;
+    --rdp-day-height: 48px;
+    --rdp-day_button-width: 45px;
+    --rdp-day_button-height: 45px;
+    --rdp-nav_button-background-color: #{mix($background-light, #ffffff, 55%)};
+    --rdp-nav_button-height: 2.5rem;
+    --rdp-nav_button-width: 2.5rem;
+    --rdp-nav-height: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    color: $text-primary;
+  }
+
+  // Seven columns at 48px fit the 90% field on a max-width modal; shrink slightly on narrow viewports.
+  @media (max-width: 420px) {
+    .alert-modal-day-picker {
+      --rdp-day-width: 42px;
+      --rdp-day-height: 42px;
+      --rdp-day_button-width: 40px;
+      --rdp-day_button-height: 40px;
+    }
+  }
+
+  .alert-modal-day-picker .rdp-month {
+    max-width: 100%;
+    margin-inline: auto;
+  }
+
+  .alert-modal-day-picker .rdp-months {
+    max-width: 100%;
+    justify-content: center;
+    margin-inline: auto;
+  }
+
+  .alert-modal-day-picker .rdp-month_grid {
+    margin-inline: auto;
+  }
+
+  .alert-modal-day-picker .rdp-month_caption {
+    font-size: 1.1rem;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .alert-modal-day-picker .rdp-dropdowns {
+    justify-content: center;
+  }
+
+  .alert-modal-day-picker .rdp-weekday {
+    text-align: center;
+  }
+
+  .alert-modal-day-picker .rdp-day {
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  .alert-modal-day-picker .rdp-day_button {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    margin-inline: auto;
+  }
+
+  .alert-modal-day-picker .rdp-button_previous,
+  .alert-modal-day-picker .rdp-button_next {
+    border-radius: 999px;
+    background-color: var(--rdp-nav_button-background-color);
+    color: mix($text-primary, $color-stone, 60%);
+    border: 1px solid rgba($color-stone, 0.35);
+
+    &:hover:not(:disabled):not([aria-disabled="true"]) {
+      background-color: mix($color-sky, #ffffff, 22%);
+      border-color: rgba($color-stone, 0.5);
+    }
+  }
+
+  .alert-modal-day-picker .rdp-selected {
+    font-weight: 500;
+    font-size: 1.05rem;
+  }
+
+  .alert-modal-day-picker-wrap {
+    width: $alert-modal-field-width;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    justify-content: center;
+  }
+
+  .alert-modal-day-picker .rdp-day.alert-modal-preview-middle {
+    background-color: var(--rdp-range_middle-background-color);
+  }
+
+  .alert-modal-day-picker .rdp-day.alert-modal-preview-middle .rdp-day_button {
+    border: unset;
+    border-radius: unset;
+    color: var(--rdp-range_middle-color);
+  }
+
+  .alert-modal-day-picker .rdp-day.alert-modal-preview-start {
+    background: var(--rdp-range_start-background);
+  }
+
+  .alert-modal-day-picker .rdp-day.alert-modal-preview-start .rdp-day_button {
+    background-color: var(--rdp-range_start-date-background-color);
+    color: var(--rdp-range_start-color);
+    border: var(--rdp-selected-border);
+  }
+
+  .alert-modal-day-picker .rdp-day.alert-modal-preview-end {
+    background: var(--rdp-range_end-background);
+  }
+
+  .alert-modal-day-picker .rdp-day.alert-modal-preview-end .rdp-day_button {
+    background-color: var(--rdp-range_end-date-background-color);
+    color: var(--rdp-range_end-color);
+    border: var(--rdp-selected-border);
+  }
+
+  .alert-modal-day-picker .rdp-day.alert-modal-suggested-arrival .rdp-day_button {
+    background-color: mix($color-sky, #ffffff, 28%);
+    color: $text-primary;
+    border: 2px dashed rgba($primary-color, 0.55);
+    box-sizing: border-box;
+  }
+
+  // When hovering before the chosen arrival, the anchor cell keeps `range_start` but should look like the span end.
+  .alert-modal-day-picker
+    .rdp-day.rdp-range_start.alert-modal-preview-end:not(.rdp-range_end)
+    .rdp-day_button {
+    background-color: var(--rdp-range_end-date-background-color);
+    color: var(--rdp-range_end-color);
+    border: unset;
+  }
+
+  .alert-modal-day-picker
+    .rdp-day.rdp-range_start.alert-modal-preview-end:not(.rdp-range_end) {
+    background: var(--rdp-range_end-background);
+  }
+
+  // Suggested arrival and departure on the same day: library strips background on start+end.
+  .alert-modal-day-picker .rdp-day.rdp-range_start.rdp-range_end {
+    background: var(--rdp-range_start-background);
+  }
+
+  .alert-modal-day-picker .rdp-day.rdp-range_start.rdp-range_end .rdp-day_button {
+    background-color: var(--rdp-range_start-date-background-color);
+    color: var(--rdp-range_start-color);
+    border: var(--rdp-selected-border);
+  }
+
   input {
-    width: 90%;
+    width: $alert-modal-field-width;
+    max-width: 100%;
+    box-sizing: border-box;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
     padding: 0.6rem;
     margin-top: 0;
     margin-bottom: 0.5rem;
@@ -88,33 +336,19 @@
     }
   }
 
-  button {
-    margin-top: 5px;
-    margin-right: 5px;
-    @include button-base;
-
-    &:first-of-type {
-      @include button-primary;
-    }
-
-    &:last-of-type {
-      @include button-danger;
-    }
-
-    &:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
-  }
-
   .modal-buttons {
     display: flex;
     justify-content: center;
     gap: 1rem;
     margin-top: 1rem;
 
-    .create-alert-btn,
-    .cancel-btn {
+    button {
+      margin-top: 5px;
+      margin-right: 0;
+    }
+
+    .create-alert-btn {
+      @include button-primary;
       min-width: 120px;
       display: flex;
       align-items: center;
@@ -122,6 +356,23 @@
 
       .loading-spinner {
         margin-right: 0;
+      }
+    }
+
+    .cancel-btn {
+      @include button-base;
+      min-width: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: mix($background-light, #ffffff, 40%);
+      color: mix($text-primary, $color-earth, 55%);
+      border: 1px solid rgba($color-stone, 0.55);
+
+      &:hover:not(:disabled) {
+        background-color: mix($color-sky, #ffffff, 18%);
+        border-color: rgba($color-stone, 0.75);
+        transform: translateY(-1px);
       }
     }
   }
