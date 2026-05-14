@@ -129,21 +129,32 @@
 
       input,
       select {
-        width: 100%;
+        width: 102%;
         border: 1px solid rgba(0, 0, 0, 0.1);
         border-radius: 8px;
-        padding: 0.75rem 1rem;
+        padding: 0.75rem 0.5rem;
         transition: $button-transition;
         background-color: white;
         box-sizing: border-box;
         min-height: 44px;
         font-size: 0.95rem;
+        color: $text-primary;
 
         &:focus {
           border-color: $primary-color;
           box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
           outline: none;
         }
+      }
+
+      input::placeholder {
+        color: $color-stone;
+        opacity: 1;
+      }
+
+      select.facilities-finder__select--placeholder {
+        color: $color-stone;
+        -webkit-text-fill-color: $color-stone;
       }
 
       select {

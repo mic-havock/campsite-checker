@@ -64,16 +64,6 @@ const getNextMonths = () => {
   return months;
 };
 
-const getStatusColors = (status) => {
-  const colors = {
-    NYR: { base: "#4a90e2", hover: "#67a7ed" },
-    Reserved: { base: "#d65140", hover: "#ff6b5b" },
-    default: { base: "#707070", hover: "#8a8a8a" },
-  };
-
-  return colors[status] || colors.default;
-};
-
 const calculateGridStyle = (rowData, tableWidth, rowHeight, headerHeight) => {
   const calculatedHeight = rowData.length * rowHeight + headerHeight + 20;
   const gridHeight = Math.min(calculatedHeight, 700);
@@ -235,7 +225,6 @@ const CampgroundAvailability = () => {
   };
 
   const handleMonthChange = async () => {
-    setSelectedMonth(event.target.value);
     setIsLoading(true);
 
     try {

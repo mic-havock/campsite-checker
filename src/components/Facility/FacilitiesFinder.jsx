@@ -27,8 +27,7 @@ const FacilitiesFinder = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [selectedState, setSelectedState] = useState("");
   const [selectedLocation, setSelectedLocation] = useState(null);
-  const [radius, setRadius] = useState(25);
-  const [facilities, setFacilities] = useState([]);
+  const [radius, setRadius] = useState("");
   const [selectedFacility, setSelectedFacility] = useState(null);
   const [hasSearched, setHasSearched] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -67,7 +66,11 @@ const FacilitiesFinder = () => {
       setInputValue(params.query || "");
       setSelectedState(params.state || "");
       setSelectedLocation(params.selectedLocation || null);
-      setRadius(params.radius || 25);
+      setRadius(
+        params.radius !== undefined && params.radius !== ""
+          ? params.radius
+          : "",
+      );
       setHasSearched(true);
     }
   }, []);
@@ -93,12 +96,16 @@ const FacilitiesFinder = () => {
     setError("");
 
     try {
+      const resolvedRadiusMiles =
+        selectedLocation &&
+        (radius === "" || Number.isNaN(Number(radius)) ? 25 : Number(radius));
+
       // Build search params
       const searchParams = {
         query: queryWithState,
         latitude: selectedLocation ? parseFloat(selectedLocation.lat) : "",
         longitude: selectedLocation ? parseFloat(selectedLocation.lon) : "",
-        radius: selectedLocation ? parseFloat(radius) : "",
+        radius: selectedLocation ? resolvedRadiusMiles : "",
       };
 
       // First call with the primary search params
@@ -126,9 +133,16 @@ const FacilitiesFinder = () => {
       setFacilities(facilities);
       setHasSearched(true);
 
+      if (selectedLocation) {
+        setRadius(resolvedRadiusMiles);
+      }
+
       requestAnimationFrame(() => {
         if (formRef.current) {
-          formRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+          formRef.current.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
         }
       });
 
@@ -137,7 +151,7 @@ const FacilitiesFinder = () => {
         query: inputValue,
         state: selectedState,
         selectedLocation,
-        radius,
+        radius: selectedLocation ? resolvedRadiusMiles : "",
       });
     } catch (err) {
       console.error(err);
@@ -151,7 +165,7 @@ const FacilitiesFinder = () => {
     setInputValue("");
     setSelectedState("");
     setSelectedLocation(null);
-    setRadius(25);
+    setRadius("");
     setFacilities([]);
     setSelectedFacility(null);
     setHasSearched(false);
@@ -303,8 +317,13 @@ const FacilitiesFinder = () => {
               name="state"
               value={selectedState}
               onChange={(e) => setSelectedState(e.target.value)}
+              className={
+                selectedState === ""
+                  ? "facilities-finder__select--placeholder"
+                  : undefined
+              }
             >
-              <option value="">Select a state</option>
+              <option value="">Select state</option>
               {STATES.map((state) => (
                 <option key={state.code} value={state.code}>
                   {state.name}
@@ -319,8 +338,17 @@ const FacilitiesFinder = () => {
               id="radius"
               name="radius"
               value={radius}
-              onChange={(e) => setRadius(Number(e.target.value))}
+              onChange={(e) => {
+                const { value } = e.target;
+                setRadius(value === "" ? "" : Number(value));
+              }}
+              className={
+                radius === ""
+                  ? "facilities-finder__select--placeholder"
+                  : undefined
+              }
             >
+              <option value="">Select radius</option>
               <option value="5">5 miles</option>
               <option value="10">10 miles</option>
               <option value="25">25 miles</option>
@@ -378,9 +406,7 @@ const FacilitiesFinder = () => {
                     onRowSelected={handleRowSelection}
                     selectedState={
                       selectedState
-                        ? STATES.find(
-                            (state) => state.code === selectedState,
-                          )
+                        ? STATES.find((state) => state.code === selectedState)
                         : null
                     }
                   />
