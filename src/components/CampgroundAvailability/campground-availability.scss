@@ -405,6 +405,7 @@
           height: 16px;
           -webkit-appearance: checkbox !important;
           appearance: checkbox !important;
+          accent-color: $color-forest-green;
         }
 
         label {
@@ -465,9 +466,10 @@
   --ag-cell-focus-border-color: transparent;
   --ag-checkbox-focus-box-shadow: none !important;
   --ag-focus-shadow: none !important;
-  --ag-checkbox-unchecked-border-color: #d1d5db !important;
-  --ag-checkbox-checked-border-color: #2b4c1c !important;
-  --ag-checkbox-border-width: 1px !important;
+  --ag-checkbox-unchecked-border-color: #{$color-forest-green} !important;
+  --ag-checkbox-checked-border-color: #{$color-forest-green} !important;
+  --ag-checkbox-checked-color: #{$color-forest-green} !important;
+  --ag-checkbox-border-width: 1.5px !important;
 
   background-color: white;
   border-radius: $button-border-radius;
@@ -498,6 +500,11 @@
       border: none !important;
       outline: none !important;
       box-shadow: none !important;
+      opacity: 0 !important;
+      position: absolute !important;
+      width: 0 !important;
+      height: 0 !important;
+      pointer-events: none !important;
     }
   }
 
