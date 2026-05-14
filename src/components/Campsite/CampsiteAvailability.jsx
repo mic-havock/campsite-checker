@@ -129,30 +129,30 @@ const CampsiteAvailability = ({ availabilities, facilityName, campsite }) => {
                 )}
               </div>
               <div className="calendar-days">
-                {Array.from({
-                  length: new Date(year, month + 1, 0).getDate(),
-                }).map((_, index) => {
-                  const dayNum = index + 1;
-                  const status = days[dayNum];
-                  const date = new Date(year, month, dayNum);
-                  return (
-                    <div
-                      key={dayNum}
-                      className={`calendar-day ${
-                        status ? getStatusClass(status, date) : ""
-                      }`}
-                      style={{
-                        gridColumnStart:
-                          dayNum === 1
-                            ? new Date(year, month, 1).getDay() + 1
-                            : "auto",
-                      }}
-                      onClick={() => handleDayClick(status, date)}
-                    >
-                      <span className="day-number">{dayNum}</span>
-                    </div>
-                  );
-                })}
+                {(() => {
+                  const firstDayColumn = new Date(year, month, 1).getDay() + 1;
+                  return Array.from({
+                    length: new Date(year, month + 1, 0).getDate(),
+                  }).map((_, index) => {
+                    const dayNum = index + 1;
+                    const status = days[dayNum];
+                    const date = new Date(year, month, dayNum);
+                    return (
+                      <div
+                        key={dayNum}
+                        className={`calendar-day ${
+                          status ? getStatusClass(status, date) : ""
+                        }`}
+                        style={{
+                          gridColumnStart: dayNum === 1 ? firstDayColumn : "auto",
+                        }}
+                        onClick={() => handleDayClick(status, date)}
+                      >
+                        <span className="day-number">{dayNum}</span>
+                      </div>
+                    );
+                  });
+                })()}
               </div>
             </div>
           </div>
