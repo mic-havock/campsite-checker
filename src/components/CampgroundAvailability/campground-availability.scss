@@ -403,7 +403,8 @@
           cursor: pointer;
           width: 16px;
           height: 16px;
-          accent-color: $primary-color;
+          -webkit-appearance: checkbox !important;
+          appearance: checkbox !important;
         }
 
         label {
@@ -463,13 +464,40 @@
   --ag-borders: none;
   --ag-cell-focus-border-color: transparent;
   --ag-checkbox-focus-box-shadow: none !important;
-  --ag-checkbox-unchecked-color: #d1d5db;
+  --ag-focus-shadow: none !important;
+  --ag-checkbox-unchecked-border-color: #d1d5db !important;
+  --ag-checkbox-checked-border-color: #2b4c1c !important;
+  --ag-checkbox-border-width: 1px !important;
 
   background-color: white;
   border-radius: $button-border-radius;
   box-shadow: $shadow-md;
   border: 1px solid rgba(0, 0, 0, 0.1);
   overflow: hidden;
+
+  .ag-checkbox-input-wrapper {
+    box-shadow: none !important;
+    outline: none !important;
+    border-radius: 2px !important;
+
+    &:focus-within {
+      outline: none !important;
+      box-shadow: none !important;
+    }
+
+    &::after,
+    &::before {
+      display: none !important;
+    }
+
+    input {
+      appearance: none !important;
+      -webkit-appearance: none !important;
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+    }
+  }
 
   .ag-header {
     border-bottom: 1px solid #e5e7eb;

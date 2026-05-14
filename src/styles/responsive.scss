@@ -93,13 +93,21 @@ button {
   font-size: 16px !important;
 
   @include touch-device {
-    &:not([type="checkbox"]) {
-      -webkit-appearance: none;
-    }
     border-radius: 0;
+
     &:focus {
       outline: none;
     }
+  }
+}
+
+@include touch-device {
+  select,
+  textarea,
+  button,
+  input:not([type="checkbox"]):not([type="radio"]) {
+    -webkit-appearance: none;
+    appearance: none;
   }
 }
 
