@@ -6,6 +6,8 @@ import {
   RowSelectionModule,
   TextFilterModule,
 } from "ag-grid-community";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-alpine.css";
 import { AgGridReact } from "ag-grid-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
@@ -15,8 +17,6 @@ import { fetchCampgroundAvailability } from "../../api/campsites";
 import { isNonReservableStatus } from "../../config/reservationStatus";
 import AlertModal from "../Common/AlertModal/AlertModal";
 import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-alpine.css";
 import "./campground-availability.scss";
 
 ModuleRegistry.registerModules([
@@ -81,7 +81,8 @@ const CampgroundAvailability = () => {
     location.state?.availabilityData,
   );
   const facilityID = location.state?.facilityID;
-  const facilityName = location.state?.facilityName || location.state?.campsiteName;
+  const facilityName =
+    location.state?.facilityName || location.state?.campsiteName;
   const facilityState = location.state?.facilityState;
   const [alertModal, setAlertModal] = useState(false);
   const [selectedCampsite, setSelectedCampsite] = useState(null);
@@ -119,25 +120,46 @@ const CampgroundAvailability = () => {
     };
   }, []);
 
-  const { dates, rowData } = useMemo(() => {
+  const { dates, rowData, missingSeasonDates } = useMemo(() => {
     if (!availabilityData || !availabilityData.campsites) {
-      return { dates: [], rowData: [] };
+      return { dates: [], rowData: [], missingSeasonDates: false };
     }
 
     const campsitesData = Object.values(availabilityData.campsites);
-    const datesArray = Array.from(
+    const hasAnyAvailabilityKeys = campsitesData.some(
+      (campsite) =>
+        campsite.availabilities &&
+        Object.keys(campsite.availabilities).length > 0,
+    );
+
+    let datesArray = Array.from(
       new Set(
         campsitesData.flatMap((campsite) =>
-          Object.keys(campsite.availabilities).map(
-            // ⚡ Bolt Performance Optimization:
-            // Replaced `new Date(date).toISOString().split("T")[0]` with `date.substring(0, 10)`
-            // Basic string extraction avoids substantial performance degradation
-            // caused by instantiating Date objects in a loop.
-            (date) => date.substring(0, 10),
+          Object.keys(campsite.availabilities || {}).map((date) =>
+            date.substring(0, 10),
           ),
         ),
       ),
     ).sort();
+
+    let missingSeason = false;
+    if (!hasAnyAvailabilityKeys && campsitesData.length > 0) {
+      missingSeason = true;
+      const monthAnchorIso =
+        startDate ||
+        new Date(
+          Date.UTC(
+            new Date().getUTCFullYear(),
+            new Date().getUTCMonth(),
+            1,
+            0,
+            0,
+            0,
+            0,
+          ),
+        ).toISOString();
+      datesArray = getUtcDateStringsForMonth(monthAnchorIso);
+    }
 
     const rowDataArray = campsitesData.map((campsite) => {
       const row = {
@@ -147,6 +169,14 @@ const CampgroundAvailability = () => {
       };
 
       datesArray.forEach((date) => {
+        if (missingSeason) {
+          row[date] = {
+            available: false,
+            status: "",
+            emptySeasonPlaceholder: true,
+          };
+          return;
+        }
         const status = campsite.availabilities[`${date}T00:00:00Z`];
         row[date] = {
           available: status === "Available" || status === "Open",
@@ -157,13 +187,18 @@ const CampgroundAvailability = () => {
       return row;
     });
 
-    return { dates: datesArray, rowData: rowDataArray };
-  }, [availabilityData]);
+    return {
+      dates: datesArray,
+      rowData: rowDataArray,
+      missingSeasonDates: missingSeason,
+    };
+  }, [availabilityData, startDate]);
 
   const notReservableMap = useMemo(() => {
     const map = new Map();
 
     if (!dates.length || !rowData.length) return map;
+    if (missingSeasonDates) return map;
 
     rowData.forEach((row) => {
       const isNotReservable = dates.every((date) => {
@@ -173,7 +208,7 @@ const CampgroundAvailability = () => {
       map.set(row.campsite, isNotReservable);
     });
     return map;
-  }, [rowData, dates]);
+  }, [rowData, dates, missingSeasonDates]);
 
   const filteredRows = useMemo(() => {
     if (!rowData.length) return [];
@@ -192,7 +227,14 @@ const CampgroundAvailability = () => {
             </p>
           </div>
         </div>
-        <div className="view-content-area" style={{ padding: "0 1.5rem", maxWidth: "1200px", margin: "4rem auto" }}>
+        <div
+          className="view-content-area"
+          style={{
+            padding: "0 1.5rem",
+            maxWidth: "1200px",
+            margin: "4rem auto",
+          }}
+        >
           <button
             onClick={() => navigate(-1)}
             className="check-availability-btn"
@@ -319,20 +361,53 @@ const CampgroundAvailability = () => {
         width: 80,
         headerClass: "ag-header-cell-center",
         cellClassRules: {
-          "status-available": (params) => params.value.available,
-          "status-reserved": (params) => !params.value.available && params.value.status === "Reserved",
-          "status-nyr": (params) => !params.value.available && params.value.status === "NYR",
-          "status-not-reservable": (params) => !params.value.available && isNonReservableStatus(params.value.status) && params.value.status !== "NYR",
-          "clickable-cell": (params) => !params.value.available && (!isNonReservableStatus(params.value.status) || params.value.status === "NYR"),
+          "season-empty-placeholder": (params) =>
+            Boolean(params.value && params.value.emptySeasonPlaceholder),
+          "status-available": (params) =>
+            params.value && params.value.available,
+          "status-reserved": (params) =>
+            params.value &&
+            !params.value.available &&
+            params.value.status === "Reserved",
+          "status-nyr": (params) =>
+            params.value &&
+            !params.value.available &&
+            params.value.status === "NYR",
+          "status-not-reservable": (params) =>
+            params.value &&
+            !params.value.available &&
+            isNonReservableStatus(params.value.status) &&
+            params.value.status !== "NYR" &&
+            !params.value.emptySeasonPlaceholder,
+          "clickable-cell": (params) =>
+            params.value &&
+            !params.value.emptySeasonPlaceholder &&
+            !params.value.available &&
+            (!isNonReservableStatus(params.value.status) ||
+              params.value.status === "NYR"),
         },
         onCellClicked: (params) => {
           const data = params.value;
-          if (!data.available && (!isNonReservableStatus(data.status) || data.status === "NYR")) {
-            handleUnavailableClick(params.data.campsiteObj, date);
+          if (
+            !data ||
+            data.emptySeasonPlaceholder ||
+            data.available ||
+            (isNonReservableStatus(data.status) && data.status !== "NYR")
+          ) {
+            return;
           }
+          handleUnavailableClick(params.data.campsiteObj, date);
         },
         cellRenderer: (params) => {
           const data = params.value;
+          if (!data || data.emptySeasonPlaceholder) {
+            return (
+              <span
+                className="status-pill season-empty"
+                aria-label="No season dates from campground"
+              />
+            );
+          }
           let statusClass = "not-reservable";
           let text = "NR";
 
@@ -350,19 +425,15 @@ const CampgroundAvailability = () => {
             text = "X";
           }
 
-          return (
-            <span className={`status-pill ${statusClass}`}>
-              {text}
-            </span>
-          );
+          return <span className={`status-pill ${statusClass}`}>{text}</span>;
         },
         cellStyle: {
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "0.75rem",
-            padding: "0",
-        }
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: "0.75rem",
+          padding: "0",
+        },
       })),
     ];
 
@@ -384,7 +455,11 @@ const CampgroundAvailability = () => {
     return (
       <>
         <Helmet>
-          <title>{facilityName ? `${facilityName} - Availability | Kamp Scout` : "Campground Availability | Kamp Scout"}</title>
+          <title>
+            {facilityName
+              ? `${facilityName} - Availability | Kamp Scout`
+              : "Campground Availability | Kamp Scout"}
+          </title>
           <script type="application/ld+json">
             {JSON.stringify(availabilitySchema)}
           </script>
@@ -396,9 +471,13 @@ const CampgroundAvailability = () => {
             <div className="hero-container">
               <h1>
                 {facilityName || "Campground Availability"}
-                {facilityState && <span className="state-indicator"> ({facilityState})</span>}
+                {facilityState && (
+                  <span className="state-indicator"> ({facilityState})</span>
+                )}
               </h1>
-              <p className="description">Explore real-time availability and set reservation alerts</p>
+              <p className="description">
+                Explore real-time availability and set reservation alerts
+              </p>
             </div>
           </div>
 
@@ -420,9 +499,7 @@ const CampgroundAvailability = () => {
                         disabled={isLoading}
                         aria-label="Select a month"
                       >
-                        <option value="">
-                          Select a month...
-                        </option>
+                        <option value="">Select a month...</option>
                         {getNextMonths().map((month) => (
                           <option key={month.value} value={month.value}>
                             {month.label}
@@ -454,16 +531,16 @@ const CampgroundAvailability = () => {
                   <div className="info-item">
                     <span className="bullet">•</span>
                     <span>
-                      Click on any Reserved or Not Yet Released date to create an
-                      alert for that date
+                      Click on any Reserved or Not Yet Released date to create
+                      an alert for that date
                     </span>
                   </div>
                   <div className="info-item">
                     <span className="bullet">•</span>
                     <span>
                       Use checkboxes to select multiple campsites, then click
-                      &quot;Create Alert for Selected&quot; to create an alert for
-                      them
+                      &quot;Create Alert for Selected&quot; to create an alert
+                      for them
                     </span>
                   </div>
                 </div>
@@ -473,6 +550,19 @@ const CampgroundAvailability = () => {
 
           <div className="availability-grid-container">
             <div className="availability-legend">
+              {missingSeasonDates && (
+                <div className="season-dates-info-notification" role="status">
+                  <p className="season-dates-info-notification__title">
+                    Info Notification:
+                  </p>
+                  <p className="season-dates-info-notification__body">
+                    Campground management has not identified season dates for
+                    this period. Please check back soon. Reservation alerts can
+                    still be created for monitoring if/when a campsite becomes
+                    available.
+                  </p>
+                </div>
+              )}
               <span className="legend-item">
                 <strong>A</strong> = Available
               </span>
@@ -512,21 +602,21 @@ const CampgroundAvailability = () => {
               <div className="ag-theme-alpine" style={gridStyle}>
                 <AgGridReact
                   rowData={filteredRows}
-                columnDefs={columnDefs}
-                suppressHorizontalScroll={false}
-                defaultColDef={{
-                  sortable: true,
-                  resizable: true,
-                  filter: true,
-                }}
-                onGridReady={(params) => {
-                  setGridApi(params.api);
-                }}
-                headerHeight={headerHeight}
-                rowHeight={rowHeight}
-                domLayout="normal"
-                rowSelection="multiple"
-                onSelectionChanged={handleSelectionChanged}
+                  columnDefs={columnDefs}
+                  suppressHorizontalScroll={false}
+                  defaultColDef={{
+                    sortable: true,
+                    resizable: true,
+                    filter: true,
+                  }}
+                  onGridReady={(params) => {
+                    setGridApi(params.api);
+                  }}
+                  headerHeight={headerHeight}
+                  rowHeight={rowHeight}
+                  domLayout="normal"
+                  rowSelection="multiple"
+                  onSelectionChanged={handleSelectionChanged}
                   suppressCellSelection={true}
                   suppressRowClickSelection={true}
                   enableCellTextSelection={true}
