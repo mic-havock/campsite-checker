@@ -276,7 +276,7 @@ const FacilitiesFinder = () => {
           onSubmit={handleSubmit}
           className="facilities-finder__form"
         >
-          <div className="form-group">
+          <div className="form-group campground-group">
             <label htmlFor="campground-name">Campground</label>
             <input
               id="campground-name"
@@ -287,7 +287,7 @@ const FacilitiesFinder = () => {
               placeholder="e.g., Cougar Rock, Mount Rainier..."
             />
           </div>
-          <div className="form-group">
+          <div className="form-group location-group">
             <label htmlFor="location-search">Location</label>
             <LocationAutocomplete
               id="location-search"
@@ -296,7 +296,7 @@ const FacilitiesFinder = () => {
               placeholder="City or Zip Code"
             />
           </div>
-          <div className="form-group">
+          <div className="form-group state-group">
             <label htmlFor="state">State</label>
             <select
               id="state"

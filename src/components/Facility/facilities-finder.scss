@@ -104,8 +104,18 @@
       align-items: flex-start;
       flex: 2;
 
+      &.campground-group {
+        flex: 3;
+      }
+
+      &.location-group {
+        flex: 2;
+      }
+
+      &.state-group,
       &.radius-group {
-        flex: 1;
+        flex: 1 1 0;
+        min-width: 140px;
       }
 
       label {
