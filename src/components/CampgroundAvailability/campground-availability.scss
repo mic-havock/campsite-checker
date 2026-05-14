@@ -466,10 +466,10 @@
   --ag-cell-focus-border-color: transparent;
   --ag-checkbox-focus-box-shadow: none !important;
   --ag-focus-shadow: none !important;
-  --ag-checkbox-unchecked-border-color: #{$color-forest-green} !important;
+  --ag-checkbox-unchecked-border-color: #d1d5db !important;
   --ag-checkbox-checked-border-color: #{$color-forest-green} !important;
   --ag-checkbox-checked-color: #{$color-forest-green} !important;
-  --ag-checkbox-border-width: 1.5px !important;
+  --ag-checkbox-border-width: 1px !important;
 
   background-color: white;
   border-radius: $button-border-radius;
@@ -492,6 +492,7 @@
       // Don't use display: none here as it hides the checkmark
       box-shadow: none !important;
       outline: none !important;
+      border: none !important;
     }
 
     input {
