@@ -8,7 +8,7 @@
   width: 100%;
   box-sizing: border-box;
   position: relative;
-  overflow-x: hidden;
+  overflow-x: visible;
 
   .hero-section {
     background: linear-gradient(
@@ -82,7 +82,7 @@
     gap: 1rem;
     box-sizing: border-box;
     width: calc(100% - 2rem);
-    max-width: 1000px;
+    max-width: 1200px;
     margin: -2rem auto 2rem;
     padding: 1.5rem;
     background: $card-bg;
@@ -102,7 +102,21 @@
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      flex: 1;
+      flex: 2;
+
+      &.campground-group {
+        flex: 3;
+      }
+
+      &.location-group {
+        flex: 2;
+      }
+
+      &.state-group,
+      &.radius-group {
+        flex: 1 1 0;
+        min-width: 140px;
+      }
 
       label {
         margin-bottom: 0.5rem;
@@ -115,21 +129,27 @@
 
       input,
       select {
-        width: 100%;
+        width: 102%;
         border: 1px solid rgba(0, 0, 0, 0.1);
         border-radius: 8px;
-        padding: 0.75rem 1rem;
+        padding: 0.75rem 0.5rem;
         transition: $button-transition;
         background-color: white;
         box-sizing: border-box;
         min-height: 44px;
         font-size: 0.95rem;
+        color: $text-primary;
 
         &:focus {
           border-color: $primary-color;
           box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
           outline: none;
         }
+      }
+
+      input::placeholder {
+        color: $color-stone;
+        opacity: 1;
       }
 
       select {
@@ -139,6 +159,11 @@
         background-size: 0.65em auto;
         padding-right: 2.5rem;
         appearance: none;
+      }
+
+      select.facilities-finder__select--placeholder {
+        color: $color-stone;
+        -webkit-text-fill-color: $color-stone;
       }
     }
 

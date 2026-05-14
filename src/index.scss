@@ -40,7 +40,6 @@ body {
   min-width: 320px;
   color: $text-primary;
   width: 100%;
-  overflow-x: hidden;
   max-width: 100vw;
   position: relative;
 }
@@ -76,7 +75,6 @@ button {
 
 html {
   height: -webkit-fill-available;
-  overflow-x: hidden;
   width: 100%;
   max-width: 100vw;
   position: relative;

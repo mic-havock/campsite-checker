@@ -64,31 +64,6 @@ const getNextMonths = () => {
   return months;
 };
 
-/**
- * Builds every calendar day in a month as `YYYY-MM-DD` strings (UTC),
- * used when the API returns campsites but no `availabilities` keys for the grid.
- * @param {string} isoMonthStart - ISO timestamp for the first instant of the month (UTC).
- * @returns {string[]}
- */
-const getUtcDateStringsForMonth = (isoMonthStart) => {
-  if (!isoMonthStart) {
-    return [];
-  }
-  const parsed = new Date(isoMonthStart);
-  if (Number.isNaN(parsed.getTime())) {
-    return [];
-  }
-  const year = parsed.getUTCFullYear();
-  const month = parsed.getUTCMonth();
-  const lastDay = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
-  const pad = (n) => String(n).padStart(2, "0");
-  const result = [];
-  for (let day = 1; day <= lastDay; day += 1) {
-    result.push(`${year}-${pad(month + 1)}-${pad(day)}`);
-  }
-  return result;
-};
-
 const calculateGridStyle = (rowData, tableWidth, rowHeight, headerHeight) => {
   const calculatedHeight = rowData.length * rowHeight + headerHeight + 20;
   const gridHeight = Math.min(calculatedHeight, 700);

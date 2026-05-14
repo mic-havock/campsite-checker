@@ -7,6 +7,7 @@ import { CONTENT } from "../../config/content";
 import { STATES } from "../../config/states";
 
 import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
+import LocationAutocomplete from "../Common/LocationAutocomplete/LocationAutocomplete";
 
 import FacilityDetails from "./FacilityDetails";
 import FacilityGrid from "./FacilityGrid";
@@ -25,6 +26,8 @@ const FacilitiesFinder = () => {
   const [inputValue, setInputValue] = useState("");
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [selectedState, setSelectedState] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [radius, setRadius] = useState("");
   const [facilities, setFacilities] = useState([]);
   const [selectedFacility, setSelectedFacility] = useState(null);
   const [hasSearched, setHasSearched] = useState(false);
@@ -63,6 +66,12 @@ const FacilitiesFinder = () => {
       const params = JSON.parse(savedParams);
       setInputValue(params.query || "");
       setSelectedState(params.state || "");
+      setSelectedLocation(params.selectedLocation || null);
+      setRadius(
+        params.radius !== undefined && params.radius !== ""
+          ? params.radius
+          : "",
+      );
       setHasSearched(true);
     }
   }, []);
@@ -88,13 +97,26 @@ const FacilitiesFinder = () => {
     setError("");
 
     try {
-      // First call with just the query
-      const response1 = await getFacilities({ query: queryWithState });
+      const resolvedRadiusMiles =
+        selectedLocation &&
+        (radius === "" || Number.isNaN(Number(radius)) ? 25 : Number(radius));
+
+      // Build search params
+      const searchParams = {
+        query: queryWithState,
+        latitude: selectedLocation ? parseFloat(selectedLocation.lat) : "",
+        longitude: selectedLocation ? parseFloat(selectedLocation.lon) : "",
+        radius: selectedLocation ? resolvedRadiusMiles : "",
+      };
+
+      // First call with the primary search params
+      const response1 = await getFacilities(searchParams);
       let facilities = response1.RECDATA || [];
 
       // If state is selected, make second call with both query and state
       if (selectedState) {
         const response2 = await getFacilities({
+          ...searchParams,
           query: inputValue,
           state: selectedState,
         });
@@ -112,9 +134,16 @@ const FacilitiesFinder = () => {
       setFacilities(facilities);
       setHasSearched(true);
 
+      if (selectedLocation) {
+        setRadius(resolvedRadiusMiles);
+      }
+
       requestAnimationFrame(() => {
         if (formRef.current) {
-          formRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+          formRef.current.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
         }
       });
 
@@ -122,6 +151,8 @@ const FacilitiesFinder = () => {
       saveToStorage(STORAGE_KEYS.SEARCH_PARAMS, {
         query: inputValue,
         state: selectedState,
+        selectedLocation,
+        radius: selectedLocation ? resolvedRadiusMiles : "",
       });
     } catch (err) {
       console.error(err);
@@ -134,6 +165,8 @@ const FacilitiesFinder = () => {
   const handleClear = () => {
     setInputValue("");
     setSelectedState("");
+    setSelectedLocation(null);
+    setRadius("");
     setFacilities([]);
     setSelectedFacility(null);
     setHasSearched(false);
@@ -258,7 +291,8 @@ const FacilitiesFinder = () => {
           onSubmit={handleSubmit}
           className="facilities-finder__form"
         >
-          <div className="form-group">
+          <div className="form-group campground-group">
+            <label htmlFor="campground-name">Campground</label>
             <input
               id="campground-name"
               name="query"
@@ -268,19 +302,57 @@ const FacilitiesFinder = () => {
               placeholder="e.g., Cougar Rock, Mount Rainier..."
             />
           </div>
-          <div className="form-group">
+          <div className="form-group location-group">
+            <label htmlFor="location-search">Location</label>
+            <LocationAutocomplete
+              id="location-search"
+              onLocationSelect={setSelectedLocation}
+              initialValue={selectedLocation?.display_name || ""}
+              placeholder="City or Zip Code"
+            />
+          </div>
+          <div className="form-group state-group">
+            <label htmlFor="state">State</label>
             <select
               id="state"
               name="state"
               value={selectedState}
               onChange={(e) => setSelectedState(e.target.value)}
+              className={
+                selectedState === ""
+                  ? "facilities-finder__select--placeholder"
+                  : undefined
+              }
             >
-              <option value="">Select a state</option>
+              <option value="">Select state</option>
               {STATES.map((state) => (
                 <option key={state.code} value={state.code}>
                   {state.name}
                 </option>
               ))}
+            </select>
+          </div>
+
+          <div className="form-group radius-group">
+            <label htmlFor="radius">Radius (miles)</label>
+            <select
+              id="radius"
+              name="radius"
+              value={radius}
+              onChange={(e) => {
+                const { value } = e.target;
+                setRadius(value === "" ? "" : Number(value));
+              }}
+              className={
+                radius === ""
+                  ? "facilities-finder__select--placeholder"
+                  : undefined
+              }
+            >
+              <option value="">Select radius</option>
+              <option value="5">5 miles</option>
+              <option value="10">10 miles</option>
+              <option value="25">25 miles</option>
             </select>
           </div>
 
@@ -335,9 +407,7 @@ const FacilitiesFinder = () => {
                     onRowSelected={handleRowSelection}
                     selectedState={
                       selectedState
-                        ? STATES.find(
-                            (state) => state.code === selectedState,
-                          )
+                        ? STATES.find((state) => state.code === selectedState)
                         : null
                     }
                   />
