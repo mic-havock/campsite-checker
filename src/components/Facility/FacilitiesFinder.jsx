@@ -28,6 +28,7 @@ const FacilitiesFinder = () => {
   const [selectedState, setSelectedState] = useState("");
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [radius, setRadius] = useState("");
+  const [facilities, setFacilities] = useState([]);
   const [selectedFacility, setSelectedFacility] = useState(null);
   const [hasSearched, setHasSearched] = useState(false);
   const [loading, setLoading] = useState(false);
