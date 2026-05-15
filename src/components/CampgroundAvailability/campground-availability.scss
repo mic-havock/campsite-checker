@@ -401,17 +401,38 @@
           border-top: 1px solid rgba(0, 0, 0, 0.1);
         }
 
-        input[type="checkbox"] {
+        #hideNotReservable {
           cursor: pointer;
-          width: 16px;
-          height: 16px;
+          flex-shrink: 0;
+          box-sizing: border-box;
+          width: 22px;
+          height: 22px;
+          min-width: 22px;
+          min-height: 22px;
+          margin: 0;
           accent-color: $primary-color;
+
+          @include mobile {
+            min-height: 22px !important;
+            min-width: 22px !important;
+          }
+
+          @include touch-device {
+            -webkit-appearance: checkbox !important;
+            appearance: auto !important;
+            border-radius: 4px;
+          }
         }
 
         label {
           cursor: pointer;
-          font-weight: 600;
+          font-size: 0.8rem;
+          font-weight: 400;
           color: $text-primary;
+
+          @include mobile {
+            font-size: 0.8rem;
+          }
         }
       }
     }
@@ -533,203 +554,203 @@
   }
 
   .ag-theme-alpine {
-  width: 100%;
-  --ag-header-background-color: #{$background-base};
-  --ag-header-foreground-color: #{$color-forest-green};
-  --ag-background-color: #{$background-base};
-  --ag-odd-row-background-color: #{$background-base};
-  --ag-row-hover-color: #{mix($background-base, #000000, 96%)};
-  --ag-selected-row-background-color: #{rgba($color-forest-green, 0.1)};
-  --ag-column-hover-color: #{mix($background-base, #000000, 96%)};
-  --ag-border-color: transparent;
-  --ag-row-border-color: transparent;
-  --ag-header-column-separator-display: none;
-  --ag-row-height: 48px;
-  --ag-header-height: 48px;
-  --ag-font-family: inherit;
-  --ag-borders: none;
-  --ag-cell-focus-border-color: transparent;
+    width: 100%;
+    --ag-header-background-color: #{$background-base};
+    --ag-header-foreground-color: #{$color-forest-green};
+    --ag-background-color: #{$background-base};
+    --ag-odd-row-background-color: #{$background-base};
+    --ag-row-hover-color: #{mix($background-base, #000000, 96%)};
+    --ag-selected-row-background-color: #{rgba($color-forest-green, 0.1)};
+    --ag-column-hover-color: #{mix($background-base, #000000, 96%)};
+    --ag-border-color: transparent;
+    --ag-row-border-color: transparent;
+    --ag-header-column-separator-display: none;
+    --ag-row-height: 48px;
+    --ag-header-height: 48px;
+    --ag-font-family: inherit;
+    --ag-borders: none;
+    --ag-cell-focus-border-color: transparent;
 
-  background-color: $background-base;
-  border-radius: $button-border-radius;
-  box-shadow: $shadow-md;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+    background-color: $background-base;
+    border-radius: $button-border-radius;
+    box-shadow: $shadow-md;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 
-  .ag-header {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  }
-
-  .ag-cell.availability-grid-pinned-cell {
-    background-color: $card-bg !important;
-  }
-
-  .ag-row-hover .ag-cell.availability-grid-pinned-cell {
-    background-color: mix($card-bg, $color-moss, 78%) !important;
-  }
-
-  .ag-row-selected .ag-cell.availability-grid-pinned-cell {
-    background-color: mix($card-bg, $color-forest-green, 86%) !important;
-  }
-
-  .ag-pinned-left-header .ag-header-cell {
-    background-color: $card-bg !important;
-  }
-
-  .ag-cell-focus {
-    outline: none !important;
-    border: none !important;
-  }
-
-  .ag-header-cell-text {
-    font-size: 0.75rem !important;
-    font-weight: 700 !important;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: $color-forest-green !important;
-  }
-
-  .ag-header-cell-center {
-    .ag-header-cell-label {
-      justify-content: center;
-    }
-  }
-
-  .ag-cell {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 !important;
-    border-right: 1px solid transparent !important;
-    border-bottom: 1px solid transparent !important;
-    box-sizing: border-box;
-
-    &:last-child {
-      border-right: 1px solid transparent !important;
+    .ag-header {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
     }
 
-    &.season-empty-placeholder {
-      border-radius: 5px;
-      overflow: hidden;
-      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
-      transition: box-shadow 0.2s ease;
-      background-color: $card-bg !important;
-      cursor: default;
-    }
-
-    &.status-available,
-    &.status-reserved,
-    &.status-nyr,
-    &.status-not-reservable {
-      border-radius: 5px;
-      overflow: hidden;
-      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
-      transition: box-shadow 0.2s ease;
+    .ag-cell.availability-grid-pinned-cell {
       background-color: $card-bg !important;
     }
 
-    &.status-available {
-      .status-pill.available {
-        margin: auto;
-        width: auto !important;
-        height: auto !important;
-        min-width: 24px;
-        min-height: 24px;
-        padding: 0 6px;
-        border-radius: 4px;
-        background-color: $availability-available-bg;
-        color: $availability-available-fg;
+    .ag-row-hover .ag-cell.availability-grid-pinned-cell {
+      background-color: mix($card-bg, $color-moss, 78%) !important;
+    }
+
+    .ag-row-selected .ag-cell.availability-grid-pinned-cell {
+      background-color: mix($card-bg, $color-forest-green, 86%) !important;
+    }
+
+    .ag-pinned-left-header .ag-header-cell {
+      background-color: $card-bg !important;
+    }
+
+    .ag-cell-focus {
+      outline: none !important;
+      border: none !important;
+    }
+
+    .ag-header-cell-text {
+      font-size: 0.75rem !important;
+      font-weight: 700 !important;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: $color-forest-green !important;
+    }
+
+    .ag-header-cell-center {
+      .ag-header-cell-label {
+        justify-content: center;
       }
     }
 
-    &.status-reserved {
-      .status-pill.reserved {
-        margin: auto;
-        width: auto !important;
-        height: auto !important;
-        min-width: 24px;
-        min-height: 24px;
-        padding: 0 6px;
-        border-radius: 4px;
-        background-color: $availability-reserved-bg;
-        color: $availability-reserved-fg;
-      }
-    }
-
-    &.status-nyr {
-      .status-pill.nyr {
-        margin: auto;
-        width: auto !important;
-        height: auto !important;
-        min-width: 24px;
-        min-height: 24px;
-        padding: 0 6px;
-        border-radius: 4px;
-        background-color: $availability-nyr-bg;
-        color: $availability-nyr-fg;
-      }
-    }
-
-    &.status-not-reservable {
-      .status-pill.not-reservable {
-        margin: auto;
-        width: auto !important;
-        height: auto !important;
-        min-width: 24px;
-        min-height: 24px;
-        padding: 0 6px;
-        border-radius: 4px;
-        background-color: $availability-not-reservable-bg;
-        color: $availability-not-reservable-fg;
-      }
-    }
-
-    .status-pill {
+    .ag-cell {
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 100%;
-      width: 100%;
-      margin: 0;
-      border-radius: 0;
-      font-weight: 600;
-      font-size: 0.8rem;
-      line-height: 1;
-      white-space: nowrap;
+      padding: 0 !important;
+      border-right: 1px solid transparent !important;
+      border-bottom: 1px solid transparent !important;
+      box-sizing: border-box;
 
-      &.season-empty {
-        background-color: transparent !important;
-        color: transparent;
-        min-height: 4px;
+      &:last-child {
+        border-right: 1px solid transparent !important;
+      }
+
+      &.season-empty-placeholder {
+        border-radius: 5px;
+        overflow: hidden;
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+        transition: box-shadow 0.2s ease;
+        background-color: $card-bg !important;
+        cursor: default;
+      }
+
+      &.status-available,
+      &.status-reserved,
+      &.status-nyr,
+      &.status-not-reservable {
+        border-radius: 5px;
+        overflow: hidden;
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.2s ease;
+        background-color: $card-bg !important;
+      }
+
+      &.status-available {
+        .status-pill.available {
+          margin: auto;
+          width: auto !important;
+          height: auto !important;
+          min-width: 24px;
+          min-height: 24px;
+          padding: 0 6px;
+          border-radius: 4px;
+          background-color: $availability-available-bg;
+          color: $availability-available-fg;
+        }
+      }
+
+      &.status-reserved {
+        .status-pill.reserved {
+          margin: auto;
+          width: auto !important;
+          height: auto !important;
+          min-width: 24px;
+          min-height: 24px;
+          padding: 0 6px;
+          border-radius: 4px;
+          background-color: $availability-reserved-bg;
+          color: $availability-reserved-fg;
+        }
+      }
+
+      &.status-nyr {
+        .status-pill.nyr {
+          margin: auto;
+          width: auto !important;
+          height: auto !important;
+          min-width: 24px;
+          min-height: 24px;
+          padding: 0 6px;
+          border-radius: 4px;
+          background-color: $availability-nyr-bg;
+          color: $availability-nyr-fg;
+        }
+      }
+
+      &.status-not-reservable {
+        .status-pill.not-reservable {
+          margin: auto;
+          width: auto !important;
+          height: auto !important;
+          min-width: 24px;
+          min-height: 24px;
+          padding: 0 6px;
+          border-radius: 4px;
+          background-color: $availability-not-reservable-bg;
+          color: $availability-not-reservable-fg;
+        }
+      }
+
+      .status-pill {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        border-radius: 0;
+        font-weight: 600;
+        font-size: 0.8rem;
+        line-height: 1;
+        white-space: nowrap;
+
+        &.season-empty {
+          background-color: transparent !important;
+          color: transparent;
+          min-height: 4px;
+        }
+      }
+
+      &.clickable-cell {
+        cursor: pointer !important;
+      }
+
+      &.clickable-cell:hover {
+        box-shadow: inset 0 0 0 2px rgba($color-forest-green, 0.45) !important;
       }
     }
 
-    &.clickable-cell {
-      cursor: pointer !important;
+    .ag-row {
+      border-bottom: none !important;
     }
 
-    &.clickable-cell:hover {
-      box-shadow: inset 0 0 0 2px rgba($color-forest-green, 0.45) !important;
+    .ag-root-wrapper {
+      border: none !important;
+    }
+
+    .ag-pinned-left-header {
+      border-right: 1px solid rgba(0, 0, 0, 0.06) !important;
+    }
+
+    .ag-pinned-left-cols-container {
+      background-color: $card-bg;
+      border-right: 1px solid rgba(0, 0, 0, 0.06) !important;
     }
   }
-
-  .ag-row {
-    border-bottom: none !important;
-  }
-
-  .ag-root-wrapper {
-    border: none !important;
-  }
-
-  .ag-pinned-left-header {
-    border-right: 1px solid rgba(0, 0, 0, 0.06) !important;
-  }
-
-  .ag-pinned-left-cols-container {
-    background-color: $card-bg;
-    border-right: 1px solid rgba(0, 0, 0, 0.06) !important;
-  }
-}
 }
 
 @keyframes spin {
