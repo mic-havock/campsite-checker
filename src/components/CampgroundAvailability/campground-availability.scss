@@ -66,6 +66,7 @@
         opacity: 0.6;
         letter-spacing: 0.02em;
         margin-bottom: 0;
+        text-align: center;
 
         @include mobile {
           font-size: 0.75rem;
@@ -311,6 +312,7 @@
       flex-wrap: wrap;
       box-sizing: border-box;
       align-self: center;
+      background-color: $background-base;
 
       @include mobile {
         padding: 0.75rem 1rem;
@@ -362,23 +364,23 @@
           border-radius: 4px;
           font-size: 0.7rem;
           font-weight: 600;
-          background-color: rgba(76, 175, 80, 0.12);
-          color: #2e7d32;
+          background-color: $availability-available-bg;
+          color: $availability-available-fg;
         }
 
         &.reserved strong {
-          background-color: rgba(214, 81, 64, 0.12);
-          color: #b71c1c;
+          background-color: $availability-reserved-bg;
+          color: $availability-reserved-fg;
         }
 
         &.not-yet-released strong {
-          background-color: rgba(74, 144, 226, 0.12);
-          color: #1565c0;
+          background-color: $availability-nyr-bg;
+          color: $availability-nyr-fg;
         }
 
         &.not-reservable strong {
-          background-color: rgba(112, 112, 112, 0.12);
-          color: #424242;
+          background-color: $availability-not-reservable-bg;
+          color: $availability-not-reservable-fg;
         }
       }
 
@@ -411,29 +413,109 @@
           font-weight: 600;
           color: $text-primary;
         }
+      }
+    }
 
-        .bulk-alert-button {
-          margin-left: 1rem;
-          padding: 0.4rem 1rem;
-          background-color: $color-forest-green;
-          color: white;
-          border: none;
-          border-radius: 8px;
-          cursor: pointer;
-          font-size: 0.8rem;
-          font-weight: 700;
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          white-space: nowrap;
-          box-shadow: $shadow-sm;
-          transition: all 0.2s ease;
+    .availability-selection-bar {
+      width: 100%;
+      max-width: 1200px;
+      align-self: center;
+      box-sizing: border-box;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem 1.25rem;
+      margin-bottom: 0rem;
+      margin-top: 0rem;
+      padding: 0.75rem 1.5rem;
+      background-color: rgba(46, 125, 50, 0.06);
+      border: 1px solid rgba(46, 125, 50, 0.2);
+      border-radius: $button-border-radius;
 
-          &:hover {
-            background-color: darken($color-forest-green, 5%);
-            transform: translateY(-1px);
-            box-shadow: $shadow-md;
-          }
+      @include mobile {
+        padding: 0.75rem 1rem;
+      }
+
+      .availability-selection-bar__summary {
+        margin: 0;
+        font-size: 0.85rem;
+        line-height: 1.35;
+        color: $text-primary;
+        text-align: center;
+
+        strong {
+          font-weight: 800;
+          color: $color-forest-green;
+        }
+      }
+
+      .availability-selection-bar__actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 0.65rem 0.85rem;
+
+        @include mobile {
+          width: 100%;
+          max-width: 22rem;
+          margin-left: auto;
+          margin-right: auto;
+          flex-direction: column;
+          align-items: stretch;
+        }
+      }
+
+      .availability-selection-bar__clear {
+        padding: 0.35rem 0.65rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: $text-primary;
+        background: transparent;
+        border: 1px solid rgba(0, 0, 0, 0.18);
+        border-radius: 8px;
+        cursor: pointer;
+        transition:
+          background-color 0.15s ease,
+          border-color 0.15s ease;
+
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.65);
+          border-color: rgba(0, 0, 0, 0.28);
+        }
+
+        @include mobile {
+          width: 100%;
+          text-align: center;
+        }
+      }
+
+      .bulk-alert-button {
+        padding: 0.4rem 1rem;
+        background-color: $color-forest-green;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        white-space: nowrap;
+        box-shadow: $shadow-sm;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background-color: darken($color-forest-green, 5%);
+          transform: translateY(-1px);
+          box-shadow: $shadow-md;
+        }
+
+        @include mobile {
+          width: 100%;
         }
       }
     }
@@ -442,18 +524,23 @@
       margin: 0 auto;
       width: fit-content;
       max-width: calc(100vw - 3rem);
+      box-sizing: border-box;
 
       @include mobile {
         max-width: calc(100vw - 2rem);
       }
     }
   }
-}
 
-.ag-theme-alpine {
+  .ag-theme-alpine {
   width: 100%;
-  --ag-header-background-color: #ffffff;
+  --ag-header-background-color: #{$background-base};
   --ag-header-foreground-color: #{$color-forest-green};
+  --ag-background-color: #{$background-base};
+  --ag-odd-row-background-color: #{$background-base};
+  --ag-row-hover-color: #{mix($background-base, #000000, 96%)};
+  --ag-selected-row-background-color: #{rgba($color-forest-green, 0.1)};
+  --ag-column-hover-color: #{mix($background-base, #000000, 96%)};
   --ag-border-color: transparent;
   --ag-row-border-color: transparent;
   --ag-header-column-separator-display: none;
@@ -463,14 +550,30 @@
   --ag-borders: none;
   --ag-cell-focus-border-color: transparent;
 
-  background-color: white;
+  background-color: $background-base;
   border-radius: $button-border-radius;
   box-shadow: $shadow-md;
   border: 1px solid rgba(0, 0, 0, 0.1);
   overflow: hidden;
 
   .ag-header {
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .ag-cell.availability-grid-pinned-cell {
+    background-color: $card-bg !important;
+  }
+
+  .ag-row-hover .ag-cell.availability-grid-pinned-cell {
+    background-color: mix($card-bg, $color-moss, 78%) !important;
+  }
+
+  .ag-row-selected .ag-cell.availability-grid-pinned-cell {
+    background-color: mix($card-bg, $color-forest-green, 86%) !important;
+  }
+
+  .ag-pinned-left-header .ag-header-cell {
+    background-color: $card-bg !important;
   }
 
   .ag-cell-focus {
@@ -497,17 +600,88 @@
     align-items: center;
     justify-content: center;
     padding: 0 !important;
-    border-right: 1px solid #ffffff !important;
-    border-bottom: 1px solid #ffffff !important;
+    border-right: 1px solid transparent !important;
+    border-bottom: 1px solid transparent !important;
     box-sizing: border-box;
 
     &:last-child {
-      border-right: 1px solid #ffffff !important;
+      border-right: 1px solid transparent !important;
     }
 
     &.season-empty-placeholder {
-      background-color: #f3f4f6 !important;
+      border-radius: 5px;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+      transition: box-shadow 0.2s ease;
+      background-color: $card-bg !important;
       cursor: default;
+    }
+
+    &.status-available,
+    &.status-reserved,
+    &.status-nyr,
+    &.status-not-reservable {
+      border-radius: 5px;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+      transition: box-shadow 0.2s ease;
+      background-color: $card-bg !important;
+    }
+
+    &.status-available {
+      .status-pill.available {
+        margin: auto;
+        width: auto !important;
+        height: auto !important;
+        min-width: 24px;
+        min-height: 24px;
+        padding: 0 6px;
+        border-radius: 4px;
+        background-color: $availability-available-bg;
+        color: $availability-available-fg;
+      }
+    }
+
+    &.status-reserved {
+      .status-pill.reserved {
+        margin: auto;
+        width: auto !important;
+        height: auto !important;
+        min-width: 24px;
+        min-height: 24px;
+        padding: 0 6px;
+        border-radius: 4px;
+        background-color: $availability-reserved-bg;
+        color: $availability-reserved-fg;
+      }
+    }
+
+    &.status-nyr {
+      .status-pill.nyr {
+        margin: auto;
+        width: auto !important;
+        height: auto !important;
+        min-width: 24px;
+        min-height: 24px;
+        padding: 0 6px;
+        border-radius: 4px;
+        background-color: $availability-nyr-bg;
+        color: $availability-nyr-fg;
+      }
+    }
+
+    &.status-not-reservable {
+      .status-pill.not-reservable {
+        margin: auto;
+        width: auto !important;
+        height: auto !important;
+        min-width: 24px;
+        min-height: 24px;
+        padding: 0 6px;
+        border-radius: 4px;
+        background-color: $availability-not-reservable-bg;
+        color: $availability-not-reservable-fg;
+      }
     }
 
     .status-pill {
@@ -521,25 +695,7 @@
       font-weight: 600;
       font-size: 0.8rem;
       line-height: 1;
-      transition: all 0.2s ease;
       white-space: nowrap;
-
-      &.available {
-        background-color: rgba(76, 175, 80, 0.12);
-        color: #2e7d32;
-      }
-      &.reserved {
-        background-color: rgba(214, 81, 64, 0.12);
-        color: #b71c1c;
-      }
-      &.nyr {
-        background-color: rgba(74, 144, 226, 0.12);
-        color: #1565c0;
-      }
-      &.not-reservable {
-        background-color: rgba(112, 112, 112, 0.12);
-        color: #424242;
-      }
 
       &.season-empty {
         background-color: transparent !important;
@@ -550,11 +706,10 @@
 
     &.clickable-cell {
       cursor: pointer !important;
-      .status-pill:hover {
-        filter: brightness(0.92);
-        z-index: 2;
-        box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.4);
-      }
+    }
+
+    &.clickable-cell:hover {
+      box-shadow: inset 0 0 0 2px rgba($color-forest-green, 0.45) !important;
     }
   }
 
@@ -566,10 +721,15 @@
     border: none !important;
   }
 
-  .ag-pinned-left-header,
-  .ag-pinned-left-cols-container {
-    border-right: 1px solid #ffffff !important;
+  .ag-pinned-left-header {
+    border-right: 1px solid rgba(0, 0, 0, 0.06) !important;
   }
+
+  .ag-pinned-left-cols-container {
+    background-color: $card-bg;
+    border-right: 1px solid rgba(0, 0, 0, 0.06) !important;
+  }
+}
 }
 
 @keyframes spin {

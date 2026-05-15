@@ -26,6 +26,16 @@ $shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
 $shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
 $shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
 
+// Availability legend + campground calendar grid (A / R / N / X)
+$availability-available-bg: rgba(76, 175, 80, 0.12);
+$availability-available-fg: #2e7d32;
+$availability-reserved-bg: rgba(214, 81, 64, 0.12);
+$availability-reserved-fg: #b71c1c;
+$availability-nyr-bg: rgba(74, 144, 226, 0.12);
+$availability-nyr-fg: #1565c0;
+$availability-not-reservable-bg: rgba(112, 112, 112, 0.12);
+$availability-not-reservable-fg: #424242;
+
 @mixin glass {
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);

@@ -1,61 +1,81 @@
 @import "../../styles/variables";
+@import "../../styles/responsive";
 
 .facility-grid-container {
-  height: 450px;
-  width: 100%;
   position: relative;
-  background-color: white;
-  border-radius: $button-border-radius;
-  box-shadow: $shadow-lg;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  width: 100%;
+  height: 450px;
+  box-sizing: border-box;
   overflow: hidden;
+  border-radius: $button-border-radius;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background-color: $text-light;
+  box-shadow: $shadow-md;
 
-  // AG Grid specific styles — clip internals to rounded card (avoids rectangular
-  // wrapper/body layering at the corners).
+  @include mobile {
+    border-radius: 10px;
+  }
+
   .ag-root-wrapper {
-    border-radius: $button-border-radius;
     overflow: hidden !important;
     border: none !important;
-    background-color: white;
+    border-radius: $button-border-radius;
+    background-color: $background-base;
   }
 
   .grid-wrapper.facility-grid-wrapper {
     position: relative;
+    isolation: isolate;
     width: 100%;
     height: 100%;
-    border-radius: $button-border-radius;
     overflow: hidden;
-    isolation: isolate;
+    border-radius: $button-border-radius;
 
-    // Kamp Scout AG Grid Theme
+    // Align with Kamp Scout surfaces (campground cards, availability grid)
     --ag-borders: none;
-    --ag-background-color: #ffffff;
-    --ag-header-column-separator-display: none;
-    --ag-header-background-color: #2b4c1c !important;
-    --ag-header-foreground-color: #ffffff !important;
-    --ag-row-border-color: #f0f0f0;
-    --ag-selected-row-background-color: #{rgba($primary-color, 0.05)};
     --ag-font-family: inherit;
-    --ag-cell-focus-border-color: transparent;
+    --ag-font-size: 13px;
     --ag-header-height: 30px;
     --ag-row-height: 30px;
-    --ag-font-size: 13px;
+    --ag-background-color: #{$background-base};
+    --ag-odd-row-background-color: #{$card-bg};
+    --ag-header-background-color: #{$color-forest-green};
+    --ag-header-foreground-color: #{$text-light};
+    --ag-row-border-color: rgba(0, 0, 0, 0.06);
+    --ag-row-hover-color: #{mix($background-base, $color-moss, 82%)};
+    --ag-selected-row-background-color: #{rgba($color-forest-green, 0.1)};
+    --ag-cell-focus-border-color: transparent;
+    --ag-header-column-separator-display: none;
 
     .ag-header-row {
-      background-color: #2b4c1c !important;
+      background-color: $color-forest-green !important;
     }
 
     .ag-header-cell {
+      display: flex;
+      align-items: center;
       padding: 0 1.5rem !important;
-      border-right: 1px solid rgba(255, 255, 255, 0.2) !important;
-      background-color: #2b4c1c !important;
+      background-color: $color-forest-green !important;
+      border-right: 1px solid rgba(255, 255, 255, 0.14) !important;
+
+      &:last-child {
+        border-right: none !important;
+      }
 
       .ag-header-cell-text {
-        font-size: 0.9rem !important;
+        font-size: 0.8rem !important;
         font-weight: 700 !important;
+        letter-spacing: 0.06em;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: #ffffff !important;
+        color: $text-light !important;
+      }
+
+      @include mobile {
+        padding: 0 1rem !important;
+
+        .ag-header-cell-text {
+          font-size: 0.72rem !important;
+        }
       }
     }
 
@@ -63,12 +83,18 @@
       display: flex;
       align-items: center;
       padding: 0 1.5rem !important;
+      border-right: 1px solid rgba(0, 0, 0, 0.05) !important;
       font-size: 0.85rem;
+      line-height: 1.35;
       color: $text-primary;
-      border-right: 1px solid #f0f0f0 !important;
+      transition: color 0.15s ease;
+
+      @include mobile {
+        padding: 0 1rem !important;
+        font-size: 0.8rem;
+      }
     }
 
-    // Alignment helpers
     .center-aligned-header .ag-header-cell-label {
       justify-content: center !important;
     }
@@ -85,60 +111,67 @@
       justify-content: flex-start !important;
     }
 
-    // Row styling
+    .uppercase-text {
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .name-cell {
+      font-weight: 600;
+      color: $color-forest-green;
+    }
+
     .ag-row {
       cursor: pointer;
-      transition: background-color 0.2s ease;
-      border-bottom: 1px solid #f0f0f0 !important;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+      transition: background-color 0.18s ease;
 
       &:hover:not(.ag-row-selected) {
-        background-color: rgba(0, 0, 0, 0.02) !important;
+        background-color: mix($background-base, $color-moss, 82%) !important;
       }
 
-      // Entire row + cells: guarantees the highlight shows (stacking/order can hide `::before` alone).
       &.ag-row-selected {
-        background-color: rgba($primary-color, 0.05) !important;
+        background-color: rgba($color-forest-green, 0.1) !important;
       }
 
       &.ag-row-selected::before {
-        background-color: rgba($primary-color, 0.05) !important;
-        pointer-events: none;
         z-index: 1;
+        pointer-events: none;
+        background-color: rgba($color-forest-green, 0.1) !important;
       }
 
-      // Alpine uses a gradient here; flatten so hover + selected matches the same tint.
       &.ag-row-hover.ag-row-selected::before {
-        background-color: rgba($primary-color, 0.05) !important;
+        background-color: rgba($color-forest-green, 0.1) !important;
         background-image: none !important;
       }
 
       &.ag-row-selected .ag-cell {
-        background-color: rgba($primary-color, 0.05) !important;
+        background-color: rgba($color-forest-green, 0.1) !important;
       }
     }
 
-    .uppercase-text {
-      text-transform: uppercase;
-      letter-spacing: 0.02em;
-    }
-
-    .name-cell {
-      font-weight: 400;
-      color: $color-forest-green;
-    }
-
     .ag-paging-panel {
-      background-color: #ffffff !important;
-      border-top: 1px solid #f0f0f0 !important;
-      height: 38px !important;
+      display: flex;
+      align-items: center;
+      height: 40px !important;
+      padding: 0 0.75rem;
+      box-sizing: border-box;
+      border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
+      background-color: $card-bg !important;
       font-size: 0.75rem !important;
       color: $color-stone !important;
 
       .ag-paging-button {
         color: $color-forest-green !important;
-        opacity: 0.8;
+        opacity: 0.85;
+        border-radius: 6px;
+        transition:
+          opacity 0.15s ease,
+          background-color 0.15s ease;
+
         &:hover {
           opacity: 1;
+          background-color: rgba($color-forest-green, 0.08);
         }
       }
 
@@ -151,37 +184,41 @@
 
   .loading-overlay {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    top: 0;
+    left: 0;
     z-index: 1000;
-    background: rgba(255, 255, 255, 0.8);
+    display: flex;
     width: 100%;
     height: 100%;
-    display: flex;
     align-items: center;
     justify-content: center;
+    background: rgba($card-bg, 0.88);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
 
-    .spinner {
-      width: 32px;
-      height: 32px;
-      border: 3px solid rgba($primary-color, 0.1);
-      border-top: 3px solid $primary-color;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
+  .loading-overlay .spinner {
+    width: 34px;
+    height: 34px;
+    border: 3px solid rgba($color-forest-green, 0.12);
+    border-top: 3px solid $color-forest-green;
+    border-radius: 50%;
+    animation: facility-grid-spin 0.9s linear infinite;
   }
 
   .error-message {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid rgba($color-danger, 0.25);
+    background-color: rgba($color-danger, 0.06);
     color: $color-danger;
-    padding: 1rem;
-    text-align: center;
+    font-size: 0.85rem;
     font-weight: 600;
-    background-color: rgba($color-danger, 0.05);
+    line-height: 1.4;
+    text-align: center;
   }
 }
 
-@keyframes spin {
+@keyframes facility-grid-spin {
   0% {
     transform: rotate(0deg);
   }

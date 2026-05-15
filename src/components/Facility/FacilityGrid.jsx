@@ -151,7 +151,11 @@ const FacilityGrid = ({ rowData, onRowSelected, selectedState }) => {
   };
 
   return (
-    <div className="facility-grid-container">
+    <div
+      className="facility-grid-container"
+      aria-busy={isLoading}
+      aria-label="Campground search results"
+    >
       {error && <div className="error-message">{error}</div>}
       <div className="grid-wrapper facility-grid-wrapper ag-theme-alpine">
         <AgGridReact
@@ -161,8 +165,8 @@ const FacilityGrid = ({ rowData, onRowSelected, selectedState }) => {
           onSelectionChanged={onSelectionChanged}
         />
         {isLoading && (
-          <div className="loading-overlay">
-            <div className="spinner"></div>
+          <div className="loading-overlay" aria-hidden="true">
+            <div className="spinner" />
           </div>
         )}
       </div>

@@ -289,6 +289,17 @@ const CampgroundAvailability = () => {
     setSelectedCampsites(selectedRows);
   };
 
+  /**
+   * Clears all row checkboxes in the availability grid; selection state
+   * updates via `onSelectionChanged`.
+   */
+  const handleClearGridSelection = () => {
+    if (!gridApi) {
+      return;
+    }
+    gridApi.deselectAll();
+  };
+
   const handleBulkAlertClick = () => {
     if (selectedCampsites.length === 0) return;
 
@@ -320,9 +331,7 @@ const CampgroundAvailability = () => {
         suppressSizeToFit: false,
         resizable: false,
         filter: false,
-        cellStyle: {
-          backgroundColor: "#f8f9fa",
-        },
+        cellClass: "availability-grid-pinned-cell",
       },
       {
         headerName: "Campsite",
@@ -332,8 +341,8 @@ const CampgroundAvailability = () => {
         width: 130,
         suppressSizeToFit: false,
         resizable: true,
+        cellClass: "availability-grid-pinned-cell",
         cellStyle: {
-          backgroundColor: "#f8f9fa",
           textAlign: "center",
         },
         headerClass: "ag-header-cell-center",
@@ -349,9 +358,7 @@ const CampgroundAvailability = () => {
               resizable: true,
               width: 200,
               headerClass: "ag-header-cell-center",
-              cellStyle: {
-                backgroundColor: "#f8f9fa",
-              },
+              cellClass: "availability-grid-pinned-cell",
             },
           ]
         : []),
@@ -586,17 +593,41 @@ const CampgroundAvailability = () => {
                 <label htmlFor="hideNotReservable">
                   Hide campsites that are not reservable for all dates
                 </label>
-                {selectedCampsites.length > 0 && (
-                  <button
-                    onClick={handleBulkAlertClick}
-                    className="bulk-alert-button"
-                  >
-                    Create Alert for {selectedCampsites.length} Selected
-                    Campsite
-                    {selectedCampsites.length !== 1 ? "s" : ""}
-                  </button>
-                )}
               </div>
+
+              {selectedCampsites.length > 0 && (
+                <div
+                  className="availability-selection-bar"
+                  role="region"
+                  aria-label="Selected campsites"
+                >
+                  <p
+                    className="availability-selection-bar__summary"
+                    aria-live="polite"
+                  >
+                    <strong>{selectedCampsites.length}</strong> campsite
+                    {selectedCampsites.length !== 1 ? "s" : ""} selected
+                  </p>
+                  <div className="availability-selection-bar__actions">
+                    <button
+                      type="button"
+                      className="availability-selection-bar__clear"
+                      onClick={handleClearGridSelection}
+                    >
+                      Clear selection
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleBulkAlertClick}
+                      className="bulk-alert-button"
+                    >
+                      Create Alert for {selectedCampsites.length} Selected
+                      Campsite
+                      {selectedCampsites.length !== 1 ? "s" : ""}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="availability-grid-centered-wrapper">
