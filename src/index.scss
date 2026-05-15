@@ -40,8 +40,12 @@ body {
   min-width: 320px;
   color: $text-primary;
   width: 100%;
-  max-width: 100vw;
+  /* Use 100% (not 100vw) so layout width matches the visible area when a vertical scrollbar is present. */
+  max-width: 100%;
+  overflow-x: hidden;
   position: relative;
+  /* Prefer vertical-only panning on touch devices when the page would otherwise rubber-band horizontally. */
+  touch-action: pan-y;
 }
 
 h1,
@@ -76,7 +80,8 @@ button {
 html {
   height: -webkit-fill-available;
   width: 100%;
-  max-width: 100vw;
+  max-width: 100%;
+  overflow-x: hidden;
   position: relative;
 }
 
@@ -109,4 +114,6 @@ button {
 
 #root {
   width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
