@@ -555,13 +555,13 @@
 
   .ag-theme-alpine {
     width: 100%;
-    --ag-header-background-color: #{$background-base};
+    --ag-header-background-color: #{$card-bg};
     --ag-header-foreground-color: #{$color-forest-green};
-    --ag-background-color: #{$background-base};
-    --ag-odd-row-background-color: #{$background-base};
-    --ag-row-hover-color: #{mix($background-base, #000000, 96%)};
-    --ag-selected-row-background-color: #{rgba($color-forest-green, 0.1)};
-    --ag-column-hover-color: #{mix($background-base, #000000, 96%)};
+    --ag-background-color: #{$card-bg};
+    --ag-odd-row-background-color: #{$card-bg};
+    --ag-row-hover-color: #{mix($card-bg, $color-moss, 78%)};
+    --ag-selected-row-background-color: #{mix($card-bg, $color-forest-green, 86%)};
+    --ag-column-hover-color: #{mix($card-bg, #000000, 96%)};
     --ag-border-color: transparent;
     --ag-row-border-color: transparent;
     --ag-header-column-separator-display: none;
@@ -571,14 +571,24 @@
     --ag-borders: none;
     --ag-cell-focus-border-color: transparent;
 
-    background-color: $background-base;
+    background-color: $card-bg;
     border-radius: $button-border-radius;
     box-shadow: $shadow-md;
     border: 1px solid rgba(0, 0, 0, 0.1);
     overflow: hidden;
 
     .ag-header {
+      background-color: $card-bg;
       border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .ag-header-viewport,
+    .ag-header-viewport .ag-header-container {
+      background-color: $card-bg;
+    }
+
+    .ag-header-viewport .ag-header-cell {
+      background-color: $card-bg !important;
     }
 
     .ag-cell.availability-grid-pinned-cell {
@@ -591,6 +601,10 @@
 
     .ag-row-selected .ag-cell.availability-grid-pinned-cell {
       background-color: mix($card-bg, $color-forest-green, 86%) !important;
+    }
+
+    .ag-header-cell {
+      background-color: $card-bg !important;
     }
 
     .ag-pinned-left-header .ag-header-cell {
@@ -617,6 +631,7 @@
     }
 
     .ag-cell {
+      background-color: $card-bg !important;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -650,57 +665,65 @@
       }
 
       &.status-available {
+        background-color: $availability-available-bg !important;
+
         .status-pill.available {
-          margin: auto;
-          width: auto !important;
-          height: auto !important;
-          min-width: 24px;
-          min-height: 24px;
-          padding: 0 6px;
-          border-radius: 4px;
-          background-color: $availability-available-bg;
+          margin: 0;
+          width: 100% !important;
+          height: 100% !important;
+          min-width: unset;
+          min-height: unset;
+          padding: 0;
+          border-radius: 0;
+          background-color: transparent;
           color: $availability-available-fg;
         }
       }
 
       &.status-reserved {
+        background-color: $availability-reserved-bg !important;
+
         .status-pill.reserved {
-          margin: auto;
-          width: auto !important;
-          height: auto !important;
-          min-width: 24px;
-          min-height: 24px;
-          padding: 0 6px;
-          border-radius: 4px;
-          background-color: $availability-reserved-bg;
+          margin: 0;
+          width: 100% !important;
+          height: 100% !important;
+          min-width: unset;
+          min-height: unset;
+          padding: 0;
+          border-radius: 0;
+          background-color: transparent;
           color: $availability-reserved-fg;
         }
       }
 
       &.status-nyr {
+        background-color: $availability-nyr-bg !important;
+
         .status-pill.nyr {
-          margin: auto;
-          width: auto !important;
-          height: auto !important;
-          min-width: 24px;
-          min-height: 24px;
-          padding: 0 6px;
-          border-radius: 4px;
-          background-color: $availability-nyr-bg;
+          margin: 0;
+          width: 100% !important;
+          height: 100% !important;
+          min-width: unset;
+          min-height: unset;
+          padding: 0;
+          border-radius: 0;
+          background-color: transparent;
           color: $availability-nyr-fg;
         }
       }
 
       &.status-not-reservable {
+        background-color: $availability-not-reservable-bg !important;
+
         .status-pill.not-reservable {
-          margin: auto;
-          width: auto !important;
-          height: auto !important;
-          min-width: 24px;
-          min-height: 24px;
-          padding: 0 6px;
-          border-radius: 4px;
-          background-color: $availability-not-reservable-bg;
+          margin: 0;
+          width: 100% !important;
+          height: 100% !important;
+          min-width: unset;
+          min-height: unset;
+          padding: 0;
+          border-radius: 0;
+          background-color: transparent;
           color: $availability-not-reservable-fg;
         }
       }
@@ -734,12 +757,60 @@
       }
     }
 
+    .ag-body-viewport,
+    .ag-body-horizontal-scroll-viewport,
+    .ag-root-wrapper-body {
+      background-color: $card-bg;
+    }
+
     .ag-row {
       border-bottom: none !important;
+      background-color: $card-bg !important;
+    }
+
+    .ag-row-hover .ag-center-cols-container .ag-cell {
+      background-color: mix($card-bg, $color-moss, 78%) !important;
+    }
+
+    .ag-row-selected .ag-center-cols-container .ag-cell {
+      background-color: mix($card-bg, $color-forest-green, 86%) !important;
+    }
+
+    .ag-row-hover .ag-center-cols-container .ag-cell.status-available {
+      background-color: $availability-available-bg !important;
+    }
+
+    .ag-row-hover .ag-center-cols-container .ag-cell.status-reserved {
+      background-color: $availability-reserved-bg !important;
+    }
+
+    .ag-row-hover .ag-center-cols-container .ag-cell.status-nyr {
+      background-color: $availability-nyr-bg !important;
+    }
+
+    .ag-row-hover .ag-center-cols-container .ag-cell.status-not-reservable {
+      background-color: $availability-not-reservable-bg !important;
+    }
+
+    .ag-row-selected .ag-center-cols-container .ag-cell.status-available {
+      background-color: $availability-available-bg !important;
+    }
+
+    .ag-row-selected .ag-center-cols-container .ag-cell.status-reserved {
+      background-color: $availability-reserved-bg !important;
+    }
+
+    .ag-row-selected .ag-center-cols-container .ag-cell.status-nyr {
+      background-color: $availability-nyr-bg !important;
+    }
+
+    .ag-row-selected .ag-center-cols-container .ag-cell.status-not-reservable {
+      background-color: $availability-not-reservable-bg !important;
     }
 
     .ag-root-wrapper {
       border: none !important;
+      background-color: $card-bg;
     }
 
     .ag-pinned-left-header {
@@ -749,6 +820,48 @@
     .ag-pinned-left-cols-container {
       background-color: $card-bg;
       border-right: 1px solid rgba(0, 0, 0, 0.06) !important;
+    }
+
+    .ag-center-cols-viewport,
+    .ag-center-cols-container {
+      background-color: $card-bg;
+    }
+
+    .ag-body-horizontal-scroll,
+    .ag-body-horizontal-scroll-viewport,
+    .ag-body-vertical-scroll,
+    .ag-body-vertical-scroll-viewport {
+      background-color: $card-bg;
+    }
+
+    .ag-body-viewport,
+    .ag-body-horizontal-scroll-viewport,
+    .ag-header-viewport,
+    .ag-center-cols-viewport,
+    .ag-body-horizontal-scroll,
+    .ag-body-vertical-scroll-viewport {
+      scrollbar-color: #{mix($color-stone, $card-bg, 45%)} $card-bg;
+      scrollbar-width: thin;
+
+      &::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+        background-color: $card-bg;
+      }
+
+      &::-webkit-scrollbar-track {
+        background-color: $card-bg;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: mix($color-stone, $card-bg, 45%);
+        border: 2px solid $card-bg;
+        border-radius: 6px;
+      }
+
+      &::-webkit-scrollbar-corner {
+        background-color: $card-bg;
+      }
     }
   }
 }
