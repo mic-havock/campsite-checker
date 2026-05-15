@@ -493,20 +493,23 @@
     overflow-y: auto;
 
     &::-webkit-scrollbar {
-      height: 8px;
-      width: 8px;
+      height: 10px;
+      width: 10px;
     }
 
     &::-webkit-scrollbar-track {
-      background: rgba(0, 0, 0, 0.03);
+      background: transparent;
     }
 
     &::-webkit-scrollbar-thumb {
-      background: rgba(0, 0, 0, 0.1);
-      border-radius: 4px;
+      background: rgba(0, 0, 0, 0.12);
+      border-radius: 20px;
+      border: 2px solid transparent;
+      background-clip: content-box;
 
       &:hover {
-        background: rgba(0, 0, 0, 0.2);
+        background: rgba(0, 0, 0, 0.22);
+        background-clip: content-box;
       }
     }
   }
@@ -529,7 +532,8 @@
       }
 
       th {
-        padding: 0.75rem 1rem;
+        height: 48px;
+        padding: 0 1rem;
         font-size: 0.75rem;
         font-weight: 700;
         text-transform: uppercase;
@@ -539,6 +543,7 @@
         white-space: nowrap;
         text-align: center;
         background-color: $background-base;
+        box-sizing: border-box;
 
         &.sortable {
           cursor: pointer;
@@ -560,30 +565,26 @@
 
     tbody {
       tr {
-        transition: background-color 0.15s ease;
+        transition: filter 0.1s ease, background-color 0.1s ease;
 
         &:hover {
-          background-color: mix($background-base, #000000, 96%);
-
-          .sticky-col {
-            background-color: mix($background-base, #000000, 96%);
-          }
+          filter: brightness(0.96);
         }
 
         &.selected-row {
-          background-color: rgba($color-forest-green, 0.1);
+          background-color: rgba($color-forest-green, 0.08);
 
           .sticky-col {
-            background-color: mix($background-base, $color-forest-green, 92%) !important;
+            background-color: mix($background-base, $color-forest-green, 94%) !important;
           }
         }
       }
 
       td {
-        padding: 0.5rem;
-        border-bottom: 1px solid transparent;
+        height: 40px;
+        padding: 0 0.5rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.02);
         text-align: center;
-        height: 48px;
         box-sizing: border-box;
       }
     }
@@ -593,7 +594,7 @@
       z-index: 10;
       background-color: $card-bg;
       box-shadow: 2px 0 4px rgba(0, 0, 0, 0.03);
-      border-right: 1px solid rgba(0, 0, 0, 0.05);
+      border-right: 1px solid #f0f0f0;
     }
 
     thead th.sticky-col {
@@ -620,8 +621,10 @@
       left: 50px;
       width: 130px;
       min-width: 130px;
-      font-weight: 600;
+      font-weight: 700;
       color: $color-forest-green;
+      text-align: left !important;
+      padding-left: 1rem !important;
     }
 
     .loop-col {
@@ -630,11 +633,14 @@
       min-width: 180px;
       font-size: 0.75rem;
       color: $text-primary;
+      text-align: left !important;
+      padding-left: 1rem !important;
     }
 
     .date-col {
       width: 80px;
       min-width: 80px;
+      border-right: 1px solid #f0f0f0;
     }
 
     .status-cell {
@@ -644,13 +650,21 @@
         cursor: pointer;
 
         &:hover {
-          box-shadow: inset 0 0 0 2px rgba($color-forest-green, 0.45);
+          box-shadow: inset 0 0 0 2px rgba($color-forest-green, 0.3);
         }
       }
 
       &.season-empty-placeholder {
         background-color: $card-bg;
         box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+      }
+
+      &.cell-available {
+        background-color: rgba($color-forest-green, 0.15);
+      }
+
+      &.cell-reserved {
+        background-color: rgba(#dc3545, 0.1);
       }
     }
 
@@ -667,13 +681,11 @@
       line-height: 1;
 
       &.available {
-        background-color: $availability-available-bg;
-        color: $availability-available-fg;
+        color: $color-forest-green;
       }
 
       &.reserved {
-        background-color: $availability-reserved-bg;
-        color: $availability-reserved-fg;
+        color: #c62828;
       }
 
       &.nyr {

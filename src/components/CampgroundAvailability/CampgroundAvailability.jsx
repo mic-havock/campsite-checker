@@ -564,14 +564,17 @@ const CampgroundAvailability = () => {
                         let statusClass = "not-reservable";
                         let text = "X";
                         let isClickable = false;
+                        let extraClass = "";
 
                         if (data.available) {
                           statusClass = "available";
                           text = "A";
+                          extraClass = "cell-available";
                         } else if (data.status === "Reserved") {
                           statusClass = "reserved";
                           text = "R";
                           isClickable = true;
+                          extraClass = "cell-reserved";
                         } else if (data.status === "NYR") {
                           statusClass = "nyr";
                           text = "N";
@@ -589,7 +592,7 @@ const CampgroundAvailability = () => {
                         return (
                           <td
                             key={date}
-                            className={`status-cell status-${statusClass} ${isClickable ? "clickable-cell" : ""}`}
+                            className={`status-cell status-${statusClass} ${extraClass} ${isClickable ? "clickable-cell" : ""}`}
                             onClick={() => isClickable && handleUnavailableClick(row.campsiteObj, date)}
                           >
                             <span className={`status-pill ${statusClass}`}>{text}</span>
