@@ -1,31 +1,13 @@
-import {
-  CellStyleModule,
-  ClientSideRowModelModule,
-  ColumnAutoSizeModule,
-  ModuleRegistry,
-  RowSelectionModule,
-  TextFilterModule,
-} from "ag-grid-community";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-alpine.css";
-import { AgGridReact } from "ag-grid-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { LuCalendar } from "react-icons/lu";
+import { LuCalendar, LuChevronDown, LuChevronUp } from "react-icons/lu";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchCampgroundAvailability } from "../../api/campsites";
 import { isNonReservableStatus } from "../../config/reservationStatus";
+import { getUtcDateStringsForMonth } from "../../utils/dateUtils";
 import AlertModal from "../Common/AlertModal/AlertModal";
 import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
 import "./campground-availability.scss";
-
-ModuleRegistry.registerModules([
-  ClientSideRowModelModule,
-  ColumnAutoSizeModule,
-  CellStyleModule,
-  TextFilterModule,
-  RowSelectionModule,
-]);
 
 const getNextMonths = () => {
   const months = [];
@@ -49,7 +31,7 @@ const getNextMonths = () => {
     const date = new Date(
       currentDate.getFullYear(),
       currentDate.getMonth() + i,
-      1,
+      1
     );
     const monthName = monthNames[date.getMonth()];
     const year = date.getFullYear();
@@ -64,21 +46,11 @@ const getNextMonths = () => {
   return months;
 };
 
-const calculateGridStyle = (rowData, tableWidth, rowHeight, headerHeight) => {
-  const calculatedHeight = rowData.length * rowHeight + headerHeight + 20;
-  const gridHeight = Math.min(calculatedHeight, 700);
-
-  return {
-    height: `${gridHeight}px`,
-    width: `${tableWidth * 0.96}px`,
-  };
-};
-
 const CampgroundAvailability = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [availabilityData, setAvailabilityData] = useState(
-    location.state?.availabilityData,
+    location.state?.availabilityData
   );
   const facilityID = location.state?.facilityID;
   const facilityName =
@@ -86,8 +58,6 @@ const CampgroundAvailability = () => {
   const facilityState = location.state?.facilityState;
   const [alertModal, setAlertModal] = useState(false);
   const [selectedCampsite, setSelectedCampsite] = useState(null);
-  const [tableWidth, setTableWidth] = useState(window.innerWidth);
-  const [gridApi, setGridApi] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState("");
   const [alertDetails, setAlertDetails] = useState({
     name: "",
@@ -100,19 +70,10 @@ const CampgroundAvailability = () => {
   const [isCreatingAlert, setIsCreatingAlert] = useState(false);
   const [hideNotReservable, setHideNotReservable] = useState(false);
   const isMounted = useRef(true);
-  const rowHeight = 30;
-  const headerHeight = 30;
-  const [selectedCampsites, setSelectedCampsites] = useState([]);
+
+  const [selectedCampsiteIds, setSelectedCampsiteIds] = useState(new Set());
   const [bulkAlertModal, setBulkAlertModal] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setTableWidth(window.innerWidth);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [gridApi]);
+  const [sortConfig, setSortConfig] = useState({ key: "campsite", direction: "asc" });
 
   useEffect(() => {
     return () => {
@@ -129,17 +90,17 @@ const CampgroundAvailability = () => {
     const hasAnyAvailabilityKeys = campsitesData.some(
       (campsite) =>
         campsite.availabilities &&
-        Object.keys(campsite.availabilities).length > 0,
+        Object.keys(campsite.availabilities).length > 0
     );
 
     let datesArray = Array.from(
       new Set(
         campsitesData.flatMap((campsite) =>
           Object.keys(campsite.availabilities || {}).map((date) =>
-            date.substring(0, 10),
-          ),
-        ),
-      ),
+            date.substring(0, 10)
+          )
+        )
+      )
     ).sort();
 
     let missingSeason = false;
@@ -155,8 +116,8 @@ const CampgroundAvailability = () => {
             0,
             0,
             0,
-            0,
-          ),
+            0
+          )
         ).toISOString();
       datesArray = getUtcDateStringsForMonth(monthAnchorIso);
     }
@@ -166,6 +127,7 @@ const CampgroundAvailability = () => {
         campsite: `${campsite.site}`,
         loop: `${campsite.loop}`,
         campsiteObj: campsite,
+        id: `${campsite.site}-${campsite.loop}`
       };
 
       datesArray.forEach((date) => {
@@ -205,7 +167,7 @@ const CampgroundAvailability = () => {
         const status = row.campsiteObj?.availabilities[`${date}T00:00:00Z`];
         return isNonReservableStatus(status);
       });
-      map.set(row.campsite, isNotReservable);
+      map.set(row.id, isNotReservable);
     });
     return map;
   }, [rowData, dates, missingSeasonDates]);
@@ -213,8 +175,32 @@ const CampgroundAvailability = () => {
   const filteredRows = useMemo(() => {
     if (!rowData.length) return [];
     if (!hideNotReservable) return rowData;
-    return rowData.filter((row) => !notReservableMap.get(row.campsite));
+    return rowData.filter((row) => !notReservableMap.get(row.id));
   }, [rowData, hideNotReservable, notReservableMap]);
+
+  const sortedRows = useMemo(() => {
+    if (!sortConfig.key) return filteredRows;
+
+    return [...filteredRows].sort((a, b) => {
+      let aVal = a[sortConfig.key];
+      let bVal = b[sortConfig.key];
+
+      // Natural sort for campsite numbers
+      if (sortConfig.key === "campsite") {
+        return sortConfig.direction === "asc"
+          ? aVal.localeCompare(bVal, undefined, { numeric: true, sensitivity: 'base' })
+          : bVal.localeCompare(aVal, undefined, { numeric: true, sensitivity: 'base' });
+      }
+
+      if (aVal < bVal) return sortConfig.direction === "asc" ? -1 : 1;
+      if (aVal > bVal) return sortConfig.direction === "asc" ? 1 : -1;
+      return 0;
+    });
+  }, [filteredRows, sortConfig]);
+
+  const selectedCampsiteObjects = useMemo(() => {
+    return filteredRows.filter(row => selectedCampsiteIds.has(row.id));
+  }, [filteredRows, selectedCampsiteIds]);
 
   if (!availabilityData || !availabilityData.campsites) {
     return (
@@ -261,13 +247,14 @@ const CampgroundAvailability = () => {
     setSelectedMonth(event.target.value);
     const startDate = new Date(event.target.value);
     const utcDate = new Date(
-      Date.UTC(startDate.getFullYear(), startDate.getMonth(), 1, 0, 0, 0, 0),
+      Date.UTC(startDate.getFullYear(), startDate.getMonth(), 1, 0, 0, 0, 0)
     );
     setStartDate(utcDate.toISOString());
   };
 
   const handleMonthChange = async () => {
     setIsLoading(true);
+    setSelectedCampsiteIds(new Set());
 
     try {
       if (!facilityID) {
@@ -284,24 +271,32 @@ const CampgroundAvailability = () => {
     }
   };
 
-  const handleSelectionChanged = (event) => {
-    const selectedRows = event.api.getSelectedRows();
-    setSelectedCampsites(selectedRows);
+  const handleSelectRow = (id) => {
+    setSelectedCampsiteIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
   };
 
-  /**
-   * Clears all row checkboxes in the availability grid; selection state
-   * updates via `onSelectionChanged`.
-   */
-  const handleClearGridSelection = () => {
-    if (!gridApi) {
-      return;
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedCampsiteIds(new Set(filteredRows.map(row => row.id)));
+    } else {
+      setSelectedCampsiteIds(new Set());
     }
-    gridApi.deselectAll();
+  };
+
+  const handleClearGridSelection = () => {
+    setSelectedCampsiteIds(new Set());
   };
 
   const handleBulkAlertClick = () => {
-    if (selectedCampsites.length === 0) return;
+    if (selectedCampsiteObjects.length === 0) return;
 
     setAlertDetails((prev) => ({
       ...prev,
@@ -311,390 +306,339 @@ const CampgroundAvailability = () => {
     setBulkAlertModal(true);
   };
 
-  const renderCalendar = () => {
-    const gridStyle = calculateGridStyle(
-      rowData,
-      tableWidth,
-      rowHeight,
-      headerHeight,
-    );
+  const requestSort = (key) => {
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
 
-    const columnDefs = [
-      {
-        headerName: "",
-        field: "checkbox",
-        headerCheckboxSelection: true,
-        checkboxSelection: true,
-        width: 50,
-        pinned: "left",
-        lockPinned: true,
-        suppressSizeToFit: false,
-        resizable: false,
-        filter: false,
-        cellClass: "availability-grid-pinned-cell",
-      },
-      {
-        headerName: "Campsite",
-        field: "campsite",
-        pinned: "left",
-        lockPinned: true,
-        width: 130,
-        suppressSizeToFit: false,
-        resizable: true,
-        cellClass: "availability-grid-pinned-cell",
-        cellStyle: {
-          textAlign: "center",
-        },
-        headerClass: "ag-header-cell-center",
-      },
-      ...(rowData.some((row) => row.loop)
-        ? [
-            {
-              headerName: "Loop",
-              field: "loop",
-              pinned: "left",
-              lockPinned: true,
-              suppressSizeToFit: false,
-              resizable: true,
-              width: 200,
-              headerClass: "ag-header-cell-center",
-              cellClass: "availability-grid-pinned-cell",
-            },
-          ]
-        : []),
-      ...dates.map((date) => ({
-        headerName: `${parseInt(date.substring(5, 7), 10)}/${parseInt(date.substring(8, 10), 10)}`,
-        field: date,
-        width: 80,
-        headerClass: "ag-header-cell-center",
-        cellClassRules: {
-          "season-empty-placeholder": (params) =>
-            Boolean(params.value && params.value.emptySeasonPlaceholder),
-          "status-available": (params) =>
-            params.value && params.value.available,
-          "status-reserved": (params) =>
-            params.value &&
-            !params.value.available &&
-            params.value.status === "Reserved",
-          "status-nyr": (params) =>
-            params.value &&
-            !params.value.available &&
-            params.value.status === "NYR",
-          "status-not-reservable": (params) =>
-            params.value &&
-            !params.value.available &&
-            isNonReservableStatus(params.value.status) &&
-            params.value.status !== "NYR" &&
-            !params.value.emptySeasonPlaceholder,
-          "clickable-cell": (params) =>
-            params.value &&
-            !params.value.emptySeasonPlaceholder &&
-            !params.value.available &&
-            (!isNonReservableStatus(params.value.status) ||
-              params.value.status === "NYR"),
-        },
-        onCellClicked: (params) => {
-          const data = params.value;
-          if (
-            !data ||
-            data.emptySeasonPlaceholder ||
-            data.available ||
-            (isNonReservableStatus(data.status) && data.status !== "NYR")
-          ) {
-            return;
-          }
-          handleUnavailableClick(params.data.campsiteObj, date);
-        },
-        cellRenderer: (params) => {
-          const data = params.value;
-          if (!data || data.emptySeasonPlaceholder) {
-            return (
-              <span
-                className="status-pill season-empty"
-                aria-label="No season dates from campground"
-              />
-            );
-          }
-          let statusClass = "not-reservable";
-          let text = "NR";
+  const renderSortIcon = (key) => {
+    if (sortConfig.key !== key) return null;
+    return sortConfig.direction === "asc" ? <LuChevronUp className="sort-icon" /> : <LuChevronDown className="sort-icon" />;
+  };
 
-          if (data.available) {
-            statusClass = "available";
-            text = "A";
-          } else if (data.status === "Reserved") {
-            statusClass = "reserved";
-            text = "R";
-          } else if (data.status === "NYR") {
-            statusClass = "nyr";
-            text = "N";
-          } else {
-            statusClass = "not-reservable";
-            text = "X";
-          }
+  const availabilitySchema = {
+    "@context": "https://schema.org",
+    "@type": "Event",
+    name: "Campground Availability Calendar",
+    description: "Real-time availability calendar for campground bookings",
+    eventStatus: "https://schema.org/EventScheduled",
+    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+    offers: {
+      "@type": "Offer",
+      availability: "https://schema.org/InStock",
+      availabilityStarts: startDate,
+      availabilityEnds: alertDetails.endDate,
+    },
+  };
 
-          return <span className={`status-pill ${statusClass}`}>{text}</span>;
-        },
-        cellStyle: {
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: "0.75rem",
-          padding: "0",
-        },
-      })),
-    ];
+  return (
+    <>
+      <Helmet>
+        <title>
+          {facilityName
+            ? `${facilityName} - Availability | Kamp Scout`
+            : "Campground Availability | Kamp Scout"}
+        </title>
+        <meta name="theme-color" content="#2b4c1c" />
+        <script type="application/ld+json">
+          {JSON.stringify(availabilitySchema)}
+        </script>
+      </Helmet>
+      <div className="campground-availability-container explorer-mode">
+        {isLoading && <LoadingSpinner fullPage />}
 
-    const availabilitySchema = {
-      "@context": "https://schema.org",
-      "@type": "Event",
-      name: "Campground Availability Calendar",
-      description: "Real-time availability calendar for campground bookings",
-      eventStatus: "https://schema.org/EventScheduled",
-      eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-      offers: {
-        "@type": "Offer",
-        availability: "https://schema.org/InStock",
-        availabilityStarts: startDate,
-        availabilityEnds: alertDetails.endDate,
-      },
-    };
-
-    return (
-      <>
-        <Helmet>
-          <title>
-            {facilityName
-              ? `${facilityName} - Availability | Kamp Scout`
-              : "Campground Availability | Kamp Scout"}
-          </title>
-          <meta name="theme-color" content="#2b4c1c" />
-          <script type="application/ld+json">
-            {JSON.stringify(availabilitySchema)}
-          </script>
-        </Helmet>
-        <div className="campground-availability-container explorer-mode">
-          {isLoading && <LoadingSpinner fullPage />}
-
-          <div className="hero-section persistent-stack">
-            <div className="hero-container">
-              <h1>
-                {facilityName || "Campground Availability"}
-                {facilityState && (
-                  <span className="state-indicator"> ({facilityState})</span>
-                )}
-              </h1>
-              <p className="description">
-                Explore real-time availability and set reservation alerts
-              </p>
-            </div>
-          </div>
-
-          <div className="controls-wrapper persistent-stack">
-            <div className="controls-container">
-              <div className="availability-card">
-                <div className="availability-header">
-                  <h2>Monthly Campground Availability</h2>
-                </div>
-                <div className="availability-body">
-                  <div className="availability-row">
-                    <div className="select-container">
-                      <LuCalendar className="input-icon" />
-                      <select
-                        id="month-select"
-                        value={selectedMonth}
-                        onChange={handleSelectChange}
-                        className="month-select"
-                        disabled={isLoading}
-                        aria-label="Select a month"
-                      >
-                        <option value="">Select a month...</option>
-                        {getNextMonths().map((month) => (
-                          <option key={month.value} value={month.value}>
-                            {month.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <button
-                      onClick={handleMonthChange}
-                      className="check-availability-btn"
-                      disabled={!selectedMonth || isLoading}
-                    >
-                      {isLoading ? (
-                        <>
-                          <LoadingSpinner size="small" />
-                          <span style={{ marginLeft: "8px" }}>Loading...</span>
-                        </>
-                      ) : (
-                        "Check"
-                      )}
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="info-text">
-                <h3>How to use:</h3>
-                <div className="info-content">
-                  <div className="info-item">
-                    <span className="bullet">•</span>
-                    <span>
-                      Click on any Reserved or Not Yet Released date to create
-                      an alert for that date
-                    </span>
-                  </div>
-                  <div className="info-item">
-                    <span className="bullet">•</span>
-                    <span>
-                      Use checkboxes to select multiple campsites, then click
-                      &quot;Create Alert for Selected&quot; to create an alert
-                      for them
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="availability-grid-container">
-            <div className="availability-legend">
-              {missingSeasonDates && (
-                <div className="season-dates-info-notification" role="status">
-                  <p className="season-dates-info-notification__title">
-                    Info Notification:
-                  </p>
-                  <p className="season-dates-info-notification__body">
-                    Campground management has not identified season dates for
-                    this period. Please check back soon. Reservation alerts can
-                    still be created for monitoring if/when a campsite becomes
-                    available.
-                  </p>
-                </div>
+        <div className="hero-section persistent-stack">
+          <div className="hero-container">
+            <h1>
+              {facilityName || "Campground Availability"}
+              {facilityState && (
+                <span className="state-indicator"> ({facilityState})</span>
               )}
-              <span className="legend-item">
-                <strong>A</strong> = Available
-              </span>
-              <span className="legend-item reserved">
-                <strong>R</strong> = Reserved
-              </span>
-              <span className="legend-item not-yet-released">
-                <strong>N</strong> = Not Yet Released
-              </span>
-              <span className="legend-item not-reservable">
-                <strong>X</strong> = Not Reservable/Not Available
-              </span>
-              <div className="legend-controls">
+            </h1>
+            <p className="description">
+              Explore real-time availability and set reservation alerts
+            </p>
+          </div>
+        </div>
+
+        <div className="controls-wrapper persistent-stack">
+          <div className="controls-container">
+            <div className="availability-card">
+              <div className="availability-header">
+                <h2>Monthly Campground Availability</h2>
+              </div>
+              <div className="availability-body">
+                <div className="availability-row">
+                  <div className="select-container">
+                    <LuCalendar className="input-icon" />
+                    <select
+                      id="month-select"
+                      value={selectedMonth}
+                      onChange={handleSelectChange}
+                      className="month-select"
+                      disabled={isLoading}
+                      aria-label="Select a month"
+                    >
+                      <option value="">Select a month...</option>
+                      {getNextMonths().map((month) => (
+                        <option key={month.value} value={month.value}>
+                          {month.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <button
+                    onClick={handleMonthChange}
+                    className="check-availability-btn"
+                    disabled={!selectedMonth || isLoading}
+                  >
+                    {isLoading ? (
+                      <>
+                        <LoadingSpinner size="small" />
+                        <span style={{ marginLeft: "8px" }}>Loading...</span>
+                      </>
+                    ) : (
+                      "Check"
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="info-text">
+              <h3>How to use:</h3>
+              <div className="info-content">
+                <div className="info-item">
+                  <span className="bullet">•</span>
+                  <span>
+                    Click on any Reserved or Not Yet Released date to create
+                    an alert for that date
+                  </span>
+                </div>
+                <div className="info-item">
+                  <span className="bullet">•</span>
+                  <span>
+                    Use checkboxes to select multiple campsites, then click
+                    &quot;Create Alert for Selected&quot; to create an alert
+                    for them
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="availability-grid-container">
+          <div className="availability-legend">
+            {missingSeasonDates && (
+              <div className="season-dates-info-notification" role="status">
+                <p className="season-dates-info-notification__title">
+                  Info Notification:
+                </p>
+                <p className="season-dates-info-notification__body">
+                  Campground management has not identified season dates for
+                  this period. Please check back soon. Reservation alerts can
+                  still be created for monitoring if/when a campsite becomes
+                  available.
+                </p>
+              </div>
+            )}
+            <span className="legend-item">
+              <strong>A</strong> = Available
+            </span>
+            <span className="legend-item reserved">
+              <strong>R</strong> = Reserved
+            </span>
+            <span className="legend-item not-yet-released">
+              <strong>N</strong> = Not Yet Released
+            </span>
+            <span className="legend-item not-reservable">
+              <strong>X</strong> = Not Reservable/Not Available
+            </span>
+            <div className="legend-controls">
+              <div className="checkbox-wrapper">
                 <input
                   type="checkbox"
                   id="hideNotReservable"
                   checked={hideNotReservable}
                   onChange={(e) => setHideNotReservable(e.target.checked)}
                 />
-                <label htmlFor="hideNotReservable">
-                  Hide campsites that are not reservable for all dates
-                </label>
               </div>
+              <label htmlFor="hideNotReservable">
+                Hide campsites that are not reservable for all dates
+              </label>
+            </div>
 
-              {selectedCampsites.length > 0 && (
-                <div
-                  className="availability-selection-bar"
-                  role="region"
-                  aria-label="Selected campsites"
+            {selectedCampsiteIds.size > 0 && (
+              <div
+                className="availability-selection-bar"
+                role="region"
+                aria-label="Selected campsites"
+              >
+                <p
+                  className="availability-selection-bar__summary"
+                  aria-live="polite"
                 >
-                  <p
-                    className="availability-selection-bar__summary"
-                    aria-live="polite"
+                  <strong>{selectedCampsiteIds.size}</strong> campsite
+                  {selectedCampsiteIds.size !== 1 ? "s" : ""} selected
+                </p>
+                <div className="availability-selection-bar__actions">
+                  <button
+                    type="button"
+                    className="availability-selection-bar__clear"
+                    onClick={handleClearGridSelection}
                   >
-                    <strong>{selectedCampsites.length}</strong> campsite
-                    {selectedCampsites.length !== 1 ? "s" : ""} selected
-                  </p>
-                  <div className="availability-selection-bar__actions">
-                    <button
-                      type="button"
-                      className="availability-selection-bar__clear"
-                      onClick={handleClearGridSelection}
-                    >
-                      Clear selection
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleBulkAlertClick}
-                      className="bulk-alert-button"
-                    >
-                      Create Alert for {selectedCampsites.length} Selected
-                      Campsite
-                      {selectedCampsites.length !== 1 ? "s" : ""}
-                    </button>
-                  </div>
+                    Clear selection
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleBulkAlertClick}
+                    className="bulk-alert-button"
+                  >
+                    Create Alert for {selectedCampsiteIds.size} Selected
+                    Campsite
+                    {selectedCampsiteIds.size !== 1 ? "s" : ""}
+                  </button>
                 </div>
-              )}
-            </div>
-
-            <div className="availability-grid-centered-wrapper">
-              <div className="ag-theme-alpine" style={gridStyle}>
-                <AgGridReact
-                  rowData={filteredRows}
-                  columnDefs={columnDefs}
-                  suppressHorizontalScroll={false}
-                  defaultColDef={{
-                    sortable: true,
-                    resizable: true,
-                    filter: true,
-                  }}
-                  onGridReady={(params) => {
-                    setGridApi(params.api);
-                  }}
-                  headerHeight={headerHeight}
-                  rowHeight={rowHeight}
-                  domLayout="normal"
-                  rowSelection="multiple"
-                  onSelectionChanged={handleSelectionChanged}
-                  suppressCellSelection={true}
-                  suppressRowClickSelection={true}
-                  enableCellTextSelection={true}
-                />
               </div>
-            </div>
+            )}
           </div>
 
-          <AlertModal
-            isOpen={alertModal}
-            onClose={() => setAlertModal(false)}
-            title="Availability Alert"
-            subtitle={
-              selectedCampsite
-                ? `Campsite: ${selectedCampsite.site} - ${selectedCampsite.loop}`
-                : ""
-            }
-            alertDetails={alertDetails}
-            setAlertDetails={setAlertDetails}
-            isCreatingAlert={isCreatingAlert}
-            setIsCreatingAlert={setIsCreatingAlert}
-            selectedCampsite={selectedCampsite}
-            campsiteName={facilityName}
-            facilityId={facilityID}
-          />
+          <div className="availability-grid-centered-wrapper">
+            <div className="modern-availability-table-container">
+              <table className="modern-availability-table">
+                <thead>
+                  <tr>
+                    <th className="sticky-col checkbox-col">
+                      <input
+                        type="checkbox"
+                        onChange={handleSelectAll}
+                        checked={filteredRows.length > 0 && selectedCampsiteIds.size === filteredRows.length}
+                      />
+                    </th>
+                    <th className="sticky-col campsite-col sortable" onClick={() => requestSort("campsite")}>
+                      Campsite {renderSortIcon("campsite")}
+                    </th>
+                    {rowData.some((row) => row.loop) && (
+                      <th className="sticky-col loop-col sortable" onClick={() => requestSort("loop")}>
+                        Loop {renderSortIcon("loop")}
+                      </th>
+                    )}
+                    {dates.map((date) => (
+                      <th key={date} className="date-col">
+                        {parseInt(date.substring(5, 7), 10)}/{parseInt(date.substring(8, 10), 10)}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {sortedRows.map((row) => (
+                    <tr key={row.id} className={selectedCampsiteIds.has(row.id) ? "selected-row" : ""}>
+                      <td className="sticky-col checkbox-col">
+                        <input
+                          type="checkbox"
+                          checked={selectedCampsiteIds.has(row.id)}
+                          onChange={() => handleSelectRow(row.id)}
+                        />
+                      </td>
+                      <td className="sticky-col campsite-col">{row.campsite}</td>
+                      {rowData.some((r) => r.loop) && (
+                        <td className="sticky-col loop-col">{row.loop}</td>
+                      )}
+                      {dates.map((date) => {
+                        const data = row[date];
+                        if (!data || data.emptySeasonPlaceholder) {
+                          return (
+                            <td key={date} className="status-cell season-empty-placeholder">
+                              <span
+                                className="status-pill season-empty"
+                                aria-label="No season dates from campground"
+                              />
+                            </td>
+                          );
+                        }
 
-          <AlertModal
-            isOpen={bulkAlertModal}
-            onClose={() => setBulkAlertModal(false)}
-            title="Bulk Availability Alert"
-            subtitle={`${selectedCampsites.length} Campsites Selected`}
-            alertDetails={alertDetails}
-            setAlertDetails={setAlertDetails}
-            isCreatingAlert={isCreatingAlert}
-            setIsCreatingAlert={setIsCreatingAlert}
-            selectedCampsites={selectedCampsites}
-            campsiteName={facilityName}
-            isBulkAlert={true}
-            facilityId={facilityID}
-          />
+                        let statusClass = "not-reservable";
+                        let text = "X";
+                        let isClickable = false;
+
+                        if (data.available) {
+                          statusClass = "available";
+                          text = "A";
+                        } else if (data.status === "Reserved") {
+                          statusClass = "reserved";
+                          text = "R";
+                          isClickable = true;
+                        } else if (data.status === "NYR") {
+                          statusClass = "nyr";
+                          text = "N";
+                          isClickable = true;
+                        } else if (isNonReservableStatus(data.status)) {
+                          statusClass = "not-reservable";
+                          text = "X";
+                        } else {
+                          // Other unavailable but potentially alertable statuses
+                          statusClass = "not-reservable";
+                          text = "X";
+                          isClickable = true;
+                        }
+
+                        return (
+                          <td
+                            key={date}
+                            className={`status-cell status-${statusClass} ${isClickable ? "clickable-cell" : ""}`}
+                            onClick={() => isClickable && handleUnavailableClick(row.campsiteObj, date)}
+                          >
+                            <span className={`status-pill ${statusClass}`}>{text}</span>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
-      </>
-    );
-  };
 
-  return renderCalendar();
+        <AlertModal
+          isOpen={alertModal}
+          onClose={() => setAlertModal(false)}
+          title="Availability Alert"
+          subtitle={
+            selectedCampsite
+              ? `Campsite: ${selectedCampsite.site} - ${selectedCampsite.loop}`
+              : ""
+          }
+          alertDetails={alertDetails}
+          setAlertDetails={setAlertDetails}
+          isCreatingAlert={isCreatingAlert}
+          setIsCreatingAlert={setIsCreatingAlert}
+          selectedCampsite={selectedCampsite}
+          campsiteName={facilityName}
+          facilityId={facilityID}
+        />
+
+        <AlertModal
+          isOpen={bulkAlertModal}
+          onClose={() => setBulkAlertModal(false)}
+          title="Bulk Availability Alert"
+          subtitle={`${selectedCampsiteObjects.length} Campsites Selected`}
+          alertDetails={alertDetails}
+          setAlertDetails={setAlertDetails}
+          isCreatingAlert={isCreatingAlert}
+          setIsCreatingAlert={setIsCreatingAlert}
+          selectedCampsites={selectedCampsiteObjects.map(r => r.campsiteObj)}
+          campsiteName={facilityName}
+          isBulkAlert={true}
+          facilityId={facilityID}
+        />
+      </div>
+    </>
+  );
 };
 
 export default CampgroundAvailability;

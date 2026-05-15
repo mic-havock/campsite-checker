@@ -66,11 +66,6 @@
         opacity: 0.6;
         letter-spacing: 0.02em;
         margin-bottom: 0;
-        text-align: center;
-
-        @include mobile {
-          font-size: 0.75rem;
-        }
       }
     }
   }
@@ -217,29 +212,10 @@
                 transform: translateY(-1px);
               }
 
-              &:active:not(:disabled) {
-                transform: translateY(0);
-              }
-
-              &:focus {
-                outline: none;
-                box-shadow: 0 0 0 3px rgba($color-forest-green, 0.3);
-              }
-
               &:disabled {
                 background-color: lighten($color-stone, 20%);
                 cursor: not-allowed;
                 opacity: 0.7;
-                box-shadow: none;
-              }
-            }
-
-            @media (max-width: 768px) {
-              flex-direction: column;
-              width: 100%;
-
-              .check-availability-btn {
-                width: 100%;
               }
             }
           }
@@ -401,17 +377,29 @@
           border-top: 1px solid rgba(0, 0, 0, 0.1);
         }
 
-        input[type="checkbox"] {
-          cursor: pointer;
+        .checkbox-wrapper {
+          display: flex;
+          align-items: center;
+          justify-content: center;
           width: 16px;
           height: 16px;
-          accent-color: $primary-color;
+
+          input[type="checkbox"] {
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+            margin: 0;
+            accent-color: $color-forest-green;
+            -webkit-appearance: checkbox !important;
+            appearance: checkbox !important;
+          }
         }
 
         label {
           cursor: pointer;
           font-weight: 600;
           color: $text-primary;
+          font-size: 0.75rem;
         }
       }
     }
@@ -426,23 +414,16 @@
       align-items: center;
       justify-content: center;
       gap: 0.75rem 1.25rem;
-      margin-bottom: 0rem;
-      margin-top: 0rem;
+      margin-bottom: 1rem;
       padding: 0.75rem 1.5rem;
       background-color: rgba(46, 125, 50, 0.06);
       border: 1px solid rgba(46, 125, 50, 0.2);
       border-radius: $button-border-radius;
 
-      @include mobile {
-        padding: 0.75rem 1rem;
-      }
-
       .availability-selection-bar__summary {
         margin: 0;
         font-size: 0.85rem;
-        line-height: 1.35;
         color: $text-primary;
-        text-align: center;
 
         strong {
           font-weight: 800;
@@ -452,19 +433,7 @@
 
       .availability-selection-bar__actions {
         display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: center;
-        gap: 0.65rem 0.85rem;
-
-        @include mobile {
-          width: 100%;
-          max-width: 22rem;
-          margin-left: auto;
-          margin-right: auto;
-          flex-direction: column;
-          align-items: stretch;
-        }
+        gap: 0.85rem;
       }
 
       .availability-selection-bar__clear {
@@ -476,18 +445,9 @@
         border: 1px solid rgba(0, 0, 0, 0.18);
         border-radius: 8px;
         cursor: pointer;
-        transition:
-          background-color 0.15s ease,
-          border-color 0.15s ease;
 
         &:hover {
           background-color: rgba(255, 255, 255, 0.65);
-          border-color: rgba(0, 0, 0, 0.28);
-        }
-
-        @include mobile {
-          width: 100%;
-          text-align: center;
         }
       }
 
@@ -500,243 +460,241 @@
         cursor: pointer;
         font-size: 0.8rem;
         font-weight: 700;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        white-space: nowrap;
         box-shadow: $shadow-sm;
-        transition: all 0.2s ease;
 
         &:hover {
           background-color: darken($color-forest-green, 5%);
-          transform: translateY(-1px);
-          box-shadow: $shadow-md;
-        }
-
-        @include mobile {
-          width: 100%;
         }
       }
     }
 
     .availability-grid-centered-wrapper {
+      width: 100%;
+      max-width: 1200px;
       margin: 0 auto;
-      width: fit-content;
-      max-width: calc(100vw - 3rem);
+      padding: 0 1.5rem;
       box-sizing: border-box;
 
       @include mobile {
-        max-width: calc(100vw - 2rem);
+        padding: 0 1rem;
       }
     }
   }
 
-  .ag-theme-alpine {
-  width: 100%;
-  --ag-header-background-color: #{$background-base};
-  --ag-header-foreground-color: #{$color-forest-green};
-  --ag-background-color: #{$background-base};
-  --ag-odd-row-background-color: #{$background-base};
-  --ag-row-hover-color: #{mix($background-base, #000000, 96%)};
-  --ag-selected-row-background-color: #{rgba($color-forest-green, 0.1)};
-  --ag-column-hover-color: #{mix($background-base, #000000, 96%)};
-  --ag-border-color: transparent;
-  --ag-row-border-color: transparent;
-  --ag-header-column-separator-display: none;
-  --ag-row-height: 48px;
-  --ag-header-height: 48px;
-  --ag-font-family: inherit;
-  --ag-borders: none;
-  --ag-cell-focus-border-color: transparent;
+  .modern-availability-table-container {
+    width: 100%;
+    overflow-x: auto;
+    background-color: $background-base;
+    border-radius: $button-border-radius;
+    box-shadow: $shadow-md;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    position: relative;
+    max-height: 700px;
+    overflow-y: auto;
 
-  background-color: $background-base;
-  border-radius: $button-border-radius;
-  box-shadow: $shadow-md;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+    &::-webkit-scrollbar {
+      height: 8px;
+      width: 8px;
+    }
 
-  .ag-header {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  }
+    &::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.03);
+    }
 
-  .ag-cell.availability-grid-pinned-cell {
-    background-color: $card-bg !important;
-  }
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 4px;
 
-  .ag-row-hover .ag-cell.availability-grid-pinned-cell {
-    background-color: mix($card-bg, $color-moss, 78%) !important;
-  }
-
-  .ag-row-selected .ag-cell.availability-grid-pinned-cell {
-    background-color: mix($card-bg, $color-forest-green, 86%) !important;
-  }
-
-  .ag-pinned-left-header .ag-header-cell {
-    background-color: $card-bg !important;
-  }
-
-  .ag-cell-focus {
-    outline: none !important;
-    border: none !important;
-  }
-
-  .ag-header-cell-text {
-    font-size: 0.75rem !important;
-    font-weight: 700 !important;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: $color-forest-green !important;
-  }
-
-  .ag-header-cell-center {
-    .ag-header-cell-label {
-      justify-content: center;
+      &:hover {
+        background: rgba(0, 0, 0, 0.2);
+      }
     }
   }
 
-  .ag-cell {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 !important;
-    border-right: 1px solid transparent !important;
-    border-bottom: 1px solid transparent !important;
-    box-sizing: border-box;
+  .modern-availability-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.85rem;
+    color: $text-primary;
 
-    &:last-child {
-      border-right: 1px solid transparent !important;
-    }
+    thead {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background-color: $background-base;
 
-    &.season-empty-placeholder {
-      border-radius: 5px;
-      overflow: hidden;
-      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
-      transition: box-shadow 0.2s ease;
-      background-color: $card-bg !important;
-      cursor: default;
-    }
+      tr {
+        background-color: $background-base;
+      }
 
-    &.status-available,
-    &.status-reserved,
-    &.status-nyr,
-    &.status-not-reservable {
-      border-radius: 5px;
-      overflow: hidden;
-      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
-      transition: box-shadow 0.2s ease;
-      background-color: $card-bg !important;
-    }
+      th {
+        padding: 0.75rem 1rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: $color-forest-green;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        white-space: nowrap;
+        text-align: center;
+        background-color: $background-base;
 
-    &.status-available {
-      .status-pill.available {
-        margin: auto;
-        width: auto !important;
-        height: auto !important;
-        min-width: 24px;
-        min-height: 24px;
-        padding: 0 6px;
-        border-radius: 4px;
-        background-color: $availability-available-bg;
-        color: $availability-available-fg;
+        &.sortable {
+          cursor: pointer;
+          user-select: none;
+
+          &:hover {
+            background-color: rgba(0, 0, 0, 0.03);
+          }
+        }
+
+        .sort-icon {
+          display: inline-block;
+          vertical-align: middle;
+          margin-left: 4px;
+          font-size: 0.9rem;
+        }
       }
     }
 
-    &.status-reserved {
-      .status-pill.reserved {
-        margin: auto;
-        width: auto !important;
-        height: auto !important;
-        min-width: 24px;
-        min-height: 24px;
-        padding: 0 6px;
-        border-radius: 4px;
-        background-color: $availability-reserved-bg;
-        color: $availability-reserved-fg;
+    tbody {
+      tr {
+        transition: background-color 0.15s ease;
+
+        &:hover {
+          background-color: mix($background-base, #000000, 96%);
+
+          .sticky-col {
+            background-color: mix($background-base, #000000, 96%);
+          }
+        }
+
+        &.selected-row {
+          background-color: rgba($color-forest-green, 0.1);
+
+          .sticky-col {
+            background-color: mix($background-base, $color-forest-green, 92%) !important;
+          }
+        }
+      }
+
+      td {
+        padding: 0.5rem;
+        border-bottom: 1px solid transparent;
+        text-align: center;
+        height: 48px;
+        box-sizing: border-box;
       }
     }
 
-    &.status-nyr {
-      .status-pill.nyr {
-        margin: auto;
-        width: auto !important;
-        height: auto !important;
-        min-width: 24px;
-        min-height: 24px;
-        padding: 0 6px;
-        border-radius: 4px;
-        background-color: $availability-nyr-bg;
-        color: $availability-nyr-fg;
+    .sticky-col {
+      position: sticky;
+      z-index: 10;
+      background-color: $card-bg;
+      box-shadow: 2px 0 4px rgba(0, 0, 0, 0.03);
+      border-right: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    thead th.sticky-col {
+      z-index: 110;
+      background-color: $background-base;
+    }
+
+    .checkbox-col {
+      left: 0;
+      width: 50px;
+      min-width: 50px;
+
+      input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+        accent-color: $color-forest-green;
+        -webkit-appearance: checkbox !important;
+        appearance: checkbox !important;
       }
     }
 
-    &.status-not-reservable {
-      .status-pill.not-reservable {
-        margin: auto;
-        width: auto !important;
-        height: auto !important;
-        min-width: 24px;
-        min-height: 24px;
-        padding: 0 6px;
-        border-radius: 4px;
-        background-color: $availability-not-reservable-bg;
-        color: $availability-not-reservable-fg;
+    .campsite-col {
+      left: 50px;
+      width: 130px;
+      min-width: 130px;
+      font-weight: 600;
+      color: $color-forest-green;
+    }
+
+    .loop-col {
+      left: 180px;
+      width: 180px;
+      min-width: 180px;
+      font-size: 0.75rem;
+      color: $text-primary;
+    }
+
+    .date-col {
+      width: 80px;
+      min-width: 80px;
+    }
+
+    .status-cell {
+      padding: 0;
+
+      &.clickable-cell {
+        cursor: pointer;
+
+        &:hover {
+          box-shadow: inset 0 0 0 2px rgba($color-forest-green, 0.45);
+        }
+      }
+
+      &.season-empty-placeholder {
+        background-color: $card-bg;
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
       }
     }
 
     .status-pill {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      height: 100%;
-      width: 100%;
-      margin: 0;
-      border-radius: 0;
-      font-weight: 600;
+      min-width: 28px;
+      height: 28px;
+      padding: 0 8px;
+      border-radius: 6px;
       font-size: 0.8rem;
+      font-weight: 700;
       line-height: 1;
-      white-space: nowrap;
+
+      &.available {
+        background-color: $availability-available-bg;
+        color: $availability-available-fg;
+      }
+
+      &.reserved {
+        background-color: $availability-reserved-bg;
+        color: $availability-reserved-fg;
+      }
+
+      &.nyr {
+        background-color: $availability-nyr-bg;
+        color: $availability-nyr-fg;
+      }
+
+      &.not-reservable {
+        background-color: $availability-not-reservable-bg;
+        color: $availability-not-reservable-fg;
+      }
 
       &.season-empty {
-        background-color: transparent !important;
+        background-color: transparent;
         color: transparent;
-        min-height: 4px;
       }
     }
-
-    &.clickable-cell {
-      cursor: pointer !important;
-    }
-
-    &.clickable-cell:hover {
-      box-shadow: inset 0 0 0 2px rgba($color-forest-green, 0.45) !important;
-    }
   }
-
-  .ag-row {
-    border-bottom: none !important;
-  }
-
-  .ag-root-wrapper {
-    border: none !important;
-  }
-
-  .ag-pinned-left-header {
-    border-right: 1px solid rgba(0, 0, 0, 0.06) !important;
-  }
-
-  .ag-pinned-left-cols-container {
-    background-color: $card-bg;
-    border-right: 1px solid rgba(0, 0, 0, 0.06) !important;
-  }
-}
 }
 
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
