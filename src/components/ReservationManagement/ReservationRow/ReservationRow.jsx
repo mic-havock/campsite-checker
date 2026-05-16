@@ -207,13 +207,6 @@ const ReservationRow = ({ reservation, onDelete, onStatsUpdate }) => {
           aria-labelledby="reservation-row-modal-title"
           tabIndex={-1}
         >
-          <button
-            type="button"
-            className="reservation-campsite-modal-close"
-            onClick={() => setShowCampsiteModal(false)}
-          >
-            Close
-          </button>
           <h2 id="reservation-row-modal-title" className="visually-hidden">
             {`Campsite details for ${reservation.campsite_name ?? "reservation"}`}
           </h2>
@@ -224,23 +217,31 @@ const ReservationRow = ({ reservation, onDelete, onStatsUpdate }) => {
               {campsiteDetailsError}
             </p>
           ) : normalizedCampsiteDetail ? (
-            <>
-              <div
-                className="reservation-campsite-preview-wrap"
-                aria-describedby="reservation-row-modal-hint"
-              >
-                <Campsite
-                  campsite={transformCampsiteData(
-                    normalizedCampsiteDetail,
-                    reservation,
-                  )}
-                  facilityName={
-                    reservation.facility_name || "Unknown Facility"
-                  }
-                  isExpanded={false}
-                  showExpandHint={false}
-                />
-              </div>
+            <div
+              className="reservation-campsite-preview-wrap"
+              aria-describedby="reservation-row-modal-hint"
+            >
+              <Campsite
+                campsite={transformCampsiteData(
+                  normalizedCampsiteDetail,
+                  reservation,
+                )}
+                facilityName={
+                  reservation.facility_name || "Unknown Facility"
+                }
+                isExpanded={false}
+                showExpandHint={false}
+              />
+            </div>
+          ) : (
+            <p className="reservation-campsite-modal-status">
+              Campsite details are not available.
+            </p>
+          )}
+          <div className="reservation-campsite-modal-footer">
+            {!campsiteDetailsLoading &&
+            !campsiteDetailsError &&
+            normalizedCampsiteDetail ? (
               <p
                 className="reservation-campsite-modal-hint"
                 id="reservation-row-modal-hint"
@@ -251,12 +252,15 @@ const ReservationRow = ({ reservation, onDelete, onStatsUpdate }) => {
                 />
                 <span>Click the card to open full campsite view.</span>
               </p>
-            </>
-          ) : (
-            <p className="reservation-campsite-modal-status">
-              Campsite details are not available.
-            </p>
-          )}
+            ) : null}
+            <button
+              type="button"
+              className="reservation-campsite-modal-close"
+              onClick={() => setShowCampsiteModal(false)}
+            >
+              Close
+            </button>
+          </div>
         </div>
       </div>
     ) : null;
