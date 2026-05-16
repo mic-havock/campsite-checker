@@ -12,7 +12,7 @@ import "ag-grid-community/styles/ag-theme-alpine.css";
 import { AgGridReact } from "ag-grid-react";
 import PropTypes from "prop-types";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { fetchCityAndState } from "../../api/location";
+import { fetchCityAndState, getCachedCityAndState } from "../../api/location";
 import "./facility-grid.scss";
 
 ModuleRegistry.registerModules([
@@ -162,6 +162,19 @@ const FacilityGrid = ({
       if (locationCacheRef.current.has(id)) {
         const cachedRow = locationCacheRef.current.get(id);
         return { ...cachedRow };
+      }
+      // Hit the persistent (sessionStorage-backed) cache synchronously so previously
+      // resolved rows render with their real city/state on remount instead of "…".
+      const persisted = getCachedCityAndState(row.FacilityID, row);
+      if (persisted) {
+        const enriched = {
+          ...row,
+          FacilityName: row.FacilityName?.toUpperCase(),
+          City: persisted.city,
+          AddressStateCode: persisted.state,
+        };
+        locationCacheRef.current.set(id, enriched);
+        return enriched;
       }
       idsNeedingFetch.push(row);
       return buildStubFacilityRow(row);

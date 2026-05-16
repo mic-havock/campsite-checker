@@ -103,6 +103,8 @@ const FacilityDetails = ({ facility, handleViewCampsites }) => {
           <FacilityInfoRow
             label="Latitude, Longitude"
             value={coordinates?.display || "Not Available"}
+            secondLabel="Reservable"
+            secondValue={facility.Reservable === true ? "Yes" : "No"}
           />
         </tbody>
       </table>
@@ -173,6 +175,7 @@ FacilityDetails.propTypes = {
     FacilityEmail: PropTypes.string,
     FacilityDescription: PropTypes.string,
     FacilityDirections: PropTypes.string,
+    Reservable: PropTypes.bool,
     MEDIA: PropTypes.arrayOf(
       PropTypes.shape({
         URL: PropTypes.string.isRequired,

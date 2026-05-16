@@ -58,6 +58,134 @@ const reverseGeocodeCache = new Map();
 
 const UNKNOWN_PLACEHOLDER = "N/A";
 
+/**
+ * sessionStorage keys for persisting resolved location lookups across reloads.
+ * Bump the `.vN` suffix if the persisted shape changes.
+ */
+const REVERSE_GEOCODE_STORAGE_KEY = "kampscoutReverseGeocodeCache.v1";
+const FACILITY_ADDRESS_STORAGE_KEY = "kampscoutFacilityAddressCache.v1";
+
+/**
+ * Reads a JSON object from sessionStorage, returning an empty record on any failure
+ * (corrupt JSON, quota errors, private browsing, SSR, etc.).
+ * @param {string} key
+ * @returns {Record<string, unknown>}
+ */
+const safeReadStorageRecord = (key) => {
+  if (typeof window === "undefined" || !window.sessionStorage) {
+    return {};
+  }
+  try {
+    const raw = window.sessionStorage.getItem(key);
+    if (typeof raw !== "string" || raw.length === 0) {
+      return {};
+    }
+    const parsed = JSON.parse(raw);
+    if (
+      parsed !== null &&
+      typeof parsed === "object" &&
+      !Array.isArray(parsed)
+    ) {
+      /** @type {Record<string, unknown>} */
+      const narrowed = {};
+      for (const k of Object.keys(parsed)) {
+        narrowed[k] = parsed[k];
+      }
+      return narrowed;
+    }
+    return {};
+  } catch {
+    return {};
+  }
+};
+
+/**
+ * Best-effort persist of an object to sessionStorage. Silently no-ops on quota errors
+ * so in-memory caches still work even when storage is unavailable.
+ * @param {string} key
+ * @param {Record<string, unknown>} value
+ */
+const safeWriteStorageRecord = (key, value) => {
+  if (typeof window === "undefined" || !window.sessionStorage) {
+    return;
+  }
+  try {
+    window.sessionStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    /* sessionStorage may be full or disabled; the in-memory Map still serves the rest of the session. */
+  }
+};
+
+/**
+ * Resolved-only shadow of {@link reverseGeocodeCache}, persisted to sessionStorage so
+ * results survive a reload. Promises are never stored here — only their settled values.
+ * @type {Record<string, { city: string, state: string }>}
+ */
+const resolvedReverseGeocode = (() => {
+  /** @type {Record<string, { city: string, state: string }>} */
+  const out = {};
+  const raw = safeReadStorageRecord(REVERSE_GEOCODE_STORAGE_KEY);
+  for (const key of Object.keys(raw)) {
+    const value = raw[key];
+    if (
+      value !== null &&
+      typeof value === "object" &&
+      !Array.isArray(value)
+    ) {
+      /** @type {Record<string, unknown>} */
+      const obj = value;
+      const city = obj.city;
+      const state = obj.state;
+      if (typeof city === "string" && typeof state === "string") {
+        out[key] = { city, state };
+      }
+    }
+  }
+  return out;
+})();
+
+/**
+ * Resolved-only shadow of {@link locationCache}, persisted to sessionStorage. Stored
+ * arrays mirror the resolved value of {@link getFacilityAddress}.
+ * @type {Record<string, Array<{ city: string, state: string }>>}
+ */
+const resolvedFacilityAddress = (() => {
+  /** @type {Record<string, Array<{ city: string, state: string }>>} */
+  const out = {};
+  const raw = safeReadStorageRecord(FACILITY_ADDRESS_STORAGE_KEY);
+  for (const key of Object.keys(raw)) {
+    const value = raw[key];
+    if (Array.isArray(value)) {
+      /** @type {Array<{ city: string, state: string }>} */
+      const rows = [];
+      for (const entry of value) {
+        if (
+          entry !== null &&
+          typeof entry === "object" &&
+          !Array.isArray(entry)
+        ) {
+          /** @type {Record<string, unknown>} */
+          const obj = entry;
+          const city = typeof obj.city === "string" ? obj.city : "";
+          const state = typeof obj.state === "string" ? obj.state : "";
+          rows.push({ city, state });
+        }
+      }
+      out[key] = rows;
+    }
+  }
+  return out;
+})();
+
+// Seed the in-memory promise caches with already-resolved values from sessionStorage
+// so the existing async code paths short-circuit immediately on reload.
+for (const key of Object.keys(resolvedReverseGeocode)) {
+  reverseGeocodeCache.set(key, Promise.resolve(resolvedReverseGeocode[key]));
+}
+for (const id of Object.keys(resolvedFacilityAddress)) {
+  locationCache.set(id, Promise.resolve(resolvedFacilityAddress[id]));
+}
+
 /** @typedef {{ latitude: number, longitude: number }} LatLngPair */
 
 /**
@@ -250,14 +378,30 @@ export const reverseGeocodeCityState = async (latitude, longitude) => {
       state:
         stateCode !== "" ? stateCode.toUpperCase() : UNKNOWN_PLACEHOLDER,
     };
-  }).catch((error) => {
-    reverseGeocodeCache.delete(cacheKey);
-    console.error("Error reverse-geocoding location:", error.message || error);
-    return {
-      city: UNKNOWN_PLACEHOLDER,
-      state: UNKNOWN_PLACEHOLDER,
-    };
-  });
+  })
+    .then((resolved) => {
+      // Write-through so the value survives a page reload (sessionStorage).
+      resolvedReverseGeocode[cacheKey] = resolved;
+      safeWriteStorageRecord(
+        REVERSE_GEOCODE_STORAGE_KEY,
+        resolvedReverseGeocode,
+      );
+      return resolved;
+    })
+    .catch((error) => {
+      // Network/HTTP failures are NOT cached so the next attempt can retry.
+      reverseGeocodeCache.delete(cacheKey);
+      delete resolvedReverseGeocode[cacheKey];
+      safeWriteStorageRecord(
+        REVERSE_GEOCODE_STORAGE_KEY,
+        resolvedReverseGeocode,
+      );
+      console.error("Error reverse-geocoding location:", error.message || error);
+      return {
+        city: UNKNOWN_PLACEHOLDER,
+        state: UNKNOWN_PLACEHOLDER,
+      };
+    });
 
   reverseGeocodeCache.set(cacheKey, fetchPromise);
 
@@ -269,26 +413,119 @@ export const getFacilityAddress = async (facilityId) => {
     throw new Error("Facility ID is required.");
   }
 
-  // ⚡ Bolt: Cache the promise to prevent concurrent identical requests
-  if (!locationCache.has(facilityId)) {
+  const cacheId = String(facilityId);
+
+  // Cache the promise to prevent concurrent identical requests AND short-circuit
+  // on already-hydrated values from sessionStorage (seeded at module load).
+  if (!locationCache.has(cacheId)) {
     const fetchPromise = axios
-      .get(`${BASE_URL}/facilities/${facilityId}/addresses`)
-      .then((response) =>
-        response.data.RECDATA.map((item) => ({
-          city: item.City,
-          state: item.AddressStateCode,
-        }))
-      )
+      .get(`${BASE_URL}/facilities/${cacheId}/addresses`)
+      .then((response) => {
+        const recData = response?.data?.RECDATA;
+        const rows = Array.isArray(recData)
+          ? recData.map((item) => ({
+              city: typeof item?.City === "string" ? item.City : "",
+              state:
+                typeof item?.AddressStateCode === "string"
+                  ? item.AddressStateCode
+                  : "",
+            }))
+          : [];
+        // Write-through so the value survives a page reload (sessionStorage).
+        resolvedFacilityAddress[cacheId] = rows;
+        safeWriteStorageRecord(
+          FACILITY_ADDRESS_STORAGE_KEY,
+          resolvedFacilityAddress,
+        );
+        return rows;
+      })
       .catch((error) => {
-        locationCache.delete(facilityId); // clear cache on failure
-        console.error("Error fetching facility address:", error.message || error);
+        locationCache.delete(cacheId);
+        delete resolvedFacilityAddress[cacheId];
+        safeWriteStorageRecord(
+          FACILITY_ADDRESS_STORAGE_KEY,
+          resolvedFacilityAddress,
+        );
+        console.error(
+          "Error fetching facility address:",
+          error.message || error,
+        );
         throw error;
       });
 
-    locationCache.set(facilityId, fetchPromise);
+    locationCache.set(cacheId, fetchPromise);
   }
 
-  return locationCache.get(facilityId);
+  return locationCache.get(cacheId);
+};
+
+/**
+ * Synchronous lookup of an already-resolved city/state pair without triggering any
+ * network request. Returns `null` when no cached answer is available yet, so callers
+ * can fall back to {@link fetchCityAndState}.
+ *
+ * Use this for cheap "do I already know this?" checks (e.g. building grid stubs on
+ * remount) to skip the placeholder UI when sessionStorage already has the answer.
+ *
+ * @param {string | number | null | undefined} facilityId
+ * @param {object | null | undefined} [facilityRecord] - Raw RECDATA row (used for the
+ *   coordinate-based reverse-geocode fallback when the addresses API was missing pieces).
+ * @returns {{ city: string, state: string } | null}
+ */
+export const getCachedCityAndState = (facilityId, facilityRecord = null) => {
+  if (facilityId === null || facilityId === undefined || facilityId === "") {
+    return null;
+  }
+  const id = String(facilityId);
+  const addressData = resolvedFacilityAddress[id];
+  if (addressData === undefined) {
+    // The addresses API call hasn't completed (and persisted) yet for this facility.
+    return null;
+  }
+
+  let city = UNKNOWN_PLACEHOLDER;
+  let state = UNKNOWN_PLACEHOLDER;
+  if (Array.isArray(addressData) && addressData.length > 0) {
+    const hit = addressData[0];
+    if (!isMissingOrNa(hit?.city)) {
+      city = String(hit.city).trim().toUpperCase();
+    }
+    if (!isMissingOrNa(hit?.state)) {
+      state = String(hit.state).trim().toUpperCase();
+    }
+  }
+
+  const needCity = isMissingOrNa(city);
+  const needState = isMissingOrNa(state);
+  if (!needCity && !needState) {
+    return { city, state };
+  }
+
+  if (!facilityRecord || typeof facilityRecord !== "object") {
+    return { city, state };
+  }
+
+  const coords = getFacilityCoordinates(facilityRecord);
+  if (!coords) {
+    return { city, state };
+  }
+
+  const reverseKey = [
+    coords.latitude.toFixed(5),
+    coords.longitude.toFixed(5),
+  ].join(",");
+  const reversed = resolvedReverseGeocode[reverseKey];
+  if (reversed === undefined) {
+    // Address call resolved, but reverse fallback hasn't — let async path fill it in.
+    return null;
+  }
+
+  return {
+    city:
+      needCity && !isMissingOrNa(reversed.city) ? reversed.city : city,
+    state:
+      needState && !isMissingOrNa(reversed.state) ? reversed.state : state,
+  };
 };
 
 /**

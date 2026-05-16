@@ -736,6 +736,7 @@ const FacilitiesFinder = () => {
               name="state"
               value={selectedState}
               onChange={(e) => setSelectedState(e.target.value)}
+              disabled={hasLocationCoordinates}
               className={
                 selectedState === ""
                   ? "facilities-finder__select--placeholder"

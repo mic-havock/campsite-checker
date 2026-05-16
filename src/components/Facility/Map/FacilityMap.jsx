@@ -41,20 +41,24 @@ const FacilityMap = ({ facility }) => {
 
   return (
     <div className="facility-map-container">
-      <div className="map-controls">
-        <button
-          className="view-toggle-button"
-          onClick={() => setIsSatellite(!isSatellite)}
-        >
-          {isSatellite ? "Standard View" : "Satellite View"}
-        </button>
-      </div>
       <div className="map-wrapper">
         <MapContainer
           center={mapCenter}
           zoom={zoomLevel}
-          style={{ height: "400px", width: "100%" }}
+          style={{ height: "100%", width: "100%" }}
         >
+          <div className="map-controls leaflet-top leaflet-right">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsSatellite(!isSatellite);
+              }}
+              className="view-toggle-button leaflet-control"
+            >
+              {isSatellite ? "Standard View" : "Satellite View"}
+            </button>
+          </div>
+
           <TileLayer
             url={
               isSatellite
@@ -69,7 +73,7 @@ const FacilityMap = ({ facility }) => {
           />
           <Marker position={[latitude, longitude]}>
             <Popup>
-              <div>
+              <div className="map-popup-content">
                 <h3>{facility.FacilityName}</h3>
                 <p>{facility.FacilityTypeDescription}</p>
                 {facility.FacilityPhone && (
