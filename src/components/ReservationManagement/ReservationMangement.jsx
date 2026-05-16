@@ -1,16 +1,27 @@
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { LuToggleLeft, LuToggleRight, LuTrash2 } from "react-icons/lu";
 import {
+  batchDeleteReservations,
   fetchReservationsActive,
   fetchUserStatsActive,
   updateBatchMonitoringStatus,
-  batchDeleteReservations,
 } from "../../api/reservationManagement";
-import ReservationCard from "./ReservationCard/ReservationCard";
+import ReservationFilters from "./ReservationFilters/ReservationFilters";
+import ReservationGroup from "./ReservationGroup/ReservationGroup";
+import { groupReservations } from "./utils/groupReservations";
 import "./reservation-management.scss";
 
+const DEFAULT_SORT_MODE = "campground";
+const AUTO_COLLAPSE_GROUP_THRESHOLD = 4;
+
+/**
+ * Top-level statistics summary shown above the grouped reservation list.
+ *
+ * @param {{ stats?: Object | null }} props
+ * @returns {JSX.Element}
+ */
 const StatsDisplay = ({ stats }) => {
   const defaultStats = {
     totalReservations: 0,
@@ -61,6 +72,12 @@ StatsDisplay.defaultProps = {
   stats: null,
 };
 
+/**
+ * Toggle pill that flips monitoring on/off for *all* of the user's reservations.
+ *
+ * @param {{ active: boolean, onToggle: (next: boolean) => void }} props
+ * @returns {JSX.Element}
+ */
 const MonitoringToggle = ({ active, onToggle }) => (
   <button
     className={`simple-toggle ${active ? "active" : "inactive"}`}
@@ -88,11 +105,10 @@ MonitoringToggle.propTypes = {
 };
 
 /**
- * DeleteAllButton component - Allows users to delete all their reservations
- * @param {Object} props - Component props
- * @param {Function} props.onDelete - Callback function when delete is clicked
- * @param {boolean} props.disabled - Whether the button is disabled
- * @returns {JSX.Element} Delete all button component
+ * "Delete all my reservations" button with a click-again-to-confirm pattern.
+ *
+ * @param {{ onDelete: () => void, disabled?: boolean }} props
+ * @returns {JSX.Element}
  */
 const DeleteAllButton = ({ onDelete, disabled }) => {
   const [showConfirm, setShowConfirm] = useState(false);
@@ -100,8 +116,8 @@ const DeleteAllButton = ({ onDelete, disabled }) => {
   const handleClick = () => {
     if (!showConfirm) {
       setShowConfirm(true);
-      // Reset confirmation after 5 seconds
-      setTimeout(() => setShowConfirm(false), 5000);
+      // Auto-reset the confirm state so a stray click later doesn't nuke data.
+      window.setTimeout(() => setShowConfirm(false), 5000);
     } else {
       onDelete();
       setShowConfirm(false);
@@ -113,11 +129,17 @@ const DeleteAllButton = ({ onDelete, disabled }) => {
       className={`delete-all-button ${showConfirm ? "confirm" : ""}`}
       onClick={handleClick}
       disabled={disabled}
-      title={showConfirm ? "Click again to confirm deletion" : "Delete all reservations"}
+      title={
+        showConfirm
+          ? "Click again to confirm deletion"
+          : "Delete all reservations"
+      }
     >
       <LuTrash2 className="delete-icon" />
       <span className="delete-text">
-        {showConfirm ? "Click Again to Confirm Delete All" : "Delete All Reservations"}
+        {showConfirm
+          ? "Click Again to Confirm Delete All"
+          : "Delete All Reservations"}
       </span>
     </button>
   );
@@ -132,6 +154,15 @@ DeleteAllButton.defaultProps = {
   disabled: false,
 };
 
+/**
+ * Reservation management dashboard. Loads a user's active reservations and
+ * organizes them into collapsible per-campground groups, each containing
+ * date-range sub-sections and compact site rows. Supports search, sort, and
+ * per-group bulk monitoring/delete to make managing many reservations
+ * tractable.
+ *
+ * @returns {JSX.Element}
+ */
 const ReservationManagement = () => {
   const [email, setEmail] = useState("");
   const [reservations, setReservations] = useState([]);
@@ -140,34 +171,49 @@ const ReservationManagement = () => {
   const [error, setError] = useState(null);
   const [allMonitoringActive, setAllMonitoringActive] = useState(false);
 
-  const handleSearch = async (emailAddress) => {
-    try {
-      setLoading(true);
-      setError(null);
+  const [query, setQuery] = useState("");
+  const [sortMode, setSortMode] = useState(DEFAULT_SORT_MODE);
+  const [expandedGroupKeys, setExpandedGroupKeys] = useState(() => new Set());
 
-      const [reservationsData, statsData] = await Promise.all([
-        fetchReservationsActive(emailAddress),
-        fetchUserStatsActive(emailAddress),
-      ]);
+  // Recompute groups whenever reservations / search / sort change. The
+  // intermediate hierarchy is what the rendered list iterates over.
+  const groups = useMemo(
+    () => groupReservations(reservations, { query, sortMode }),
+    [reservations, query, sortMode],
+  );
 
-      setReservations(reservationsData.reservations);
-      setStats(statsData.stats);
-      setAllMonitoringActive(
-        reservationsData.reservations.every((res) => res.monitoring_active)
-      );
-    } catch (err) {
-      console.error("Failed to fetch user stats:", err);
-      setError(err.message);
-      setReservations([]);
-      setStats(null);
-      setAllMonitoringActive(false);
-    } finally {
-      setLoading(false);
+  const totalGroupCount = useMemo(
+    () => groupReservations(reservations, { sortMode }).length,
+    [reservations, sortMode],
+  );
+
+  /**
+   * When the loaded reservation set changes (e.g. after a search) initialize
+   * the expanded-set so users with only a couple of campgrounds see content
+   * immediately, while users with many groups start collapsed for scannability.
+   */
+  useEffect(() => {
+    const allKeys = groupReservations(reservations, { sortMode }).map(
+      (group) => group.key,
+    );
+    if (allKeys.length === 0) {
+      setExpandedGroupKeys(new Set());
+      return;
     }
-  };
+    if (allKeys.length <= AUTO_COLLAPSE_GROUP_THRESHOLD) {
+      setExpandedGroupKeys(new Set(allKeys));
+    } else {
+      setExpandedGroupKeys(new Set());
+    }
+    // Intentionally only depend on the reservation list identity (not sortMode)
+    // so toggling sort doesn't reset the user's manual expand/collapse choices.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reservations]);
 
-  const handleStatsUpdate = async () => {
-    if (!email) return;
+  const handleStatsUpdate = useCallback(async () => {
+    if (!email) {
+      return;
+    }
     try {
       const response = await fetchUserStatsActive(email);
       if (response && response.stats) {
@@ -189,27 +235,58 @@ const ReservationManagement = () => {
         totalAttempts: 0,
       });
     }
-  };
+  }, [email]);
 
-  const handleReservationDelete = async (id) => {
+  const handleSearch = async (emailAddress) => {
     try {
-      setReservations((prev) => prev.filter((res) => res.id !== id));
-      await handleStatsUpdate();
+      setLoading(true);
+      setError(null);
+
+      const [reservationsData, statsData] = await Promise.all([
+        fetchReservationsActive(emailAddress),
+        fetchUserStatsActive(emailAddress),
+      ]);
+
+      const list = reservationsData?.reservations || [];
+      setReservations(list);
+      setStats(statsData?.stats || null);
+      setAllMonitoringActive(
+        list.length > 0 && list.every((res) => res.monitoring_active),
+      );
     } catch (err) {
-      console.error("Failed to update after deletion:", err);
+      console.error("Failed to fetch user stats:", err);
+      setError(err.message);
+      setReservations([]);
+      setStats(null);
+      setAllMonitoringActive(false);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleBatchMonitoringUpdate = async (active) => {
-    if (!email) return;
+  const handleReservationDelete = useCallback(
+    async (id) => {
+      try {
+        setReservations((prev) => prev.filter((res) => res.id !== id));
+        await handleStatsUpdate();
+      } catch (err) {
+        console.error("Failed to update after deletion:", err);
+      }
+    },
+    [handleStatsUpdate],
+  );
 
+  const handleBatchMonitoringUpdate = async (active) => {
+    if (!email) {
+      return;
+    }
     try {
       await updateBatchMonitoringStatus(email, active);
       setReservations((prev) =>
         prev.map((res) => ({
           ...res,
           monitoring_active: active ? 1 : 0,
-        }))
+        })),
       );
       setAllMonitoringActive(active);
       await handleStatsUpdate();
@@ -219,24 +296,60 @@ const ReservationManagement = () => {
     }
   };
 
+  const handleGroupMonitoringUpdate = useCallback(
+    async (ids, active) => {
+      if (!email || !Array.isArray(ids) || ids.length === 0) {
+        return;
+      }
+      try {
+        await updateBatchMonitoringStatus(email, active, ids);
+        const idSet = new Set(ids);
+        setReservations((prev) =>
+          prev.map((res) =>
+            idSet.has(res.id)
+              ? { ...res, monitoring_active: active ? 1 : 0 }
+              : res,
+          ),
+        );
+        await handleStatsUpdate();
+      } catch (err) {
+        console.error("Failed to update group monitoring:", err);
+        setError(err.message);
+      }
+    },
+    [email, handleStatsUpdate],
+  );
+
+  const handleGroupDelete = useCallback(
+    async (ids) => {
+      if (!email || !Array.isArray(ids) || ids.length === 0) {
+        return;
+      }
+      try {
+        await batchDeleteReservations(email, ids);
+        const idSet = new Set(ids);
+        setReservations((prev) => prev.filter((res) => !idSet.has(res.id)));
+        await handleStatsUpdate();
+      } catch (err) {
+        console.error("Failed to delete reservation group:", err);
+        setError(err.message);
+      }
+    },
+    [email, handleStatsUpdate],
+  );
+
   /**
-   * Handles batch deletion of all reservations for the current user
-   * Sends all reservation IDs to the batchDeleteReservations API
+   * Delete *every* reservation owned by the current user. Sends all current
+   * IDs to the batch endpoint at once.
    */
   const handleBatchDelete = async () => {
-    if (!email || reservations.length === 0) return;
-
+    if (!email || reservations.length === 0) {
+      return;
+    }
     try {
-      // Extract all reservation IDs
       const reservationIds = reservations.map((res) => res.id);
-      
-      // Call the batch delete API
       await batchDeleteReservations(email, reservationIds);
-      
-      // Clear reservations from state
       setReservations([]);
-      
-      // Update stats to reflect the deletion
       await handleStatsUpdate();
     } catch (err) {
       console.error("Failed to batch delete reservations:", err);
@@ -251,6 +364,26 @@ const ReservationManagement = () => {
     }
   };
 
+  const handleToggleGroup = useCallback((key) => {
+    setExpandedGroupKeys((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+      return next;
+    });
+  }, []);
+
+  const handleExpandAll = useCallback(() => {
+    setExpandedGroupKeys(new Set(groups.map((group) => group.key)));
+  }, [groups]);
+
+  const handleCollapseAll = useCallback(() => {
+    setExpandedGroupKeys(new Set());
+  }, []);
+
   const reservationSchema = {
     "@context": "https://schema.org",
     "@type": "ReservationPackage",
@@ -261,6 +394,8 @@ const ReservationManagement = () => {
       name: "KampScout",
     },
   };
+
+  const hasReservations = reservations.length > 0;
 
   return (
     <>
@@ -315,7 +450,7 @@ const ReservationManagement = () => {
 
           {stats && <StatsDisplay stats={stats} />}
 
-          {reservations.length > 0 && (
+          {hasReservations && (
             <div className="batch-monitoring">
               <MonitoringToggle
                 active={allMonitoringActive}
@@ -328,19 +463,44 @@ const ReservationManagement = () => {
             </div>
           )}
 
-          {reservations.length > 0 && (
+          {hasReservations && (
             <div className="reservations-list">
               <h2>Reservations</h2>
-              <div className="reservations-grid">
-                {reservations.map((reservation) => (
-                  <ReservationCard
-                    key={reservation.id}
-                    reservation={reservation}
-                    onDelete={handleReservationDelete}
-                    onStatsUpdate={handleStatsUpdate}
-                  />
-                ))}
-              </div>
+
+              <ReservationFilters
+                query={query}
+                onQueryChange={setQuery}
+                sortMode={sortMode}
+                onSortModeChange={setSortMode}
+                onExpandAll={handleExpandAll}
+                onCollapseAll={handleCollapseAll}
+                visibleGroupCount={groups.length}
+                totalGroupCount={totalGroupCount}
+              />
+
+              {groups.length > 0 ? (
+                <div className="reservation-groups">
+                  {groups.map((group) => (
+                    <ReservationGroup
+                      key={group.key}
+                      campgroundName={group.campgroundName}
+                      dateRanges={group.dateRanges}
+                      totalCount={group.totalCount}
+                      activeCount={group.activeCount}
+                      isExpanded={expandedGroupKeys.has(group.key)}
+                      onToggleExpanded={() => handleToggleGroup(group.key)}
+                      onGroupMonitoringUpdate={handleGroupMonitoringUpdate}
+                      onGroupDelete={handleGroupDelete}
+                      onReservationDelete={handleReservationDelete}
+                      onStatsUpdate={handleStatsUpdate}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <p className="reservations-empty">
+                  No reservations match your filter.
+                </p>
+              )}
             </div>
           )}
         </div>

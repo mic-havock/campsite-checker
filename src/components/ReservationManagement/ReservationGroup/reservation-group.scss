@@ -1,0 +1,296 @@
+@import "../../../styles/variables";
+@import "../../../styles/responsive";
+
+.reservation-group {
+  background-color: $card-bg;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: $button-border-radius;
+  box-shadow: $shadow-sm;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+
+  &.is-expanded {
+    box-shadow: $shadow-md;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem 1.1rem;
+    background: linear-gradient(
+      90deg,
+      rgba($primary-color, 0.06) 0%,
+      rgba($primary-color, 0.02) 100%
+    );
+    border-bottom: 1px solid rgba($primary-color, 0.08);
+
+    .is-collapsed & {
+      border-bottom: none;
+    }
+
+    @include mobile {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.65rem;
+    }
+  }
+
+  &__toggle {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    color: $text-primary;
+    min-width: 0;
+
+    &:focus-visible {
+      outline: 2px solid rgba($primary-color, 0.45);
+      outline-offset: 2px;
+      border-radius: 6px;
+    }
+  }
+
+  &__chevron {
+    flex-shrink: 0;
+    font-size: 1.25rem;
+    color: $primary-color;
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    font-size: 1.15rem;
+    color: $primary-color;
+  }
+
+  &__name {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: $primary-color;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex-shrink: 1;
+    min-width: 0;
+
+    @include mobile {
+      white-space: normal;
+    }
+  }
+
+  &__count {
+    flex-shrink: 0;
+    padding: 0.15rem 0.55rem;
+    background-color: rgba($primary-color, 0.12);
+    color: $primary-color;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  &__monitor-summary {
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+
+    &.is-active {
+      background-color: rgba($availability-available-fg, 0.12);
+      color: $availability-available-fg;
+    }
+
+    &.is-inactive {
+      background-color: rgba($color-stone, 0.18);
+      color: $color-stone;
+    }
+  }
+
+  &__bulk-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+
+    @include mobile {
+      width: 100%;
+      justify-content: stretch;
+
+      button {
+        flex: 1;
+        justify-content: center;
+      }
+    }
+  }
+
+  &__bulk-toggle,
+  &__bulk-delete {
+    @include button-base;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 999px;
+  }
+
+  &__bulk-toggle {
+    background-color: rgba($color-stone, 0.12);
+    color: $color-stone;
+    border: 1px solid rgba($color-stone, 0.25);
+
+    &:hover:not(:disabled) {
+      background-color: rgba($color-stone, 0.22);
+      transform: translateY(-1px);
+    }
+
+    &.is-on {
+      background-color: rgba($primary-color, 0.14);
+      color: $primary-color;
+      border-color: rgba($primary-color, 0.35);
+
+      &:hover:not(:disabled) {
+        background-color: rgba($primary-color, 0.22);
+      }
+    }
+  }
+
+  &__bulk-icon {
+    font-size: 1rem;
+  }
+
+  &__bulk-delete {
+    background-color: transparent;
+    color: $color-danger;
+    border: 1px solid rgba($color-danger, 0.4);
+
+    &:hover:not(:disabled) {
+      background-color: rgba($color-danger, 0.12);
+      transform: translateY(-1px);
+    }
+
+    &.is-confirming {
+      background-color: $color-danger;
+      color: $text-light;
+      border-color: $color-danger;
+      animation: reservation-group-pulse 0.5s ease-in-out;
+
+      &:hover:not(:disabled) {
+        background-color: darken($color-danger, 8%);
+      }
+    }
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 1.1rem 1.25rem;
+  }
+
+  &__date-range {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  &__date-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.4rem 0.65rem;
+    background-color: rgba($primary-color, 0.04);
+    border-left: 3px solid rgba($primary-color, 0.35);
+    border-radius: 6px;
+
+    @include mobile {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.25rem;
+    }
+  }
+
+  &__date-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: $text-primary;
+    letter-spacing: 0.02em;
+  }
+
+  &__date-count {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: $color-stone;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  &__row-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 0.6rem;
+
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__pagination {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    padding-top: 0.25rem;
+  }
+
+  &__pagination-button {
+    @include button-base;
+    padding: 0.4rem 0.95rem;
+    background-color: rgba($primary-color, 0.1);
+    color: $primary-color;
+    font-size: 0.78rem;
+    font-weight: 700;
+    border-radius: 999px;
+
+    &:hover:not(:disabled) {
+      background-color: rgba($primary-color, 0.18);
+      transform: translateY(-1px);
+    }
+
+    &.is-secondary {
+      background-color: transparent;
+      color: $color-stone;
+      border: 1px solid rgba($color-stone, 0.3);
+
+      &:hover:not(:disabled) {
+        background-color: rgba($color-stone, 0.12);
+        color: $text-primary;
+      }
+    }
+  }
+}
+
+@keyframes reservation-group-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
