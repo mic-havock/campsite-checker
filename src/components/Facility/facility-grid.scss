@@ -44,9 +44,6 @@
     --ag-row-border-color: rgba(0, 0, 0, 0.06);
     --ag-row-hover-color: #{mix($background-base, $color-moss, 82%)};
     --ag-selected-row-background-color: #{rgba($color-forest-green, 0.1)};
-    /* Focused cell ring uses range-selection vars in AG Grid v33+, not --ag-cell-focus-border-color */
-    --ag-range-selection-border-color: transparent;
-    --ag-range-selection-border-style: none;
     --ag-header-column-separator-display: none;
 
     .ag-header-row {
@@ -157,6 +154,25 @@
       &.ag-row-selected .ag-cell {
         background-color: rgba($color-forest-green, 0.1) !important;
       }
+    }
+
+    /* AG Grid v33: focused/selected cell draws a 1px ring via range-selection border vars */
+    .ag-cell.ag-cell-focus,
+    .ag-ltr .ag-cell-focus:not(.ag-cell-range-selected):focus-within,
+    .ag-ltr .ag-context-menu-open .ag-cell-focus:not(.ag-cell-range-selected),
+    .ag-ltr .ag-cell-range-single-cell,
+    .ag-ltr .ag-cell-range-single-cell.ag-cell-range-handle,
+    .ag-rtl .ag-cell-focus:not(.ag-cell-range-selected):focus-within,
+    .ag-rtl .ag-context-menu-open .ag-cell-focus:not(.ag-cell-range-selected),
+    .ag-rtl .ag-cell-range-single-cell,
+    .ag-rtl .ag-cell-range-single-cell.ag-cell-range-handle {
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+    }
+
+    .ag-row-selected .ag-cell.ag-cell-focus {
+      border-right: 1px solid rgba(0, 0, 0, 0.05) !important;
     }
 
     .ag-paging-panel {
