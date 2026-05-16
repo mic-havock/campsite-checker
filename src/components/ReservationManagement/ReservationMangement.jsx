@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { LuToggleLeft, LuToggleRight, LuTrash2 } from "react-icons/lu";
 import {
@@ -188,27 +188,28 @@ const ReservationManagement = () => {
   );
 
   /**
-   * When the loaded reservation set changes (e.g. after a search) initialize
-   * the expanded-set so users with only a couple of campgrounds see content
-   * immediately, while users with many groups start collapsed for scannability.
+   * Compute the initial expanded-group set for a freshly loaded reservation
+   * list. When the user has only a few campgrounds we expand them all so
+   * content is visible immediately; when there are many we start collapsed for
+   * scannability. Pulled out of `useEffect` on purpose so per-row deletes /
+   * monitoring toggles don't re-run this and stomp the user's manual
+   * expand/collapse choices.
+   *
+   * @param {Object[]} list
+   * @returns {Set<string>}
    */
-  useEffect(() => {
-    const allKeys = groupReservations(reservations, { sortMode }).map(
+  const computeInitialExpandedKeys = (list) => {
+    const keys = groupReservations(list, { sortMode: DEFAULT_SORT_MODE }).map(
       (group) => group.key,
     );
-    if (allKeys.length === 0) {
-      setExpandedGroupKeys(new Set());
-      return;
+    if (keys.length === 0) {
+      return new Set();
     }
-    if (allKeys.length <= AUTO_COLLAPSE_GROUP_THRESHOLD) {
-      setExpandedGroupKeys(new Set(allKeys));
-    } else {
-      setExpandedGroupKeys(new Set());
+    if (keys.length <= AUTO_COLLAPSE_GROUP_THRESHOLD) {
+      return new Set(keys);
     }
-    // Intentionally only depend on the reservation list identity (not sortMode)
-    // so toggling sort doesn't reset the user's manual expand/collapse choices.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reservations]);
+    return new Set();
+  };
 
   const handleStatsUpdate = useCallback(async () => {
     if (!email) {
@@ -253,12 +254,16 @@ const ReservationManagement = () => {
       setAllMonitoringActive(
         list.length > 0 && list.every((res) => res.monitoring_active),
       );
+      // Seed expansion only on a fresh search so subsequent per-row deletes /
+      // toggles don't reset the user's manual expand/collapse choices.
+      setExpandedGroupKeys(computeInitialExpandedKeys(list));
     } catch (err) {
       console.error("Failed to fetch user stats:", err);
       setError(err.message);
       setReservations([]);
       setStats(null);
       setAllMonitoringActive(false);
+      setExpandedGroupKeys(new Set());
     } finally {
       setLoading(false);
     }
@@ -350,6 +355,7 @@ const ReservationManagement = () => {
       const reservationIds = reservations.map((res) => res.id);
       await batchDeleteReservations(email, reservationIds);
       setReservations([]);
+      setExpandedGroupKeys(new Set());
       await handleStatsUpdate();
     } catch (err) {
       console.error("Failed to batch delete reservations:", err);

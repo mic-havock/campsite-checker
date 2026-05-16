@@ -97,20 +97,17 @@ $campsite-expandable-border: 1px solid rgba($primary-color, 0.35);
     margin-top: 2rem;
     padding: 1rem;
     text-align: center;
-    border-radius: $button-border-radius;
-    font-weight: 600;
+    border-radius: 8px;
   }
 
   .availability-loading {
-    background-color: rgba($primary-color, 0.1);
-    color: $primary-color;
-    border: 1px solid rgba($primary-color, 0.25);
+    background-color: #e3f2fd;
+    color: #1976d2;
   }
 
   .availability-error {
-    background-color: rgba($color-danger, 0.1);
-    color: $color-danger;
-    border: 1px solid rgba($color-danger, 0.25);
+    background-color: #ffebee;
+    color: #c62828;
   }
 }
 
@@ -156,7 +153,7 @@ $campsite-expandable-border: 1px solid rgba($primary-color, 0.35);
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -167,46 +164,28 @@ $campsite-expandable-border: 1px solid rgba($primary-color, 0.35);
 
 .modal-content {
   cursor: default;
-  background: $background-light;
+  background: white;
   border-radius: $button-border-radius;
-  border: 1px solid rgba($color-bark, 0.14);
   max-width: 1000px;
   width: 95%;
   max-height: 90vh;
   overflow-y: auto;
   position: relative;
   padding: 2rem 0.5rem;
-  box-shadow:
-    $shadow-lg,
-    0 0 0 1px rgba($color-bark, 0.08);
-  // Firefox: thin themed scrollbar that hugs the rounded shape.
-  scrollbar-width: thin;
-  scrollbar-color: rgba($color-stone, 0.55) transparent;
 
   &::-webkit-scrollbar {
     width: 10px;
   }
 
-  // Pull the track in by the corner radius so it never paints over the modal's
-  // rounded top/bottom corners, and round its right corners to the same radius
-  // as the modal so the two shapes line up exactly.
   &::-webkit-scrollbar-track {
     background: transparent;
-    margin: $button-border-radius 0;
-    border-top-right-radius: $button-border-radius;
-    border-bottom-right-radius: $button-border-radius;
+    border-radius: 0 16px 16px 0;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: rgba($color-stone, 0.55);
-    border-radius: $button-border-radius;
-    border: 2px solid $background-light;
-    background-clip: padding-box;
-  }
-
-  &::-webkit-scrollbar-thumb:hover {
-    background: rgba($color-stone, 0.8);
-    background-clip: padding-box;
+    background: #888;
+    border-radius: 10px;
+    border: 2px solid white;
   }
 
   &::-webkit-scrollbar-corner {
@@ -219,10 +198,9 @@ $campsite-expandable-border: 1px solid rgba($primary-color, 0.35);
 
   h2 {
     margin: 0 0 16px;
-    color: $primary-color;
+    color: #2c3e50;
     font-size: 2rem;
-    font-weight: 700;
-    letter-spacing: 0.01em;
+    font-weight: 600;
   }
 }
 
@@ -230,11 +208,9 @@ $campsite-expandable-border: 1px solid rgba($primary-color, 0.35);
   margin-top: 0.5rem;
   h3 {
     margin: 0 0 20px;
-    color: $primary-color;
-    font-size: 1.1rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+    color: #2c3e50;
+    font-size: 1.4rem;
+    font-weight: 500;
   }
 }
 
@@ -246,22 +222,16 @@ $campsite-expandable-border: 1px solid rgba($primary-color, 0.35);
 }
 
 .attribute-item {
-  background: $card-bg;
+  background: $background-light;
   border-radius: $button-border-radius;
-  border: 1px solid rgba($primary-color, 0.12);
   display: flex;
   flex-direction: column;
-  padding: 0.5rem 0.65rem;
+  padding: 4px;
   font-size: 0.9rem;
-  color: $text-primary;
+  padding-left: 0.5rem;
 
   .attribute-name {
-    color: $color-stone;
-    font-weight: 700;
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 0.15rem;
+    color: #6c757d;
   }
 }
 
@@ -288,22 +258,16 @@ $campsite-expandable-border: 1px solid rgba($primary-color, 0.35);
 
 .recreation-link {
   display: inline-block;
-  margin: 0 2rem 1rem;
-  padding: 0.6rem 1.1rem;
-  color: $primary-color;
-  background-color: rgba($primary-color, 0.08);
+  padding: 0.5rem 1rem;
+  color: #2e7d32;
   text-decoration: none;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  border: 1px solid rgba($primary-color, 0.45);
+  border: 1px solid #2e7d32;
   border-radius: $button-border-radius;
-  transition: $button-transition;
+  transition: all 0.2s ease;
 
   &:hover {
-    background-color: $primary-color;
-    color: $text-light;
-    transform: translateY(-1px);
-    box-shadow: $shadow-sm;
+    background-color: #2e7d32;
+    color: white;
   }
 }
 
