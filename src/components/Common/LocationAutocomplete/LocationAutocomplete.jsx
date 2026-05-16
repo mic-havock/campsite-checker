@@ -3,8 +3,33 @@ import { useEffect, useRef, useState } from "react";
 import { searchLocations } from "../../../api/location";
 import "./location-autocomplete.scss";
 
+/**
+ * Narrow Nominatim `address` to string fields so callers can derive US state.
+ * @param {unknown} rawAddress
+ * @returns {Record<string, string> | undefined}
+ */
+const normalizeNominatimAddressFields = (rawAddress) => {
+  if (
+    typeof rawAddress !== "object" ||
+    rawAddress === null ||
+    Array.isArray(rawAddress)
+  ) {
+    return undefined;
+  }
+  /** @type {Record<string, string>} */
+  const out = {};
+  for (const key of Object.keys(rawAddress)) {
+    const val = rawAddress[key];
+    if (typeof val === "string") {
+      out[key] = val;
+    }
+  }
+  return Object.keys(out).length ? out : undefined;
+};
+
 const LocationAutocomplete = ({
   onLocationSelect,
+  onLocationQueryChange,
   placeholder = "City or Zip Code",
   initialValue = "",
   id,
@@ -19,6 +44,12 @@ const LocationAutocomplete = ({
   useEffect(() => {
     setQuery(initialValue);
   }, [initialValue]);
+
+  useEffect(() => {
+    if (typeof onLocationQueryChange === "function") {
+      onLocationQueryChange(query);
+    }
+  }, [query, onLocationQueryChange]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -67,6 +98,7 @@ const LocationAutocomplete = ({
       display_name: suggestion.display_name,
       lat: suggestion.lat,
       lon: suggestion.lon,
+      address: normalizeNominatimAddressFields(suggestion.address),
     });
   };
 
@@ -101,6 +133,8 @@ const LocationAutocomplete = ({
 
 LocationAutocomplete.propTypes = {
   onLocationSelect: PropTypes.func.isRequired,
+  /** Called with the current input text so parents can require picking a suggestion when non-empty. */
+  onLocationQueryChange: PropTypes.func,
   placeholder: PropTypes.string,
   initialValue: PropTypes.string,
   id: PropTypes.string,

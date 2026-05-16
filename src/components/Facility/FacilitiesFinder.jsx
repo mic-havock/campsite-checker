@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import { fetchCampsitesByFacility } from "../../api/campsites";
 import { getFacilities } from "../../api/facilities";
+import { resolveUsStateAbbreviation } from "../../api/location";
 import { CONTENT } from "../../config/content";
 import { STATES } from "../../config/states";
 
@@ -20,6 +21,104 @@ const STORAGE_KEYS = {
   SEARCH_PARAMS: "searchParams",
 };
 
+/** Matches Recreation.gov facility search page size (see METADATA.SEARCH_PARAMETERS.LIMIT). */
+const FACILITY_PAGE_SIZE = 50;
+
+/**
+ * Reads result totals and paging info from a Recreation.gov-style payload.
+ * @param {object|null|undefined} response
+ * @returns {{ totalCount: number, currentCount: number, limit: number, offset: number }}
+ */
+const parseFacilityResponseMetadata = (response) => {
+  const meta = response?.METADATA;
+  const results = meta?.RESULTS;
+  const params = meta?.SEARCH_PARAMETERS;
+  const totalRaw = results?.TOTAL_COUNT;
+  const currentRaw = results?.CURRENT_COUNT;
+  const limitRaw = params?.LIMIT;
+  const offsetRaw = params?.OFFSET;
+
+  const toNonNegInt = (value) => {
+    if (typeof value === "number" && Number.isFinite(value)) {
+      return Math.max(0, Math.trunc(value));
+    }
+    if (typeof value === "string" && value.trim() !== "") {
+      const parsed = Number.parseInt(value, 10);
+      return Number.isFinite(parsed) ? Math.max(0, parsed) : 0;
+    }
+    return 0;
+  };
+
+  const totalCount = toNonNegInt(totalRaw);
+  const currentCount = toNonNegInt(currentRaw);
+  const limitParsed = toNonNegInt(limitRaw);
+  const limit = limitParsed > 0 ? limitParsed : FACILITY_PAGE_SIZE;
+  const offset = toNonNegInt(offsetRaw);
+
+  return { totalCount, currentCount, limit, offset };
+};
+
+/**
+ * Merges two facility arrays, deduping by FacilityID (first occurrence wins).
+ * @param {object[]} primary
+ * @param {object[]} secondary
+ * @returns {object[]}
+ */
+const mergeFacilitiesById = (primary, secondary) => {
+  const merged = new Map();
+  for (const item of primary) {
+    if (item && item.FacilityID != null) {
+      merged.set(String(item.FacilityID), item);
+    }
+  }
+  for (const item of secondary) {
+    if (
+      item &&
+      item.FacilityID != null &&
+      !merged.has(String(item.FacilityID))
+    ) {
+      merged.set(String(item.FacilityID), item);
+    }
+  }
+  return Array.from(merged.values());
+};
+
+/**
+ * Reads coordinates from the location picker or session-restored payload (Nominatim uses string lat/lon).
+ * @param {Record<string, unknown> | null | undefined} location
+ * @returns {{ latitude: number, longitude: number } | null}
+ */
+const resolveSelectedLatLng = (location) => {
+  if (!location || typeof location !== "object") {
+    return null;
+  }
+  const latRaw = location.lat ?? location.latitude;
+  const lonRaw = location.lon ?? location.longitude;
+  const latitude =
+    typeof latRaw === "number"
+      ? latRaw
+      : Number.parseFloat(String(latRaw ?? ""));
+  const longitude =
+    typeof lonRaw === "number"
+      ? lonRaw
+      : Number.parseFloat(String(lonRaw ?? ""));
+  if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+    return null;
+  }
+  return { latitude, longitude };
+};
+
+/**
+ * @param {{ totalCount: number, recLength: number, offset: number, limit: number }} args
+ * @returns {boolean}
+ */
+const streamHasMorePages = ({ totalCount, recLength, offset, limit }) => {
+  if (totalCount > 0) {
+    return offset + recLength < totalCount;
+  }
+  return recLength === limit;
+};
+
 const FacilitiesFinder = () => {
   const navigate = useNavigate();
   const formRef = useRef(null);
@@ -27,13 +126,40 @@ const FacilitiesFinder = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [selectedState, setSelectedState] = useState("");
   const [selectedLocation, setSelectedLocation] = useState(null);
+  /** Plain text in the location field; non-empty without coordinates means search must not run. */
+  const [locationQueryDraft, setLocationQueryDraft] = useState("");
   const [radius, setRadius] = useState("");
-  const [facilities, setFacilities] = useState([]);
   const [selectedFacility, setSelectedFacility] = useState(null);
   const [hasSearched, setHasSearched] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isAppendingResults, setIsAppendingResults] = useState(false);
   const [error, setError] = useState("");
   const [viewMode, setViewMode] = useState("grid"); // "grid" or "map"
+  /**
+   * Each entry is one Recreation.gov page (offset = index * FACILITY_PAGE_SIZE).
+   */
+  const [facilityFetchStack, setFacilityFetchStack] = useState([]);
+  const facilityFetchStackRef = useRef([]);
+  /** TOTAL_COUNT from METADATA for the active search (single API stream). */
+  const [totalReportedCount, setTotalReportedCount] = useState(0);
+  const resultsPaginationRef = useRef(null);
+
+  const facilities = useMemo(
+    () =>
+      facilityFetchStack.reduce(
+        (acc, chunk) => mergeFacilitiesById(acc, chunk.rows),
+        [],
+      ),
+    [facilityFetchStack],
+  );
+
+  useEffect(() => {
+    facilityFetchStackRef.current = facilityFetchStack;
+  }, [facilityFetchStack]);
+
+  const hasMoreResults =
+    facilityFetchStack.length > 0 &&
+    facilityFetchStack[facilityFetchStack.length - 1].hasMoreAfter;
 
   // Storage management functions
   const clearStorage = useCallback(() => {
@@ -62,27 +188,333 @@ const FacilitiesFinder = () => {
     const savedParams = sessionStorage.getItem(STORAGE_KEYS.SEARCH_PARAMS);
 
     if (savedResults && savedParams) {
-      setFacilities(JSON.parse(savedResults));
       const params = JSON.parse(savedParams);
       setInputValue(params.query || "");
       setSelectedState(params.state || "");
       setSelectedLocation(params.selectedLocation || null);
+      setLocationQueryDraft(
+        typeof params.selectedLocation?.display_name === "string"
+          ? params.selectedLocation.display_name
+          : "",
+      );
       setRadius(
         params.radius !== undefined && params.radius !== ""
           ? params.radius
           : "",
       );
       setHasSearched(true);
+      const list = JSON.parse(savedResults);
+      const tot =
+        typeof params.totalReportedCount === "number"
+          ? params.totalReportedCount
+          : 0;
+      setTotalReportedCount(tot);
+
+      if (
+        Array.isArray(params.facilityFetchStack) &&
+        params.facilityFetchStack.length > 0
+      ) {
+        setFacilityFetchStack(params.facilityFetchStack);
+      } else {
+        const legacyHasMore =
+          typeof params.hasMoreResults === "boolean"
+            ? params.hasMoreResults
+            : list.length === FACILITY_PAGE_SIZE &&
+              (tot === 0 || list.length < tot);
+        setFacilityFetchStack([
+          {
+            rows: list,
+            fetchOffset: 0,
+            hasMoreAfter: legacyHasMore,
+          },
+        ]);
+      }
     }
   }, []);
+
+  /**
+   * Geo + optional state: without state, one keyword/geo stream; with state only, one state/geo stream;
+   * with both, merges two RIDB-style streams (keyword+geo and state+geo), matching legacy behavior.
+   */
+  const fetchFacilitiesAtOffset = useCallback(
+    async (offset, queryWithState, resolvedRadiusMiles) => {
+      const limit = FACILITY_PAGE_SIZE;
+      const coords = resolveSelectedLatLng(selectedLocation);
+      const geoParams =
+        coords !== null
+          ? {
+              latitude: coords.latitude,
+              longitude: coords.longitude,
+              radius: resolvedRadiusMiles,
+            }
+          : {
+              latitude: "",
+              longitude: "",
+              radius: "",
+            };
+
+      const hasGeo = coords !== null;
+
+      if (selectedState && hasGeo) {
+        const [responseKeywordStateGeo, responseStateFilteredGeo] =
+          await Promise.all([
+            getFacilities({
+              query: queryWithState,
+              ...geoParams,
+              offset,
+              limit,
+            }),
+            getFacilities({
+              query: inputValue,
+              state: selectedState,
+              ...geoParams,
+              offset,
+              limit,
+            }),
+          ]);
+
+        const rec = mergeFacilitiesById(
+          responseKeywordStateGeo.RECDATA || [],
+          responseStateFilteredGeo.RECDATA || [],
+        );
+        const meta1 = parseFacilityResponseMetadata(responseKeywordStateGeo);
+        const meta2 = parseFacilityResponseMetadata(responseStateFilteredGeo);
+        const limitResolved =
+          meta1.limit > 0 ? meta1.limit : meta2.limit > 0 ? meta2.limit : limit;
+
+        const len1 = (responseKeywordStateGeo.RECDATA || []).length;
+        const len2 = (responseStateFilteredGeo.RECDATA || []).length;
+
+        const hasMore1 = streamHasMorePages({
+          totalCount: meta1.totalCount,
+          recLength: len1,
+          offset,
+          limit: limitResolved,
+        });
+        const hasMore2 = streamHasMorePages({
+          totalCount: meta2.totalCount,
+          recLength: len2,
+          offset,
+          limit: limitResolved,
+        });
+
+        return {
+          facilities: rec,
+          totalReportedCount: Math.max(meta1.totalCount, meta2.totalCount),
+          hasMore: hasMore1 || hasMore2,
+        };
+      }
+
+      if (selectedState) {
+        const response = await getFacilities({
+          query: inputValue,
+          state: selectedState,
+          ...geoParams,
+          offset,
+          limit,
+        });
+        const rec = response.RECDATA || [];
+        const meta = parseFacilityResponseMetadata(response);
+        return {
+          facilities: rec,
+          totalReportedCount: meta.totalCount,
+          hasMore: streamHasMorePages({
+            totalCount: meta.totalCount,
+            recLength: rec.length,
+            offset,
+            limit: meta.limit,
+          }),
+        };
+      }
+
+      const response1 = await getFacilities({
+        query: queryWithState,
+        ...geoParams,
+        offset,
+        limit,
+      });
+      const rec1 = response1.RECDATA || [];
+      const meta1 = parseFacilityResponseMetadata(response1);
+
+      return {
+        facilities: rec1,
+        totalReportedCount: meta1.totalCount,
+        hasMore: streamHasMorePages({
+          totalCount: meta1.totalCount,
+          recLength: rec1.length,
+          offset,
+          limit: meta1.limit,
+        }),
+      };
+    },
+    [selectedLocation, selectedState, inputValue],
+  );
+
+  const persistSearchSession = useCallback(
+    (fetchStack, resolvedRadiusMiles, totalCount) => {
+      const flat = fetchStack.reduce(
+        (acc, chunk) => mergeFacilitiesById(acc, chunk.rows),
+        [],
+      );
+      saveToStorage(STORAGE_KEYS.SEARCH_RESULTS, flat);
+      saveToStorage(STORAGE_KEYS.SEARCH_PARAMS, {
+        query: inputValue,
+        state: selectedState,
+        selectedLocation,
+        radius:
+          resolveSelectedLatLng(selectedLocation) !== null
+            ? resolvedRadiusMiles
+            : "",
+        facilityFetchStack: fetchStack,
+        totalReportedCount: totalCount,
+      });
+    },
+    [inputValue, selectedState, selectedLocation, saveToStorage],
+  );
+
+  const appendNextFederalPage = useCallback(async () => {
+    const locationDraftTrimmed = locationQueryDraft.trim();
+    const needsLocationPick =
+      locationDraftTrimmed !== "" &&
+      resolveSelectedLatLng(selectedLocation) === null;
+
+    if (needsLocationPick) {
+      setError(
+        "Choose a location from the suggestions list to search near that place.",
+      );
+      return;
+    }
+
+    setLoading(true);
+    setIsAppendingResults(true);
+    setError("");
+    setSelectedFacility(null);
+    const stateInfo = STATES.find((state) => state.code === selectedState);
+    const stateName = stateInfo ? stateInfo.name : "";
+    const queryWithState = stateName
+      ? `${inputValue} ${stateName}`.trim()
+      : inputValue;
+    const coordsForPagination = resolveSelectedLatLng(selectedLocation);
+    const resolvedRadiusMiles =
+      coordsForPagination === null
+        ? ""
+        : radius === "" || Number.isNaN(Number(radius))
+          ? 25
+          : Number(radius);
+
+    const nextOffset =
+      facilityFetchStackRef.current.length * FACILITY_PAGE_SIZE;
+
+    try {
+      const {
+        facilities: pageRows,
+        totalReportedCount: reportedTotal,
+        hasMore,
+      } = await fetchFacilitiesAtOffset(
+        nextOffset,
+        queryWithState,
+        resolvedRadiusMiles,
+      );
+
+      const prev = facilityFetchStackRef.current;
+      const nextStack = [
+        ...prev,
+        {
+          rows: pageRows,
+          fetchOffset: nextOffset,
+          hasMoreAfter: hasMore,
+        },
+      ];
+
+      setFacilityFetchStack(nextStack);
+      facilityFetchStackRef.current = nextStack;
+      setTotalReportedCount(reportedTotal);
+
+      persistSearchSession(nextStack, resolvedRadiusMiles, reportedTotal);
+
+      requestAnimationFrame(() => {
+        if (resultsPaginationRef.current) {
+          resultsPaginationRef.current.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+          });
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      setError("Error fetching facilities");
+    } finally {
+      setLoading(false);
+      setIsAppendingResults(false);
+    }
+  }, [
+    selectedState,
+    selectedLocation,
+    inputValue,
+    locationQueryDraft,
+    radius,
+    fetchFacilitiesAtOffset,
+    persistSearchSession,
+  ]);
+
+  const handleLoadMoreResults = () => {
+    if (loading || !hasMoreResults) return;
+    void appendNextFederalPage();
+  };
 
   // Event handlers
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
   };
 
+  /**
+   * Stores the geocoded location and, when Nominatim includes a US state, syncs the State filter.
+   * @param {Record<string, unknown> | null} location
+   */
+  const handleFacilityLocationSelect = useCallback((location) => {
+    setSelectedLocation(location);
+    if (!location || typeof location !== "object") {
+      return;
+    }
+    const rawAddress = location.address;
+    if (
+      typeof rawAddress !== "object" ||
+      rawAddress === null ||
+      Array.isArray(rawAddress)
+    ) {
+      return;
+    }
+    /** @type {Record<string, string | undefined>} */
+    const addressLike = {};
+    for (const key of Object.keys(rawAddress)) {
+      const val = rawAddress[key];
+      addressLike[key] = typeof val === "string" ? val : undefined;
+    }
+    const code = resolveUsStateAbbreviation(addressLike);
+    if (code !== "") {
+      setSelectedState(code);
+    }
+  }, []);
+
+  const hasLocationCoordinates = useMemo(
+    () => resolveSelectedLatLng(selectedLocation) !== null,
+    [selectedLocation],
+  );
+
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
+
+    const locationDraftTrimmed = locationQueryDraft.trim();
+    const needsLocationPick =
+      locationDraftTrimmed !== "" &&
+      resolveSelectedLatLng(selectedLocation) === null;
+
+    if (needsLocationPick) {
+      setError(
+        "Choose a location from the suggestions list to search near that place.",
+      );
+      return;
+    }
 
     // Find the state name if a state code is selected
     const stateInfo = STATES.find((state) => state.code === selectedState);
@@ -95,46 +527,37 @@ const FacilitiesFinder = () => {
 
     setLoading(true);
     setError("");
+    setSelectedFacility(null);
 
     try {
+      const coordsForSubmit = resolveSelectedLatLng(selectedLocation);
       const resolvedRadiusMiles =
-        selectedLocation &&
-        (radius === "" || Number.isNaN(Number(radius)) ? 25 : Number(radius));
+        coordsForSubmit === null
+          ? ""
+          : radius === "" || Number.isNaN(Number(radius))
+            ? 25
+            : Number(radius);
 
-      // Build search params
-      const searchParams = {
-        query: queryWithState,
-        latitude: selectedLocation ? parseFloat(selectedLocation.lat) : "",
-        longitude: selectedLocation ? parseFloat(selectedLocation.lon) : "",
-        radius: selectedLocation ? resolvedRadiusMiles : "",
-      };
+      const {
+        facilities: nextFacilities,
+        totalReportedCount: reportedTotal,
+        hasMore,
+      } = await fetchFacilitiesAtOffset(0, queryWithState, resolvedRadiusMiles);
 
-      // First call with the primary search params
-      const response1 = await getFacilities(searchParams);
-      let facilities = response1.RECDATA || [];
+      const initialStack = [
+        {
+          rows: nextFacilities,
+          fetchOffset: 0,
+          hasMoreAfter: hasMore,
+        },
+      ];
 
-      // If state is selected, make second call with both query and state
-      if (selectedState) {
-        const response2 = await getFacilities({
-          ...searchParams,
-          query: inputValue,
-          state: selectedState,
-        });
-        const stateFacilities = response2.RECDATA || [];
-
-        // Combine results, removing duplicates based on FacilityID
-        const allFacilities = [...facilities, ...stateFacilities];
-        const uniqueFacilitiesMap = new Map();
-        for (const item of allFacilities) {
-          uniqueFacilitiesMap.set(item.FacilityID, item);
-        }
-        facilities = Array.from(uniqueFacilitiesMap.values());
-      }
-
-      setFacilities(facilities);
+      setFacilityFetchStack(initialStack);
+      facilityFetchStackRef.current = initialStack;
+      setTotalReportedCount(reportedTotal);
       setHasSearched(true);
 
-      if (selectedLocation) {
+      if (coordsForSubmit !== null) {
         setRadius(resolvedRadiusMiles);
       }
 
@@ -147,13 +570,7 @@ const FacilitiesFinder = () => {
         }
       });
 
-      saveToStorage(STORAGE_KEYS.SEARCH_RESULTS, facilities);
-      saveToStorage(STORAGE_KEYS.SEARCH_PARAMS, {
-        query: inputValue,
-        state: selectedState,
-        selectedLocation,
-        radius: selectedLocation ? resolvedRadiusMiles : "",
-      });
+      persistSearchSession(initialStack, resolvedRadiusMiles, reportedTotal);
     } catch (err) {
       console.error(err);
       setError("Error fetching facilities");
@@ -166,11 +583,16 @@ const FacilitiesFinder = () => {
     setInputValue("");
     setSelectedState("");
     setSelectedLocation(null);
+    setLocationQueryDraft("");
     setRadius("");
-    setFacilities([]);
+    setFacilityFetchStack([]);
+    facilityFetchStackRef.current = [];
     setSelectedFacility(null);
     setHasSearched(false);
     setError("");
+    setLoading(false);
+    setIsAppendingResults(false);
+    setTotalReportedCount(0);
     clearStorage();
   };
 
@@ -251,6 +673,9 @@ const FacilitiesFinder = () => {
     },
   };
 
+  const showFederalResultsFooter =
+    facilities.length > 0 && (hasMoreResults || facilityFetchStack.length > 1);
+
   return (
     <>
       <Helmet>
@@ -293,8 +718,8 @@ const FacilitiesFinder = () => {
           onSubmit={handleSubmit}
           className="facilities-finder__form"
         >
-          <div className="form-group campground-group">
-            <label htmlFor="campground-name">Campground</label>
+          <div className="form-group keyword-group">
+            <label htmlFor="campground-name">Keyword</label>
             <input
               id="campground-name"
               name="query"
@@ -302,15 +727,6 @@ const FacilitiesFinder = () => {
               value={inputValue}
               onChange={handleInputChange}
               placeholder="e.g., Cougar Rock, Mount Rainier..."
-            />
-          </div>
-          <div className="form-group location-group">
-            <label htmlFor="location-search">Location</label>
-            <LocationAutocomplete
-              id="location-search"
-              onLocationSelect={setSelectedLocation}
-              initialValue={selectedLocation?.display_name || ""}
-              placeholder="City or Zip Code"
             />
           </div>
           <div className="form-group state-group">
@@ -326,7 +742,7 @@ const FacilitiesFinder = () => {
                   : undefined
               }
             >
-              <option value="">Select state</option>
+              <option value="">State</option>
               {STATES.map((state) => (
                 <option key={state.code} value={state.code}>
                   {state.name}
@@ -334,32 +750,48 @@ const FacilitiesFinder = () => {
               ))}
             </select>
           </div>
+          <div className="form-group location-group">
+            <label htmlFor="location-search">Location</label>
+            <LocationAutocomplete
+              id="location-search"
+              onLocationSelect={handleFacilityLocationSelect}
+              onLocationQueryChange={setLocationQueryDraft}
+              initialValue={selectedLocation?.display_name || ""}
+              placeholder="City, county, ZIP, or full address…"
+            />
+          </div>
 
           <div className="form-group radius-group">
             <label htmlFor="radius">Radius (miles)</label>
             <select
               id="radius"
               name="radius"
-              value={radius}
+              value={hasLocationCoordinates ? radius : ""}
+              disabled={!hasLocationCoordinates}
               onChange={(e) => {
                 const { value } = e.target;
                 setRadius(value === "" ? "" : Number(value));
               }}
-              className={
-                radius === ""
-                  ? "facilities-finder__select--placeholder"
-                  : undefined
-              }
+              className={[
+                "facilities-finder__select--radius",
+                radius === "" ? "facilities-finder__select--placeholder" : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
             >
-              <option value="">Select radius</option>
+              <option value="">Radius</option>
               <option value="5">5 miles</option>
               <option value="10">10 miles</option>
               <option value="25">25 miles</option>
             </select>
           </div>
 
-          <div className="buttons-container">
-            <button type="submit" className="submit" disabled={loading}>
+          <div className="facilities-finder__form-actions">
+            <button
+              type="submit"
+              className="facilities-finder__form-btn facilities-finder__form-btn--submit submit"
+              disabled={loading}
+            >
               {loading ? (
                 <div
                   style={{
@@ -376,7 +808,11 @@ const FacilitiesFinder = () => {
                 "Search"
               )}
             </button>
-            <button type="button" className="clear" onClick={handleClear}>
+            <button
+              type="button"
+              className="facilities-finder__form-btn facilities-finder__form-btn--clear clear"
+              onClick={handleClear}
+            >
               Clear
             </button>
           </div>
@@ -403,10 +839,52 @@ const FacilitiesFinder = () => {
                   </button>
                 </div>
 
+                {showFederalResultsFooter && (
+                  <div
+                    ref={resultsPaginationRef}
+                    className="facilities-pagination facilities-pagination--load-more"
+                    aria-label="Federal search results"
+                  >
+                    <p className="facilities-pagination__summary">
+                      <span className="facilities-pagination__range">
+                        {facilities.length.toLocaleString()}
+                      </span>{" "}
+                      {facilities.length === 1 ? "campground" : "campgrounds"}{" "}
+                      loaded
+                      {totalReportedCount > 0 ? (
+                        <>
+                          {" "}
+                          · up to{" "}
+                          <span className="facilities-pagination__total">
+                            {totalReportedCount.toLocaleString()}
+                          </span>{" "}
+                          reported matches
+                        </>
+                      ) : null}
+                    </p>
+                    {hasMoreResults ? (
+                      <div className="facilities-pagination__actions facilities-pagination__actions--single">
+                        <button
+                          type="button"
+                          className="facilities-pagination__btn facilities-pagination__btn--primary"
+                          onClick={handleLoadMoreResults}
+                          disabled={loading}
+                          aria-busy={isAppendingResults}
+                        >
+                          {isAppendingResults
+                            ? "Loading…"
+                            : "Load more results"}
+                        </button>
+                      </div>
+                    ) : null}
+                  </div>
+                )}
+
                 {viewMode === "grid" && (
                   <FacilityGrid
                     rowData={facilities}
                     onRowSelected={handleRowSelection}
+                    applySelectedStateRowFilter={!selectedState}
                     selectedState={
                       selectedState
                         ? STATES.find((state) => state.code === selectedState)
@@ -426,10 +904,7 @@ const FacilitiesFinder = () => {
             ) : (
               !loading && (
                 <div className="no-results">
-                  <p>
-                    No campgrounds found for your search. Try different terms or
-                    another state.
-                  </p>
+                  <p>No campgrounds found for your search.</p>
                 </div>
               )
             )}
