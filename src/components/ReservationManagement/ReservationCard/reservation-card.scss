@@ -191,12 +191,55 @@ button {
   }
 
   .modal-content.reservation-campsite-modal {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: stretch;
     padding: 1rem;
     background-color: $background-light;
     border: 1px solid rgba($color-bark, 0.14);
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .reservation-campsite-modal-close {
+    align-self: flex-end;
+    margin: 0 0 0.5rem;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.2;
+    color: $text-primary;
+    background-color: rgba($color-stone, 0.15);
+    border: 1px solid rgba($color-bark, 0.18);
+    border-radius: $button-border-radius;
+    cursor: pointer;
+    transition: $button-transition;
+
+    &:hover {
+      background-color: rgba($primary-color, 0.12);
+      border-color: rgba($primary-color, 0.35);
+      color: $primary-color;
+    }
+  }
+
+  .reservation-campsite-modal-status {
+    margin: 0;
+    padding: 1.25rem 0.75rem;
+    text-align: center;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    color: $text-primary;
   }
 
   .reservation-campsite-modal-hint {

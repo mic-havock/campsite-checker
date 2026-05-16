@@ -1,7 +1,11 @@
 import { format, parseISO } from "date-fns";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
-import { LuToggleLeft, LuToggleRight } from "react-icons/lu";
+import {
+  LuMousePointerClick,
+  LuToggleLeft,
+  LuToggleRight,
+} from "react-icons/lu";
 import { fetchCampsiteDetails } from "../../../api/campsites";
 import {
   updateMonitoringStatus,
@@ -38,11 +42,33 @@ const transformCampsiteData = (details, reservation) => ({
   PERMITTEDEQUIPMENT: details.PERMITTEDEQUIPMENT || [],
 });
 
+/**
+ * The GET /campsites/:id endpoint may return a single object or an array;
+ * normalize to one record so the modal can render reliably.
+ *
+ * @param {unknown} data
+ * @returns {Record<string, unknown> | null}
+ */
+const normalizeCampsiteDetailRecord = (data) => {
+  if (data === null || data === undefined) {
+    return null;
+  }
+  if (Array.isArray(data)) {
+    const first = data[0];
+    return typeof first === "object" && first !== null ? first : null;
+  }
+  return typeof data === "object" ? data : null;
+};
+
 const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
   const [isMonitoringActive, setIsMonitoringActive] = useState(
     Boolean(reservation.monitoring_active)
   );
   const [campsiteDetails, setCampsiteDetails] = useState(null);
+  const [campsiteDetailsLoading, setCampsiteDetailsLoading] = useState(
+    Boolean(reservation.campsite_id),
+  );
+  const [campsiteDetailsError, setCampsiteDetailsError] = useState("");
   const [showCampsiteModal, setShowCampsiteModal] = useState(false);
 
   useEffect(() => {
@@ -50,18 +76,43 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
   }, [reservation.monitoring_active]);
 
   useEffect(() => {
+    let cancelled = false;
+
     const loadCampsiteDetails = async () => {
-      if (reservation.campsite_id) {
-        try {
-          const details = await fetchCampsiteDetails(reservation.campsite_id);
+      if (!reservation.campsite_id) {
+        setCampsiteDetailsLoading(false);
+        return;
+      }
+      setCampsiteDetailsLoading(true);
+      setCampsiteDetailsError("");
+      try {
+        const details = await fetchCampsiteDetails(reservation.campsite_id);
+        if (!cancelled) {
           setCampsiteDetails(details);
-        } catch (err) {
-          console.error("Failed to fetch campsite details:", err);
+        }
+      } catch (err) {
+        console.error("Failed to fetch campsite details:", err);
+        if (!cancelled) {
+          const message =
+            err && typeof err === "object" && "message" in err
+              ? String(err.message)
+              : "";
+          setCampsiteDetailsError(
+            message.trim() ||
+              "Could not load campsite details. Try again later.",
+          );
+        }
+      } finally {
+        if (!cancelled) {
+          setCampsiteDetailsLoading(false);
         }
       }
     };
 
     loadCampsiteDetails();
+    return () => {
+      cancelled = true;
+    };
   }, [reservation.campsite_id]);
 
   useEffect(() => {
@@ -96,6 +147,9 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
     }
   };
 
+  const normalizedCampsiteDetail =
+    normalizeCampsiteDetailRecord(campsiteDetails);
+
   return (
     <>
       <div className="reservation-card">
@@ -116,6 +170,8 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
           </div>
           <div className="reservation-actions">
             <button
+              type="button"
+              disabled={!reservation.campsite_id}
               onClick={() => setShowCampsiteModal(true)}
               className="edit-button"
             >
@@ -160,21 +216,13 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
         </div>
       </div>
 
-      {showCampsiteModal && campsiteDetails && campsiteDetails[0] && (
+      {showCampsiteModal && reservation.campsite_id ? (
         <div
           className="modal-overlay"
           onClick={() => setShowCampsiteModal(false)}
-          role="button"
-          tabIndex={0}
-          aria-label="Close campsite details modal"
+          role="presentation"
           onKeyDown={(e) => {
             if (e.key === "Escape") {
-              e.preventDefault();
-              setShowCampsiteModal(false);
-            } else if (
-              (e.key === "Enter" || e.key === " ") &&
-              e.target === e.currentTarget
-            ) {
               e.preventDefault();
               setShowCampsiteModal(false);
             }
@@ -183,34 +231,68 @@ const ReservationCard = ({ reservation, onDelete, onStatsUpdate }) => {
           <div
             className="modal-content reservation-campsite-modal"
             onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="reservation-campsite-modal-title"
+            tabIndex={-1}
           >
-            <div
-              className="reservation-campsite-preview-wrap"
-              aria-describedby="reservation-campsite-modal-hint"
+            <button
+              type="button"
+              className="reservation-campsite-modal-close"
+              onClick={() => setShowCampsiteModal(false)}
             >
-              <Campsite
-                campsite={transformCampsiteData(
-                  campsiteDetails[0],
-                  reservation,
-                )}
-                facilityName={reservation.facility_name || "Unknown Facility"}
-                isExpanded={false}
-                showExpandHint={false}
-              />
-            </div>
-            <p
-              className="reservation-campsite-modal-hint"
-              id="reservation-campsite-modal-hint"
+              Close
+            </button>
+            <h2
+              id="reservation-campsite-modal-title"
+              className="visually-hidden"
             >
-              <LuMousePointerClick
-                className="reservation-campsite-modal-hint-icon"
-                aria-hidden
-              />
-              <span>Click the card to open full campsite view.</span>
-            </p>
+              {`Campsite details for ${reservation.campsite_name ?? "reservation"}`}
+            </h2>
+            {campsiteDetailsLoading ? (
+              <p className="reservation-campsite-modal-status">Loading…</p>
+            ) : campsiteDetailsError ? (
+              <p className="reservation-campsite-modal-status">
+                {campsiteDetailsError}
+              </p>
+            ) : normalizedCampsiteDetail ? (
+              <>
+                <div
+                  className="reservation-campsite-preview-wrap"
+                  aria-describedby="reservation-campsite-modal-hint"
+                >
+                  <Campsite
+                    campsite={transformCampsiteData(
+                      normalizedCampsiteDetail,
+                      reservation,
+                    )}
+                    facilityName={
+                      reservation.facility_name || "Unknown Facility"
+                    }
+                    isExpanded={false}
+                    showExpandHint={false}
+                  />
+                </div>
+                <p
+                  className="reservation-campsite-modal-hint"
+                  id="reservation-campsite-modal-hint"
+                >
+                  <LuMousePointerClick
+                    className="reservation-campsite-modal-hint-icon"
+                    aria-hidden
+                  />
+                  <span>Click the card to open full campsite view.</span>
+                </p>
+              </>
+            ) : (
+              <p className="reservation-campsite-modal-status">
+                Campsite details are not available.
+              </p>
+            )}
           </div>
         </div>
-      )}
+      ) : null}
     </>
   );
 };
