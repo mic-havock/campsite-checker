@@ -32,27 +32,43 @@ const StatsDisplay = ({ stats }) => {
 
   const displayStats = stats || defaultStats;
 
+  // Format integers with locale-aware thousands separators (e.g. 1,234).
+  // Falls back to "0" if the value is not a finite number so we never render NaN.
+  const formatCount = (value) => {
+    const numericValue = Number(value);
+    if (!Number.isFinite(numericValue)) {
+      return "0";
+    }
+    return numericValue.toLocaleString("en-US");
+  };
+
   return (
     <div className="user-stats">
       <h2>User Statistics</h2>
       <div className="stats-grid">
         <div className="stat-item">
           <span className="stat-label">Total Reservations:</span>
-          <span className="stat-value">{displayStats.totalReservations}</span>
+          <span className="stat-value">
+            {formatCount(displayStats.totalReservations)}
+          </span>
         </div>
         <div className="stat-item">
           <span className="stat-label">Active Monitoring:</span>
-          <span className="stat-value">{displayStats.activeMonitoring}</span>
+          <span className="stat-value">
+            {formatCount(displayStats.activeMonitoring)}
+          </span>
         </div>
         <div className="stat-item">
           <span className="stat-label">Availability Notifications Sent:</span>
           <span className="stat-value">
-            {displayStats.successfulNotifications}
+            {formatCount(displayStats.successfulNotifications)}
           </span>
         </div>
         <div className="stat-item">
           <span className="stat-label">Total Availability Checks:</span>
-          <span className="stat-value">{displayStats.totalAttempts}</span>
+          <span className="stat-value">
+            {formatCount(displayStats.totalAttempts)}
+          </span>
         </div>
       </div>
     </div>

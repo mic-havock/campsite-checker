@@ -20,6 +20,22 @@
 
 .map-popup-content {
   @include map-popup-content;
+
+  padding-top: 0;
+  padding-bottom: 0;
+
+  .map-popup-type {
+    margin-bottom: 4px;
+  }
+
+  .map-popup-reservable {
+    margin-bottom: 8px;
+  }
+}
+
+.leaflet-popup-content:has(.map-popup-content) {
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
 
 @include leaflet-overrides;

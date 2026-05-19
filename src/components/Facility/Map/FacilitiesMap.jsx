@@ -167,7 +167,13 @@ const FacilitiesMap = ({ facilities, onFacilitySelect }) => {
               <Popup>
                 <div className="map-popup-content">
                   <h3>{facility.FacilityName}</h3>
-                  <p>{facility.FacilityTypeDescription}</p>
+                  <p className="map-popup-type">
+                    <strong>Type:</strong> {facility.FacilityTypeDescription}
+                  </p>
+                  <p className="map-popup-reservable">
+                    <strong>Reservable:</strong>{" "}
+                    {facility.Reservable === true ? "Yes" : "No"}
+                  </p>
                   <button
                     className="view-details-btn"
                     onClick={() => {
