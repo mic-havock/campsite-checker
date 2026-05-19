@@ -7,6 +7,45 @@
   border-radius: 8px;
   overflow: hidden;
 
+  .first-come-first-serve-notice {
+    width: 100%;
+    padding: 1.25rem 1.5rem;
+    background-color: rgba(74, 144, 226, 0.08);
+    border: 1px solid rgba(74, 144, 226, 0.22);
+    border-radius: $button-border-radius;
+    box-sizing: border-box;
+    text-align: center;
+
+    .first-come-first-serve-notice__title {
+      margin: 0 0 0.5rem 0;
+      font-size: 1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #1565c0;
+    }
+
+    .first-come-first-serve-notice__body {
+      margin: 0 auto;
+      max-width: 640px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: $text-primary;
+    }
+
+    @media (max-width: 900px) {
+      padding: 1rem;
+
+      .first-come-first-serve-notice__title {
+        font-size: 0.9rem;
+      }
+
+      .first-come-first-serve-notice__body {
+        font-size: 0.85rem;
+      }
+    }
+  }
+
   .availability-legend {
     display: flex;
     flex-wrap: nowrap;

@@ -120,19 +120,30 @@ const CampgroundAvailability = () => {
     };
   }, []);
 
-  const { dates, rowData, missingSeasonDates } = useMemo(() => {
+  const { dates, rowData, allCampsitesNotReservable } = useMemo(() => {
     if (!availabilityData || !availabilityData.campsites) {
-      return { dates: [], rowData: [], missingSeasonDates: false };
+      return { dates: [], rowData: [], allCampsitesNotReservable: false };
     }
 
     const campsitesData = Object.values(availabilityData.campsites);
+
+    if (campsitesData.length === 0) {
+      return { dates: [], rowData: [], allCampsitesNotReservable: false };
+    }
+
     const hasAnyAvailabilityKeys = campsitesData.some(
       (campsite) =>
         campsite.availabilities &&
         Object.keys(campsite.availabilities).length > 0,
     );
 
-    let datesArray = Array.from(
+    // Facilities returned with zero availability keys across every campsite
+    // are treated as first-come, first-served rather than rendering an empty grid.
+    if (!hasAnyAvailabilityKeys) {
+      return { dates: [], rowData: [], allCampsitesNotReservable: true };
+    }
+
+    const datesArray = Array.from(
       new Set(
         campsitesData.flatMap((campsite) =>
           Object.keys(campsite.availabilities || {}).map((date) =>
@@ -142,25 +153,6 @@ const CampgroundAvailability = () => {
       ),
     ).sort();
 
-    let missingSeason = false;
-    if (!hasAnyAvailabilityKeys && campsitesData.length > 0) {
-      missingSeason = true;
-      const monthAnchorIso =
-        startDate ||
-        new Date(
-          Date.UTC(
-            new Date().getUTCFullYear(),
-            new Date().getUTCMonth(),
-            1,
-            0,
-            0,
-            0,
-            0,
-          ),
-        ).toISOString();
-      datesArray = getUtcDateStringsForMonth(monthAnchorIso);
-    }
-
     const rowDataArray = campsitesData.map((campsite) => {
       const row = {
         campsite: `${campsite.site}`,
@@ -169,14 +161,6 @@ const CampgroundAvailability = () => {
       };
 
       datesArray.forEach((date) => {
-        if (missingSeason) {
-          row[date] = {
-            available: false,
-            status: "",
-            emptySeasonPlaceholder: true,
-          };
-          return;
-        }
         const status = campsite.availabilities[`${date}T00:00:00Z`];
         row[date] = {
           available: status === "Available" || status === "Open",
@@ -190,15 +174,14 @@ const CampgroundAvailability = () => {
     return {
       dates: datesArray,
       rowData: rowDataArray,
-      missingSeasonDates: missingSeason,
+      allCampsitesNotReservable: false,
     };
-  }, [availabilityData, startDate]);
+  }, [availabilityData]);
 
   const notReservableMap = useMemo(() => {
     const map = new Map();
 
     if (!dates.length || !rowData.length) return map;
-    if (missingSeasonDates) return map;
 
     rowData.forEach((row) => {
       const isNotReservable = dates.every((date) => {
@@ -208,7 +191,7 @@ const CampgroundAvailability = () => {
       map.set(row.campsite, isNotReservable);
     });
     return map;
-  }, [rowData, dates, missingSeasonDates]);
+  }, [rowData, dates]);
 
   const filteredRows = useMemo(() => {
     if (!rowData.length) return [];
@@ -368,8 +351,6 @@ const CampgroundAvailability = () => {
         width: 80,
         headerClass: "ag-header-cell-center",
         cellClassRules: {
-          "season-empty-placeholder": (params) =>
-            Boolean(params.value && params.value.emptySeasonPlaceholder),
           "status-available": (params) =>
             params.value && params.value.available,
           "status-reserved": (params) =>
@@ -384,11 +365,9 @@ const CampgroundAvailability = () => {
             params.value &&
             !params.value.available &&
             isNonReservableStatus(params.value.status) &&
-            params.value.status !== "NYR" &&
-            !params.value.emptySeasonPlaceholder,
+            params.value.status !== "NYR",
           "clickable-cell": (params) =>
             params.value &&
-            !params.value.emptySeasonPlaceholder &&
             !params.value.available &&
             (!isNonReservableStatus(params.value.status) ||
               params.value.status === "NYR"),
@@ -397,7 +376,6 @@ const CampgroundAvailability = () => {
           const data = params.value;
           if (
             !data ||
-            data.emptySeasonPlaceholder ||
             data.available ||
             (isNonReservableStatus(data.status) && data.status !== "NYR")
           ) {
@@ -407,13 +385,8 @@ const CampgroundAvailability = () => {
         },
         cellRenderer: (params) => {
           const data = params.value;
-          if (!data || data.emptySeasonPlaceholder) {
-            return (
-              <span
-                className="status-pill season-empty"
-                aria-label="No season dates from campground"
-              />
-            );
+          if (!data) {
+            return null;
           }
           let statusClass = "not-reservable";
           let text = "NR";
@@ -557,104 +530,110 @@ const CampgroundAvailability = () => {
           </div>
 
           <div className="availability-grid-container">
-            <div className="availability-legend">
-              {missingSeasonDates && (
-                <div className="season-dates-info-notification" role="status">
-                  <p className="season-dates-info-notification__title">
-                    Info Notification:
-                  </p>
-                  <p className="season-dates-info-notification__body">
-                    Campground management has not identified season dates for
-                    this period. Please check back soon. Reservation alerts can
-                    still be created for monitoring if/when a campsite becomes
-                    available.
-                  </p>
-                </div>
-              )}
-              <span className="legend-item">
-                <strong>A</strong> = Available
-              </span>
-              <span className="legend-item reserved">
-                <strong>R</strong> = Reserved
-              </span>
-              <span className="legend-item not-yet-released">
-                <strong>N</strong> = Not Yet Released
-              </span>
-              <span className="legend-item not-reservable">
-                <strong>X</strong> = Not Reservable/Not Available
-              </span>
-              <div className="legend-controls">
-                <input
-                  type="checkbox"
-                  id="hideNotReservable"
-                  checked={hideNotReservable}
-                  onChange={(e) => setHideNotReservable(e.target.checked)}
-                />
-                <label htmlFor="hideNotReservable">
-                  Hide campsites that are not reservable for all dates
-                </label>
+            {allCampsitesNotReservable ? (
+              <div
+                className="first-come-first-serve-notice"
+                role="status"
+                aria-live="polite"
+              >
+                <h2 className="first-come-first-serve-notice__title">
+                  First-Come, First-Served Campground
+                </h2>
+                <p className="first-come-first-serve-notice__body">
+                  Campsites at this facility are not reservable. They are
+                  available on a first-come, first-served basis. To secure a
+                  spot, please arrive at the campground in person.
+                </p>
               </div>
+            ) : (
+              <>
+                <div className="availability-legend">
+                  <span className="legend-item">
+                    <strong>A</strong> = Available
+                  </span>
+                  <span className="legend-item reserved">
+                    <strong>R</strong> = Reserved
+                  </span>
+                  <span className="legend-item not-yet-released">
+                    <strong>N</strong> = Not Yet Released
+                  </span>
+                  <span className="legend-item not-reservable">
+                    <strong>X</strong> = Not Reservable/Not Available
+                  </span>
+                  <div className="legend-controls">
+                    <input
+                      type="checkbox"
+                      id="hideNotReservable"
+                      checked={hideNotReservable}
+                      onChange={(e) => setHideNotReservable(e.target.checked)}
+                    />
+                    <label htmlFor="hideNotReservable">
+                      Hide campsites that are not reservable for all dates
+                    </label>
+                  </div>
 
-              {selectedCampsites.length > 0 && (
-                <div
-                  className="availability-selection-bar"
-                  role="region"
-                  aria-label="Selected campsites"
-                >
-                  <p
-                    className="availability-selection-bar__summary"
-                    aria-live="polite"
-                  >
-                    <strong>{selectedCampsites.length}</strong> campsite
-                    {selectedCampsites.length !== 1 ? "s" : ""} selected
-                  </p>
-                  <div className="availability-selection-bar__actions">
-                    <button
-                      type="button"
-                      className="availability-selection-bar__clear"
-                      onClick={handleClearGridSelection}
+                  {selectedCampsites.length > 0 && (
+                    <div
+                      className="availability-selection-bar"
+                      role="region"
+                      aria-label="Selected campsites"
                     >
-                      Clear selection
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleBulkAlertClick}
-                      className="bulk-alert-button"
-                    >
-                      Create Alert for {selectedCampsites.length} Selected
-                      Campsite
-                      {selectedCampsites.length !== 1 ? "s" : ""}
-                    </button>
+                      <p
+                        className="availability-selection-bar__summary"
+                        aria-live="polite"
+                      >
+                        <strong>{selectedCampsites.length}</strong> campsite
+                        {selectedCampsites.length !== 1 ? "s" : ""} selected
+                      </p>
+                      <div className="availability-selection-bar__actions">
+                        <button
+                          type="button"
+                          className="availability-selection-bar__clear"
+                          onClick={handleClearGridSelection}
+                        >
+                          Clear selection
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleBulkAlertClick}
+                          className="bulk-alert-button"
+                        >
+                          Create Alert for {selectedCampsites.length} Selected
+                          Campsite
+                          {selectedCampsites.length !== 1 ? "s" : ""}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="availability-grid-centered-wrapper">
+                  <div className="ag-theme-alpine" style={gridStyle}>
+                    <AgGridReact
+                      rowData={filteredRows}
+                      columnDefs={columnDefs}
+                      suppressHorizontalScroll={false}
+                      defaultColDef={{
+                        sortable: true,
+                        resizable: true,
+                        filter: true,
+                      }}
+                      onGridReady={(params) => {
+                        setGridApi(params.api);
+                      }}
+                      headerHeight={headerHeight}
+                      rowHeight={rowHeight}
+                      domLayout="normal"
+                      rowSelection="multiple"
+                      onSelectionChanged={handleSelectionChanged}
+                      suppressCellSelection={true}
+                      suppressRowClickSelection={true}
+                      enableCellTextSelection={true}
+                    />
                   </div>
                 </div>
-              )}
-            </div>
-
-            <div className="availability-grid-centered-wrapper">
-              <div className="ag-theme-alpine" style={gridStyle}>
-                <AgGridReact
-                  rowData={filteredRows}
-                  columnDefs={columnDefs}
-                  suppressHorizontalScroll={false}
-                  defaultColDef={{
-                    sortable: true,
-                    resizable: true,
-                    filter: true,
-                  }}
-                  onGridReady={(params) => {
-                    setGridApi(params.api);
-                  }}
-                  headerHeight={headerHeight}
-                  rowHeight={rowHeight}
-                  domLayout="normal"
-                  rowSelection="multiple"
-                  onSelectionChanged={handleSelectionChanged}
-                  suppressCellSelection={true}
-                  suppressRowClickSelection={true}
-                  enableCellTextSelection={true}
-                />
-              </div>
-            </div>
+              </>
+            )}
           </div>
 
           <AlertModal

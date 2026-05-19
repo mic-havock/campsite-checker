@@ -14,15 +14,17 @@ const CampsiteAvailability = ({ availabilities, facilityName, campsite }) => {
     endDate: "",
   });
 
-  // ⚡ Bolt Performance Optimization:
-  // Instantiating `today` once per render prevents instantiating `new Date()` and
-  // calling `setHours()` for every single day cell rendered (can be hundreds of times per render).
-  // This caching results in ~300x faster execution per comparison operation, without
-  // the stale-date bug introduced by `useMemo(..., [])` for long-running sessions.
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
+  // Treat an empty availabilities payload as a first-come, first-served site
+  // so we render a notice instead of an empty legend and calendar grid.
+  const hasAvailabilityData =
+    availabilities && Object.keys(availabilities).length > 0;
+
   const monthlyAvailabilities = useMemo(() => {
+    if (!hasAvailabilityData) return [];
+
     const months = {};
 
     Object.entries(availabilities).forEach(([dateStr, status]) => {
@@ -32,7 +34,7 @@ const CampsiteAvailability = ({ availabilities, facilityName, campsite }) => {
       const date = new Date(year, month - 1, day);
 
       const monthKey = `${date.getFullYear()}-${String(
-        date.getMonth() + 1
+        date.getMonth() + 1,
       ).padStart(2, "0")}`;
 
       if (!months[monthKey]) {
@@ -47,7 +49,7 @@ const CampsiteAvailability = ({ availabilities, facilityName, campsite }) => {
     });
 
     return Object.values(months);
-  }, [availabilities]);
+  }, [availabilities, hasAvailabilityData]);
 
   const getStatusClass = (status, date) => {
     if (date < today) {
@@ -80,7 +82,7 @@ const CampsiteAvailability = ({ availabilities, facilityName, campsite }) => {
   const handleDayClick = (status, date) => {
     if (status === "Reserved" || status === "NYR") {
       const formattedDate = `${date.getFullYear()}-${String(
-        date.getMonth() + 1
+        date.getMonth() + 1,
       ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
       setAlertDetails((prev) => ({
         ...prev,
@@ -93,71 +95,90 @@ const CampsiteAvailability = ({ availabilities, facilityName, campsite }) => {
 
   return (
     <div className="availability-section">
-      <div className="availability-legend">
-        <div className="legend-item">
-          <span className="status-dot status-available"></span>
-          <span>Available</span>
+      {!hasAvailabilityData ? (
+        <div
+          className="first-come-first-serve-notice"
+          role="status"
+          aria-live="polite"
+        >
+          <h4 className="first-come-first-serve-notice__title">
+            First-Come, First-Served Campsite
+          </h4>
+          <p className="first-come-first-serve-notice__body">
+            This campsite is not reservable. It is available on a first-come,
+            first-served basis. To secure it, please arrive at the campground
+            in person.
+          </p>
         </div>
-        <div className="legend-item">
-          <span className="status-dot status-reserved"></span>
-          <span>Reserved</span>
-        </div>
-        <div className="legend-item">
-          <span className="status-dot status-nyr"></span>
-          <span>Not Yet Released</span>
-        </div>
-        <div className="legend-item">
-          <span className="status-dot status-not-reservable"></span>
-          <span>Not Reservable/Not Available</span>
-        </div>
-        <p className="info-text">
-          Click Reserved/NYR Dates for Availability Alerts{" "}
-        </p>
-      </div>
-      <div className="monthly-calendars">
-        {monthlyAvailabilities.map(({ year, month, days }) => (
-          <div key={`${year}-${month}`} className="month-calendar">
-            <h4>{`${getMonthName(month)} ${year}`}</h4>
-            <div className="calendar-grid">
-              <div className="calendar-header">
-                {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(
-                  (day) => (
-                    <div key={day} className="day-header">
-                      {day}
-                    </div>
-                  )
-                )}
-              </div>
-              <div className="calendar-days">
-                {Array.from({
-                  length: new Date(year, month + 1, 0).getDate(),
-                }).map((_, index) => {
-                  const dayNum = index + 1;
-                  const status = days[dayNum];
-                  const date = new Date(year, month, dayNum);
-                  return (
-                    <div
-                      key={dayNum}
-                      className={`calendar-day ${
-                        status ? getStatusClass(status, date) : ""
-                      }`}
-                      style={{
-                        gridColumnStart:
-                          dayNum === 1
-                            ? new Date(year, month, 1).getDay() + 1
-                            : "auto",
-                      }}
-                      onClick={() => handleDayClick(status, date)}
-                    >
-                      <span className="day-number">{dayNum}</span>
-                    </div>
-                  );
-                })}
-              </div>
+      ) : (
+        <>
+          <div className="availability-legend">
+            <div className="legend-item">
+              <span className="status-dot status-available"></span>
+              <span>Available</span>
             </div>
+            <div className="legend-item">
+              <span className="status-dot status-reserved"></span>
+              <span>Reserved</span>
+            </div>
+            <div className="legend-item">
+              <span className="status-dot status-nyr"></span>
+              <span>Not Yet Released</span>
+            </div>
+            <div className="legend-item">
+              <span className="status-dot status-not-reservable"></span>
+              <span>Not Reservable/Not Available</span>
+            </div>
+            <p className="info-text">
+              Click Reserved/NYR Dates for Availability Alerts{" "}
+            </p>
           </div>
-        ))}
-      </div>
+          <div className="monthly-calendars">
+            {monthlyAvailabilities.map(({ year, month, days }) => (
+              <div key={`${year}-${month}`} className="month-calendar">
+                <h4>{`${getMonthName(month)} ${year}`}</h4>
+                <div className="calendar-grid">
+                  <div className="calendar-header">
+                    {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(
+                      (day) => (
+                        <div key={day} className="day-header">
+                          {day}
+                        </div>
+                      ),
+                    )}
+                  </div>
+                  <div className="calendar-days">
+                    {Array.from({
+                      length: new Date(year, month + 1, 0).getDate(),
+                    }).map((_, index) => {
+                      const dayNum = index + 1;
+                      const status = days[dayNum];
+                      const date = new Date(year, month, dayNum);
+                      return (
+                        <div
+                          key={dayNum}
+                          className={`calendar-day ${
+                            status ? getStatusClass(status, date) : ""
+                          }`}
+                          style={{
+                            gridColumnStart:
+                              dayNum === 1
+                                ? new Date(year, month, 1).getDay() + 1
+                                : "auto",
+                          }}
+                          onClick={() => handleDayClick(status, date)}
+                        >
+                          <span className="day-number">{dayNum}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
 
       <AlertModal
         isOpen={alertModal}
@@ -175,9 +196,7 @@ const CampsiteAvailability = ({ availabilities, facilityName, campsite }) => {
         selectedCampsite={campsite}
         campsiteName={facilityName}
         facilityId={
-          campsite?.FacilityID != null
-            ? String(campsite.FacilityID)
-            : undefined
+          campsite?.FacilityID != null ? String(campsite.FacilityID) : undefined
         }
       />
     </div>
