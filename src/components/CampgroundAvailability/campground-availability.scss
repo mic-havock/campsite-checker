@@ -393,6 +393,11 @@
           color: $availability-nyr-fg;
         }
 
+        &.checkout-only strong {
+          background-color: $availability-checkout-bg;
+          color: $availability-checkout-fg;
+        }
+
         &.not-reservable strong {
           background-color: $availability-not-reservable-bg;
           color: $availability-not-reservable-fg;
@@ -677,6 +682,7 @@
       &.status-available,
       &.status-reserved,
       &.status-nyr,
+      &.status-checkout,
       &.status-not-reservable {
         border-radius: 5px;
         overflow: hidden;
@@ -730,6 +736,22 @@
           border-radius: 0;
           background-color: transparent;
           color: $availability-nyr-fg;
+        }
+      }
+
+      &.status-checkout {
+        background-color: $availability-checkout-bg !important;
+
+        .status-pill.checkout {
+          margin: 0;
+          width: 100% !important;
+          height: 100% !important;
+          min-width: unset;
+          min-height: unset;
+          padding: 0;
+          border-radius: 0;
+          background-color: transparent;
+          color: $availability-checkout-fg;
         }
       }
 
@@ -803,6 +825,10 @@
       background-color: $availability-nyr-bg !important;
     }
 
+    .ag-row-hover .ag-center-cols-container .ag-cell.status-checkout {
+      background-color: $availability-checkout-bg !important;
+    }
+
     .ag-row-hover .ag-center-cols-container .ag-cell.status-not-reservable {
       background-color: $availability-not-reservable-bg !important;
     }
@@ -817,6 +843,10 @@
 
     .ag-row-selected .ag-center-cols-container .ag-cell.status-nyr {
       background-color: $availability-nyr-bg !important;
+    }
+
+    .ag-row-selected .ag-center-cols-container .ag-cell.status-checkout {
+      background-color: $availability-checkout-bg !important;
     }
 
     .ag-row-selected .ag-center-cols-container .ag-cell.status-not-reservable {

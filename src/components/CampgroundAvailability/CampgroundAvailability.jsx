@@ -14,7 +14,12 @@ import { Helmet } from "react-helmet-async";
 import { LuCalendar } from "react-icons/lu";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchCampgroundAvailability } from "../../api/campsites";
-import { isNonReservableStatus } from "../../config/reservationStatus";
+import {
+  getAvailabilityCategory,
+  isAlertableStatus,
+  isAvailableForCheckIn,
+  isNonReservableStatus,
+} from "../../config/reservationStatus";
 import AlertModal from "../Common/AlertModal/AlertModal";
 import LoadingSpinner from "../Common/LoadingSpinner/LoadingSpinner";
 import "./campground-availability.scss";
@@ -163,8 +168,9 @@ const CampgroundAvailability = () => {
       datesArray.forEach((date) => {
         const status = campsite.availabilities[`${date}T00:00:00Z`];
         row[date] = {
-          available: status === "Available" || status === "Open",
+          available: isAvailableForCheckIn(status),
           status: status,
+          category: getAvailabilityCategory(status),
         };
       });
 
@@ -352,33 +358,21 @@ const CampgroundAvailability = () => {
         headerClass: "ag-header-cell-center",
         cellClassRules: {
           "status-available": (params) =>
-            params.value && params.value.available,
+            params.value && params.value.category === "available",
           "status-reserved": (params) =>
-            params.value &&
-            !params.value.available &&
-            params.value.status === "Reserved",
+            params.value && params.value.category === "reserved",
           "status-nyr": (params) =>
-            params.value &&
-            !params.value.available &&
-            params.value.status === "NYR",
+            params.value && params.value.category === "nyr",
+          "status-checkout": (params) =>
+            params.value && params.value.category === "checkout",
           "status-not-reservable": (params) =>
-            params.value &&
-            !params.value.available &&
-            isNonReservableStatus(params.value.status) &&
-            params.value.status !== "NYR",
+            params.value && params.value.category === "not-reservable",
           "clickable-cell": (params) =>
-            params.value &&
-            !params.value.available &&
-            (!isNonReservableStatus(params.value.status) ||
-              params.value.status === "NYR"),
+            params.value && isAlertableStatus(params.value.status),
         },
         onCellClicked: (params) => {
           const data = params.value;
-          if (
-            !data ||
-            data.available ||
-            (isNonReservableStatus(data.status) && data.status !== "NYR")
-          ) {
+          if (!data || !isAlertableStatus(data.status)) {
             return;
           }
           handleUnavailableClick(params.data.campsiteObj, date);
@@ -388,22 +382,17 @@ const CampgroundAvailability = () => {
           if (!data) {
             return null;
           }
-          let statusClass = "not-reservable";
-          let text = "NR";
 
-          if (data.available) {
-            statusClass = "available";
-            text = "A";
-          } else if (data.status === "Reserved") {
-            statusClass = "reserved";
-            text = "R";
-          } else if (data.status === "NYR") {
-            statusClass = "nyr";
-            text = "N";
-          } else {
-            statusClass = "not-reservable";
-            text = "X";
-          }
+          const pillByCategory = {
+            available: { statusClass: "available", text: "A" },
+            reserved: { statusClass: "reserved", text: "R" },
+            nyr: { statusClass: "nyr", text: "N" },
+            checkout: { statusClass: "checkout", text: "C" },
+            "not-reservable": { statusClass: "not-reservable", text: "X" },
+          };
+
+          const { statusClass, text } =
+            pillByCategory[data.category] ?? pillByCategory.reserved;
 
           return <span className={`status-pill ${statusClass}`}>{text}</span>;
         },
@@ -512,8 +501,8 @@ const CampgroundAvailability = () => {
                   <div className="info-item">
                     <span className="bullet">•</span>
                     <span>
-                      Click on any Reserved or Not Yet Released date to create
-                      an alert for that date
+                      Click on any Reserved, Not Yet Released, or Checkout Only
+                      date to create an alert for that date
                     </span>
                   </div>
                   <div className="info-item">
@@ -556,6 +545,9 @@ const CampgroundAvailability = () => {
                   </span>
                   <span className="legend-item not-yet-released">
                     <strong>N</strong> = Not Yet Released
+                  </span>
+                  <span className="legend-item checkout-only">
+                    <strong>C</strong> = Checkout Only
                   </span>
                   <span className="legend-item not-reservable">
                     <strong>X</strong> = Not Reservable/Not Available

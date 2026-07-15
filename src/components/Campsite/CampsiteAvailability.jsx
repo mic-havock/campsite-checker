@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import { useMemo, useState } from "react";
-import { isNonReservableStatus } from "../../config/reservationStatus";
+import { isAlertableStatus, getAvailabilityCategory } from "../../config/reservationStatus";
 import AlertModal from "../Common/AlertModal/AlertModal";
 import "./campsite-availability.scss";
 
@@ -56,21 +56,7 @@ const CampsiteAvailability = ({ availabilities, facilityName, campsite }) => {
       return "status-not-reservable";
     }
 
-    switch (status) {
-      case "Reserved":
-        return "status-reserved";
-      case "Available":
-      case "Open":
-        return "status-available";
-      default:
-        if (isNonReservableStatus(status)) {
-          return "status-not-reservable";
-        }
-        if (status === "NYR") {
-          return "status-nyr";
-        }
-        return "status-reserved";
-    }
+    return `status-${getAvailabilityCategory(status)}`;
   };
 
   const getMonthName = (monthIndex) => {
@@ -80,7 +66,7 @@ const CampsiteAvailability = ({ availabilities, facilityName, campsite }) => {
   };
 
   const handleDayClick = (status, date) => {
-    if (status === "Reserved" || status === "NYR") {
+    if (isAlertableStatus(status)) {
       const formattedDate = `${date.getFullYear()}-${String(
         date.getMonth() + 1,
       ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
@@ -126,11 +112,15 @@ const CampsiteAvailability = ({ availabilities, facilityName, campsite }) => {
               <span>Not Yet Released</span>
             </div>
             <div className="legend-item">
+              <span className="status-dot status-checkout"></span>
+              <span>Checkout Only</span>
+            </div>
+            <div className="legend-item">
               <span className="status-dot status-not-reservable"></span>
               <span>Not Reservable/Not Available</span>
             </div>
             <p className="info-text">
-              Click Reserved/NYR Dates for Availability Alerts{" "}
+              Click Reserved, NYR, or Checkout Only dates for availability alerts
             </p>
           </div>
           <div className="monthly-calendars">

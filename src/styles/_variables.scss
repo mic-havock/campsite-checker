@@ -35,6 +35,8 @@ $availability-nyr-bg: rgba(74, 144, 226, 0.12);
 $availability-nyr-fg: #1565c0;
 $availability-not-reservable-bg: rgba(112, 112, 112, 0.12);
 $availability-not-reservable-fg: #424242;
+$availability-checkout-bg: rgba(212, 132, 106, 0.15);
+$availability-checkout-fg: #b85c3a;
 
 @mixin glass {
   background: rgba(255, 255, 255, 0.7);
