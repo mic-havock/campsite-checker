@@ -378,7 +378,10 @@ const AlertModal = ({
       onClick={handleBackdropClick}
       key={`alert-modal-${isCreatingAlert}`}
     >
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
+      <div
+        className={`modal${isBulkAlert ? " modal--bulk" : ""}`}
+        onClick={(e) => e.stopPropagation()}
+      >
         <h2>{title}</h2>
         {subtitle && <h3>{subtitle}</h3>}
         {isBulkAlert && selectedCampsites?.length > 0 && (

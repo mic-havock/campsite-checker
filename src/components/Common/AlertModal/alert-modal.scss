@@ -10,7 +10,10 @@
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
+  overflow-y: auto;
+  padding: 1rem;
+  box-sizing: border-box;
   z-index: 99999;
 }
 
@@ -21,12 +24,29 @@
   position: relative;
   width: min(100% - 2rem, 440px);
   max-width: 440px;
+  max-height: calc(100dvh - 2rem);
+  margin: auto;
+  flex-shrink: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   border: 1px solid rgba($primary-color, 0.35);
   background-color: $text-light;
   box-shadow: $shadow-lg;
   border-radius: $button-border-radius;
   z-index: 100000;
   padding: 2rem;
+  box-sizing: border-box;
+
+  @media (max-height: 700px), (max-width: 480px) {
+    padding: 1.25rem;
+  }
+
+  &.modal--bulk {
+    .selected-campsites {
+      max-height: min(200px, 28dvh);
+    }
+  }
 
   h2 {
     margin: 0;
