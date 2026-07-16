@@ -348,9 +348,11 @@
       margin-bottom: 1rem;
       padding: 0.75rem 1.5rem;
       display: flex;
-      gap: 1.5rem;
+      column-gap: 1.5rem;
+      row-gap: 0.35rem;
       font-size: 0.75rem;
       align-items: center;
+      justify-content: center;
       flex-wrap: wrap;
       box-sizing: border-box;
       align-self: center;
@@ -406,45 +408,26 @@
 
       .legend-controls {
         display: flex;
-        align-items: flex-start;
+        align-items: center;
+        justify-content: center;
         gap: 8px;
-        margin-left: auto;
-        flex-shrink: 1;
+        flex-basis: 100%;
+        width: 100%;
+        max-width: none;
         min-width: 0;
-        max-width: 22rem;
-        border-left: 1px solid rgba(0, 0, 0, 0.1);
-        padding-left: 1.5rem;
-
-        @media (max-width: #{$breakpoint-lg - 1px}) {
-          flex-basis: 100%;
-          max-width: none;
-          margin-left: 0;
-          margin-right: 0;
-          border-left: none;
-          padding-left: 0;
-          width: 100%;
-          padding-top: 0.75rem;
-          border-top: 1px solid rgba(0, 0, 0, 0.1);
-          justify-content: flex-start;
-          align-items: flex-start;
-        }
+        margin: 0;
+        padding-top: 0.35rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
 
         #hideNotReservable {
           cursor: pointer;
           flex-shrink: 0;
-          margin-top: 0.1rem;
           box-sizing: border-box;
           width: 22px;
           height: 22px;
           min-width: 22px;
           min-height: 22px;
           accent-color: $primary-color;
-
-          @media (max-width: #{$breakpoint-lg - 1px}) {
-            margin-top: 0;
-            min-height: 22px !important;
-            min-width: 22px !important;
-          }
 
           @include touch-device {
             -webkit-appearance: checkbox !important;
@@ -461,13 +444,9 @@
           color: $text-primary;
           white-space: normal;
           min-width: 0;
-          flex: 1;
-
-          @media (max-width: #{$breakpoint-lg - 1px}) {
-            flex: 0 1 auto;
-            max-width: 22rem;
-            text-align: left;
-          }
+          flex: 0 1 auto;
+          max-width: 22rem;
+          text-align: left;
         }
       }
     }
@@ -605,12 +584,79 @@
     --ag-font-family: inherit;
     --ag-borders: none;
     --ag-cell-focus-border-color: transparent;
+    --ag-checkbox-focus-box-shadow: none;
+    --ag-focus-shadow: none;
+    --ag-input-focus-box-shadow: none;
+    --ag-checkbox-background-color: transparent;
+    --ag-checkbox-border-radius: 3px;
+    --ag-icon-image-display: none;
 
     background-color: $card-bg;
     border-radius: $button-border-radius;
     box-shadow: $shadow-md;
     border: 1px solid rgba(0, 0, 0, 0.1);
     overflow: hidden;
+
+    .ag-checkbox-input-wrapper {
+      position: relative;
+      width: 18px !important;
+      height: 18px !important;
+      min-width: 18px !important;
+      min-height: 18px !important;
+      background-color: #fff !important;
+      background-repeat: no-repeat !important;
+      background-position: center !important;
+      background-size: 12px 12px !important;
+      background-image: none !important;
+      border: 1.5px solid rgba(0, 0, 0, 0.4) !important;
+      border-radius: 3px !important;
+      overflow: visible !important;
+      box-shadow: none !important;
+      outline: none !important;
+
+      &:focus-within,
+      &:active {
+        outline: none !important;
+        box-shadow: none !important;
+        border-color: rgba(0, 0, 0, 0.6) !important;
+      }
+
+      &::before,
+      &::after {
+        display: none !important;
+        content: none !important;
+        background: none !important;
+        background-image: none !important;
+      }
+
+      &.ag-checked {
+        border-color: #000 !important;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='M2 6l3 3 5-5'/%3E%3C/svg%3E") !important;
+      }
+
+      &.ag-indeterminate {
+        border-color: #000 !important;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' d='M2 6h8'/%3E%3C/svg%3E") !important;
+      }
+
+      input {
+        -webkit-appearance: none !important;
+        appearance: none !important;
+        opacity: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        cursor: pointer;
+        border: none !important;
+        outline: none !important;
+        box-shadow: none !important;
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+      }
+    }
 
     .ag-header {
       background-color: $card-bg;
