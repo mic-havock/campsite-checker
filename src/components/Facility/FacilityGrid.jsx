@@ -305,8 +305,8 @@ const FacilityGrid = ({
       pagination: true,
       paginationPageSize: 50,
       paginationPageSizeSelector: GRID_PAGE_SIZE_OPTIONS,
-      headerHeight: 30,
-      rowHeight: 30,
+      headerHeight: 42,
+      rowHeight: 40,
     }),
     [],
   );

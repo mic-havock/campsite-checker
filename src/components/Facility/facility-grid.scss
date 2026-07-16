@@ -8,8 +8,8 @@
   box-sizing: border-box;
   overflow: hidden;
   border-radius: $button-border-radius;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  background-color: $text-light;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: $card-bg;
   box-shadow: $shadow-md;
 
   @include mobile {
@@ -20,7 +20,7 @@
     overflow: hidden !important;
     border: none !important;
     border-radius: $button-border-radius;
-    background-color: $background-base;
+    background-color: $card-bg;
   }
 
   .grid-wrapper.facility-grid-wrapper {
@@ -31,20 +31,24 @@
     overflow: hidden;
     border-radius: $button-border-radius;
 
-    // Align with Kamp Scout surfaces (campground cards, availability grid)
     --ag-borders: none;
     --ag-font-family: inherit;
     --ag-font-size: 13px;
-    --ag-header-height: 30px;
-    --ag-row-height: 30px;
-    --ag-background-color: #{$background-base};
-    --ag-odd-row-background-color: #{$card-bg};
+    --ag-header-height: 42px;
+    --ag-row-height: 40px;
+    --ag-background-color: #{$card-bg};
+    --ag-odd-row-background-color: #{mix($card-bg, $color-moss, 92%)};
     --ag-header-background-color: #{$color-forest-green};
     --ag-header-foreground-color: #{$text-light};
-    --ag-row-border-color: rgba(0, 0, 0, 0.06);
-    --ag-row-hover-color: #{mix($background-base, $color-moss, 82%)};
+    --ag-row-border-color: transparent;
+    --ag-row-hover-color: #{mix($card-bg, $color-moss, 78%)};
     --ag-selected-row-background-color: #{rgba($color-forest-green, 0.1)};
     --ag-header-column-separator-display: none;
+    --ag-cell-horizontal-border: none;
+
+    .ag-header {
+      border-bottom: none !important;
+    }
 
     .ag-header-row {
       background-color: $color-forest-green !important;
@@ -53,43 +57,46 @@
     .ag-header-cell {
       display: flex;
       align-items: center;
-      padding: 0 1.5rem !important;
+      padding: 0 1.25rem !important;
       background-color: $color-forest-green !important;
-      border-right: 1px solid rgba(255, 255, 255, 0.14) !important;
-
-      &:last-child {
-        border-right: none !important;
-      }
+      border-right: none !important;
 
       .ag-header-cell-text {
-        font-size: 0.8rem !important;
+        font-size: 0.72rem !important;
         font-weight: 700 !important;
-        letter-spacing: 0.06em;
+        letter-spacing: 0.08em;
         text-transform: uppercase;
         color: $text-light !important;
       }
 
       @include mobile {
-        padding: 0 1rem !important;
+        padding: 0 0.85rem !important;
 
         .ag-header-cell-text {
-          font-size: 0.72rem !important;
+          font-size: 0.68rem !important;
         }
       }
+    }
+
+    .ag-body-viewport,
+    .ag-center-cols-viewport,
+    .ag-center-cols-container,
+    .ag-body-horizontal-scroll-viewport {
+      background-color: $card-bg !important;
     }
 
     .ag-cell {
       display: flex;
       align-items: center;
-      padding: 0 1.5rem !important;
-      border-right: 1px solid rgba(0, 0, 0, 0.05) !important;
+      padding: 0 1.25rem !important;
+      border-right: none !important;
       font-size: 0.85rem;
       line-height: 1.35;
       color: $text-primary;
       transition: color 0.15s ease;
 
       @include mobile {
-        padding: 0 1rem !important;
+        padding: 0 0.85rem !important;
         font-size: 0.8rem;
       }
     }
@@ -123,17 +130,18 @@
     }
 
     .name-cell {
-      font-weight: 600;
+      font-weight: 700;
       color: $color-forest-green;
+      letter-spacing: 0.02em;
     }
 
     .ag-row {
       cursor: pointer;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04) !important;
       transition: background-color 0.18s ease;
 
       &:hover:not(.ag-row-selected) {
-        background-color: mix($background-base, $color-moss, 82%) !important;
+        background-color: mix($card-bg, $color-moss, 78%) !important;
       }
 
       &.ag-row-selected {
@@ -172,35 +180,49 @@
     }
 
     .ag-row-selected .ag-cell.ag-cell-focus {
-      border-right: 1px solid rgba(0, 0, 0, 0.05) !important;
+      border-right: none !important;
     }
 
     .ag-paging-panel {
       display: flex;
       align-items: center;
-      height: 40px !important;
-      padding: 0 0.75rem;
+      justify-content: flex-end;
+      gap: 0.75rem 1.25rem;
+      height: 48px !important;
+      padding: 0 1.25rem;
       box-sizing: border-box;
       border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
       background-color: $card-bg !important;
-      font-size: 0.75rem !important;
-      color: $color-stone !important;
+      font-size: 0.78rem !important;
+      color: mix($color-stone, $text-primary, 35%) !important;
+
+      .ag-paging-page-size {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        margin-right: auto;
+      }
 
       .ag-paging-button {
         color: $color-forest-green !important;
-        opacity: 0.85;
+        opacity: 0.8;
         border-radius: 6px;
         transition:
           opacity 0.15s ease,
           background-color 0.15s ease;
 
-        &:hover {
+        &:hover:not(.ag-disabled) {
           opacity: 1;
           background-color: rgba($color-forest-green, 0.08);
         }
+
+        &.ag-disabled {
+          opacity: 0.35;
+        }
       }
 
-      .ag-paging-row-summary-panel {
+      .ag-paging-row-summary-panel,
+      .ag-paging-page-summary-panel {
         font-weight: 600;
         color: $text-primary;
       }
