@@ -12,6 +12,8 @@ const useFilteredCampsites = (
   campsiteData,
   showReservableOnly,
   selectedLoops,
+  selectedAttributes,
+  selectedEquipment,
 ) => {
   return useMemo(() => {
     return campsiteData.filter((campsite) => {
@@ -20,9 +22,27 @@ const useFilteredCampsites = (
       const loopMatch =
         selectedLoops.length === 0 ||
         (campsite.Loop && selectedLoops.includes(campsite.Loop));
-      return reservableMatch && loopMatch;
+      
+      const attributesMatch = 
+        selectedAttributes.length === 0 ||
+        selectedAttributes.every((selectedAttr) => {
+          const [attrName, attrValue] = selectedAttr.split("::");
+          return campsite.ATTRIBUTES?.some(
+            (attr) => attr.AttributeName === attrName && attr.AttributeValue === attrValue
+          );
+        });
+      
+      const equipmentMatch =
+        selectedEquipment.length === 0 ||
+        selectedEquipment.every((selectedEquip) =>
+          campsite.PERMITTEDEQUIPMENT?.some(
+            (equip) => equip.EquipmentName === selectedEquip
+          )
+        );
+      
+      return reservableMatch && loopMatch && attributesMatch && equipmentMatch;
     });
-  }, [campsiteData, showReservableOnly, selectedLoops]);
+  }, [campsiteData, showReservableOnly, selectedLoops, selectedAttributes, selectedEquipment]);
 };
 
 const CampsiteExplorer = () => {
@@ -35,6 +55,8 @@ const CampsiteExplorer = () => {
   const [loading, setLoading] = useState(false);
   const [showReservableOnly, setShowReservableOnly] = useState(false);
   const [selectedLoops, setSelectedLoops] = useState([]);
+  const [selectedAttributes, setSelectedAttributes] = useState([]);
+  const [selectedEquipment, setSelectedEquipment] = useState([]);
 
   useEffect(() => {
     if (!initialCampsites || initialCampsites.length === 0) {
@@ -54,6 +76,8 @@ const CampsiteExplorer = () => {
     campsiteData,
     showReservableOnly,
     selectedLoops,
+    selectedAttributes,
+    selectedEquipment,
   );
 
   const facilityID = campsiteData?.[0]?.FacilityID;
@@ -97,11 +121,14 @@ const CampsiteExplorer = () => {
             <div className="filter-section">
               <CampsiteFilter
                 campsiteData={campsiteData}
-                filteredCampsites={filteredCampsites}
                 setShowReservableOnly={setShowReservableOnly}
                 showReservableOnly={showReservableOnly}
                 selectedLoops={selectedLoops}
                 setSelectedLoops={setSelectedLoops}
+                selectedAttributes={selectedAttributes}
+                setSelectedAttributes={setSelectedAttributes}
+                selectedEquipment={selectedEquipment}
+                setSelectedEquipment={setSelectedEquipment}
               />
             </div>
 
@@ -139,14 +166,21 @@ const CampsiteExplorer = () => {
         <div className="view-content-area">
           {viewMode === "list" ? (
             <div className="campsites-grid">
-              {filteredCampsites.map((campsite) => (
-                <Campsite
-                  key={campsite.CampsiteID}
-                  campsite={campsite}
-                  facilityName={facilityName}
-                  showExpandHint={false}
-                />
-              ))}
+              {filteredCampsites.length > 0 ? (
+                filteredCampsites.map((campsite) => (
+                  <Campsite
+                    key={campsite.CampsiteID}
+                    campsite={campsite}
+                    facilityName={facilityName}
+                    showExpandHint={false}
+                  />
+                ))
+              ) : (
+                <div className="no-results-message">
+                  <p>No campsites match your selected filters.</p>
+                  <p>Try adjusting or clearing some filters to see more results.</p>
+                </div>
+              )}
             </div>
           ) : (
             <div className="map-view-container">
@@ -154,6 +188,12 @@ const CampsiteExplorer = () => {
                 campsites={filteredCampsites}
                 facilityName={facilityName || "Campground"}
               />
+              {filteredCampsites.length === 0 && (
+                <div className="no-results-overlay">
+                  <p>No campsites match your selected filters.</p>
+                  <p>Try adjusting or clearing some filters to see more results.</p>
+                </div>
+              )}
             </div>
           )}
         </div>
