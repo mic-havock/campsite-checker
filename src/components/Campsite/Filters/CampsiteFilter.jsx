@@ -330,9 +330,12 @@ const CampsiteFilter = ({
     return Array.from(equipmentSet)
       .map((name) => {
         const display = name.split(/(?=[A-Z])/).join(" ");
-        return display;
+        return {
+          key: name,
+          display,
+        };
       })
-      .sort();
+      .sort((a, b) => a.display.localeCompare(b.display));
   }, [campsiteData]);
 
   return (
@@ -380,8 +383,8 @@ const CampsiteFilter = ({
             setDropdownPosition={setEquipmentDropdownPosition}
             title="Select permitted equipment types"
             buttonText="Equipment"
-            getAmenityValue={(equip) => equip}
-            getAmenityDisplay={(equip) => equip}
+            getAmenityValue={(equip) => equip.key}
+            getAmenityDisplay={(equip) => equip.display}
           />
 
           <label className="reservable-checkbox">
