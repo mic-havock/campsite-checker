@@ -78,13 +78,22 @@ const Layout = ({ children }) => {
               </Link>
             </div>
             <div className="header-right">
+              {location.pathname !== "/permit-alerts" && (
+                <button
+                  onClick={() => navigate("/permit-alerts")}
+                  className="permit-alerts-btn"
+                  aria-label="Permit Alerts"
+                >
+                  {isMobile ? "Permits" : "Permit Alerts"}
+                </button>
+              )}
               {location.pathname !== "/reservation-management" && (
                 <button
                   onClick={() => navigate("/reservation-management")}
                   className="alert-management-btn"
-                  aria-label="Manage Reservation Alerts"
+                  aria-label="Manage Alerts"
                 >
-                  {isMobile ? "Alerts" : "Manage Reservation Alerts"}
+                  {isMobile ? "Manage" : "Manage Alerts"}
                 </button>
               )}
             </div>

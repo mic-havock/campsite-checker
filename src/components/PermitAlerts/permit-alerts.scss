@@ -1,0 +1,580 @@
+@import "../../styles/variables";
+
+.permit-alerts {
+  min-height: calc(100vh - 5rem);
+  background: linear-gradient(
+    135deg,
+    $background-light 0%,
+    mix($color-moss, $background-light, 4%) 50%,
+    mix($color-earth, $background-light, 3%) 100%
+  );
+
+  .hero-section {
+    background: linear-gradient(
+      135deg,
+      mix($primary-color, $color-moss, 80%) 0%,
+      $primary-color 50%,
+      mix($primary-color, $color-earth, 85%) 100%
+    );
+    color: $text-light;
+    padding: 3rem 1.5rem;
+    text-align: center;
+    box-shadow: $shadow-md;
+
+    @media (max-width: 768px) {
+      padding: 2rem 1rem;
+    }
+
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 0 0 1rem 0;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+        @media (max-width: 768px) {
+          font-size: 2rem;
+        }
+      }
+
+      .description {
+        font-size: 1.2rem;
+        opacity: 0.95;
+        margin: 0;
+
+        @media (max-width: 768px) {
+          font-size: 1rem;
+        }
+      }
+    }
+  }
+
+  .permit-alerts-content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+
+    @media (max-width: 768px) {
+      padding: 1.5rem 1rem;
+    }
+  }
+
+  .permit-alerts-form {
+    background: $text-light;
+    border-radius: $button-border-radius;
+    padding: 2rem;
+    box-shadow: $shadow-md;
+
+    @media (max-width: 768px) {
+      padding: 1.5rem 1rem;
+    }
+
+    .form-section {
+      margin-bottom: 2rem;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      h2 {
+        font-size: 1.3rem;
+        color: $text-primary;
+        margin: 0 0 1rem 0;
+
+        .required {
+          color: #d32f2f;
+          margin-left: 0.25rem;
+        }
+      }
+
+      .section-description {
+        font-size: 0.95rem;
+        color: mix($text-primary, $color-stone, 65%);
+        margin: 0 0 0.75rem 0;
+      }
+
+      .lottery-notice {
+        background-color: mix($color-sky, #ffffff, 25%);
+        border-left: 4px solid mix($primary-color, $color-sky, 60%);
+        padding: 0.75rem 1rem;
+        margin-bottom: 1rem;
+        border-radius: 4px;
+        font-size: 0.95rem;
+        color: $text-primary;
+
+        strong {
+          font-weight: 600;
+        }
+      }
+    }
+
+    .url-input-group {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+
+      input {
+        flex: 1;
+        min-width: 250px;
+        padding: 0.65rem;
+        border: 2px solid $color-stone;
+        border-radius: $button-border-radius;
+        font-size: 1rem;
+        transition: $button-transition;
+
+        &:focus {
+          outline: none;
+          border-color: $primary-color;
+          box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+        }
+
+        &:disabled {
+          background-color: mix($background-light, #ffffff, 40%);
+          cursor: not-allowed;
+        }
+      }
+
+      .parse-url-btn {
+        @include button-base;
+        padding: 0.65rem 1.5rem;
+        background-color: $primary-color;
+        color: $text-light;
+        border: none;
+        font-weight: 600;
+
+        &:hover:not(:disabled) {
+          background-color: darken($primary-color, 8%);
+          transform: translateY(-1px);
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+    }
+
+    .permit-select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid $color-stone;
+      border-radius: $button-border-radius;
+      font-size: 1rem;
+      background-color: $text-light;
+      cursor: pointer;
+      transition: $button-transition;
+
+      &:focus {
+        outline: none;
+        border-color: $primary-color;
+        box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+      }
+
+      &:disabled {
+        background-color: mix($background-light, #ffffff, 40%);
+        cursor: not-allowed;
+      }
+    }
+
+    .loading-divisions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      padding: 2rem;
+      color: mix($text-primary, $color-stone, 65%);
+    }
+
+    .no-divisions,
+    .no-results {
+      text-align: center;
+      padding: 2rem;
+      color: mix($text-primary, $color-stone, 65%);
+      font-style: italic;
+    }
+
+    .division-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+
+      .division-search {
+        width: 100%;
+        padding: 0.65rem;
+        border: 2px solid $color-stone;
+        border-radius: $button-border-radius;
+        font-size: 1rem;
+        transition: $button-transition;
+
+        &:focus {
+          outline: none;
+          border-color: $primary-color;
+          box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+        }
+
+        &:disabled {
+          background-color: mix($background-light, #ffffff, 40%);
+          cursor: not-allowed;
+        }
+      }
+
+      .division-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+
+        button {
+          @include button-base;
+          padding: 0.5rem 1rem;
+          font-size: 0.9rem;
+          background-color: mix($background-light, #ffffff, 40%);
+          color: mix($text-primary, $color-earth, 55%);
+          border: 1px solid rgba($color-stone, 0.55);
+
+          &:hover:not(:disabled) {
+            background-color: mix($color-sky, #ffffff, 18%);
+            border-color: rgba($color-stone, 0.75);
+            transform: translateY(-1px);
+          }
+
+          &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+          }
+        }
+      }
+    }
+
+    .divisions-list {
+      max-height: 400px;
+      overflow-y: auto;
+      border: 2px solid $color-stone;
+      border-radius: $button-border-radius;
+      background-color: $text-light;
+
+      @media (max-width: 768px) {
+        max-height: 300px;
+      }
+
+      .division-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid rgba($color-stone, 0.2);
+        cursor: pointer;
+        transition: background-color 0.2s;
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        &:hover {
+          background-color: mix($color-sky, #ffffff, 8%);
+        }
+
+        &.division-item--selected {
+          background-color: mix($color-moss, #ffffff, 12%);
+
+          &:hover {
+            background-color: mix($color-moss, #ffffff, 18%);
+          }
+        }
+
+        input[type="checkbox"] {
+          margin-right: 0.75rem;
+          cursor: pointer;
+          width: 18px;
+          height: 18px;
+          accent-color: $primary-color;
+        }
+
+        .division-name {
+          flex: 1;
+          color: $text-primary;
+          font-size: 0.95rem;
+        }
+      }
+    }
+
+    .contact-input {
+      width: 100%;
+      padding: 0.65rem;
+      margin-bottom: 0.75rem;
+      border: 2px solid $color-stone;
+      border-radius: $button-border-radius;
+      font-size: 1rem;
+      transition: $button-transition;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: $primary-color;
+        box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+      }
+
+      &:disabled {
+        background-color: mix($background-light, #ffffff, 40%);
+        cursor: not-allowed;
+      }
+    }
+
+    .create-permit-alert-btn {
+      @include button-primary;
+      width: 100%;
+      padding: 0.85rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+
+      &:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  // Date picker styles (similar to AlertModal)
+  .permit-alerts-date-range {
+    width: 100%;
+    margin-bottom: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .permit-alerts-date-range--disabled {
+    opacity: 0.65;
+    pointer-events: none;
+  }
+
+  .permit-alerts-range-hint {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 0.75rem;
+    padding: 0.65rem 0.85rem;
+    border-radius: $button-border-radius;
+    background-color: mix($color-sky, #ffffff, 35%);
+    color: $text-primary;
+    font-size: 0.95rem;
+    text-align: center;
+
+    strong {
+      color: mix($primary-color, $text-primary, 45%);
+      font-weight: 600;
+    }
+  }
+
+  .permit-alerts-range-summary {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 0.65rem;
+    font-size: 0.9rem;
+    color: mix($text-primary, $color-stone, 70%);
+    font-weight: 500;
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.15rem 0.35rem;
+  }
+
+  .permit-alerts-range-summary-nights {
+    color: mix($text-primary, $color-stone, 58%);
+    font-size: 0.92em;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .permit-alerts-day-picker-wrap {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    justify-content: center;
+  }
+
+  .permit-alerts-day-picker {
+    $range-end: mix($primary-color, #ffffff, 58%);
+    $range-mid: mix($color-moss, #ffffff, 14%);
+    $range-mid-text: mix($text-primary, $primary-color, 78%);
+    $chrome: mix($color-earth, $color-stone, 55%);
+
+    --rdp-accent-color: #{$chrome};
+    --rdp-accent-background-color: #{mix($range-mid, #ffffff, 35%)};
+    --rdp-range_middle-background-color: #{$range-mid};
+    --rdp-range_middle-color: #{$range-mid-text};
+    --rdp-range_start-date-background-color: #{$range-end};
+    --rdp-range_end-date-background-color: #{$range-end};
+    --rdp-range_start-color: #ffffff;
+    --rdp-range_end-color: #ffffff;
+    --rdp-selected-border: 1px solid rgba($primary-color, 0.35);
+    --rdp-today-color: #{$chrome};
+    --rdp-weekday-opacity: 0.55;
+    --rdp-outside-opacity: 0.45;
+    --rdp-disabled-opacity: 0.38;
+    --rdp-day_button-border-radius: 12px;
+    --rdp-day-width: 48px;
+    --rdp-day-height: 48px;
+    --rdp-day_button-width: 45px;
+    --rdp-day_button-height: 45px;
+    --rdp-nav_button-background-color: #{mix($background-light, #ffffff, 55%)};
+    --rdp-nav_button-height: 2.5rem;
+    --rdp-nav_button-width: 2.5rem;
+    --rdp-nav-height: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    color: $text-primary;
+  }
+
+  @media (max-width: 420px) {
+    .permit-alerts-day-picker {
+      --rdp-day-width: 42px;
+      --rdp-day-height: 42px;
+      --rdp-day_button-width: 40px;
+      --rdp-day_button-height: 40px;
+    }
+  }
+
+  .permit-alerts-day-picker .rdp-month {
+    max-width: 100%;
+    margin-inline: auto;
+  }
+
+  .permit-alerts-day-picker .rdp-months {
+    max-width: 100%;
+    justify-content: center;
+    margin-inline: auto;
+  }
+
+  .permit-alerts-day-picker .rdp-month_grid {
+    margin-inline: auto;
+  }
+
+  .permit-alerts-day-picker .rdp-month_caption {
+    font-size: 1.1rem;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .permit-alerts-day-picker .rdp-dropdowns {
+    justify-content: center;
+  }
+
+  .permit-alerts-day-picker .rdp-weekday {
+    text-align: center;
+  }
+
+  .permit-alerts-day-picker .rdp-day {
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  .permit-alerts-day-picker .rdp-day_button {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    margin-inline: auto;
+  }
+
+  .permit-alerts-day-picker .rdp-button_previous,
+  .permit-alerts-day-picker .rdp-button_next {
+    border-radius: 999px;
+    background-color: var(--rdp-nav_button-background-color);
+    color: mix($text-primary, $color-stone, 60%);
+    border: 1px solid rgba($color-stone, 0.35);
+
+    &:hover:not(:disabled):not([aria-disabled="true"]) {
+      background-color: mix($color-sky, #ffffff, 22%);
+      border-color: rgba($color-stone, 0.5);
+    }
+  }
+
+  .permit-alerts-day-picker .rdp-selected {
+    font-weight: 500;
+    font-size: 1.05rem;
+  }
+
+  .permit-alerts-day-picker .rdp-day.permit-alerts-preview-middle {
+    background-color: var(--rdp-range_middle-background-color);
+  }
+
+  .permit-alerts-day-picker
+    .rdp-day.permit-alerts-preview-middle
+    .rdp-day_button {
+    border: unset;
+    border-radius: unset;
+    color: var(--rdp-range_middle-color);
+  }
+
+  .permit-alerts-day-picker .rdp-day.permit-alerts-preview-start {
+    background: var(--rdp-range_start-background);
+  }
+
+  .permit-alerts-day-picker
+    .rdp-day.permit-alerts-preview-start
+    .rdp-day_button {
+    background-color: var(--rdp-range_start-date-background-color);
+    color: var(--rdp-range_start-color);
+    border: var(--rdp-selected-border);
+  }
+
+  .permit-alerts-day-picker .rdp-day.permit-alerts-preview-end {
+    background: var(--rdp-range_end-background);
+  }
+
+  .permit-alerts-day-picker .rdp-day.permit-alerts-preview-end .rdp-day_button {
+    background-color: var(--rdp-range_end-date-background-color);
+    color: var(--rdp-range_end-color);
+    border: var(--rdp-selected-border);
+  }
+
+  .permit-alerts-day-picker
+    .rdp-day.rdp-range_start.permit-alerts-preview-end:not(.rdp-range_end)
+    .rdp-day_button {
+    background-color: var(--rdp-range_end-date-background-color);
+    color: var(--rdp-range_end-color);
+    border: unset;
+  }
+
+  .permit-alerts-day-picker
+    .rdp-day.rdp-range_start.permit-alerts-preview-end:not(.rdp-range_end) {
+    background: var(--rdp-range_end-background);
+  }
+
+  .permit-alerts-day-picker .rdp-day.rdp-range_start.rdp-range_end {
+    background: var(--rdp-range_start-background);
+  }
+
+  .permit-alerts-day-picker
+    .rdp-day.rdp-range_start.rdp-range_end
+    .rdp-day_button {
+    background-color: var(--rdp-range_start-date-background-color);
+    color: var(--rdp-range_start-color);
+    border: var(--rdp-selected-border);
+  }
+}

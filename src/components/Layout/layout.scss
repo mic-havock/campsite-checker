@@ -54,7 +54,8 @@
   }
 
   .back-to-search-btn,
-  .alert-management-btn {
+  .alert-management-btn,
+  .permit-alerts-btn {
     background-color: transparent;
     color: $primary-color;
     border: 1px solid rgba($primary-color, 0.3);
@@ -79,11 +80,20 @@
     }
   }
 
+  .header-right {
+    gap: 0.5rem;
+
+    @include mobile {
+      gap: 0.25rem;
+    }
+  }
+
   .back-to-search-btn:hover {
     transform: translateX(-2px);
   }
 
-  .alert-management-btn:hover {
+  .alert-management-btn:hover,
+  .permit-alerts-btn:hover {
     transform: translateX(2px);
   }
 
