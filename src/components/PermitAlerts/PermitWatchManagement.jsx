@@ -39,7 +39,7 @@ const PermitWatchManagement = ({ watches, email, onUpdate }) => {
   const groupedWatches = useMemo(() => {
     const groups = {};
     watches.forEach((watch) => {
-      const permitName = watch.permitName || "Unknown Permit";
+      const permitName = watch.permit_name || "Unknown Permit";
       if (!groups[permitName]) {
         groups[permitName] = [];
       }
@@ -67,26 +67,26 @@ const PermitWatchManagement = ({ watches, email, onUpdate }) => {
                 <div className="watch-info">
                   <div className="watch-divisions">
                     <strong>Zones:</strong>{" "}
-                    {watch.divisions && watch.divisions.length > 0
-                      ? watch.divisions.join(", ")
+                    {watch.division_ids && watch.division_ids.length > 0
+                      ? watch.division_ids.join(", ")
                       : "N/A"}
                   </div>
                   <div className="watch-dates">
-                    <strong>Dates:</strong> {watch.startDate} – {watch.endDate}
+                    <strong>Dates:</strong> {watch.start_date} – {watch.end_date}
                   </div>
                   <div className="watch-meta">
                     <span className="watch-status">
                       Status:{" "}
-                      {watch.active ? (
+                      {watch.monitoring_active ? (
                         <span className="status-active">Active</span>
                       ) : (
                         <span className="status-inactive">Inactive</span>
                       )}
                     </span>
-                    {watch.createdAt && (
+                    {watch.created_at && (
                       <span className="watch-created">
                         Created:{" "}
-                        {format(new Date(watch.createdAt), "MMM d, yyyy")}
+                        {format(new Date(watch.created_at), "MMM d, yyyy")}
                       </span>
                     )}
                   </div>
@@ -116,12 +116,12 @@ PermitWatchManagement.propTypes = {
   watches: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-      permitName: PropTypes.string,
-      divisions: PropTypes.arrayOf(PropTypes.string),
-      startDate: PropTypes.string.isRequired,
-      endDate: PropTypes.string.isRequired,
-      active: PropTypes.bool,
-      createdAt: PropTypes.string,
+      permit_name: PropTypes.string,
+      division_ids: PropTypes.arrayOf(PropTypes.string),
+      start_date: PropTypes.string.isRequired,
+      end_date: PropTypes.string.isRequired,
+      monitoring_active: PropTypes.bool,
+      created_at: PropTypes.string,
     })
   ).isRequired,
   email: PropTypes.string.isRequired,

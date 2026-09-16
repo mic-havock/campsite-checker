@@ -132,8 +132,8 @@ const PermitAlerts = () => {
     const loadDivisions = async () => {
       setLoadingDivisions(true);
       try {
-        const response = await getPermitDivisions(selectedPermitId);
-        setDivisions(response.divisions || []);
+        const divisionsArray = await getPermitDivisions(selectedPermitId);
+        setDivisions(Array.isArray(divisionsArray) ? divisionsArray : []);
       } catch (error) {
         console.error("Failed to load divisions:", error);
         setDivisions([]);
@@ -339,20 +339,23 @@ const PermitAlerts = () => {
     setIsCreatingAlert(true);
 
     try {
+      const selectedPermit = PERMIT_CATALOG.find((p) => p.id === selectedPermitId);
+      
       const watchData = {
-        permitId: selectedPermitId,
-        divisionIds: Array.from(selectedDivisions),
-        startDate,
-        endDate,
-        email,
         name,
+        email_address: email,
+        permit_id: selectedPermitId,
+        permit_name: selectedPermit?.name || "Unknown Permit",
+        division_ids: Array.from(selectedDivisions),
+        start_date: startDate,
+        end_date: endDate,
+        group_size: 2,
       };
 
       await createPermitWatch(watchData);
       setIsCreatingAlert(false);
       isSubmitting.current = false;
 
-      const selectedPermit = PERMIT_CATALOG.find((p) => p.id === selectedPermitId);
       const isDailyLottery = selectedPermit?.isDailyLottery;
 
       // Reset form

@@ -4,7 +4,8 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 /**
  * Fetch the curated catalog of available wilderness permits.
- * @returns {Promise<Object>} Response containing permits array
+ * Backend returns a bare array of permits.
+ * @returns {Promise<Array>} Array of permit objects
  */
 export const getPermitCatalog = async () => {
   try {
@@ -18,8 +19,9 @@ export const getPermitCatalog = async () => {
 
 /**
  * Fetch divisions (camps/zones) for a specific permit.
+ * Backend returns a bare array of division objects.
  * @param {string} permitId - The Recreation.gov permit ID
- * @returns {Promise<Object>} Response containing divisions array
+ * @returns {Promise<Array>} Array of division objects with {id, name, ...}
  */
 export const getPermitDivisions = async (permitId) => {
   try {
@@ -33,7 +35,15 @@ export const getPermitDivisions = async (permitId) => {
 
 /**
  * Create a new permit watch alert.
- * @param {Object} data - Watch data including permitId, divisionIds, startDate, endDate, email, name
+ * @param {Object} data - Watch data with snake_case fields:
+ *   - name: string
+ *   - email_address: string
+ *   - permit_id: string
+ *   - permit_name: string
+ *   - division_ids: string[]
+ *   - start_date: string (YYYY-MM-DD)
+ *   - end_date: string (YYYY-MM-DD)
+ *   - group_size: number (optional)
  * @returns {Promise<Object>} Response from the API
  */
 export const createPermitWatch = async (data) => {
@@ -48,8 +58,9 @@ export const createPermitWatch = async (data) => {
 
 /**
  * Fetch all permit watches for a specific email.
+ * Backend returns watches with snake_case fields.
  * @param {string} email - User email address
- * @returns {Promise<Object>} Response containing watches array
+ * @returns {Promise<Array>} Array of watch objects with snake_case fields
  */
 export const getPermitWatches = async (email) => {
   try {

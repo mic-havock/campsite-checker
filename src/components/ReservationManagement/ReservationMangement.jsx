@@ -266,8 +266,8 @@ const ReservationManagement = () => {
     }
     setLoadingPermitWatches(true);
     try {
-      const response = await getPermitWatches(email);
-      setPermitWatches(response.watches || []);
+      const watchesArray = await getPermitWatches(email);
+      setPermitWatches(Array.isArray(watchesArray) ? watchesArray : []);
     } catch (err) {
       console.error("Failed to fetch permit watches:", err);
       setPermitWatches([]);
