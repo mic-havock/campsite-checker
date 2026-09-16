@@ -35,33 +35,22 @@ const PERMIT_CATALOG = [
   {
     id: "4675317",
     name: "Mount Rainier Wilderness & Climbing",
-    isLottery: false,
   },
   {
     id: "4675322",
     name: "North Cascades Backcountry",
-    isLottery: false,
   },
   {
     id: "4098362",
     name: "Olympic NP Wilderness",
-    isLottery: false,
   },
   {
     id: "250003",
     name: "Mount Margaret Backcountry",
-    isLottery: false,
   },
   {
     id: "233273",
     name: "Enchantments Advanced Lottery",
-    isLottery: true,
-  },
-  {
-    id: "445863",
-    name: "Enchantments Daily Lottery",
-    isLottery: true,
-    isDailyLottery: true,
   },
 ];
 
@@ -356,8 +345,6 @@ const PermitAlerts = () => {
       setIsCreatingAlert(false);
       isSubmitting.current = false;
 
-      const isDailyLottery = selectedPermit?.isDailyLottery;
-
       // Reset form
       setAlertDetails({ name: "", email: "", startDate: "", endDate: "" });
       setSelectedPermitId("");
@@ -365,15 +352,9 @@ const PermitAlerts = () => {
       setDivisionSearch("");
 
       window.setTimeout(() => {
-        if (isDailyLottery) {
-          alert(
-            `Lottery reminder created successfully!\n\nYou will receive a confirmation email shortly.\n\nThis is a daily lottery reminder, not a cancelation alert.`,
-          );
-        } else {
-          alert(
-            `Permit alert created successfully!\n\nYou will receive a confirmation email shortly.\n\nIf availability opens up, you will receive another email notification.`,
-          );
-        }
+        alert(
+          `Permit alert created successfully!\n\nYou will receive a confirmation email shortly.\n\nIf availability opens up, you will receive another email notification.`,
+        );
       }, 20);
     } catch (error) {
       setIsCreatingAlert(false);
@@ -383,11 +364,6 @@ const PermitAlerts = () => {
       }, 20);
     }
   };
-
-  const selectedPermit = useMemo(
-    () => PERMIT_CATALOG.find((p) => p.id === selectedPermitId),
-    [selectedPermitId]
-  );
 
   return (
     <>
@@ -446,7 +422,6 @@ const PermitAlerts = () => {
                 {PERMIT_CATALOG.map((permit) => (
                   <option key={permit.id} value={permit.id}>
                     {permit.name}
-                    {permit.isDailyLottery ? " (Daily Lottery)" : ""}
                   </option>
                 ))}
               </select>
@@ -458,13 +433,6 @@ const PermitAlerts = () => {
                 <h2>
                   2. Select Camps/Zones <span className="required">*</span>
                 </h2>
-                {selectedPermit?.isDailyLottery && (
-                  <div className="lottery-notice">
-                    <strong>Note:</strong> This is a daily lottery reminder, not
-                    a cancelation alert. You&apos;ll be reminded to enter the lottery
-                    during your selected date range.
-                  </div>
-                )}
                 <p className="section-description">
                   Selected: {selectedDivisions.size} / {divisions.length}
                 </p>
