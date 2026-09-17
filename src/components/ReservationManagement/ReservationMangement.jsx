@@ -267,7 +267,12 @@ const ReservationManagement = () => {
     setLoadingPermitWatches(true);
     try {
       const watchesArray = await getPermitWatches(email);
-      setPermitWatches(Array.isArray(watchesArray) ? watchesArray : []);
+      // Filter out disabled/deleted watches (monitoring_active = 0)
+      // so trash action removes them from the list
+      const activeWatches = Array.isArray(watchesArray)
+        ? watchesArray.filter((watch) => watch.monitoring_active)
+        : [];
+      setPermitWatches(activeWatches);
     } catch (err) {
       console.error("Failed to fetch permit watches:", err);
       setPermitWatches([]);
