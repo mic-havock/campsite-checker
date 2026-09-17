@@ -76,16 +76,23 @@ export const getPermitWatches = async (email) => {
 
 /**
  * Disable a specific permit watch.
+ * Backend sets monitoring_active = 0 and returns HTML.
  * @param {string} id - Watch ID
- * @param {string} email - User email address
- * @returns {Promise<Object>} Response from the API
+ * @param {string} email - User email address (will be URL-encoded)
+ * @returns {Promise<void>}
  */
 export const disablePermitWatch = async (id, email) => {
   try {
-    const response = await axios.get(`${BASE_URL}/permits/watches/disable/${id}/${email}`);
-    return response.data;
+    // URL-encode email to handle @ and other special characters
+    const encodedEmail = encodeURIComponent(email);
+    // Backend returns HTML, not JSON. Accept any 2xx response as success.
+    await axios.get(`${BASE_URL}/permits/watches/disable/${id}/${encodedEmail}`, {
+      validateStatus: (status) => status >= 200 && status < 300,
+    });
   } catch (error) {
     console.error(`Error disabling permit watch ${id}:`, error);
-    throw error.response?.data || error.message;
+    // Extract meaningful error message
+    const errorMessage = error.response?.data || error.message || "Failed to disable permit watch";
+    throw new Error(errorMessage);
   }
 };
