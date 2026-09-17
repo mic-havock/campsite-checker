@@ -5,6 +5,7 @@ import CampsiteExplorer from "./components/Campsite/CampsiteExplorer";
 import FacilitiesFinder from "./components/Facility/FacilitiesFinder";
 import Layout from "./components/Layout/Layout";
 import NotFound from "./components/NotFound/NotFound";
+import PermitAlerts from "./components/PermitAlerts/PermitAlerts";
 import ReservationManagement from "./components/ReservationManagement/ReservationMangement";
 
 const App = () => (
@@ -18,6 +19,7 @@ const App = () => (
             path="/campground-availability"
             element={<CampgroundAvailability />}
           />
+          <Route path="/permit-alerts" element={<PermitAlerts />} />
           <Route
             path="/reservation-management"
             element={<ReservationManagement />}

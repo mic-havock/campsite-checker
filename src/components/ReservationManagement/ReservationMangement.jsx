@@ -8,6 +8,8 @@ import {
   fetchUserStatsActive,
   updateBatchMonitoringStatus,
 } from "../../api/reservationManagement";
+import { getPermitWatches } from "../../api/permits";
+import PermitWatchManagement from "../PermitAlerts/PermitWatchManagement";
 import ReservationFilters from "./ReservationFilters/ReservationFilters";
 import ReservationGroup from "./ReservationGroup/ReservationGroup";
 import { groupReservations } from "./utils/groupReservations";
@@ -191,6 +193,10 @@ const ReservationManagement = () => {
   const [sortMode, setSortMode] = useState(DEFAULT_SORT_MODE);
   const [expandedGroupKeys, setExpandedGroupKeys] = useState(() => new Set());
 
+  const [viewMode, setViewMode] = useState("campsites");
+  const [permitWatches, setPermitWatches] = useState([]);
+  const [loadingPermitWatches, setLoadingPermitWatches] = useState(false);
+
   // Recompute groups whenever reservations / search / sort change. The
   // intermediate hierarchy is what the rendered list iterates over.
   const groups = useMemo(
@@ -254,6 +260,22 @@ const ReservationManagement = () => {
     }
   }, [email]);
 
+  const handleLoadPermitWatches = useCallback(async () => {
+    if (!email) {
+      return;
+    }
+    setLoadingPermitWatches(true);
+    try {
+      const watchesArray = await getPermitWatches(email);
+      setPermitWatches(Array.isArray(watchesArray) ? watchesArray : []);
+    } catch (err) {
+      console.error("Failed to fetch permit watches:", err);
+      setPermitWatches([]);
+    } finally {
+      setLoadingPermitWatches(false);
+    }
+  }, [email]);
+
   const handleSearch = async (emailAddress) => {
     try {
       setLoading(true);
@@ -273,6 +295,8 @@ const ReservationManagement = () => {
       // Seed expansion only on a fresh search so subsequent per-row deletes /
       // toggles don't reset the user's manual expand/collapse choices.
       setExpandedGroupKeys(computeInitialExpandedKeys(list));
+
+      await handleLoadPermitWatches();
     } catch (err) {
       console.error("Failed to fetch user stats:", err);
       setError(err.message);
@@ -472,7 +496,28 @@ const ReservationManagement = () => {
 
           {stats && <StatsDisplay stats={stats} />}
 
-          {hasReservations && (
+          {(hasReservations || permitWatches.length > 0) && (
+            <div className="view-mode-toggle">
+              <button
+                className={`view-mode-btn ${
+                  viewMode === "campsites" ? "active" : ""
+                }`}
+                onClick={() => setViewMode("campsites")}
+              >
+                Campsite Alerts
+              </button>
+              <button
+                className={`view-mode-btn ${
+                  viewMode === "permits" ? "active" : ""
+                }`}
+                onClick={() => setViewMode("permits")}
+              >
+                Permit Alerts
+              </button>
+            </div>
+          )}
+
+          {viewMode === "campsites" && hasReservations && (
             <div className="batch-monitoring">
               <MonitoringToggle
                 active={allMonitoringActive}
@@ -485,9 +530,9 @@ const ReservationManagement = () => {
             </div>
           )}
 
-          {hasReservations && (
+          {viewMode === "campsites" && hasReservations && (
             <div className="reservations-list">
-              <h2>Reservations</h2>
+              <h2>Campsite Reservations</h2>
 
               <ReservationFilters
                 query={query}
@@ -522,6 +567,23 @@ const ReservationManagement = () => {
                 <p className="reservations-empty">
                   No reservations match your filter.
                 </p>
+              )}
+            </div>
+          )}
+
+          {viewMode === "permits" && (
+            <div className="permit-watches-section">
+              <h2>Permit Watches</h2>
+              {loadingPermitWatches ? (
+                <div className="loading-section">
+                  <p>Loading permit watches...</p>
+                </div>
+              ) : (
+                <PermitWatchManagement
+                  watches={permitWatches}
+                  email={email}
+                  onUpdate={handleLoadPermitWatches}
+                />
               )}
             </div>
           )}
