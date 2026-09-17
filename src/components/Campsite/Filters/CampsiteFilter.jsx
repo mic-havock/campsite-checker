@@ -112,17 +112,146 @@ LoopFilter.propTypes = {
   setDropdownPosition: PropTypes.func.isRequired,
 };
 
+const AmenityFilter = ({
+  uniqueAmenities,
+  selectedAmenities,
+  setSelectedAmenities,
+  showAmenityFilter,
+  setShowAmenityFilter,
+  amenityFilterRef,
+  dropdownPosition,
+  setDropdownPosition,
+  title,
+  buttonText,
+  getAmenityValue,
+  getAmenityDisplay,
+}) => {
+  const handleToggleAmenityFilter = useCallback(() => {
+    if (!showAmenityFilter && amenityFilterRef.current) {
+      const rect = amenityFilterRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + window.scrollY,
+        left: rect.left + window.scrollX,
+      });
+    }
+    setShowAmenityFilter(!showAmenityFilter);
+  }, [showAmenityFilter, amenityFilterRef, setDropdownPosition, setShowAmenityFilter]);
+
+  const toggleAmenitySelection = useCallback(
+    (amenity) => {
+      const value = getAmenityValue(amenity);
+      setSelectedAmenities((prevSelected) => {
+        if (prevSelected.includes(value)) {
+          return prevSelected.filter((a) => a !== value);
+        } else {
+          return [...prevSelected, value];
+        }
+      });
+    },
+    [setSelectedAmenities, getAmenityValue]
+  );
+
+  const clearAllAmenities = useCallback(() => {
+    setSelectedAmenities([]);
+  }, [setSelectedAmenities]);
+
+  const getAmenityFilterButtonText = useCallback(() => {
+    if (selectedAmenities.length > 0) {
+      return `${buttonText} (${selectedAmenities.length} selected)`;
+    }
+    return buttonText;
+  }, [selectedAmenities.length, buttonText]);
+
+  if (uniqueAmenities.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="loop-filter" ref={amenityFilterRef}>
+      <button className="loop-filter-toggle" onClick={handleToggleAmenityFilter}>
+        <div className="toggle-label-group">
+          <LuFilter className="input-icon" />
+          <span className="filter-button-text">{getAmenityFilterButtonText()}</span>
+        </div>
+        <span className="toggle-icon">{showAmenityFilter ? "▲" : "▼"}</span>
+      </button>
+
+      {showAmenityFilter && (
+        <div
+          className="loop-checkbox-container"
+          style={{
+            top: `${dropdownPosition.top}px`,
+            left: `${dropdownPosition.left}px`,
+          }}
+        >
+          <div className="loop-filter-header">
+            <p className="loop-filter-info">{title}</p>
+            <div className="loop-actions">
+              {selectedAmenities.length > 0 && (
+                <button className="clear-all-btn" onClick={clearAllAmenities}>
+                  Clear All
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="loop-checkbox-list">
+            {uniqueAmenities.map((amenity) => {
+              const value = getAmenityValue(amenity);
+              const display = getAmenityDisplay(amenity);
+              return (
+                <label key={value} className="loop-checkbox-item">
+                  <input
+                    type="checkbox"
+                    checked={selectedAmenities.includes(value)}
+                    onChange={() => toggleAmenitySelection(amenity)}
+                  />
+                  {display}
+                </label>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+AmenityFilter.propTypes = {
+  uniqueAmenities: PropTypes.array.isRequired,
+  selectedAmenities: PropTypes.array.isRequired,
+  setSelectedAmenities: PropTypes.func.isRequired,
+  showAmenityFilter: PropTypes.bool.isRequired,
+  setShowAmenityFilter: PropTypes.func.isRequired,
+  amenityFilterRef: PropTypes.object.isRequired,
+  dropdownPosition: PropTypes.object.isRequired,
+  setDropdownPosition: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired,
+  buttonText: PropTypes.string.isRequired,
+  getAmenityValue: PropTypes.func.isRequired,
+  getAmenityDisplay: PropTypes.func.isRequired,
+};
+
 const CampsiteFilter = ({
   campsiteData,
-  filteredCampsites,
   setShowReservableOnly,
   showReservableOnly,
   selectedLoops,
   setSelectedLoops,
+  selectedAttributes,
+  setSelectedAttributes,
+  selectedEquipment,
+  setSelectedEquipment,
 }) => {
   const [showLoopFilter, setShowLoopFilter] = useState(false);
+  const [showAttributeFilter, setShowAttributeFilter] = useState(false);
+  const [showEquipmentFilter, setShowEquipmentFilter] = useState(false);
   const loopFilterRef = useRef(null);
+  const attributeFilterRef = useRef(null);
+  const equipmentFilterRef = useRef(null);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+  const [attributeDropdownPosition, setAttributeDropdownPosition] = useState({ top: 0, left: 0 });
+  const [equipmentDropdownPosition, setEquipmentDropdownPosition] = useState({ top: 0, left: 0 });
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -132,22 +261,81 @@ const CampsiteFilter = ({
       ) {
         setShowLoopFilter(false);
       }
+      if (
+        attributeFilterRef.current &&
+        !attributeFilterRef.current.contains(event.target)
+      ) {
+        setShowAttributeFilter(false);
+      }
+      if (
+        equipmentFilterRef.current &&
+        !equipmentFilterRef.current.contains(event.target)
+      ) {
+        setShowEquipmentFilter(false);
+      }
     };
 
-    if (showLoopFilter) {
+    if (showLoopFilter || showAttributeFilter || showEquipmentFilter) {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [showLoopFilter]);
+  }, [showLoopFilter, showAttributeFilter, showEquipmentFilter]);
 
   const uniqueLoops = useMemo(() => {
     if (!campsiteData) return [];
     return [...new Set(campsiteData.map((site) => site.Loop))]
       .filter(Boolean)
       .sort();
+  }, [campsiteData]);
+
+  const uniqueAttributes = useMemo(() => {
+    if (!campsiteData) return [];
+    const attributeSet = new Set();
+    campsiteData.forEach((site) => {
+      if (site.ATTRIBUTES && Array.isArray(site.ATTRIBUTES)) {
+        site.ATTRIBUTES.forEach((attr) => {
+          const key = `${attr.AttributeName}::${attr.AttributeValue}`;
+          attributeSet.add(key);
+        });
+      }
+    });
+    return Array.from(attributeSet)
+      .map((key) => {
+        const [name, value] = key.split("::");
+        const displayName = name.split(/(?=[A-Z])/).join(" ");
+        const displayValue = value.split(/(?=[A-Z])/).join(" ");
+        return {
+          key,
+          display: `${displayName}: ${displayValue}`,
+          name,
+          value,
+        };
+      })
+      .sort((a, b) => a.display.localeCompare(b.display));
+  }, [campsiteData]);
+
+  const uniqueEquipment = useMemo(() => {
+    if (!campsiteData) return [];
+    const equipmentSet = new Set();
+    campsiteData.forEach((site) => {
+      if (site.PERMITTEDEQUIPMENT && Array.isArray(site.PERMITTEDEQUIPMENT)) {
+        site.PERMITTEDEQUIPMENT.forEach((equip) => {
+          equipmentSet.add(equip.EquipmentName);
+        });
+      }
+    });
+    return Array.from(equipmentSet)
+      .map((name) => {
+        const display = name.split(/(?=[A-Z])/).join(" ");
+        return {
+          key: name,
+          display,
+        };
+      })
+      .sort((a, b) => a.display.localeCompare(b.display));
   }, [campsiteData]);
 
   return (
@@ -169,6 +357,36 @@ const CampsiteFilter = ({
             setDropdownPosition={setDropdownPosition}
           />
 
+          <AmenityFilter
+            uniqueAmenities={uniqueAttributes}
+            selectedAmenities={selectedAttributes}
+            setSelectedAmenities={setSelectedAttributes}
+            showAmenityFilter={showAttributeFilter}
+            setShowAmenityFilter={setShowAttributeFilter}
+            amenityFilterRef={attributeFilterRef}
+            dropdownPosition={attributeDropdownPosition}
+            setDropdownPosition={setAttributeDropdownPosition}
+            title="Select campsite attributes (electric, accessible, etc.)"
+            buttonText="Attributes"
+            getAmenityValue={(attr) => attr.key}
+            getAmenityDisplay={(attr) => attr.display}
+          />
+
+          <AmenityFilter
+            uniqueAmenities={uniqueEquipment}
+            selectedAmenities={selectedEquipment}
+            setSelectedAmenities={setSelectedEquipment}
+            showAmenityFilter={showEquipmentFilter}
+            setShowAmenityFilter={setShowEquipmentFilter}
+            amenityFilterRef={equipmentFilterRef}
+            dropdownPosition={equipmentDropdownPosition}
+            setDropdownPosition={setEquipmentDropdownPosition}
+            title="Select permitted equipment types"
+            buttonText="Equipment"
+            getAmenityValue={(equip) => equip.key}
+            getAmenityDisplay={(equip) => equip.display}
+          />
+
           <label className="reservable-checkbox">
             <input
               type="checkbox"
@@ -185,11 +403,14 @@ const CampsiteFilter = ({
 
 CampsiteFilter.propTypes = {
   campsiteData: PropTypes.array.isRequired,
-  filteredCampsites: PropTypes.array.isRequired,
   setShowReservableOnly: PropTypes.func.isRequired,
   showReservableOnly: PropTypes.bool.isRequired,
   selectedLoops: PropTypes.array.isRequired,
   setSelectedLoops: PropTypes.func.isRequired,
+  selectedAttributes: PropTypes.array.isRequired,
+  setSelectedAttributes: PropTypes.func.isRequired,
+  selectedEquipment: PropTypes.array.isRequired,
+  setSelectedEquipment: PropTypes.func.isRequired,
 };
 
 export default CampsiteFilter;
