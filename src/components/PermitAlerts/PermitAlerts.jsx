@@ -374,7 +374,10 @@ const PermitAlerts = () => {
       <div className="permit-alerts">
         <div className="hero-section">
           <div className="hero-content">
-            <h1>Wilderness Permit Alerts</h1>
+            <h1>
+              Wilderness Permit Alerts
+              <span className="beta-badge">Beta</span>
+            </h1>
             <p className="description">
               Get notified when wilderness permit availability opens up
             </p>

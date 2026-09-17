@@ -84,7 +84,10 @@ const Layout = ({ children }) => {
                   className="permit-alerts-btn"
                   aria-label="Permit Alerts"
                 >
-                  {isMobile ? "Permits" : "Permit Alerts"}
+                  <span className="btn-text">
+                    {isMobile ? "Permits" : "Permit Alerts"}
+                  </span>
+                  <span className="beta-badge">Beta</span>
                 </button>
               )}
               {location.pathname !== "/reservation-management" && (
