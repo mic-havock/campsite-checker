@@ -1,109 +1,52 @@
-# Kampscout
+# Kamp Scout
 
-A modern web application for finding and managing campsite reservations, featuring an interactive calendar interface and real-time availability tracking.
+**Live app:** [kampscout.com](https://kampscout.com)
 
-## Live Application
-
-Visit [kampscout.com](https://kampscout.com) to use the application.
+A Recreation.gov campground finder with campsite cancellation and availability email alerts. Search campgrounds on an interactive map, view real-time availability, and get notified when sites open up.
 
 ## Features
 
-- Interactive grid-based reservation system
-- Visual representation of campsite availability
-- Date-based filtering and navigation
-- Real-time availability updates
-- Responsive design for various screen sizes
+- **Interactive map** – Search and explore Recreation.gov campgrounds by location
+- **Availability matrix** – See campsite availability across dates at a glance (AG Grid)
+- **Email alerts** – Get notified when campsites become available due to cancellations
+- **Wilderness permits** – UI for wilderness permit availability alerts (beta)
+- **Mobile-friendly** – Responsive design for on-the-go planning
 
-## Technologies Used
+## Tech Stack
 
-- React.js
-- AG Grid (for data grid functionality)
-- SCSS (for styling)
-- JavaScript
-- Vite (build tool)
+**Frontend (this repo):**
+- React, TypeScript, Vite
+- Leaflet (mapping)
+- AG Grid (data tables)
+- Tailwind CSS
 
-## Prerequisites
+**Backend (separate repo):**
+- Express, SQLite
+- Recreation.gov / RIDB API polling
+- Email alert system
+- [mic-havock/ridb-backend](https://github.com/mic-havock/ridb-backend)
 
-Before you begin, ensure you have the following installed:
-
-- Node.js (v18.0.0 or higher)
-- [Corepack](https://nodejs.org/api/corepack.html) (ships with Node.js 16.13+), used to install the pnpm version declared in `package.json` (`packageManager` field)
-
-## Installation
-
-1. Clone the repository:
+## Local Development
 
 ```bash
-git clone https://github.com/mkovach302/campsite-reservation-system.git
-```
-
-2. Navigate to the project directory:
-
-```bash
-cd campsite-reservation-system
-```
-
-3. Enable Corepack and use the project’s pinned pnpm version, then install dependencies:
-
-```bash
+# Install dependencies (uses pnpm)
 corepack enable
 corepack install
 pnpm install
-```
 
-4. Start the development server:
-
-```bash
+# Start dev server
 pnpm run dev
 ```
 
-## Key Components
+The frontend expects the backend API at `http://localhost:3001` (configure via `.env` if needed – see `.env.example`).
 
-### CampgroundAvailability
+## Repository Structure
 
-The main component that handles the reservation grid display and interactions:
+- `src/components/` – React components (map, grid, modals)
+- `src/pages/` – Route-level page components
+- `src/styles/` – Global styles and Tailwind configuration
+- `public/` – Static assets
 
-- Displays campsite availability in a grid format
-- Uses AG Grid for data presentation
-- Implements interactive cell rendering for availability status
-- Handles user interactions for reservation management
+---
 
-## Grid Features
-
-- **Column Headers**: Center-aligned date displays
-- **Cell Styling**:
-  - Available slots: Green background with "A"
-  - Unavailable slots: Red background with "X"
-- **Interactive Elements**:
-  - Hover effects on cells
-  - Click handling for unavailable dates
-- **Fixed Layout**:
-  - Campsite column pinned to left
-  - Date columns with uniform width
-
-## Development Notes
-
-- Uses Cursor's Integrated Powershell with Administrator rights for development
-- Chrome browser recommended for optimal development experience
-- Follows specific string handling conventions (double quotes, template literals)
-
-## Code Standards
-
-- Use double quotes for strings
-- Implement proper error checking
-- Include JSDoc comments for functions
-- Use template literals for string interpolation
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## Contact
-
-Michael Kovach - [mkovach302@gmail.com]
-
-Project Link: [https://github.com/mkovach302/campsite-reservation-system]
+Built by [Michael Kovach](https://github.com/mic-havock) · Live at [kampscout.com](https://kampscout.com)
